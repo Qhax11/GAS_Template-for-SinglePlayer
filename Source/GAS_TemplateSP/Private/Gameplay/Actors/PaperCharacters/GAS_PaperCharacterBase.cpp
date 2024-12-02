@@ -11,7 +11,6 @@
 #include "Components/CapsuleComponent.h"
 
 
-
 AGAS_PaperCharacterBase::AGAS_PaperCharacterBase(const class FObjectInitializer& ObjectInitializer)
 {
 	PaperCharacterASC = CreateDefaultSubobject<UGAS_AbilitySystemComponent>(TEXT("PaperCharacterASC"));

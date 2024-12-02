@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_SequenceAbility.h"
+#include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "GA_RangeAttackBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GAS_TEMPLATESP_API UGA_RangeAttackBase : public UGA_SequenceAbility
+class GAS_TEMPLATESP_API UGA_RangeAttackBase : public UGA_MontageAbility
 {
 	GENERATED_BODY()
 

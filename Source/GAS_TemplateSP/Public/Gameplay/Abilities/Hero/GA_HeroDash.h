@@ -2,21 +2,21 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_SequenceAbility.h"
+#include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "GA_HeroDash.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GAS_TEMPLATESP_API UGA_HeroDash : public UGA_SequenceAbility
+class GAS_TEMPLATESP_API UGA_HeroDash : public UGA_MontageAbility
 {
 	GENERATED_BODY()
 	
 
 protected:
 
-	virtual void OnEventRecieved() override;
+	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionTaskParams")
 	float Strenght = 500.0f;

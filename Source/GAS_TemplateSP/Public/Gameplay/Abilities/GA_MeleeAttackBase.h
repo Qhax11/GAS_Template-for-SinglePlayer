@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_SequenceAbility.h"
+#include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "GA_MeleeAttackBase.generated.h"
 
@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_SequenceAbility
+class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_MontageAbility
 {
 	GENERATED_BODY()
 

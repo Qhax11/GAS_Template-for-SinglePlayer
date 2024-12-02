@@ -20,15 +20,15 @@ UAnimMontage* UGA_ComboMeleeAttack::SelectSequence()
 
 UAnimMontage* UGA_ComboMeleeAttack::GetNextComboSequence()
 {
-	if (AnimSequences.IsValidIndex(SequenceIndex)) 
+	if (Montages.IsValidIndex(SequenceIndex))
 	{
-		return AnimSequences[SequenceIndex++];
+		return Montages[SequenceIndex++];
 	}
 
-	else if(AnimSequences.IsValidIndex(0))
+	else if(Montages.IsValidIndex(0))
 	{
 		SequenceIndex = 0;
-		return AnimSequences[SequenceIndex++];
+		return Montages[SequenceIndex++];
 	}
 
 	return nullptr;

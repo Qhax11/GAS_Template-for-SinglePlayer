@@ -6,7 +6,7 @@
 #include "GameFramework/RootMotionSource.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 
-void UGA_HeroDash::OnEventRecieved()
+void UGA_HeroDash::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	/*
 	UAbilityTask_ApplyRootMotionConstantForce* RootMotionTask =

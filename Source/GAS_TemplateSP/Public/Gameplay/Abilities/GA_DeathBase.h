@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_SequenceAbility.h"
+#include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "Gameplay/Actors/PaperCharacters/GAS_PaperCharacterBase.h"
 #include "GA_DeathBase.generated.h"
 
@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class GAS_TEMPLATESP_API UGA_DeathBase : public UGA_SequenceAbility
+class GAS_TEMPLATESP_API UGA_DeathBase : public UGA_MontageAbility
 {
 	GENERATED_BODY()
 

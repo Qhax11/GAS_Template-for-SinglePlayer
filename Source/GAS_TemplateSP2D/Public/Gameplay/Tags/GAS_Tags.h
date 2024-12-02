@@ -1,0 +1,123 @@
+// Qhax's GAS Template for SinglePlayer
+
+#pragma once
+
+#include "NativeGameplayTags.h"
+
+
+namespace GAS_Tags
+{
+	/************************************************
+	*----------------<Gameplay Tags>----------------*
+	* Add all of the Gameplay related tags to here. *
+	*************************************************/
+
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Health);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Health_Full);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Health_Regen);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Mana);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Mana_Full);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Mana_Regen);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Attack);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Attack_Event);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_DamageImmune);
+
+	// To activate GameplayAbility using a GameplayEvent trigger.
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_TakeDamage);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_Death);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Debuff);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Debuff_Stun);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Debuff_Slow);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Dead);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InCombat);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_EffectData_SetByCaller_DamageAmount);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_EffectData_SetByCaller_GainHealthAmount);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_EffectData_SetByCaller_GainManaAmount);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_EffectData_EnableLifeSteal);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_EffectData_EnableCriticalDamage);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Entity_Hero);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Entity_Enemy);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_HeroAbility0);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_HeroAbility1);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_HeroAbility2);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_HeroAbility3);
+
+	/**********************************************
+	*----------------<Filter Tags>----------------*
+	* Add all of the Filter related tags to here. *
+	***********************************************/
+
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Filter);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Filter_Team);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Filter_Team_Hostile);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Filter_Team_Friend);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Filter_Team_Neutral);
+
+	/***************************************************
+	*----------------<GameplayCue Tags>----------------*
+	* Add all of the GameplayCue related tags to here. *
+	****************************************************/
+
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_AttachedEffectText_PhysicalDamage);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_AttachedEffectText_CriticalDamage);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_AttachedEffectText_Bleed);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_AttachedEffectText_GainHealth);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_AttachedEffectText_GainMana);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_HeroMessageHUD_LevelUp);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_HeroMessageHUD_Died);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_HeroMessageHUD_Stunned);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_HeroMessageHUD_Slowed);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_HeroMessageHUD_GainPhysicalArmor);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_HeroMessageHUD_GainLifeSteal);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_VFX_Blood);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_VFX_Heal);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_TakeDamage);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_AttackSwing);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_Death);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_LevelUp);
+
+	/************************************************
+	*-------------------<AI Tags>-------------------*
+	* Add all of the AI related tags to here.       *
+	*************************************************/
+
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI);
+
+	/************************************************
+	*-------------------<UI Tags>-------------------*
+	* Add all of the UI related tags to here.       *
+	*************************************************/
+
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_HitTypeText_Critical);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_HitTypeText_Blind);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_HitTypeText_Physical);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_HitTypeText_Magical);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_HitTypeText_Heal);
+
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_Cooldown_Ability0);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_Cooldown_Ability1);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_Cooldown_Ability2);
+	GAS_TEMPLATESP2D_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_UI_Cooldown_Ability3);
+}

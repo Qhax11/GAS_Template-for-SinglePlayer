@@ -9,14 +9,11 @@
 #include "Gameplay/Components/AC_GameplayData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "PaperFlipbookComponent.h"
+
 
 
 AGAS_PaperCharacterBase::AGAS_PaperCharacterBase(const class FObjectInitializer& ObjectInitializer)
 {
-	// We want see shadows of characters
-	GetSprite()->CastShadow = true;
-
 	PaperCharacterASC = CreateDefaultSubobject<UGAS_AbilitySystemComponent>(TEXT("PaperCharacterASC"));
 
 	AbilitySetComponent = CreateDefaultSubobject<UAC_AbilitySet>(TEXT("AbilitySetComponent"));

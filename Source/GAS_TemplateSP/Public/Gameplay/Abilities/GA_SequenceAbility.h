@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-#include "AnimSequences/PaperZDAnimSequence.h"
 #include "GA_SequenceAbility.generated.h"
 
 /**
@@ -15,11 +14,12 @@ class GAS_TEMPLATESP_API UGA_SequenceAbility : public UGAS_GameplayAbilityBase
 	GENERATED_BODY()
 
 public:
-
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
-
+	
 	UPROPERTY(EditDefaultsOnly, Category = "SequenceAbility|Montage")
-	TArray<TObjectPtr<UPaperZDAnimSequence>> AnimSequences;
+	TArray<TObjectPtr<UAnimMontage>> AnimSequences;
+	
 
 	UPROPERTY(EditDefaultsOnly, Category = "SequenceAbility|Montage")
 	FGameplayTag EventTag;
@@ -31,7 +31,7 @@ public:
 	float PlayRate = 1.0f;
 
 protected:
-	virtual UPaperZDAnimSequence* SelectSequence();
+	virtual UAnimMontage* SelectSequence();
 
 	virtual void OnCompleted();
 
@@ -42,7 +42,8 @@ protected:
 
 private:
 	void OnOverrideEnd(bool OverrideEnd);
+	/*
 
-	void BindEventRecievedInAnimSequence(UPaperZDAnimSequence* SelectedSequence);
-
+	void BindEventRecievedInAnimSequence(UAnimMontage* SelectedSequence);
+	*/
 };

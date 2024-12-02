@@ -3,9 +3,7 @@
 
 #include "Gameplay/Abilities/GA_SequenceAbility.h"
 #include "Gameplay/Actors/PaperCharacters/GAS_PaperCharacterBase.h"
-#include "Gameplay/Animations/Notifys/AN_EventReceived.h"
-#include "PaperZDAnimationComponent.h"
-#include "PaperZDAnimInstance.h"
+
 
 
 void UGA_SequenceAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -15,7 +13,7 @@ void UGA_SequenceAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UPaperZDAnimSequence* SelectedSequence = SelectSequence();
+	UAnimMontage* SelectedSequence = SelectSequence();
 	if (!SelectedSequence)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectSequence function couldn't selcet sequence in: %s"), *this->GetName());
@@ -36,23 +34,12 @@ void UGA_SequenceAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		return;
 	}
 
-	UPaperZDAnimationComponent* PaperZDAnimComp = PaperCharacter->GetComponentByClass<UPaperZDAnimationComponent>();
-	if (!PaperZDAnimComp)
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
-	}
+	
 
-	if (UPaperZDAnimInstance* AnimInstance = PaperZDAnimComp->GetAnimInstance())
-	{
-		FZDOnAnimationOverrideEndSignature OnOverrideEnd;
-		OnOverrideEnd.BindUObject(this, &UGA_SequenceAbility::OnOverrideEnd);
-		AnimInstance->PlayAnimationOverride(SelectedSequence, SlotName, PlayRate, 0.0f, OnOverrideEnd);
-		BindEventRecievedInAnimSequence(SelectedSequence);
-	}
+
 }
 
-UPaperZDAnimSequence* UGA_SequenceAbility::SelectSequence()
+UAnimMontage* UGA_SequenceAbility::SelectSequence()
 {
 	return AnimSequences.IsValidIndex(0) ? AnimSequences[0] : nullptr;
 }
@@ -83,8 +70,8 @@ void UGA_SequenceAbility::OnEventRecieved()
 {
 	/* Will be implemented in child classes */
 }
-
-void UGA_SequenceAbility::BindEventRecievedInAnimSequence(UPaperZDAnimSequence* SelectedSequence)
+/*
+void UGA_SequenceAbility::BindEventRecievedInAnimSequence(UAnimMontage* SelectedSequence)
 {
 	if (SelectedSequence)
 	{
@@ -104,3 +91,4 @@ void UGA_SequenceAbility::BindEventRecievedInAnimSequence(UPaperZDAnimSequence* 
 		}
 	}
 }
+*/

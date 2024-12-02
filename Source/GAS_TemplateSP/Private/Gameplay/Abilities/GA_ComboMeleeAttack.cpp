@@ -13,12 +13,12 @@ void UGA_ComboMeleeAttack::OnEventRecieved()
 	Super::OnEventRecieved();
 }
 
-UPaperZDAnimSequence* UGA_ComboMeleeAttack::SelectSequence()
+UAnimMontage* UGA_ComboMeleeAttack::SelectSequence()
 {
 	return GetNextComboSequence();
 }
 
-UPaperZDAnimSequence* UGA_ComboMeleeAttack::GetNextComboSequence()
+UAnimMontage* UGA_ComboMeleeAttack::GetNextComboSequence()
 {
 	if (AnimSequences.IsValidIndex(SequenceIndex)) 
 	{

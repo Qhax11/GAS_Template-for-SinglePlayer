@@ -21,9 +21,9 @@ protected:
 
 	virtual void OnEventRecieved();
 
-	virtual UPaperZDAnimSequence* SelectSequence() override;
+	virtual UAnimMontage* SelectSequence() override;
 	
-	UPaperZDAnimSequence* GetNextComboSequence();
+	UAnimMontage* GetNextComboSequence();
 
 	int32 SequenceIndex = 0;
 };

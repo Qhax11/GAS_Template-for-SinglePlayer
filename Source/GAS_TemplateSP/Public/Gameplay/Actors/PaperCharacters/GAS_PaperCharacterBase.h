@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "PaperZDCharacter.h"
+#include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "GAS_PaperCharacterBase.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API AGAS_PaperCharacterBase : public APaperZDCharacter, public IAbilitySystemInterface
+class GAS_TEMPLATESP_API AGAS_PaperCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	

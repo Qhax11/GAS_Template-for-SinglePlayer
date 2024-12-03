@@ -33,7 +33,7 @@ protected:
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
-	class UAC_HeroMoving* HeroMovingComponent;
+	class UAC_HeroControl* HeroControlComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_AbilityInputBinding* AbilityInputBindingComponent;

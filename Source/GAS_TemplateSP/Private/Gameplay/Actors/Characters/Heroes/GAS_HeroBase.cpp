@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMoving.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAttributesListener.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroRespawn.h"
@@ -23,7 +23,7 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer):
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
     FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-    HeroMovingComponent = CreateDefaultSubobject<UAC_HeroMoving>(TEXT("HeroMovingComponent"));
+    HeroControlComponent = CreateDefaultSubobject<UAC_HeroControl>(TEXT("HeroControlComponent"));
 
     AbilityInputBindingComponent = CreateDefaultSubobject<UAC_AbilityInputBinding>(TEXT("AbilityInputBindingComponent"));
 

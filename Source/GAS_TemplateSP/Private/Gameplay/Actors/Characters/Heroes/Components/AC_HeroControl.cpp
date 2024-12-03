@@ -16,15 +16,15 @@ void UAC_HeroControl::BeginPlay()
 	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
 	if (!HeroBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null! (This message comes from %s)"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
 		return;
 	}
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
-	TryBindMovingInputs(EnhancedInputComponent);
+	TryBindControlInputs(EnhancedInputComponent);
 }
 
-void UAC_HeroControl::TryBindMovingInputs(UEnhancedInputComponent* EnhancedInputComponent)
+void UAC_HeroControl::TryBindControlInputs(UEnhancedInputComponent* EnhancedInputComponent)
 {
 	if (!EnhancedInputComponent)
 	{

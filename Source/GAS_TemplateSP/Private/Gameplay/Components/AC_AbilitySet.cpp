@@ -15,6 +15,13 @@ void UAC_AbilitySet::Initialize(UGAS_AbilitySystemComponent* ASC)
 		UE_LOG(LogTemp, Warning, TEXT("ASC is null in: %s. AbilitySet cannot be initialized."), *GetName());
 		return;
 	}
+
+	if (!AbilitySet)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AbilitySet is null in: %s. AbilitySet cannot be initialized."), *GetName());
+		return;
+	}
+
 	if (ASC->GiveAbilitySet(AbilitySet))
 	{
 		OnAbilitySetGiven.Broadcast(GetOwner());

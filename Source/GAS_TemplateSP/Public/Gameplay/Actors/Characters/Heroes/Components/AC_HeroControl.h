@@ -7,6 +7,7 @@
 #include "AC_HeroControl.generated.h"
 
 
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_HeroControl : public UActorComponent
 {
@@ -21,7 +22,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	void TryBindMovingInputs(UEnhancedInputComponent* EnhancedInputComponent);
+	void TryBindControlInputs(UEnhancedInputComponent* EnhancedInputComponent);
 
 	void Move(const FInputActionValue& Value);
 

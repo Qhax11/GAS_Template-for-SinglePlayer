@@ -15,6 +15,6 @@ class GAS_TEMPLATESP_API UGA_RangeAttackBase : public UGA_MontageAbility
 
 protected:
 
-	virtual void OnEventRecieved();
+	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 	
 };

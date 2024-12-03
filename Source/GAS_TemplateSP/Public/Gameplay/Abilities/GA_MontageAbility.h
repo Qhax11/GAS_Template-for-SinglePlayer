@@ -41,13 +41,13 @@ protected:
 	virtual UAnimMontage* SelectSequence();
 
 	UFUNCTION()
-	virtual void OnMontageCancelled();
+	virtual void OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
 
 	UFUNCTION()
-	virtual void OnMontageCompleted();
+	virtual void OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData);
 
 	UFUNCTION()
-	virtual void OnEventReceived();
+	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
 
 
 };

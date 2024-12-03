@@ -4,7 +4,7 @@
 #include "Gameplay/Abilities/GA_MeleeAttackBase.h"
 #include <AbilitySystemGlobals.h>
 
-void UGA_MeleeAttackBase::OnEventRecieved()
+void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	TArray<AActor*> OutResultActors;
 	CreateTraceFromTargetingDataWithTeamFilter(OutResultActors, ETeamAttitude::Hostile);

@@ -2,7 +2,8 @@
 
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
-#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Gameplay/Abilities/Tasks/GAS_Task_PlayMontageWaitForEvent.h"
+
 
 void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
@@ -14,9 +15,9 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	UAnimMontage* SelectedMontage = SelectSequence();
 	if (!SelectedMontage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SelectedMontage is null in: %s, ability cannot initialize"), *GetName());
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
+		//UE_LOG(LogTemp, Warning, TEXT("SelectedMontage is null in: %s, ability cannot initialize"), *GetName());
+		//EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		//return;
 	}
 
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
@@ -32,13 +33,13 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 	
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTas = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, SelectedMontage);
-	PlayMontageAndWaitTas->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-	PlayMontageAndWaitTas->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-	PlayMontageAndWaitTas->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-	PlayMontageAndWaitTas->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-	//PlayMontageAndWaitTas->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
-	PlayMontageAndWaitTas->ReadyForActivation();
+	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, SelectedMontage, WaitForEventTag, PlayRate, NAME_None, bStopWhenAbilityEnds, 1.0f);
+	Task->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+	Task->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+	Task->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+	Task->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+	Task->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
+	Task->ReadyForActivation();
 }
 
 UAnimMontage* UGA_MontageAbility::SelectSequence()
@@ -46,17 +47,17 @@ UAnimMontage* UGA_MontageAbility::SelectSequence()
 	return Montages.IsValidIndex(0) ? Montages[0] : nullptr;
 }
 
-void UGA_MontageAbility::OnMontageCancelled()
+void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
-void UGA_MontageAbility::OnMontageCompleted()
+void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
-void UGA_MontageAbility::OnEventReceived()
+void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	/* Will be implemented in child classes */
 }

@@ -15,7 +15,7 @@ class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_MontageAbility
 	GENERATED_BODY()
 
 public:
-	virtual void OnEventRecieved();
+	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameters")
 	TSubclassOf<UGameplayEffect> GEPhysicalDamage;

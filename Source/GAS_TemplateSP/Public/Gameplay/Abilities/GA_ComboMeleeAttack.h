@@ -19,7 +19,7 @@ public:
 
 protected:
 
-	virtual void OnEventRecieved();
+	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
 	virtual UAnimMontage* SelectSequence() override;
 	

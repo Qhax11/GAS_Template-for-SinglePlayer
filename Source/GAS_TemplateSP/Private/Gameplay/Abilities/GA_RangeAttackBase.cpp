@@ -3,7 +3,7 @@
 
 #include "Gameplay/Abilities/GA_RangeAttackBase.h"
 
-void UGA_RangeAttackBase::OnEventRecieved()
+void UGA_RangeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	// TODO: Spawn projectile.
 }

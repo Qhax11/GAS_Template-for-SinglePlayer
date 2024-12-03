@@ -8,9 +8,9 @@ UGA_ComboMeleeAttack::UGA_ComboMeleeAttack()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
-void UGA_ComboMeleeAttack::OnEventRecieved()
+void UGA_ComboMeleeAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	Super::OnEventRecieved();
+	Super::OnEventReceived(EventTag, EventData);
 }
 
 UAnimMontage* UGA_ComboMeleeAttack::SelectSequence()

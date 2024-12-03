@@ -15,9 +15,9 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	UAnimMontage* SelectedMontage = SelectSequence();
 	if (!SelectedMontage)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("SelectedMontage is null in: %s, ability cannot initialize"), *GetName());
-		//EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		//return;
+		UE_LOG(LogTemp, Warning, TEXT("SelectedMontage is null in: %s, ability cannot initialize"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
 	}
 
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))

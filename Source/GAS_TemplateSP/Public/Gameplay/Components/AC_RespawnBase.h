@@ -30,9 +30,9 @@ protected:
 
 	FTimerHandle CharacterDeSpawnCountDownTimerHandle;
 
-	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase|Params")
+	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")
 	float ReSpawnDelay = 2.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase|Params")
+	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")
 	TSubclassOf<class UGameplayEffect> ReSpawnEffectClass;
 };

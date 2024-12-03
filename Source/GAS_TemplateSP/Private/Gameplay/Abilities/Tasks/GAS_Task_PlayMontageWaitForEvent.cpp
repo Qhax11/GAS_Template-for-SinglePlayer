@@ -9,10 +9,6 @@
 #include "Runtime/Launch/Resources/Version.h"
 
 
-UGAS_Task_PlayMontageWaitForEvent::UGAS_Task_PlayMontageWaitForEvent(const FObjectInitializer& ObjectInitializer)
-{
-}
-
 void UGAS_Task_PlayMontageWaitForEvent::Activate()
 {
     if (!Ability)
@@ -22,11 +18,7 @@ void UGAS_Task_PlayMontageWaitForEvent::Activate()
 
     bool bPlayedMontage = false;
 
-#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1
     if (AbilitySystemComponent.IsValid())
-#else
-    if (AbilitySystemComponent)
-#endif
     {
         const FGameplayAbilityActorInfo* ActorInfo = Ability->GetCurrentActorInfo();
         UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
@@ -52,9 +44,7 @@ void UGAS_Task_PlayMontageWaitForEvent::Activate()
                 MontageEndedDelegate.BindUObject(this, &UGAS_Task_PlayMontageWaitForEvent::OnMontageEnded);
                 AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, MontageToPlay);
 
-                ACharacter* Character = Cast<ACharacter>(GetAvatarActor());
-                if (Character && (Character->GetLocalRole() == ROLE_Authority ||
-                    (Character->GetLocalRole() == ROLE_AutonomousProxy && Ability->GetNetExecutionPolicy() == EGameplayAbilityNetExecutionPolicy::LocalPredicted)))
+                if (ACharacter* Character = Cast<ACharacter>(GetAvatarActor()))
                 {
                     Character->SetAnimRootMotionTranslationScale(AnimRootMotionTranslationScale);
                 }
@@ -86,11 +76,7 @@ void UGAS_Task_PlayMontageWaitForEvent::Activate()
 
 void UGAS_Task_PlayMontageWaitForEvent::ExternalCancel()
 {
-#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1
     check(AbilitySystemComponent.IsValid());
-#else
-    check(AbilitySystemComponent);
-#endif
 
     OnAbilityCancelled();
     Super::ExternalCancel();
@@ -128,11 +114,7 @@ void UGAS_Task_PlayMontageWaitForEvent::OnDestroy(bool AbilityEnded)
         }
     }
 
-#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1
     if (AbilitySystemComponent.IsValid())
-#else
-    if (AbilitySystemComponent)
-#endif
     {
         AbilitySystemComponent->RemoveGameplayEventTagContainerDelegate(EventTags, EventHandle);
     }
@@ -186,11 +168,7 @@ bool UGAS_Task_PlayMontageWaitForEvent::StopPlayingMontage() const
 
     // Check if the montage is still playing
     // The ability would have been interrupted, in which case we should automatically stop the montage
-#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 1
     if (AbilitySystemComponent.IsValid() && Ability)
-#else
-    if (AbilitySystemComponent && Ability)
-#endif
     {
         if (AbilitySystemComponent->GetAnimatingAbility() == Ability && AbilitySystemComponent->GetCurrentMontage() == MontageToPlay)
         {

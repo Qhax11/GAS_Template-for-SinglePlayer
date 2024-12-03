@@ -22,19 +22,19 @@ public:
 	TArray<TObjectPtr<UAnimMontage>> Montages;
 
 	/** Change to play the montage faster or slower */
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	float PlayRate = 1.f;
 
 	/** Any gameplay events matching this tag will activate the OnEventReceived callback and apply the gameplay effect containers for this ability */
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	FGameplayTagContainer WaitForEventTag;
 
 	/** If we need to turn off characters rotation during the gameplay effect */
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	bool bTurnOffRotation;
 
 	/** If we want that montage doesen't stop after ability end */
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	bool bStopWhenAbilityEnds = true;
 
 protected:
@@ -48,6 +48,5 @@ protected:
 
 	UFUNCTION()
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
-
 
 };

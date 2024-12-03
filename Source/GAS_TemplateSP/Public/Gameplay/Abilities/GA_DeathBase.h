@@ -24,7 +24,7 @@ protected:
 
 	virtual void BroadcastDeSpawn();
 
-	UPROPERTY(EditDefaultsOnly, Category = "DeathBase|Params")
+	UPROPERTY(EditDefaultsOnly, Category = "DeathBase")
 	TSubclassOf<class UGameplayEffect> DeathEffectClass;
 	
 };

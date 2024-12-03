@@ -26,7 +26,6 @@ class GAS_TEMPLATESP_API UGAS_Task_PlayMontageWaitForEvent : public UAbilityTask
 	GENERATED_BODY()
 
 public:
-	UGAS_Task_PlayMontageWaitForEvent(const FObjectInitializer& ObjectInitializer);
 
 	virtual void Activate() override;
 	virtual void ExternalCancel() override;

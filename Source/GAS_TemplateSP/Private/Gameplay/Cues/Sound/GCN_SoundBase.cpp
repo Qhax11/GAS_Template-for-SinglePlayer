@@ -26,6 +26,10 @@ void AGCN_SoundBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayC
 				USoundCue* AbilitySoundCue = SoundsData->TagToSoundMap[GameplayCueTag];
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), AbilitySoundCue, Target->GetActorLocation());
 			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("No sound found for GameplayCueTag: %s"), *GameplayCueTag.ToString());
+			}
 		}
 	}
 }

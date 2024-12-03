@@ -8,7 +8,7 @@
 
 void UGA_HeroDash::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	/*
+	
 	UAbilityTask_ApplyRootMotionConstantForce* RootMotionTask =
 		UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(
 			this,
@@ -25,7 +25,7 @@ void UGA_HeroDash::OnEventReceived(FGameplayTag EventTag, FGameplayEventData Eve
 			
 
 	RootMotionTask->ReadyForActivation();
-	RootMotionTask->OnFinish.AddDynamic(this, &UGA_HeroDash::OnTaskFinished);
-	*/
+//	RootMotionTask->OnFinish.AddDynamic(this, &UGA_HeroDash::OnTaskFinished);
+	
 }
 

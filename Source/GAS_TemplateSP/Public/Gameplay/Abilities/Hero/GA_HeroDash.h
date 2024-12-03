@@ -16,7 +16,7 @@ class GAS_TEMPLATESP_API UGA_HeroDash : public UGA_MontageAbility
 
 protected:
 
-	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
+	virtual void OnEventReceived() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionTaskParams")
 	float Strenght = 500.0f;

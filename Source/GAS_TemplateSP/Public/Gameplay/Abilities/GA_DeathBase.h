@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
-#include "Gameplay/Actors/PaperCharacters/GAS_PaperCharacterBase.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "GA_DeathBase.generated.h"
 
 /**

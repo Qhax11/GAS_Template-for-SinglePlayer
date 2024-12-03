@@ -6,7 +6,6 @@
 #include "GameFramework/Character.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/Attributes/AS_Base.h"
-#include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemGlobals.h"
 
 

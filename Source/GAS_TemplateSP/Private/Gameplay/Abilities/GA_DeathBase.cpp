@@ -28,7 +28,7 @@ void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	BroadcastDeSpawn();
 
-	if (AGAS_PaperCharacterBase* CharacterBase = Cast<AGAS_PaperCharacterBase>(GetAvatarActorFromActorInfo()))
+	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
 	{
 		CharacterBase->DisableMovement();
 		CharacterBase->DisableCollision();
@@ -40,8 +40,6 @@ void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		}
 	}
 }
-
-	
 
 void UGA_DeathBase::BroadcastDeSpawn()
 {

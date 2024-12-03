@@ -6,7 +6,7 @@
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "AC_RespawnBase.generated.h"
 
-class AGAS_PaperCharacterBase;
+class AGAS_CharacterBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_RespawnBase : public UActorComponent
@@ -17,16 +17,16 @@ public:
 	UAC_RespawnBase();
 
 	UFUNCTION()
-	void StartCharacterReSpawnCountdown(AGAS_PaperCharacterBase* CharacterBase);
+	void StartCharacterReSpawnCountdown(AGAS_CharacterBase* CharacterBase);
 
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void BindCharacterDeSpawn();
 
-	virtual void OnCharacterRespawn(AGAS_PaperCharacterBase* CharacterBase);
+	virtual void OnCharacterRespawn(AGAS_CharacterBase* CharacterBase);
 
-	void ApplyCharacterReSpawnEffect(AGAS_PaperCharacterBase* CharacterBase);
+	void ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterBase);
 
 	FTimerHandle CharacterDeSpawnCountDownTimerHandle;
 

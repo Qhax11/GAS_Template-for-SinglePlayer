@@ -9,6 +9,6 @@ void UGA_EnemyDeath::BroadcastDeSpawn()
 {
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
-		SpawnDelegatesSubsystem->OnEnemyDeSpawn.Broadcast(Cast<AGAS_PaperCharacterBase>(GetAvatarActorFromActorInfo()));
+		SpawnDelegatesSubsystem->OnEnemyDeSpawn.Broadcast(Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()));
 	}
 }

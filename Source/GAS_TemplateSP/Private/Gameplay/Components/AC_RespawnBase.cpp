@@ -3,7 +3,7 @@
 
 #include "Gameplay/Components/AC_RespawnBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
-#include "Gameplay/Actors/PaperCharacters/GAS_PaperCharacterBase.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 
 
 UAC_RespawnBase::UAC_RespawnBase()
@@ -23,7 +23,7 @@ void UAC_RespawnBase::BindCharacterDeSpawn()
 	// The logic will be implemented in the subclasses.
 }
 
-void UAC_RespawnBase::StartCharacterReSpawnCountdown(AGAS_PaperCharacterBase* CharacterBase)
+void UAC_RespawnBase::StartCharacterReSpawnCountdown(AGAS_CharacterBase* CharacterBase)
 {
 	GetWorld()->GetTimerManager().SetTimer(CharacterDeSpawnCountDownTimerHandle, [this, CharacterBase]()
 		{
@@ -32,7 +32,7 @@ void UAC_RespawnBase::StartCharacterReSpawnCountdown(AGAS_PaperCharacterBase* Ch
 		ReSpawnDelay, false);
 }
 
-void UAC_RespawnBase::OnCharacterRespawn(AGAS_PaperCharacterBase* CharacterBase)
+void UAC_RespawnBase::OnCharacterRespawn(AGAS_CharacterBase* CharacterBase)
 {
 	ApplyCharacterReSpawnEffect(CharacterBase);
 
@@ -40,7 +40,7 @@ void UAC_RespawnBase::OnCharacterRespawn(AGAS_PaperCharacterBase* CharacterBase)
 	CharacterBase->EnableCollision();
 }
 
-void UAC_RespawnBase::ApplyCharacterReSpawnEffect(AGAS_PaperCharacterBase* CharacterBase)
+void UAC_RespawnBase::ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterBase)
 {
 	if (!ReSpawnEffectClass)
 	{

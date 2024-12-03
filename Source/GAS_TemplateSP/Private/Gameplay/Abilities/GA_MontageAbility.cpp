@@ -3,8 +3,6 @@
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Gameplay/Actors/PaperCharacters/GAS_PaperCharacterBase.h"
-
 
 void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
@@ -33,15 +31,14 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-	/*
-	UAbilityTask_PlayMontageAndWait* Task = UAbilityTask_PlayMontageAndWait::UAbilityTask_PlayMontageAndWait(this, NAME_None, SelectedMontage, WaitForEventTag, Rate, NAME_None, bStopWhenAbilityEnds, 1.0f);
-	Task->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-	Task->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-	Task->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-	Task->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-	Task->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
-	Task->ReadyForActivation();
-	*/
+	
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTas = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, SelectedMontage);
+	PlayMontageAndWaitTas->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+	PlayMontageAndWaitTas->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+	PlayMontageAndWaitTas->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+	PlayMontageAndWaitTas->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+	//PlayMontageAndWaitTas->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
+	PlayMontageAndWaitTas->ReadyForActivation();
 }
 
 UAnimMontage* UGA_MontageAbility::SelectSequence()
@@ -49,19 +46,18 @@ UAnimMontage* UGA_MontageAbility::SelectSequence()
 	return Montages.IsValidIndex(0) ? Montages[0] : nullptr;
 }
 
-void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGA_MontageAbility::OnMontageCancelled()
 {
 	EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
-void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGA_MontageAbility::OnMontageCompleted()
 {
 	EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
-void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGA_MontageAbility::OnEventReceived()
 {
 	/* Will be implemented in child classes */
-
 }
 

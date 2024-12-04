@@ -1,8 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
-#include "GameFramework/PlayerController.h"
-
+#include "Gameplay/Tags/GAS_Tags.h"
 
 UAC_HeroControl::UAC_HeroControl()
 {
@@ -16,7 +15,14 @@ void UAC_HeroControl::BeginPlay()
 	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
 	if (!HeroBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s, cannot initialize HeroControl"), *GetName());
+		return;
+	}
+
+	HeroASC = HeroBase->GetAbilitySystemComponent();
+	if (!HeroASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in %s, cannot initialize HeroControl."), *this->GetName());
 		return;
 	}
 
@@ -45,22 +51,18 @@ void UAC_HeroControl::TryBindControlInputs(UEnhancedInputComponent* EnhancedInpu
 
 void UAC_HeroControl::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (HeroBase != nullptr && HeroBase->Controller != nullptr)
 	{
-		// find out which way is forward
+		// Find out which way is forward
 		const FRotator Rotation = HeroBase->Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
 		HeroBase->AddMovementInput(ForwardDirection, MovementVector.Y);
 		HeroBase->AddMovementInput(RightDirection, MovementVector.X);
 	}
@@ -68,7 +70,11 @@ void UAC_HeroControl::Move(const FInputActionValue& Value)
 
 void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 {
-	// input is a Vector2D
+	if (HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked)) 
+	{
+		return;
+	}
+
 	const FVector2D VectorValue = Value.Get<FVector2D>();
 
 	if (VectorValue.X != 0.0f)

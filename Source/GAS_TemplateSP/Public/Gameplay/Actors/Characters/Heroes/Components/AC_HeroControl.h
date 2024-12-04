@@ -37,4 +37,6 @@ public:
 protected:
 
 	AGAS_HeroBase* HeroBase;
+
+	UAbilitySystemComponent* HeroASC;
 };

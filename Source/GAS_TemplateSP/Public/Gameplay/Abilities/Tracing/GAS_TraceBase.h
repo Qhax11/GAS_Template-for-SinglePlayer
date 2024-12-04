@@ -14,6 +14,9 @@ enum ETraceOrigin: uint8
 	Camera
 };
 
+#define ECC_DEAD ECC_GameTraceChannel1
+#define ECC_ENEMY ECC_GameTraceChannel2
+
 UCLASS(Abstract, Blueprintable, DefaultToInstanced, EditInLineNew)
 class GAS_TEMPLATESP_API UGAS_TraceBase : public UObject
 {
@@ -33,10 +36,13 @@ public:
 	bool bIgnoreSelf = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
-	TEnumAsByte<ECollisionChannel> TraceChannel = ECollisionChannel::ECC_Pawn;
+	TEnumAsByte<ECollisionChannel> TraceChannel = ECollisionChannel::ECC_ENEMY;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	float TraceDistance = .0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true), meta = (EditCondition = "!bOverrideTraceDirection"))
+	FRotator TraceDirectionOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams")
 	bool bOverrideTraceDirection = false;

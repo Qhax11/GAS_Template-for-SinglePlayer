@@ -28,7 +28,7 @@ struct FWidgetMessageData
 	FSlateColor MessageColor = FSlateColor(FLinearColor::White);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WidgetMessageData")
-	TEnumAsByte <EMessageTextAnim> MessageTextAnim = EMessageTextAnim::SlideUpFadeOut;
+	TEnumAsByte<EMessageTextAnim> MessageTextAnim = EMessageTextAnim::SlideUpFadeOut;
 
 	FWidgetMessageData() = default;
 

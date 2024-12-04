@@ -5,29 +5,9 @@
 #include "Kismet\KismetSystemLibrary.h"
 
 
-void UGAS_GameplayAbilityBase::CreateTraceFromTargetingData(TArray<AActor*>& OutActors)
+void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
 {
-	FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
-	FRotator TraceDirection = GetAvatarActorFromActorInfo()->GetActorForwardVector().Rotation();
-
-	TargetingData->Trace->MakeTrace(GetAvatarActorFromActorInfo(), GetWorld(), StartLocation, TraceDirection, OutActors);
-}
-
-void UGAS_GameplayAbilityBase::CreateTraceFromTargetingDataWithTeamFilter(TArray<AActor*>& OutActors, ETeamAttitude::Type TeamAttidue)
-{
-	CreateTraceFromTargetingData(OutActors);
-
-	const AActor& Owner = *GetAvatarActorFromActorInfo();
-	for (AActor* CollectedActor : OutActors)
-	{
-		if (UAC_Team* TeamComp = CollectedActor->GetComponentByClass<UAC_Team>())
-		{
-			if (TeamComp->GetTeamAttitudeTowards(Owner) != TeamAttidue)
-			{
-				OutActors.Remove(CollectedActor);
-			}
-		}
-	}
+	TargetingData->Trace->CreateTraceFromTargetingDataWithTeamFilter(GetWorld(), OutActors, GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile);
 }
 
 float UGAS_GameplayAbilityBase::GetCost(int32 AbilityLevel) const

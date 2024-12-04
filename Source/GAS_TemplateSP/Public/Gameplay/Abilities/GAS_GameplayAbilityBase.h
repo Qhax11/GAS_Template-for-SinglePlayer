@@ -6,7 +6,6 @@
 #include "Gameplay/Abilities/Targeting/GAS_AbilityTargetingData.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemComponent.h"
-#include "Gameplay/Components/AC_Team.h"
 #include "Gameplay/Attributes/AS_Base.h"
 #include "GAS_GameplayAbilityBase.generated.h"
 
@@ -22,10 +21,8 @@ class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
 
 public:
 
-	void CreateTraceFromTargetingData(TArray<AActor*>& OutActors);
+	void TraceForHostileUnits(TArray<AActor*>& OutActors);
 
-	void CreateTraceFromTargetingDataWithTeamFilter(TArray<AActor*>& OutActors, ETeamAttitude::Type TeamAttidue);
-	
 	UFUNCTION(BlueprintPure, Category = "GameplayAbilityBase")
 	float GetCost(int32 AbilityLevel) const;
 

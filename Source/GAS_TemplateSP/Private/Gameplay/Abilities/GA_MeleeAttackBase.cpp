@@ -7,7 +7,7 @@
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	TArray<AActor*> OutResultActors;
-	CreateTraceFromTargetingDataWithTeamFilter(OutResultActors, ETeamAttitude::Hostile);
+	TraceForHostileUnits(OutResultActors);
 
 	FGameplayEffectSpec DamageSpec;
 	bool bIsDamageSpecValid = UGAS_EffectBlueprintFunctionLibary::CreateInstantEffectSpecWithSetByCallerValue(

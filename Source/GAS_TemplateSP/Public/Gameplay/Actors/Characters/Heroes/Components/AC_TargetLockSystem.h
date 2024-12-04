@@ -15,10 +15,13 @@ class GAS_TEMPLATESP_API UAC_TargetLockSystem : public UActorComponent
 public:	
 	UAC_TargetLockSystem();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem")
+	class UGAS_AbilityTargetingData* TargetingData;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem")
 	const UInputAction* LookMouseInputAction;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem")
 	float Threshold;
 
 protected:

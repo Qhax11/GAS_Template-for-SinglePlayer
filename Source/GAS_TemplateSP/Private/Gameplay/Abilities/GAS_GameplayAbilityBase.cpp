@@ -2,13 +2,13 @@
 
 
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-#include "Gameplay/Abilities/Targeting/GAS_AbilityTargetingData.h"
+#include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Kismet\KismetSystemLibrary.h"
 
 
 void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
 {
-	TargetingData->Trace->CreateTraceFromTargetingDataWithTeamFilter(GetWorld(), OutActors, GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile);
+	TraceData->Trace->CreateTraceFromTargetingDataWithTeamFilter(GetWorld(), OutActors, GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile);
 }
 
 float UGAS_GameplayAbilityBase::GetCost(int32 AbilityLevel) const

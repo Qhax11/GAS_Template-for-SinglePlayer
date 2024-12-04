@@ -2,7 +2,9 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
-#include "Gameplay/Abilities/Targeting/GAS_AbilityTargetingData.h"
+#include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
+#include "AbilitySystemGlobals.h"
+#include "Gameplay/Tags/GAS_Tags.h"
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
 {
@@ -11,24 +13,39 @@ UAC_TargetLockSystem::UAC_TargetLockSystem()
 
 void UAC_TargetLockSystem::StartTargetLock()
 {
-	if (!TargetingData) 
+	if (!TracingData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TargetingData is null in: %s"), *GetName());
 		return;
 	}
 
 	TArray<AActor*> OutResultActors;
-	TargetingData->Trace->CreateTraceFromTargetingDataWithTeamFilter(GetWorld(), OutResultActors, HeroBase, ETeamAttitude::Hostile);
+	TracingData->Trace->CreateTraceFromTargetingDataWithTeamFilter(GetWorld(), OutResultActors, HeroBase, ETeamAttitude::Hostile);
 
 	if (OutResultActors.IsValidIndex(0)) 
 	{
 		CurrentTarget = OutResultActors[0];
 		bLocked = true;
+		UGAS_AbilitySystemComponent* CurrentTargetASC = Cast<UGAS_AbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CurrentTarget));
+		if (!CurrentTargetASC)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerASC is null in %s, cannot initialize ability slots."), *this->GetName());
+			return;
+		}
+		CurrentTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
 	}
 }
 
 void UAC_TargetLockSystem::EndTargetLock()
 {
+	UGAS_AbilitySystemComponent* CurrentTargetASC = Cast<UGAS_AbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CurrentTarget));
+	if (!CurrentTargetASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerASC is null in %s, cannot initialize ability slots."), *this->GetName());
+		return;
+	}
+	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
+
 	CurrentTarget = nullptr;
 	bLocked = false;
 }

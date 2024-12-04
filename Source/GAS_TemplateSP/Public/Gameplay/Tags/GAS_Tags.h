@@ -54,6 +54,9 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_HeroAbility2);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_HeroAbility3);
 
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Targeting_Hero_TargetLocked);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Targeting_Enemy_Targeted);
+
 	/**********************************************
 	*----------------<Filter Tags>----------------*
 	* Add all of the Filter related tags to here. *

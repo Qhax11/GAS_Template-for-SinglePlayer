@@ -49,6 +49,9 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility2, "Gameplay.Hero.Ability2");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility3, "Gameplay.Hero.Ability3");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Targeting_Hero_TargetLocked, "Gameplay.Targeting.Hero.TargetLocked");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Targeting_Enemy_Targeted, "Gameplay.Targeting.Enemy.Targeted");
+
 	/**********************************************
 	*----------------<Filter Tags>----------------*
 	* Add all of the Filter related tags to here. *

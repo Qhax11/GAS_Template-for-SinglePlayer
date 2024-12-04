@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Targeting/GAS_TraceSphere.h"
+#include "Gameplay/Abilities/Tracing/GAS_TraceSphere.h"
 
 FCollisionShape UGAS_TraceSphere::GetCollisionShape() const
 {

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/Targeting/GAS_TraceBase.h"
+#include "Gameplay/Abilities/Tracing/GAS_TraceBase.h"
 #include "GAS_TraceSphere.generated.h"
 
 /**

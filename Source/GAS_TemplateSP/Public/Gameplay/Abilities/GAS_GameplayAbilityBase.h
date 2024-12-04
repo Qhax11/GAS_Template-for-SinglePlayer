@@ -37,8 +37,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GameplayAbilityBase|Delegates")
 	FOnAbilityCooldownChanged OnAbilityCooldownChanged;
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbilityBase|TargetingData")
-	class UGAS_AbilityTargetingData* TargetingData;
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbilityBase|TraceData")
+	class UGAS_AbilityTraceData* TraceData;
 
 	// Icon of ability that will seen on Gameplay UI
 	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase|UI")

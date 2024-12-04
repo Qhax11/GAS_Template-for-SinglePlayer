@@ -41,12 +41,9 @@ protected:
 	class UAC_HeroControl* HeroControlComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
-	class UAC_AbilityInputBinding* AbilityInputBindingComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
-	class UAC_HeroTagDispatcher* HeroTagDispatcherComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_HeroRespawn* HeroRespawnComponent;
+
+private:
+	class UAC_AbilityInputBinding* AbilityInputBindingComponent;
 
 };

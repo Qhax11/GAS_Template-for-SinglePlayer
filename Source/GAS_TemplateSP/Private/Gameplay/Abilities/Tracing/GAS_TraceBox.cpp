@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Targeting/GAS_TraceBox.h"
+#include "Gameplay/Abilities/Tracing/GAS_TraceBox.h"
 
 FCollisionShape UGAS_TraceBox::GetCollisionShape() const
 {

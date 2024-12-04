@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Targeting/GAS_TraceLine.h"
+#include "Gameplay/Abilities/Tracing/GAS_TraceLine.h"
 
 void UGAS_TraceLine::TraceLogic(const UWorld* World, const FVector& Location, const FRotator& Direction, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults)
 {

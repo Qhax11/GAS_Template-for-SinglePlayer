@@ -27,8 +27,6 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer):
 
     AbilityInputBindingComponent = CreateDefaultSubobject<UAC_AbilityInputBinding>(TEXT("AbilityInputBindingComponent"));
 
-    HeroTagDispatcherComponent = CreateDefaultSubobject<UAC_HeroTagDispatcher>(TEXT("HeroTagDispatcherComponent"));
-
     HeroRespawnComponent = CreateDefaultSubobject<UAC_HeroRespawn>(TEXT("HeroRespawnComponent"));
 }
 

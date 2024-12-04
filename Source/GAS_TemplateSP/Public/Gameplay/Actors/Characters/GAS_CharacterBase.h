@@ -25,7 +25,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	UGAS_AbilitySystemComponent* PaperCharacterASC;
 
-public:
+protected:
 
 	/* Components */
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
@@ -35,13 +35,17 @@ public:
 	class UAC_Team* TeamComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
-	class UAC_TagDelegates* TagDelegatesComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_AttributesListenerBase* AttributesListenerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_GameplayData* GameplayDataComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
+	class UAC_TagDispatcher* TagDispatcherComponent;
+
+private:
+	class UAC_TagDelegates* TagDelegatesComponent;
+
 
 public:
 

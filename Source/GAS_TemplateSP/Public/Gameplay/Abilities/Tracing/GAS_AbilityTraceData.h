@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/Targeting/GAS_TraceBase.h"
-#include "GAS_AbilityTargetingData.generated.h"
+#include "Gameplay/Abilities/Tracing/GAS_TraceBase.h"
+#include "GAS_AbilityTraceData.generated.h"
 
 
 UCLASS(Blueprintable)
-class GAS_TEMPLATESP_API UGAS_AbilityTargetingData : public UDataAsset
+class GAS_TEMPLATESP_API UGAS_AbilityTraceData : public UDataAsset
 {
 	GENERATED_BODY()
 

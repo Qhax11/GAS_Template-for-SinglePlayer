@@ -6,6 +6,7 @@
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/Components/AC_Team.h"
 #include "Gameplay/Components/AC_TagDelegates.h"
+#include "Gameplay/Components/AC_TagDispatcher.h"
 #include "Gameplay/Components/AC_GameplayData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -20,6 +21,8 @@ AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectIni
 	TeamComponent = CreateDefaultSubobject<UAC_Team>(TEXT("TeamComponent"));
 
 	TagDelegatesComponent = CreateDefaultSubobject<UAC_TagDelegates>(TEXT("TagDelegatesComponent"));
+
+	TagDispatcherComponent = CreateDefaultSubobject<UAC_TagDispatcher>(TEXT("TagDispatcherComponent"));
 
 	AttributesListenerComponent = CreateDefaultSubobject<UAC_AttributesListenerBase>(TEXT("AttributesListenerComponent"));
 

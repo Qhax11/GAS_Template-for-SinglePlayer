@@ -16,7 +16,7 @@ public:
 	UAC_TargetLockSystem();
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem")
-	class UGAS_AbilityTargetingData* TargetingData;
+	class UGAS_AbilityTraceData* TracingData;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Inputs")
 	const UInputAction* LookMouseInput;

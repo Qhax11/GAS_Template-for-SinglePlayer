@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Targeting/GAS_TraceBase.h"
+#include "Gameplay/Abilities/Tracing/GAS_TraceBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 

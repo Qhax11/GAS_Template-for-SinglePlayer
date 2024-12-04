@@ -18,27 +18,41 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem")
 	class UGAS_AbilityTargetingData* TargetingData;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem")
-	const UInputAction* LookMouseInputAction;
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Inputs")
+	const UInputAction* LookMouseInput;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Inputs")
+	const UInputAction* ActivateTargetLockInput;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem")
 	float Threshold;
 
+	UFUNCTION(BlueprintCallable)
+	void StartTargetLock();
+
+	UFUNCTION(BlueprintCallable)
+	void EndTargetLock();
+
 protected:
 	virtual void BeginPlay() override;
 
-	void TryBindLookMouseInputs(UEnhancedInputComponent* EnhancedInputComponent);
+	void TryBindTargetLockSystemInputs(UEnhancedInputComponent* EnhancedInputComponent);
 
 	void LookMouse(const FInputActionValue& Value);
+
+	void TryActivateTargetLock(const FInputActionValue& Value);
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void TargetChange(bool right);
 
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 protected:
-
 	AGAS_HeroBase* HeroBase;
-		
+	
+	UPROPERTY(BlueprintReadWrite)
+	bool bLocked = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* CurrentTarget;
 };

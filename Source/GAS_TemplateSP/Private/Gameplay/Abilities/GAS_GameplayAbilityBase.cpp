@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/Abilities/Targeting/GAS_AbilityTargetingData.h"
 #include "Kismet\KismetSystemLibrary.h"
 
 

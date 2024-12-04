@@ -2,10 +2,35 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
+#include "Gameplay/Abilities/Targeting/GAS_AbilityTargetingData.h"
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UAC_TargetLockSystem::StartTargetLock()
+{
+	if (!TargetingData) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetingData is null in: %s"), *GetName());
+		return;
+	}
+
+	TArray<AActor*> OutResultActors;
+	TargetingData->Trace->CreateTraceFromTargetingDataWithTeamFilter(GetWorld(), OutResultActors, HeroBase, ETeamAttitude::Hostile);
+
+	if (OutResultActors.IsValidIndex(0)) 
+	{
+		CurrentTarget = OutResultActors[0];
+		bLocked = true;
+	}
+}
+
+void UAC_TargetLockSystem::EndTargetLock()
+{
+	CurrentTarget = nullptr;
+	bLocked = false;
 }
 
 void UAC_TargetLockSystem::BeginPlay()
@@ -20,10 +45,10 @@ void UAC_TargetLockSystem::BeginPlay()
 	}
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
-	TryBindLookMouseInputs(EnhancedInputComponent);
+	TryBindTargetLockSystemInputs(EnhancedInputComponent);
 }
 
-void UAC_TargetLockSystem::TryBindLookMouseInputs(UEnhancedInputComponent* EnhancedInputComponent)
+void UAC_TargetLockSystem::TryBindTargetLockSystemInputs(UEnhancedInputComponent* EnhancedInputComponent)
 {
 	if (!EnhancedInputComponent)
 	{
@@ -31,13 +56,14 @@ void UAC_TargetLockSystem::TryBindLookMouseInputs(UEnhancedInputComponent* Enhan
 		return;
 	}
 
-	if (LookMouseInputAction)
+	if (ActivateTargetLockInput && LookMouseInput)
 	{
-		EnhancedInputComponent->BindAction(LookMouseInputAction, ETriggerEvent::Triggered, this, &UAC_TargetLockSystem::LookMouse);
+		EnhancedInputComponent->BindAction(LookMouseInput, ETriggerEvent::Triggered, this, &UAC_TargetLockSystem::LookMouse);
+		EnhancedInputComponent->BindAction(ActivateTargetLockInput, ETriggerEvent::Triggered, this, &UAC_TargetLockSystem::TryActivateTargetLock);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LookMouseInputAction action are null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Input actions are null in: %s"), *GetName());
 	}
 }
 
@@ -54,6 +80,20 @@ void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)
 	if (VectorValue.X < -Threshold)
 	{
 		TargetChange(false);
+	}
+}
+
+void UAC_TargetLockSystem::TryActivateTargetLock(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("TryActivateTargetLock"));
+
+	if (!bLocked) 
+	{
+		StartTargetLock();
+	}
+	else
+	{
+		EndTargetLock();
 	}
 }
 

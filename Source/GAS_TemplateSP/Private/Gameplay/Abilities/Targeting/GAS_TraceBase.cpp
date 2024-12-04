@@ -39,6 +39,10 @@ void UGAS_TraceBase::MakeTeamFilter(TArray<AActor*>& OutActors, const AActor& Ow
 				OutActors.Remove(CollectedActor);
 			}
 		}
+		else
+		{
+			OutActors.Remove(CollectedActor);
+		}
 	}
 }
 

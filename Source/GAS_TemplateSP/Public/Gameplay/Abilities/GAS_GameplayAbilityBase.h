@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Abilities/GameplayAbility.h"
-#include "Gameplay/Abilities/Targeting/GAS_AbilityTargetingData.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Attributes/AS_Base.h"
@@ -39,7 +38,7 @@ public:
 	FOnAbilityCooldownChanged OnAbilityCooldownChanged;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbilityBase|TargetingData")
-	UGAS_AbilityTargetingData* TargetingData;
+	class UGAS_AbilityTargetingData* TargetingData;
 
 	// Icon of ability that will seen on Gameplay UI
 	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase|UI")

@@ -8,7 +8,7 @@
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	SetComponentTickEnabled(false);
 }
 
 void UAC_TargetLockSystem::BeginPlay()
@@ -91,6 +91,8 @@ void UAC_TargetLockSystem::StartTargetLock()
 	CurrentTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
 	CurrentTarget = OutResultActors[0];
 	bLocked = true;
+
+	SetComponentTickEnabled(true);
 }
 
 void UAC_TargetLockSystem::EndTargetLock()
@@ -105,25 +107,29 @@ void UAC_TargetLockSystem::EndTargetLock()
 	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
 	CurrentTarget = nullptr;
 	bLocked = false;
+
+	SetComponentTickEnabled(false);
 }
 
 void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)
 {
+	if (!bLocked)
+	{
+		return;
+	}
+
 	const FVector2D VectorValue = Value.Get<FVector2D>();
 
 	// Cooldown mechanism: Each direction can only trigger the action once per second.
 	const float CurrentTime = GetWorld()->GetTimeSeconds(); 
 
-	static float LastExecutionTimeRight = 0.0f; 
-	static float LastExecutionTimeLeft = 0.0f;  
-
-	if (VectorValue.X > Threshold && CurrentTime - LastExecutionTimeRight >= 1.0f)
+	if (VectorValue.X > Threshold && CurrentTime - LastExecutionTimeRight >= ExecutionCooldownHorizontal)
 	{
 		TryToChangeTarget(ETargetChangeDirection::Right);
 		LastExecutionTimeRight = CurrentTime; 
 	}
 
-	if (VectorValue.X < -Threshold && CurrentTime - LastExecutionTimeLeft >= 1.0f)
+	if (VectorValue.X < -Threshold && CurrentTime - LastExecutionTimeLeft >= ExecutionCooldownHorizontal)
 	{
 		TryToChangeTarget(ETargetChangeDirection::Left);
 		LastExecutionTimeLeft = CurrentTime; 
@@ -147,31 +153,51 @@ void UAC_TargetLockSystem::TryToChangeTarget(TEnumAsByte<ETargetChangeDirection>
 		TracingDataRight->Trace->CreateTraceFromTargetingDataWithTeamFilter(GetWorld(), OutResultActors, HeroBase, ETeamAttitude::Hostile);
 	}
 
-	if (!OutResultActors.IsValidIndex(0))
+	// If detect CurrentTarget
+	OutResultActors.Remove(CurrentTarget);
+
+	if (OutResultActors.IsEmpty())
 	{
 		return;
 	}
 
-	if (OutResultActors[0] == CurrentTarget)
-	{
-		return;
-	}
+	AActor* NewTarget = FindNearestActor(CurrentTarget, OutResultActors);
 
-	UAbilitySystemComponent* NewTargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OutResultActors[0]);
+	UAbilitySystemComponent* NewTargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(NewTarget);
 	if (!NewTargetASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("NewTargetASC is null in %s, cannot initialize TargetLockSystem."), *GetName());
 		return;
 	}
 
-	if (CurrentTargetASC) 
-	{
-		CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
-	}
-
+	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
 	NewTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
 	CurrentTargetASC = NewTargetASC;
-	CurrentTarget = OutResultActors[0];
+	CurrentTarget = NewTarget;
+}
+
+AActor* UAC_TargetLockSystem::FindNearestActor(AActor* TargetedActor, TArray<AActor*> ActorArray)
+{
+	if (ActorArray.IsEmpty())
+	{
+		return nullptr;
+	}
+
+	AActor* NearestActor = nullptr;
+	float NearestDistance = FLT_MAX; 
+
+	for (AActor* Actor : ActorArray) 
+	{
+		float Distance = FVector::Dist(TargetedActor->GetActorLocation(), Actor->GetActorLocation());
+
+		if (Distance < NearestDistance)
+		{
+			NearestDistance = Distance;
+			NearestActor = Actor;
+		}
+	}
+
+	return NearestActor;
 }
 
 

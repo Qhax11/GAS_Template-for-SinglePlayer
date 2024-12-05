@@ -8,7 +8,7 @@
 #include "GAS_TraceBase.generated.h"
 
 UENUM(BlueprintType)
-enum ETraceOrigin: uint8
+enum ETraceStartLocation: uint8
 {
 	Avatar,
 	Camera
@@ -27,10 +27,12 @@ protected:
 	const AActor* OwnerActor = nullptr;
 
 public:
-	void CreateTraceFromTargetingDataWithTeamFilter(const UWorld* World, TArray<AActor*>& OutActors, AActor* Owner, ETeamAttitude::Type TeamAttidue);
+	void CreateTraceFromTraceDataWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors);
+
+	void CreateTraceFromTraceDataWithTeamFilterWithDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
-	TEnumAsByte<ETraceOrigin> TraceOrigin = ETraceOrigin::Avatar;
+	TEnumAsByte<ETraceStartLocation> TraceOrigin = ETraceStartLocation::Avatar;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	bool bIgnoreSelf = true;

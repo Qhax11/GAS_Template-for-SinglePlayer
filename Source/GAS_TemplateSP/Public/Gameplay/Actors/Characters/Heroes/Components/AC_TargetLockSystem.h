@@ -38,7 +38,13 @@ protected:
 
 	void EndTargetLock();
 
-	void TryToChangeTarget(TEnumAsByte<ETargetChangeDirection> TargetChangeDirection);
+	void TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection> TargetChangeDirection);
+
+	void SplitActorsByPositionRelativeToHero(const TArray<AActor*>& InActors, TArray<AActor*>& OutLeftActors, TArray<AActor*>& OutRightActors);
+
+	AActor* FindNearestActor(AActor* TargetedActor, TArray<AActor*> ActorArray);
+
+	void ChangeTarget(AActor* NewTarget);
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -48,10 +54,13 @@ public:
 	class UGAS_AbilityTraceData* TracingDataStart;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
-	class UGAS_AbilityTraceData* TracingDataLeft;
+	class UGAS_AbilityTraceData* TracingDataTargetChange;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
-	class UGAS_AbilityTraceData* TracingDataRight;
+	class UGAS_AbilityTraceData* TracingDataCheckForFrontActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
+	bool bEnableTraceDebug = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Inputs")
 	const UInputAction* ActivateTargetLockInput;
@@ -81,7 +90,6 @@ protected:
 	UAbilitySystemComponent* CurrentTargetASC;
 
 private:
-	AActor* FindNearestActor(AActor* TargetedActor, TArray<AActor*> ActorArray);
 
 	float LastExecutionTimeRight = 0.0f;
 	float LastExecutionTimeLeft = 0.0f;

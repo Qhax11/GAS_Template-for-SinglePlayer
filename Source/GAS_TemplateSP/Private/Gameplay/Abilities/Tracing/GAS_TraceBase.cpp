@@ -5,14 +5,20 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 
-void UGAS_TraceBase::CreateTraceFromTargetingDataWithTeamFilter(const UWorld* World, TArray<AActor*>& OutActors, AActor* Owner, ETeamAttitude::Type TeamAttidue)
+void UGAS_TraceBase::CreateTraceFromTraceDataWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors)
 {
-	FVector StartLocation = Owner->GetActorLocation();
 	FRotator Direction = Owner->GetActorForwardVector().Rotation();
 	
-	if (TraceOrigin == ETraceOrigin::Camera)
+	CreateTraceFromTraceDataWithTeamFilterWithDirection(World, Owner, TeamAttidue, Direction, OutActors);
+}
+
+void UGAS_TraceBase::CreateTraceFromTraceDataWithTeamFilterWithDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors)
+{
+	FVector StartLocation = Owner->GetActorLocation();
+
+	if (TraceOrigin == ETraceStartLocation::Camera)
 	{
-		if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(Owner)) 
+		if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(Owner))
 		{
 			StartLocation = HeroBase->GetFollowCamera()->GetComponentLocation();
 			Direction = HeroBase->GetFollowCamera()->GetForwardVector().Rotation();
@@ -22,7 +28,7 @@ void UGAS_TraceBase::CreateTraceFromTargetingDataWithTeamFilter(const UWorld* Wo
 			UE_LOG(LogTemp, Warning, TEXT("TraceOriginActor is set to Camera, but the current actor is not the hero!"));
 		}
 	}
-	
+
 	MakeTrace(Owner, World, StartLocation, Direction, OutActors);
 
 	MakeTeamFilter(OutActors, *Owner, TeamAttidue);

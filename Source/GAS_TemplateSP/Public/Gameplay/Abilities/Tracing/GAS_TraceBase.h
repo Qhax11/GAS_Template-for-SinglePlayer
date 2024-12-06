@@ -14,6 +14,13 @@ enum ETraceStartLocation: uint8
 	Camera
 };
 
+UENUM(BlueprintType)
+enum ETraceDirectionType : uint8
+{
+	ForwardVector,
+	Custom
+};
+
 #define ECC_DEAD ECC_GameTraceChannel1
 #define ECC_ENEMY ECC_GameTraceChannel2
 
@@ -27,12 +34,15 @@ protected:
 	const AActor* OwnerActor = nullptr;
 
 public:
-	void CreateTraceFromTraceDataWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors);
+	void CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors);
 
-	void CreateTraceFromTraceDataWithTeamFilterWithDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors);
+	void CreateTraceWithTeamFilterAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
-	TEnumAsByte<ETraceStartLocation> TraceOrigin = ETraceStartLocation::Avatar;
+	TEnumAsByte<ETraceStartLocation> TraceStartLocation = ETraceStartLocation::Avatar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
+	TEnumAsByte<ETraceDirectionType> TraceDirectionType = ETraceDirectionType::ForwardVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	bool bIgnoreSelf = true;
@@ -68,6 +78,8 @@ public:
 	FColor DrawColor = FColor::White;
 
 protected:
+
+	void GetTraceStartLocationAndDirection(AActor* Owner, FVector& OutStartLocation, FRotator& OutDirection);
 
 	void MakeTeamFilter(TArray<AActor*>& OutActors, const AActor& Owner, ETeamAttitude::Type TeamAttidue);
 

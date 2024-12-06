@@ -86,7 +86,7 @@ void UAC_TargetLockSystem::StartTargetLock()
 	}
 
 	TArray<AActor*> OutResultActors;
-	TracingDataStart->Trace->CreateTraceFromTraceDataWithTeamFilter(GetWorld(), HeroBase, ETeamAttitude::Hostile, OutResultActors);
+	TracingDataStart->Trace->CreateTraceWithTeamFilter(GetWorld(), HeroBase, ETeamAttitude::Hostile, OutResultActors);
 
 	if (!OutResultActors.IsValidIndex(0))
 	{
@@ -164,7 +164,7 @@ void UAC_TargetLockSystem::TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection
 	}
 
 	TArray<AActor*> OutResultActors;
-	TracingDataTargetChange->Trace->CreateTraceFromTraceDataWithTeamFilter(GetWorld(), HeroBase, ETeamAttitude::Hostile, OutResultActors);
+	TracingDataTargetChange->Trace->CreateTraceWithTeamFilter(GetWorld(), HeroBase, ETeamAttitude::Hostile, OutResultActors);
 
 	OutResultActors.Remove(CurrentTarget);
 
@@ -195,7 +195,7 @@ void UAC_TargetLockSystem::TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection
 	{
 		TArray<AActor*> CheckForFrontActors;
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HeroBase->GetActorLocation(), FoundNewTarget->GetActorLocation());
-		TracingDataCheckForFrontActor->Trace->CreateTraceFromTraceDataWithTeamFilterWithDirection(GetWorld(), HeroBase, ETeamAttitude::Hostile, LookAtRotation, CheckForFrontActors);
+		TracingDataCheckForFrontActor->Trace->CreateTraceWithTeamFilterAndDirection(GetWorld(), HeroBase, ETeamAttitude::Hostile, LookAtRotation, CheckForFrontActors);
 		if (CheckForFrontActors.IsValidIndex(0)) 
 		{
 			// If the actor in front of the player is different from the current target, set it as the new target.

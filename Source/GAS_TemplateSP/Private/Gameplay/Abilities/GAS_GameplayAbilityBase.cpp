@@ -8,7 +8,7 @@
 
 void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
 {
-	TraceData->Trace->CreateTraceFromTraceDataWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutActors);
+	TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutActors);
 }
 
 float UGAS_GameplayAbilityBase::GetCost(int32 AbilityLevel) const

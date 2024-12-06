@@ -3,8 +3,19 @@
 
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
+#include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Kismet\KismetSystemLibrary.h"
 
+
+void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+	const FGameplayAbilityActorInfo* ActorInfo, 
+	const FGameplayAbilityActivationInfo ActivationInfo, 
+	const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), GetAbilitySystemComponentFromActorInfo(), AbilityActivationEffects);
+}
 
 void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
 {

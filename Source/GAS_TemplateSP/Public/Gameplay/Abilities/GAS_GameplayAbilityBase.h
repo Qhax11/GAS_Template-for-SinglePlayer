@@ -20,6 +20,8 @@ class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
 
 public:
 
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+
 	void TraceForHostileUnits(TArray<AActor*>& OutActors);
 
 	UFUNCTION(BlueprintPure, Category = "GameplayAbilityBase")
@@ -43,6 +45,9 @@ public:
 	// Icon of ability that will seen on Gameplay UI
 	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase|UI")
 	class UTexture2D* AbilityIcon;
+
+	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase")
+	TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects;
 
 protected:
 

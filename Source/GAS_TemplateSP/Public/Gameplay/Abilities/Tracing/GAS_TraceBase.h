@@ -53,9 +53,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	float TraceDistance = .0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true), meta = (EditCondition = "!bOverrideTraceDirection"))
-	FRotator TraceDirectionOffset;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams")
 	bool bOverrideTraceDirection = false;
 

@@ -128,7 +128,6 @@ void UGAS_TraceBase::Initialize(const UObject* Owner, FRotator Direction)
 		TraceDirection = Direction;
 	}
 
-	TraceDirection += TraceDirectionOffset;
 }
 
 void UGAS_TraceBase::TraceLogic(const UWorld* World, const FVector& Location, const FRotator& Direction, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults)

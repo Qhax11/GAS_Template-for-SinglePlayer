@@ -3,20 +3,24 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
+#include "GameFramework/Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemGlobals.h"
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
 {
-	SetComponentTickEnabled(false);
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UAC_TargetLockSystem::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetComponentTickEnabled(false);
+
 	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
+	check(HeroBase);
 	if (!HeroBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s)"), *GetName());
@@ -24,21 +28,22 @@ void UAC_TargetLockSystem::BeginPlay()
 	}
 
 	HeroASC = HeroBase->GetAbilitySystemComponent();
+	check(HeroASC);
 	if (!HeroASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in %s, cannot initialize HeroControl."), *this->GetName());
 		return;
 	}
 
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
-	TryBindTargetLockSystemInputs(EnhancedInputComponent);
-
-	if (TracingDataStart && TracingDataTargetChange && TracingDataCheckForFrontActor)
+	if (ensure(TracingDataStart) && ensure(TracingDataTargetChange) && ensure(TracingDataCheckForFrontActor))
 	{
 		TracingDataStart->Trace->bDrawEnable = bEnableTraceDebug;
 		TracingDataTargetChange->Trace->bDrawEnable = bEnableTraceDebug;
 		TracingDataCheckForFrontActor->Trace->bDrawEnable = bEnableTraceDebug;
 	}
+
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
+	TryBindTargetLockSystemInputs(EnhancedInputComponent);
 }
 
 void UAC_TargetLockSystem::TryBindTargetLockSystemInputs(UEnhancedInputComponent* EnhancedInputComponent)
@@ -144,16 +149,17 @@ void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)
 	}
 }
 
-void UAC_TargetLockSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
 void UAC_TargetLockSystem::TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection> TargetChangeDirection)
 {
 	if (!TracingDataTargetChange || !TracingDataCheckForFrontActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TracingDataTargetChange or  TracingDataCheckForFrontActor is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TracingDataTargetChange or TracingDataCheckForFrontActor is null in: %s"), *GetName());
+		return;
+	}
+
+	if (!HeroBase) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
 		return;
 	}
 
@@ -272,7 +278,54 @@ void UAC_TargetLockSystem::ChangeTarget(AActor* NewTarget)
 	CurrentTarget = NewTarget;
 }
 
+void UAC_TargetLockSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	RotateCameraToTarget();
+	RotateHeroToTarget();
+}
+
+void UAC_TargetLockSystem::RotateCameraToTarget()
+{
+	if (!HeroBase || !CurrentTarget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase or CurrentTarget null in: %s"), *GetName());
+		return;
+	}
+
+	FVector CurrentTargetLocation = CurrentTarget->GetActorLocation();
+	CurrentTargetLocation.Z = CurrentTargetLocation.Z - CameraOffsetZ;
+
+	FRotator LookAtTargetRotation = UKismetMathLibrary::FindLookAtRotation(HeroBase->GetActorLocation(), CurrentTargetLocation);
+
+	// Get the current camera rotation and interpolate towards the target for smooth transition
+	FRotator CurrentCameraRotation = HeroBase->GetControlRotation();
+	FRotator NewCameraRotation = UKismetMathLibrary::RInterpTo(CurrentCameraRotation, LookAtTargetRotation, GetWorld()->GetDeltaSeconds(), RotateInterpSpeed);
+
+	HeroBase->GetController()->SetControlRotation(NewCameraRotation);
+}
+
+void UAC_TargetLockSystem::RotateHeroToTarget()
+{
+	if (!HeroBase || !CurrentTarget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase or CurrentTarget null in: %s"), *GetName());
+		return;
+	}
+
+	FVector CurrentTargetLocation = CurrentTarget->GetActorLocation();
+	FRotator LookAtTargetRotation = UKismetMathLibrary::FindLookAtRotation(HeroBase->GetActorLocation(), CurrentTargetLocation);
+
+	FRotator CurrentHeroRotation = HeroBase->GetActorRotation();
+	FRotator NewHeroRotation = UKismetMathLibrary::RInterpTo(CurrentHeroRotation, LookAtTargetRotation, GetWorld()->GetDeltaSeconds(), RotateInterpSpeed);
+
+	// Set the new rotation, but only update Yaw (Left-Right rotation), keep Pitch and Roll unchanged
+	NewHeroRotation.Pitch = CurrentHeroRotation.Pitch;
+	NewHeroRotation.Roll = CurrentHeroRotation.Roll;
+
+	HeroBase->SetActorRotation(NewHeroRotation);
+}
 
 
 

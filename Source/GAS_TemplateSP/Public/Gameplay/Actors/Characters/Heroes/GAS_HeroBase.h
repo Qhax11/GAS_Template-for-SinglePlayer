@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_HeroRespawn* HeroRespawnComponent;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
+	class UAC_TargetLockSystem* TargetLockSystemComponent;
+
 private:
 	class UAC_AbilityInputBinding* AbilityInputBindingComponent;
 

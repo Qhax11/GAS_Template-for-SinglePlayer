@@ -28,6 +28,8 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer):
     AbilityInputBindingComponent = CreateDefaultSubobject<UAC_AbilityInputBinding>(TEXT("AbilityInputBindingComponent"));
 
     HeroRespawnComponent = CreateDefaultSubobject<UAC_HeroRespawn>(TEXT("HeroRespawnComponent"));
+
+    TargetLockSystemComponent = CreateDefaultSubobject<UAC_TargetLockSystem>(TEXT("TargetLockSystemComponent"));
 }
 
 void AGAS_HeroBase::BeginPlay()

@@ -47,6 +47,10 @@ protected:
 	void ChangeTarget(AActor* NewTarget);
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	void RotateCameraToTarget();
+
+	void RotateHeroToTarget();
 
 public:
 
@@ -76,6 +80,12 @@ public:
 	// Cooldown Mechanism: Each direction can trigger the action only once per ExecutionCooldownHorizontal duration.
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem", meta = (ToolTip = "Time interval within which each direction can trigger the action only once."))
 	float ExecutionCooldownHorizontal = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
+	float RotateInterpSpeed = 5.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
+	float CameraOffsetZ = 100.0f;
 
 protected:
 

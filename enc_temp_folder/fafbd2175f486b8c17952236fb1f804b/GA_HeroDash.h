@@ -18,39 +18,32 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
-
-	FVector GetDashDirection(const FVector2D& LastMovementInput);
-
-	FVector GetDirectionFromLastMovementInput(const FVector2D& LastMovementInput);
 	
-	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
-	float DistanceMultiplier = 300.0f;
-
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
 	float Duration = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
 	bool bSetNewMovementMode;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
+	UPROPERTY(EditDefaultsOnly)
 	TEnumAsByte<EMovementMode> NewMovementMode = EMovementMode::MOVE_Walking;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
+	UPROPERTY(EditDefaultsOnly)
 	bool bRestrictSpeedToExpected = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
 	class UCurveVector* DashCurve;
 	
 	// What to do with character's Velocity when root motion finishes 
-	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
+	UPROPERTY(EditDefaultsOnly)
 	ERootMotionFinishVelocityMode FinishVelocityMode = ERootMotionFinishVelocityMode::ClampVelocity;
 	
 	// If FinishVelocityMode mode is "SetVelocity", character velocity is set to this value when root motion finishes 
-	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
+	UPROPERTY(EditDefaultsOnly)
 	FVector FinishSetVelocity = FVector(0, 0, 0);
 
 	// If FinishVelocityMode mode is "ClampVelocity", character velocity is clamped to this value when root motion finishes 
-	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
+	UPROPERTY(EditDefaultsOnly)
 	float FinishClampVelocity = 0.f;
 	
 };

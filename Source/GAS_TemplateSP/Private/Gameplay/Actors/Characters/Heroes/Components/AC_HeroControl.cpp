@@ -5,7 +5,7 @@
 
 UAC_HeroControl::UAC_HeroControl()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UAC_HeroControl::BeginPlay()
@@ -66,6 +66,13 @@ void UAC_HeroControl::Move(const FInputActionValue& Value)
 		HeroBase->AddMovementInput(ForwardDirection, MovementVector.Y);
 		HeroBase->AddMovementInput(RightDirection, MovementVector.X);
 	}
+
+	if (!MovementVector.IsNearlyZero())
+	{
+		// New input received, update the last movement input direction
+		LastMovementInputDirection = MovementVector;
+		LastMovementInputTime = GetWorld()->GetTimeSeconds(); 
+	}
 }
 
 void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
@@ -85,6 +92,17 @@ void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 	if (VectorValue.Y != 0.0f)
 	{
 		HeroBase->AddControllerPitchInput(VectorValue.Y);
+	}
+}
+
+void UAC_HeroControl::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// If more than the threshold time has passed since the last movement input
+	if (GetWorld()->GetTimeSeconds() - LastMovementInputTime > MovementInputResetThreshold)
+	{
+		LastMovementInputDirection = FVector2D::ZeroVector; // Input'u sýfýrla
 	}
 }
 

@@ -34,9 +34,19 @@ public:
 	UPROPERTY(EditAnywhere)
 	const UInputAction* LookMouseInputAction;
 
+	UPROPERTY(BlueprintReadOnly)
+	FVector2D LastMovementInputDirection;
+
 protected:
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	AGAS_HeroBase* HeroBase;
 
 	UAbilitySystemComponent* HeroASC;
+
+private:
+	
+	float LastMovementInputTime = 0.0f; // The time when the last movement input was received
+	const float MovementInputResetThreshold = 0.1f; // Threshold duration for resetting movement input (0.1 seconds)
 };

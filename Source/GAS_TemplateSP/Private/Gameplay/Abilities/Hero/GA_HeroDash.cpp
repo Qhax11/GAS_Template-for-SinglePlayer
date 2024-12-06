@@ -2,26 +2,79 @@
 
 
 #include "Gameplay/Abilities/Hero/GA_HeroDash.h"
-#include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
-#include "GameFramework/RootMotionSource.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Tags/GAS_Tags.h"
+
+
+void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	
+	AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
+	if (!HeroBase) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
+		return;
+	}
+
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked))
+	{
+		if (UAC_HeroControl* GetHeroControlComponent = HeroBase->GetHeroControlComponent())
+		{
+			FVector DashDirection = GetDashDirection(GetHeroControlComponent->LastMovementInputDirection);
+
+			FVector DashTargetLocation = DashDirection * DistanceMultiplier + HeroBase->GetActorLocation();
+
+			UAbilityTask_ApplyRootMotionMoveToForce* DashRootMotionTask =
+				UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
+					this,
+					TEXT("DashRootMotionTask"),
+					DashTargetLocation,
+					Duration,
+					bSetNewMovementMode,
+					NewMovementMode,
+					bRestrictSpeedToExpected,
+					DashCurve,
+					FinishVelocityMode,
+					FinishSetVelocity,
+					FinishClampVelocity);
+
+			DashRootMotionTask->ReadyForActivation();
+		}
+	}
+	
+}
 
 void UGA_HeroDash::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	UAbilityTask_ApplyRootMotionConstantForce* RootMotionTask =
-		UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(
-			this,
-			TEXT("None"),
-			GetAvatarActorFromActorInfo()->GetActorRotation().Vector(),
-			Strenght,
-			Duration,
-			false,
-			DashCurve,
-			ERootMotionFinishVelocityMode::MaintainLastRootMotionVelocity,
-			FVector(0, 0, 0),
-			0.f,
-			bEnableGravity);
+	Super::OnEventReceived(EventTag, EventData);
+}
 
-	RootMotionTask->ReadyForActivation();
+FVector UGA_HeroDash::GetDashDirection(const FVector2D& LastMovementInput)
+{
+	// This is because when no input is provided, we want the dash to happen in the forward direction of the character
+	if (LastMovementInput.X == 0 && LastMovementInput.Y == 0)
+	{
+		return GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	}
+
+	// Else return the direction based on input
+	return GetDirectionFromLastMovementInput(LastMovementInput);
+}
+
+FVector UGA_HeroDash::GetDirectionFromLastMovementInput(const FVector2D& LastMovementInput)
+{
+	FVector HeroForwardDirection = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	FVector HeroRightDirection = GetAvatarActorFromActorInfo()->GetActorRightVector();
+
+	// Create the direction vector based on input (using the forward and right directions)
+	FVector Direction = HeroForwardDirection * LastMovementInput.Y + HeroRightDirection * LastMovementInput.X;
+
+	return Direction;
 }
 

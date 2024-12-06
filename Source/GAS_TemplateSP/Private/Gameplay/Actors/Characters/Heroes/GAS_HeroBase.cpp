@@ -7,6 +7,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAttributesListener.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroRespawn.h"
 #include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
 
 
 AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer):

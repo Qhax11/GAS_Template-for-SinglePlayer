@@ -6,7 +6,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
-#include "InputMappingContext.h"
 #include "GAS_HeroBase.generated.h"
 
 
@@ -21,12 +20,13 @@ public:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	UInputMappingContext* HeroInputMappingContext;
+	class UInputMappingContext* HeroInputMappingContext;
 
-	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
+
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	FORCEINLINE class UAC_HeroControl* GetHeroControlComponent() const { return HeroControlComponent; }
 
 protected:
 

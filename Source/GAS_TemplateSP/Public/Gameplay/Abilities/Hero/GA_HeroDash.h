@@ -17,8 +17,6 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
-
 	FVector GetDashDirection(const FVector2D& LastMovementInput);
 
 	FVector GetDirectionFromLastMovementInput(const FVector2D& LastMovementInput);

@@ -35,7 +35,10 @@ public:
 	const UInputAction* LookMouseInputAction;
 
 	UPROPERTY(BlueprintReadOnly)
-	FVector2D LastMovementInputDirection;
+	FVector2D LastMovementInput;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector2D LastLookMouseInput;
 
 protected:
 
@@ -49,4 +52,7 @@ private:
 	
 	float LastMovementInputTime = 0.0f; // The time when the last movement input was received
 	const float MovementInputResetThreshold = 0.1f; // Threshold duration for resetting movement input (0.1 seconds)
+
+	float LastLookMouseInputTime = 0.0f; // The time when the last movement input was received
+	const float LookMouseInputResetThreshold = 0.1f; // Threshold duration for resetting movement input (0.1 seconds)
 };

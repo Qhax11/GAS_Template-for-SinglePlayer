@@ -26,7 +26,7 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		if (UAC_HeroControl* GetHeroControlComponent = HeroBase->GetHeroControlComponent())
 		{
-			FVector DashDirection = GetDashDirection(GetHeroControlComponent->LastMovementInputDirection);
+			FVector DashDirection = GetDashDirection(GetHeroControlComponent->LastMovementInput);
 
 			FVector DashTargetLocation = DashDirection * DistanceMultiplier + HeroBase->GetActorLocation();
 
@@ -47,12 +47,6 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			DashRootMotionTask->ReadyForActivation();
 		}
 	}
-	
-}
-
-void UGA_HeroDash::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	Super::OnEventReceived(EventTag, EventData);
 }
 
 FVector UGA_HeroDash::GetDashDirection(const FVector2D& LastMovementInput)

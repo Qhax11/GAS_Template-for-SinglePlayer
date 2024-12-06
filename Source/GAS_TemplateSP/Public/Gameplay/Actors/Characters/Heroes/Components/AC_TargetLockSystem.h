@@ -7,9 +7,6 @@
 #include "AC_TargetLockSystem.generated.h"
 
 
-// TODO: Target'ýn saðýndaki ve solundaki birimleri hesaplayarak en yakýnda birimi yeni hedef olarak alýcak algoritma lazým
-// dot vektörü ile yapabilirsin, gpt'ye sor..
-
 UENUM(BlueprintType)
 enum ETargetChangeDirection : uint8
 {
@@ -17,7 +14,7 @@ enum ETargetChangeDirection : uint8
 	Right
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable)
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class GAS_TEMPLATESP_API UAC_TargetLockSystem : public UActorComponent
 {
 	GENERATED_BODY()

@@ -69,29 +69,31 @@ void UAC_HeroControl::Move(const FInputActionValue& Value)
 
 	if (!MovementVector.IsNearlyZero())
 	{
-		// New input received, update the last movement input direction
-		LastMovementInputDirection = MovementVector;
+		// New input received, update the LastMovementInput
+		LastMovementInput = MovementVector;
 		LastMovementInputTime = GetWorld()->GetTimeSeconds(); 
 	}
 }
 
 void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 {
-	if (HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked)) 
+	const FVector2D LookMouseVector = Value.Get<FVector2D>();
+
+	if (LookMouseVector.X != 0.0f && !HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked))
 	{
-		return;
+		HeroBase->AddControllerYawInput(LookMouseVector.X);
 	}
 
-	const FVector2D VectorValue = Value.Get<FVector2D>();
-
-	if (VectorValue.X != 0.0f)
+	if (LookMouseVector.Y != 0.0f && !HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked))
 	{
-		HeroBase->AddControllerYawInput(VectorValue.X);
+		HeroBase->AddControllerPitchInput(LookMouseVector.Y);
 	}
 
-	if (VectorValue.Y != 0.0f)
+	if (!LookMouseVector.IsNearlyZero())
 	{
-		HeroBase->AddControllerPitchInput(VectorValue.Y);
+		// New input received, update the LastLookMouseInput
+		LastLookMouseInput = LookMouseVector;
+		LastMovementInputTime = GetWorld()->GetTimeSeconds();
 	}
 }
 
@@ -102,7 +104,13 @@ void UAC_HeroControl::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	// If more than the threshold time has passed since the last movement input
 	if (GetWorld()->GetTimeSeconds() - LastMovementInputTime > MovementInputResetThreshold)
 	{
-		LastMovementInputDirection = FVector2D::ZeroVector; // Input'u sýfýrla
+		LastMovementInput = FVector2D::ZeroVector; 
+	}
+
+	// If more than the threshold time has passed since the last movement input
+	if (GetWorld()->GetTimeSeconds() - LastLookMouseInputTime > LookMouseInputResetThreshold)
+	{
+		LastLookMouseInput = FVector2D::ZeroVector;
 	}
 }
 

@@ -50,7 +50,6 @@ public:
 	TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects;
 
 protected:
-
 	/**
 	 * For "Instanced Per Actor" abilities:
 	 * Normally, broadcasting delegates over the CDO is not required for proper functionality. 
@@ -60,4 +59,5 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void IncreaseLevel(UAbilitySystemComponent* AbilitySystemComp);
+
 };

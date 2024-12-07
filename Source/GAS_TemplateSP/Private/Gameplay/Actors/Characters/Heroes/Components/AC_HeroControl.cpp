@@ -26,27 +26,32 @@ void UAC_HeroControl::BeginPlay()
 		return;
 	}
 
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
-	TryBindControlInputs(EnhancedInputComponent);
+	EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
+	TryBindControlInputs();
 }
 
-void UAC_HeroControl::TryBindControlInputs(UEnhancedInputComponent* EnhancedInputComponent)
+void UAC_HeroControl::TryBindControlInputs()
 {
-	if (!EnhancedInputComponent)
+	if (!GetEnhancedInputComponent())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnhancedInputComponent is null in: %s"), *GetName());
 		return;
 	}
 
-	if (MoveInputAction && LookMouseInputAction)
+	if (IA_Move && IA_LookMouse)
 	{
-		EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &UAC_HeroControl::Move);
-		EnhancedInputComponent->BindAction(LookMouseInputAction, ETriggerEvent::Triggered, this, &UAC_HeroControl::LookMouse);
+		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &UAC_HeroControl::Move);
+		EnhancedInputComponent->BindAction(IA_LookMouse, ETriggerEvent::Triggered, this, &UAC_HeroControl::LookMouse);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Input actions are null in: %s"), *GetName());
 	}
+}
+
+UEnhancedInputComponent* UAC_HeroControl::GetEnhancedInputComponent() const
+{
+	return EnhancedInputComponent ? EnhancedInputComponent : Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
 }
 
 void UAC_HeroControl::Move(const FInputActionValue& Value)

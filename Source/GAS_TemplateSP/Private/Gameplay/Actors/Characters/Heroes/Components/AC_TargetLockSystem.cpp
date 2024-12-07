@@ -3,6 +3,7 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "GameFramework/Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
@@ -20,7 +21,6 @@ void UAC_TargetLockSystem::BeginPlay()
 	SetComponentTickEnabled(false);
 
 	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
-	check(HeroBase);
 	if (!HeroBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s)"), *GetName());
@@ -28,10 +28,9 @@ void UAC_TargetLockSystem::BeginPlay()
 	}
 
 	HeroASC = HeroBase->GetAbilitySystemComponent();
-	check(HeroASC);
 	if (!HeroASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in %s, cannot initialize HeroControl."), *this->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in %s, cannot initialize HeroControl."), *GetName());
 		return;
 	}
 
@@ -42,30 +41,42 @@ void UAC_TargetLockSystem::BeginPlay()
 		TracingDataCheckForFrontActor->Trace->bDrawEnable = bEnableTraceDebug;
 	}
 
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
-	TryBindTargetLockSystemInputs(EnhancedInputComponent);
+	if (!BindTargetLockSystemInputs()) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Binding is failed in %s, cannot initialize TargetLockSystem."), *GetName());
+	}
 }
 
-void UAC_TargetLockSystem::TryBindTargetLockSystemInputs(UEnhancedInputComponent* EnhancedInputComponent)
+bool UAC_TargetLockSystem::BindTargetLockSystemInputs()
 {
+	UAC_HeroControl* HeroControlComponent = HeroBase->GetHeroControlComponent();
+	if (!HeroControlComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroControlComponent is null in: %s"), *GetName());
+		return false;
+	}
+
+	UEnhancedInputComponent* EnhancedInputComponent = HeroControlComponent->GetEnhancedInputComponent();
 	if (!EnhancedInputComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnhancedInputComponent is null in: %s"), *GetName());
-		return;
+		return false;
 	}
 
-	if (ActivateTargetLockInput && LookMouseInput)
+	if (HeroControlComponent->IA_LookMouse && IA_ActivateTargetLock)
 	{
-		EnhancedInputComponent->BindAction(ActivateTargetLockInput, ETriggerEvent::Triggered, this, &UAC_TargetLockSystem::TryActivateTargetLock);
-		EnhancedInputComponent->BindAction(LookMouseInput, ETriggerEvent::Triggered, this, &UAC_TargetLockSystem::LookMouse);
+		EnhancedInputComponent->BindAction(IA_ActivateTargetLock, ETriggerEvent::Triggered, this, &UAC_TargetLockSystem::ActivateTargetLock);
+		EnhancedInputComponent->BindAction(HeroControlComponent->IA_LookMouse, ETriggerEvent::Triggered, this, &UAC_TargetLockSystem::LookMouse);
+		return true;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Input actions are null in: %s"), *GetName());
+		return false;
 	}
 }
 
-void UAC_TargetLockSystem::TryActivateTargetLock(const FInputActionValue& Value)
+void UAC_TargetLockSystem::ActivateTargetLock(const FInputActionValue& Value)
 {
 	if (!bLocked)
 	{

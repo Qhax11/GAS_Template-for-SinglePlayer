@@ -17,22 +17,28 @@ public:
 
 	UAC_HeroControl();
 
-protected:
-
+public:	
 	virtual void BeginPlay() override;
 
-public:	
-	void TryBindControlInputs(UEnhancedInputComponent* EnhancedInputComponent);
+	void TryBindControlInputs();
+
+	FORCEINLINE UEnhancedInputComponent* GetEnhancedInputComponent() const;
 
 	void Move(const FInputActionValue& Value);
 
 	void LookMouse(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere)
-	const UInputAction* MoveInputAction;
+	const UInputAction* IA_Move;
 
 	UPROPERTY(EditAnywhere)
-	const UInputAction* LookMouseInputAction;
+	const UInputAction* IA_LookMouse;
+
+	UPROPERTY(EditAnywhere)
+	const UInputAction* IA_ConfirmTarget;
+
+	UPROPERTY(EditAnywhere)
+	const UInputAction* IA_CancelTarget;
 
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D LastMovementInput;
@@ -49,6 +55,8 @@ protected:
 	UAbilitySystemComponent* HeroASC;
 
 private:
+
+	UEnhancedInputComponent* EnhancedInputComponent;
 	
 	float LastMovementInputTime = 0.0f; // The time when the last movement input was received
 	const float MovementInputResetThreshold = 0.1f; // Threshold duration for resetting movement input (0.1 seconds)

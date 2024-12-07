@@ -25,9 +25,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	void TryBindTargetLockSystemInputs(UEnhancedInputComponent* EnhancedInputComponent);
+	bool BindTargetLockSystemInputs();
 
-	void TryActivateTargetLock(const FInputActionValue& Value);
+	void ActivateTargetLock(const FInputActionValue& Value);
 
 	void LookMouse(const FInputActionValue& Value);
 
@@ -63,11 +63,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
 	bool bEnableTraceDebug = false;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Inputs")
-	const UInputAction* ActivateTargetLockInput;
-
-	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Inputs")
-	const UInputAction* LookMouseInput;
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Input")
+	const UInputAction* IA_ActivateTargetLock;
 
 	// Represents the movement speed threshold for horizontal mouse movement.
     // Used to determine the sensitivity for shifting the target lock left or right.

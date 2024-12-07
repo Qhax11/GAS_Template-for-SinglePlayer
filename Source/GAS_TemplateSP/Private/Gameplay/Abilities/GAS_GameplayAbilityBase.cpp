@@ -4,8 +4,6 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
-#include "Kismet\KismetSystemLibrary.h"
-
 
 void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 
@@ -80,6 +78,4 @@ void UGAS_GameplayAbilityBase::IncreaseLevel(UAbilitySystemComponent* AbilitySys
 	float NewCooldown = GetCoolDown(NewAbilityLevel);
 	CDO_AbilityBase->OnAbilityCooldownChanged.Broadcast(this, NewCooldown);
 }
-
-
 

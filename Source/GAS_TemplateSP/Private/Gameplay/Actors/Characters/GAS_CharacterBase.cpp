@@ -14,7 +14,7 @@
 
 AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectInitializer)
 {
-	PaperCharacterASC = CreateDefaultSubobject<UGAS_AbilitySystemComponent>(TEXT("PaperCharacterASC"));
+	CharacterASC = CreateDefaultSubobject<UGAS_AbilitySystemComponent>(TEXT("CharacterASC"));
 
 	AbilitySetComponent = CreateDefaultSubobject<UAC_AbilitySet>(TEXT("AbilitySetComponent"));
 
@@ -33,19 +33,19 @@ void AGAS_CharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!PaperCharacterASC)
+	if (!CharacterASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PaperCharacterASC doesen't exist in %s"), *this->GetName());
 		return;
 	}
 
-	PaperCharacterASC->InitAbilityActorInfo(this, this);
-	AbilitySetComponent->Initialize(PaperCharacterASC);
+	CharacterASC->InitAbilityActorInfo(this, this);
+	AbilitySetComponent->Initialize(CharacterASC);
 }
 
 UAbilitySystemComponent* AGAS_CharacterBase::GetAbilitySystemComponent() const
 {
-	return PaperCharacterASC;
+	return CharacterASC;
 }
 
 void AGAS_CharacterBase::DisableMovement()

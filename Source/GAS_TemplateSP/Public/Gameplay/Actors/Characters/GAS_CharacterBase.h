@@ -23,7 +23,7 @@ public:
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
-	UGAS_AbilitySystemComponent* PaperCharacterASC;
+	UGAS_AbilitySystemComponent* CharacterASC;
 
 protected:
 

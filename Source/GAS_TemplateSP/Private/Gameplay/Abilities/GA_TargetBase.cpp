@@ -73,11 +73,13 @@ AGameplayAbilityTargetActor* UGA_TargetBase::SpawnAndSetupTargetActor()
 void UGA_TargetBase::OnGameplayEventValidData(const FGameplayAbilityTargetDataHandle& Data)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Target data received"));
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_TargetBase::OnGameplayEventCancelled(const FGameplayAbilityTargetDataHandle& Data)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Targeting cancelled"));
+	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
 }
 
 void UGA_TargetBase::ConfirmTargetingFromInput()
@@ -94,8 +96,6 @@ void UGA_TargetBase::CancelAbilityFromInput()
 	{
 		WaitTargetData->ExternalCancel();
 	}
-
-	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
 }
 
 

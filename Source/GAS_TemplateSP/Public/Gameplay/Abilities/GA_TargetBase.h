@@ -30,19 +30,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
 	TEnumAsByte<EGameplayTargetingConfirmation::Type> ConfirmationType = EGameplayTargetingConfirmation::Custom;
 
-private:
+protected:
 
 	UFUNCTION()
-	void OnGameplayEventValidData(const FGameplayAbilityTargetDataHandle& Data);
+	virtual void OnGameplayEventValidData(const FGameplayAbilityTargetDataHandle& Data);
 
 	UFUNCTION()
-	void OnGameplayEventCancelled(const FGameplayAbilityTargetDataHandle& Data);
+	virtual void OnGameplayEventCancelled(const FGameplayAbilityTargetDataHandle& Data);
 
 	UFUNCTION()
 	void ConfirmTargetingFromInput();
 
 	UFUNCTION()
 	void CancelAbilityFromInput();
+
+private:
 
 	UAbilityTask_WaitTargetData* WaitTargetData;
 };

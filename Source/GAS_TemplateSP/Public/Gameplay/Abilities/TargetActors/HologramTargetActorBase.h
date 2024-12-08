@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
-#include "HologramTargetActor.generated.h"
+#include "HologramTargetActorBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GAS_TEMPLATESP_API AHologramTargetActor : public AGAS_TargetActorBase
+class GAS_TEMPLATESP_API AHologramTargetActorBase : public AGAS_TargetActorBase
 {
 	GENERATED_BODY()
 

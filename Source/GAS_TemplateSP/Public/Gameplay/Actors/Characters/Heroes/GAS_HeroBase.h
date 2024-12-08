@@ -28,6 +28,9 @@ public:
 
 	FORCEINLINE class UAC_HeroControl* GetHeroControlComponent() const { return HeroControlComponent; }
 
+	FORCEINLINE class USC_EyeOfView* GetEyeOfViewComponent() const { return EyeOfViewComponent; }
+
+
 protected:
 
 	//* Components *//

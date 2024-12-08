@@ -1,23 +1,14 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/TargetActors/HologramTargetActor.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "AbilitySystemComponent.h"
+#include "Gameplay/Abilities/TargetActors/HologramTargetActorBase.h"
 
-
-void AHologramTargetActor::StartTargeting(UGameplayAbility* Ability)
+void AHologramTargetActorBase::StartTargeting(UGameplayAbility* Ability)
 {
 	Super::StartTargeting(Ability);
-
-	AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(OwningAbility->GetAvatarActorFromActorInfo());
-	if (!HeroBase) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
-	}
 }
 
-void AHologramTargetActor::ConfirmTargetingAndContinue()
+void AHologramTargetActorBase::ConfirmTargetingAndContinue()
 {
 	// We need hologram ref in ability so we give the self ref.
 	TArray<TWeakObjectPtr<AActor>> OverlapedActors;

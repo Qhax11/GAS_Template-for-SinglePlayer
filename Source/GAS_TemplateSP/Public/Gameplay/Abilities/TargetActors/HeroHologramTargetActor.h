@@ -25,4 +25,7 @@ private:
 	
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USC_EyeOfView* EyeOfViewComponent;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UAC_TargetLockSystem* TargetLockSystemComponent;
 };

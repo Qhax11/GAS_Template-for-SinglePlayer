@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 
 
 void AHeroHologramTargetActor::StartTargeting(UGameplayAbility* Ability)
@@ -19,6 +20,12 @@ void AHeroHologramTargetActor::StartTargeting(UGameplayAbility* Ability)
 	if(!EyeOfViewComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EyeOfViewComponent is null in: %s"), *GetName());
+	}
+
+	TargetLockSystemComponent = HeroBase->GetTargetLockSystemComponent();
+	if (!TargetLockSystemComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetLockSystemComponent is null in: %s"), *GetName());
 	}
 }
 
@@ -45,12 +52,4 @@ void AHeroHologramTargetActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!EyeOfViewComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("EyeOfViewComponent is null in: %s"), *GetName());
-		return;
-	}
-
-
-	
 }

@@ -6,7 +6,12 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "Abilities/Tasks/AbilityTask_WaitTargetData.h"
 
-void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+UGA_TargetBase::UGA_TargetBase()
+{
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting);
+}
+
+void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)

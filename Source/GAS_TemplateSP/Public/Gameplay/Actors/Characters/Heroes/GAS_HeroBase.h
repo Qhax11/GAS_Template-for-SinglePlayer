@@ -30,7 +30,7 @@ public:
 
 	FORCEINLINE class USC_EyeOfView* GetEyeOfViewComponent() const { return EyeOfViewComponent; }
 
-
+	FORCEINLINE class UAC_TargetLockSystem* GetTargetLockSystemComponent() const { return TargetLockSystemComponent; }
 protected:
 
 	//* Components *//

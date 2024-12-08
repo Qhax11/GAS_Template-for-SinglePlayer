@@ -111,8 +111,8 @@ void UAC_TargetLockSystem::StartTargetLock()
 		return;
 	}
 
-	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked);
-	CurrentTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
+	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
+	CurrentTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 	CurrentTarget = OutResultActors[0];
 	bLocked = true;
 
@@ -127,8 +127,8 @@ void UAC_TargetLockSystem::EndTargetLock()
 		return;
 	}
 
-	HeroASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked);
-	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
+	HeroASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
+	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 	CurrentTarget = nullptr;
 	bLocked = false;
 
@@ -137,7 +137,7 @@ void UAC_TargetLockSystem::EndTargetLock()
 
 void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)
 {
-	if (!bLocked)
+	if (!bLocked || HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting))
 	{
 		return;
 	}
@@ -147,16 +147,16 @@ void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)
 	// Cooldown mechanism: Each direction can only trigger the action once per second.
 	const float CurrentTime = GetWorld()->GetTimeSeconds(); 
 
-	if (VectorValue.X > Threshold && CurrentTime - LastExecutionTimeRight >= ExecutionCooldownHorizontal)
+	if ((VectorValue.X > Threshold) && (CurrentTime - TryToFindNewTargetLastExecutionTimeRight >= TryToFindNewTargetExecutionCooldown))
 	{
 		TryToFindNewTarget(ETargetChangeDirection::Right);
-		LastExecutionTimeRight = CurrentTime; 
+		TryToFindNewTargetLastExecutionTimeRight = CurrentTime;
 	}
 
-	if (VectorValue.X < -Threshold && CurrentTime - LastExecutionTimeLeft >= ExecutionCooldownHorizontal)
+	if ((VectorValue.X < -Threshold) && (CurrentTime - TryToFindNewTargetLastExecutionTimeLeft >= TryToFindNewTargetExecutionCooldown))
 	{
 		TryToFindNewTarget(ETargetChangeDirection::Left);
-		LastExecutionTimeLeft = CurrentTime; 
+		TryToFindNewTargetLastExecutionTimeLeft = CurrentTime;
 	}
 }
 
@@ -282,8 +282,8 @@ void UAC_TargetLockSystem::ChangeTarget(AActor* NewTarget)
 		return;
 	}
 
-	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
-	NewTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Enemy_Targeted);
+	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
+	NewTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 
 	CurrentTargetASC = NewTargetASC;
 	CurrentTarget = NewTarget;

@@ -73,7 +73,7 @@ public:
 
 	// Cooldown Mechanism: Each direction can trigger the action only once per ExecutionCooldownHorizontal duration.
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem", meta = (ToolTip = "Time interval within which each direction can trigger the action only once."))
-	float ExecutionCooldownHorizontal = 1.0f;
+	float TryToFindNewTargetExecutionCooldown = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
 	float RotateInterpSpeed = 5.0f;
@@ -89,12 +89,15 @@ protected:
 	AGAS_HeroBase* HeroBase;
 	UAbilitySystemComponent* HeroASC;
 
+public:
+
 	UPROPERTY(BlueprintReadWrite)
 	AActor* CurrentTarget;
+
 	UAbilitySystemComponent* CurrentTargetASC;
 
 private:
 
-	float LastExecutionTimeRight = 0.0f;
-	float LastExecutionTimeLeft = 0.0f;
+	float TryToFindNewTargetLastExecutionTimeRight = 0.0f;
+	float TryToFindNewTargetLastExecutionTimeLeft = 0.0f;
 };

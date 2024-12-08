@@ -84,12 +84,12 @@ void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 {
 	const FVector2D LookMouseVector = Value.Get<FVector2D>();
 
-	if (LookMouseVector.X != 0.0f && !HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked))
+	if (LookMouseVector.X != 0.0f && !HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
 		HeroBase->AddControllerYawInput(LookMouseVector.X);
 	}
 
-	if (LookMouseVector.Y != 0.0f && !HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked))
+	if (LookMouseVector.Y != 0.0f && !HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
 		HeroBase->AddControllerPitchInput(LookMouseVector.Y);
 	}

@@ -11,8 +11,6 @@ void UGA_HeroHologram::OnGameplayEventValidData(const FGameplayAbilityTargetData
         if (LocationInfo)
         {
             FVector ExtractedLocation = LocationInfo->TargetLocation.GetTargetingTransform().GetLocation();
-            UE_LOG(LogTemp, Log, TEXT("Extracted target location: %s"), *ExtractedLocation.ToString());
-
             GetAvatarActorFromActorInfo()->SetActorLocation(ExtractedLocation);
         }
     }

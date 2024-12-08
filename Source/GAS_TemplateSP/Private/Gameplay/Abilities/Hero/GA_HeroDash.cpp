@@ -22,7 +22,7 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
-	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Targeting_Hero_TargetLocked))
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
 		if (UAC_HeroControl* GetHeroControlComponent = HeroBase->GetHeroControlComponent())
 		{

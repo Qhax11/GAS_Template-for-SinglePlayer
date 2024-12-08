@@ -17,6 +17,8 @@ class GAS_TEMPLATESP_API UGA_TargetBase : public UGAS_GameplayAbilityBase
 	
 public:
 
+	UGA_TargetBase();
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	bool BindInputForTargeting();

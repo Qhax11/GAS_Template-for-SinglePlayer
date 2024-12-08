@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "GameFramework/PlayerController.h"
 #include "SC_EyeOfView.generated.h"
 
 /**
- * EyeOfView Component
+ * USC_EyeOfView
  *
- * This component is designed to mimic the rotation of the camera controlled by mouse inputs.
- * It is particularly useful for abilities such as hologram-based effects, where a visual representation
- * synced to the camera's rotation is required.
+ * This component is designed to mimic the rotation of the player's camera controlled by mouse inputs.
+ * It is particularly useful in scenarios where the camera's viewpoint is locked or fixed, but an associated
+ * actor or component needs to replicate the same rotational behavior as the camera.
  *
- * A Static Mesh is included to serve as a symbolic or visual representation of the camera's orientation.
+ * Ideal for abilities such as hologram-based effects or visual representations that need to stay
+ * synchronized with the camera's orientation.
  */
 
 
@@ -39,5 +39,7 @@ public:
 
 private:
 
-	APlayerController* PC;
+	class APlayerController* PC;
+
+	class AGAS_HeroBase* HeroBase;
 };

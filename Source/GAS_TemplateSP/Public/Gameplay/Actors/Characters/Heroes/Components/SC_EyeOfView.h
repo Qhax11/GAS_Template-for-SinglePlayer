@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
+#include "GameFramework/PlayerController.h"
 #include "SC_EyeOfView.generated.h"
 
 /**
@@ -35,4 +36,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float RotationSpeed = 2.5f;
+
+private:
+
+	APlayerController* PC;
 };

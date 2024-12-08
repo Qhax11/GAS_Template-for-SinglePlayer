@@ -12,6 +12,8 @@ USC_EyeOfView::USC_EyeOfView()
 void USC_EyeOfView::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PC = GetWorld()->GetFirstPlayerController();
 }
 
 void USC_EyeOfView::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -19,9 +21,9 @@ void USC_EyeOfView::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	FVector2D MouseInput;
-	if (GetWorld()->GetFirstPlayerController())
+	if (PC)
 	{
-		GetWorld()->GetFirstPlayerController()->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
+		PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
 
 		if (!MouseInput.IsNearlyZero())
 		{
@@ -33,7 +35,7 @@ void USC_EyeOfView::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 void USC_EyeOfView::UpdateRotationFromMouseInput(const FVector2D& MouseInput)
 {
 	FRotator DeltaRot;
-	DeltaRot.Pitch = -MouseInput.Y * RotationSpeed; 
+	DeltaRot.Pitch = MouseInput.Y * RotationSpeed; 
 	DeltaRot.Yaw = MouseInput.X * RotationSpeed;   
 	DeltaRot.Roll = 0.0f;                          
 
@@ -41,7 +43,7 @@ void USC_EyeOfView::UpdateRotationFromMouseInput(const FVector2D& MouseInput)
 
 	FRotator NewRotation = CurrentRotation + DeltaRot;
 
-	//NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch, -80.0f, 80.0f);
+	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch, -89.9f, 89.9f);
 
 	SetWorldRotation(NewRotation);
 }

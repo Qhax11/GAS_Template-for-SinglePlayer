@@ -40,8 +40,8 @@ bool UGA_TargetBase::BindInputForTargeting()
 		{
 			if (GetHeroControlComponent->IA_ConfirmTarget && GetHeroControlComponent->IA_CancelTarget)
 			{
-				EnhancedInputComponent->BindAction(GetHeroControlComponent->IA_ConfirmTarget, ETriggerEvent::Triggered, this, &UGA_TargetBase::ForceConfirmTargeting);
-				EnhancedInputComponent->BindAction(GetHeroControlComponent->IA_CancelTarget, ETriggerEvent::Triggered, this, &UGA_TargetBase::CancelAbility);
+				EnhancedInputComponent->BindAction(GetHeroControlComponent->IA_ConfirmTarget, ETriggerEvent::Triggered, this, &UGA_TargetBase::ConfirmTargetingFromInput);
+				EnhancedInputComponent->BindAction(GetHeroControlComponent->IA_CancelTarget, ETriggerEvent::Triggered, this, &UGA_TargetBase::CancelAbilityFromInput);
 				return true;
 			}
 			else
@@ -80,7 +80,7 @@ void UGA_TargetBase::OnGameplayEventCancelled(const FGameplayAbilityTargetDataHa
 	UE_LOG(LogTemp, Warning, TEXT("Targeting cancelled"));
 }
 
-void UGA_TargetBase::ForceConfirmTargeting()
+void UGA_TargetBase::ConfirmTargetingFromInput()
 {
 	if (WaitTargetData)
 	{
@@ -88,10 +88,14 @@ void UGA_TargetBase::ForceConfirmTargeting()
 	}
 }
 
-void UGA_TargetBase::CancelAbility()
+void UGA_TargetBase::CancelAbilityFromInput()
 {
 	if (WaitTargetData)
 	{
 		WaitTargetData->ExternalCancel();
 	}
+
+	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
 }
+
+

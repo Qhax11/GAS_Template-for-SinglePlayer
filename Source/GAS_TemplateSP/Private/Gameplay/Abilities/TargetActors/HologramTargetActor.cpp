@@ -15,7 +15,6 @@ void AHologramTargetActor::StartTargeting(UGameplayAbility* Ability)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
 	}
-
 }
 
 void AHologramTargetActor::ConfirmTargetingAndContinue()

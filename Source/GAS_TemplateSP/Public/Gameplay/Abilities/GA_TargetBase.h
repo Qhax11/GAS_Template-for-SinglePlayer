@@ -39,10 +39,10 @@ private:
 	void OnGameplayEventCancelled(const FGameplayAbilityTargetDataHandle& Data);
 
 	UFUNCTION()
-	void ForceConfirmTargeting();
+	void ConfirmTargetingFromInput();
 
 	UFUNCTION()
-	void CancelAbility();
+	void CancelAbilityFromInput();
 
 	UAbilityTask_WaitTargetData* WaitTargetData;
 };

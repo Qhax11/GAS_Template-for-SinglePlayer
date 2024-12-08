@@ -98,7 +98,7 @@ void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 	{
 		// New input received, update the LastLookMouseInput
 		LastLookMouseInput = LookMouseVector;
-		LastMovementInputTime = GetWorld()->GetTimeSeconds();
+		LastLookMouseInputTime = GetWorld()->GetTimeSeconds();
 	}
 }
 

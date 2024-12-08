@@ -46,6 +46,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_TargetLockSystem* TargetLockSystemComponent;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
+	class USC_EyeOfView* EyeOfViewComponent;
+
 private:
 	class UAC_AbilityInputBinding* AbilityInputBindingComponent;
 

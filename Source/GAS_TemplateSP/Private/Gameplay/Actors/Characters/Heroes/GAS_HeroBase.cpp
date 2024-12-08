@@ -6,6 +6,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAttributesListener.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroRespawn.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_EyeOfView.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
@@ -31,6 +32,9 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer):
     HeroRespawnComponent = CreateDefaultSubobject<UAC_HeroRespawn>(TEXT("HeroRespawnComponent"));
 
     TargetLockSystemComponent = CreateDefaultSubobject<UAC_TargetLockSystem>(TEXT("TargetLockSystemComponent"));
+
+    EyeOfViewComponent = CreateDefaultSubobject<USC_EyeOfView>(TEXT("EyeOfViewComponent"));
+    EyeOfViewComponent->SetupAttachment(RootComponent);
 }
 
 void AGAS_HeroBase::BeginPlay()

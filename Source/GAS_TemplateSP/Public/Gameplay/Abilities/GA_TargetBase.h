@@ -49,4 +49,5 @@ protected:
 private:
 
 	UAbilityTask_WaitTargetData* WaitTargetData;
+
 };

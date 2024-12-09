@@ -61,7 +61,7 @@ AGameplayAbilityTargetActor* UGA_TargetBase::SpawnAndSetupTargetActor()
 {
 	if (UWorld* World = this->GetWorld())
 	{
-		if (TargetActorClass->IsValidLowLevelFast())
+		if (TargetActorClass)
 		{
 			FTransform ActorTransform(FRotator::ZeroRotator, FVector::ZeroVector);
 			AGameplayAbilityTargetActor* TargetActor = World->SpawnActor<AGameplayAbilityTargetActor>(TargetActorClass, ActorTransform);
@@ -85,7 +85,7 @@ void UGA_TargetBase::OnGameplayEventCancelled(const FGameplayAbilityTargetDataHa
 
 void UGA_TargetBase::ConfirmTargetingFromInput()
 {
-	if (WaitTargetData && WaitTargetData->IsValidLowLevelFast())
+	if (WaitTargetData && WaitTargetData->IsActive())
 	{
 		FGameplayEventData* StaticEventData = nullptr;
 		Super::ActivateAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), StaticEventData);
@@ -95,6 +95,7 @@ void UGA_TargetBase::ConfirmTargetingFromInput()
 
 void UGA_TargetBase::CancelAbilityFromInput()
 {
+	
 	if (WaitTargetData)
 	{
 		WaitTargetData->ExternalCancel();

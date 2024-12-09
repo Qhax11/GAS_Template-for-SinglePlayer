@@ -6,6 +6,7 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Gameplay/Components/AC_Team.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 
 
@@ -32,6 +33,13 @@ AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer
 
 void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+	if (Stimulus.WasSuccessfullySensed() && Actor) 
+	{
+		if (UBlackboardComponent* BlackboradComponent = GetBlackboardComponent()) 
+		{
+			BlackboradComponent->SetValueAsObject(FName("TargetActor"), Actor);
+		}
+	}
 }
 
 ETeamAttitude::Type AAIControllerBase::GetTeamAttitudeTowards(const AActor& Other) const

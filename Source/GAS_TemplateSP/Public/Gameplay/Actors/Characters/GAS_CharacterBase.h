@@ -14,10 +14,8 @@ class GAS_TEMPLATESP_API AGAS_CharacterBase : public ACharacter, public IAbility
 	GENERATED_BODY()
 	
 public:
-	// Sets default values for this character's properties
 	AGAS_CharacterBase(const class FObjectInitializer& ObjectInitializer);
 
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;

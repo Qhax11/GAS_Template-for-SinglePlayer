@@ -20,11 +20,14 @@ void UGA_HeroHologram::OnGameplayEventValidData(const FGameplayAbilityTargetData
         GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
         GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
 
-        if (HeroHologramTargetActor->AttackMontage) 
+        if (HeroHologramTargetActor->AttackMontage && HeroHologramTargetActor->CurrentTarget)
         {
             CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage, FName("Section2"));
         }
+        else
+        {
+            // Calling EndAbility
+            Super::OnGameplayEventValidData(Data);
+        }
     }
-
-   // Super::OnGameplayEventValidData(Data);
 }

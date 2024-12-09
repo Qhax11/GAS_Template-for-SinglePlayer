@@ -22,6 +22,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	UAnimMontage* AttackMontage;
 
+	UPROPERTY(BlueprintReadWrite)
+	AActor* CurrentTarget;
+
 public:
 	UFUNCTION()
 	void OnTargetChaned(AActor* NewTarget);
@@ -38,9 +41,6 @@ public:
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class AGAS_HeroBase* HeroBase;
-
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	AActor* CurrentTarget;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USC_EyeOfView* EyeOfViewComponent;

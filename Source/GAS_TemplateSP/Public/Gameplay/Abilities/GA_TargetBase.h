@@ -32,6 +32,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
 	TEnumAsByte<EGameplayTargetingConfirmation::Type> ConfirmationType = EGameplayTargetingConfirmation::Custom;
 
+	UAbilityTask_WaitTargetData* WaitTargetData;
+
 protected:
 
 	UFUNCTION()
@@ -45,9 +47,5 @@ protected:
 
 	UFUNCTION()
 	void CancelAbilityFromInput();
-
-private:
-
-	UAbilityTask_WaitTargetData* WaitTargetData;
 
 };

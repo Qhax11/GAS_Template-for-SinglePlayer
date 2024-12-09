@@ -18,6 +18,11 @@ void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
 	TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutActors);
 }
 
+void UGAS_GameplayAbilityBase::StartupEffects()
+{
+	ApplyGameplayEffectToSelf();
+}
+
 void UGAS_GameplayAbilityBase::ApplyGameplayEffectToSelf()
 {
 	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), GetAbilitySystemComponentFromActorInfo(), AbilityActivationEffects);

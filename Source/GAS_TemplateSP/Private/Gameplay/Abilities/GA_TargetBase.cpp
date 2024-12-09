@@ -16,8 +16,6 @@ void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	ApplyGameplayEffectToSelf();
-
 	if (BindInputForTargeting())
 	{
 		if (AGameplayAbilityTargetActor* TargetActor = SpawnAndSetupTargetActor())
@@ -87,6 +85,8 @@ void UGA_TargetBase::OnGameplayEventCancelled(const FGameplayAbilityTargetDataHa
 
 void UGA_TargetBase::ConfirmTargetingFromInput()
 {
+	StartupEffects();
+
 	if (!CommitAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo()))
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, true);

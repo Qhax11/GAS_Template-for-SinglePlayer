@@ -24,6 +24,8 @@ public:
 
 	void TraceForHostileUnits(TArray<AActor*>& OutActors);
 
+	virtual void StartupEffects();
+
 	virtual void ApplyGameplayEffectToSelf();
 
 	UFUNCTION(BlueprintPure, Category = "GameplayAbilityBase")

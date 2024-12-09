@@ -35,7 +35,7 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 	CreatePlayMontageWaitForEvent(SelectedMontage);
 
-	ApplyGameplayEffectToSelf();
+	StartupEffects();
 }
 
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent(UAnimMontage* Montage, FName SectionName)

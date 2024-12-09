@@ -6,6 +6,8 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "AC_TargetLockSystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetChanged, AActor*, NewTarget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndTargetLock);
 
 UENUM(BlueprintType)
 enum ETargetChangeDirection : uint8
@@ -50,6 +52,11 @@ protected:
 	void RotateHeroToTarget();
 
 public:
+	UPROPERTY(BlueprintAssignable)
+	FOnTargetChanged OnTargetChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnEndTargetLock OnEndTargetLock;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
 	class UGAS_AbilityTraceData* TracingDataStart;

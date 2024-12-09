@@ -12,16 +12,31 @@ class GAS_TEMPLATESP_API AHeroHologramTargetActor : public AHologramTargetActorB
 	GENERATED_BODY()
 
 public:
-
 	virtual void StartTargeting(UGameplayAbility* Ability) override;
 
 	virtual void ConfirmTargetingAndContinue() override;
 
 	virtual void Tick(float DeltaSeconds) override;
 
+public:
+	UFUNCTION()
+	void OnTargetChaned(AActor* NewTarget);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_OnTargetChaned(AActor* NewTarget);
+
+	UFUNCTION()
+	void OnEndTargetLock();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_OnEndTargetLock();
+
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class AGAS_HeroBase* HeroBase;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	AActor* CurrentTarget;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USC_EyeOfView* EyeOfViewComponent;

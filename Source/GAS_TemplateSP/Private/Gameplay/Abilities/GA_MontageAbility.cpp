@@ -20,12 +20,6 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
-	}
-
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if (!AvatarActor)
 	{

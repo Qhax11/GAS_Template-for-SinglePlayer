@@ -24,6 +24,8 @@ public:
 
 	void TraceForHostileUnits(TArray<AActor*>& OutActors);
 
+	virtual void ApplyGameplayEffectToSelf();
+
 	UFUNCTION(BlueprintPure, Category = "GameplayAbilityBase")
 	float GetCost(int32 AbilityLevel) const;
 

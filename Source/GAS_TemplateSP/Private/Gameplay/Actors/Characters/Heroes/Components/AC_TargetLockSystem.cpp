@@ -104,18 +104,10 @@ void UAC_TargetLockSystem::StartTargetLock()
 		return;
 	}
 
-	CurrentTargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OutResultActors[0]);
-	if (!CurrentTargetASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetASC is null in %s, cannot initialize TargetLockSystem."), *GetName());
-		return;
-	}
+	ChangeTarget(OutResultActors[0]);
 
 	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
-	CurrentTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
-	CurrentTarget = OutResultActors[0];
 	bLocked = true;
-
 	SetComponentTickEnabled(true);
 }
 
@@ -131,6 +123,8 @@ void UAC_TargetLockSystem::EndTargetLock()
 	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 	CurrentTarget = nullptr;
 	bLocked = false;
+
+	OnEndTargetLock.Broadcast();
 
 	SetComponentTickEnabled(false);
 }
@@ -282,11 +276,16 @@ void UAC_TargetLockSystem::ChangeTarget(AActor* NewTarget)
 		return;
 	}
 
-	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
+	// For StartTargetLock, CurrentTargetASC is null.
+	if (CurrentTargetASC) 
+	{
+		CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
+	}
 	NewTargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 
 	CurrentTargetASC = NewTargetASC;
 	CurrentTarget = NewTarget;
+	OnTargetChanged.Broadcast(NewTarget);
 }
 
 void UAC_TargetLockSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

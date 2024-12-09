@@ -12,12 +12,23 @@ void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), GetAbilitySystemComponentFromActorInfo(), AbilityActivationEffects);
+	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	ApplyGameplayEffectToSelf();
 }
 
 void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
 {
 	TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutActors);
+}
+
+void UGAS_GameplayAbilityBase::ApplyGameplayEffectToSelf()
+{
+	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), GetAbilitySystemComponentFromActorInfo(), AbilityActivationEffects);
 }
 
 float UGAS_GameplayAbilityBase::GetCost(int32 AbilityLevel) const

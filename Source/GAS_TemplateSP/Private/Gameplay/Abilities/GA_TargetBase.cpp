@@ -16,8 +16,6 @@ void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
 	if (BindInputForTargeting())
 	{
 		if (AGameplayAbilityTargetActor* TargetActor = SpawnAndSetupTargetActor())
@@ -77,7 +75,6 @@ AGameplayAbilityTargetActor* UGA_TargetBase::SpawnAndSetupTargetActor()
 
 void UGA_TargetBase::OnGameplayEventValidData(const FGameplayAbilityTargetDataHandle& Data)
 {
-	CommitAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo());
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
@@ -90,6 +87,8 @@ void UGA_TargetBase::ConfirmTargetingFromInput()
 {
 	if (WaitTargetData)
 	{
+		FGameplayEventData* StaticEventData = nullptr;
+		Super::ActivateAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), StaticEventData);
 		WaitTargetData->ExternalConfirm(true);
 	}
 }

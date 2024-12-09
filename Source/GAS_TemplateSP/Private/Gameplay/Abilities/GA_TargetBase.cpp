@@ -16,6 +16,8 @@ void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
+	ApplyGameplayEffectToSelf();
+
 	if (BindInputForTargeting())
 	{
 		if (AGameplayAbilityTargetActor* TargetActor = SpawnAndSetupTargetActor())
@@ -63,7 +65,7 @@ AGameplayAbilityTargetActor* UGA_TargetBase::SpawnAndSetupTargetActor()
 	{
 		if (TargetActorClass->IsValidLowLevelFast())
 		{
-			FTransform ActorTransform(FRotator::ZeroRotator, FVector::ZeroVector);
+			FTransform ActorTransform = FTransform(FRotator(0, 0, 0), FVector(0, 0, 0));
 			AGameplayAbilityTargetActor* TargetActor = World->SpawnActor<AGameplayAbilityTargetActor>(TargetActorClass, ActorTransform);
 
 			return TargetActor;
@@ -85,10 +87,14 @@ void UGA_TargetBase::OnGameplayEventCancelled(const FGameplayAbilityTargetDataHa
 
 void UGA_TargetBase::ConfirmTargetingFromInput()
 {
-	if (WaitTargetData && WaitTargetData->IsValidLowLevelFast())
+	if (!CommitAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo()))
 	{
-		FGameplayEventData* StaticEventData = nullptr;
-		Super::ActivateAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), StaticEventData);
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, true);
+		return;
+	}
+
+	if (WaitTargetData)
+	{
 		WaitTargetData->ExternalConfirm(true);
 	}
 }

@@ -23,24 +23,16 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	if (!SelectedMontage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectedMontage is null in: %s, ability cannot initialize"), *GetName());
-		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
-		return;
-	}
-
-	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
-	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-
+	
 	CreatePlayMontageWaitForEvent(SelectedMontage);
-
-	ApplyGameplayEffectToSelf();
 }
 
-void UGA_MontageAbility::CreatePlayMontageWaitForEvent(UAnimMontage* Montage, FName SectionName)
+void UGA_MontageAbility::CreatePlayMontageWaitForEvent(UAnimMontage* Montage)
 {
-	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
+	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage, WaitForEventTag, PlayRate, NAME_None, bStopWhenAbilityEnds, 1.0f);
 	Task->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
 	Task->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
 	Task->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
@@ -56,12 +48,12 @@ UAnimMontage* UGA_MontageAbility::SelectSequence()
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+	EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)

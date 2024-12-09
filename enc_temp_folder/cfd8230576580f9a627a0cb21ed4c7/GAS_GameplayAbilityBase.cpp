@@ -11,6 +11,14 @@ void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle 
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	ApplyGameplayEffectToSelf();
 }
 
 void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)

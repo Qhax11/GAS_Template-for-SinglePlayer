@@ -41,27 +41,15 @@ void AHeroHologramTargetActor::StartTargeting(UGameplayAbility* Ability)
 
 void AHeroHologramTargetActor::ConfirmTargetingAndContinue()
 {
-	FGameplayAbilityTargetDataHandle TargetDataHandle;
-
-	// Konum bilgisi için bir TargetData_LocationInfo oluþtur
-	FGameplayAbilityTargetData_LocationInfo* LocationData = new FGameplayAbilityTargetData_LocationInfo();
-	LocationData->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
-
-	// Konumu TargetData'ya ekle
-	FTransform TargetTransform;
-	TargetTransform.SetLocation(GetActorLocation());
-	LocationData->TargetLocation.LiteralTransform = TargetTransform;
-
-	// TargetDataHandle'a veriyi ekle
-	TargetDataHandle.Add(LocationData);
-
+	TArray<TWeakObjectPtr<AActor>> TargetActorsArray;
+	TargetActorsArray.Add(TWeakObjectPtr<AActor>(this));  
+	FGameplayAbilityTargetDataHandle TargetDataHandle = StartLocation.MakeTargetDataHandleFromActors(TargetActorsArray);
 	TargetDataReadyDelegate.Broadcast(TargetDataHandle);
 }
 
 void AHeroHologramTargetActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
 }
 
 void AHeroHologramTargetActor::OnTargetChaned(AActor* NewTarget)

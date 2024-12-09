@@ -18,11 +18,10 @@ void UGA_HeroHologram::OnGameplayEventValidData(const FGameplayAbilityTargetData
     {
         AHeroHologramTargetActor* HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(Actors[0]);
         GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
-        GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
 
         if (HeroHologramTargetActor->AttackMontage) 
         {
-            CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage, FName("Section2"));
+            CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage);
         }
     }
 

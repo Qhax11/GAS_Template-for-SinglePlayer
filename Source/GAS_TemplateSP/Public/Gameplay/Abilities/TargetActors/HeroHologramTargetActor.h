@@ -19,6 +19,10 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
+	UPROPERTY(BlueprintReadWrite)
+	UAnimMontage* AttackMontage;
+
+public:
 	UFUNCTION()
 	void OnTargetChaned(AActor* NewTarget);
 

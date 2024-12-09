@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "Abilities/Tasks/AbilityTask_WaitTargetData.h"
 #include "GA_TargetBase.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class GAS_TEMPLATESP_API UGA_TargetBase : public UGAS_GameplayAbilityBase
+class GAS_TEMPLATESP_API UGA_TargetBase : public UGA_MontageAbility
 {
 	GENERATED_BODY()
 	

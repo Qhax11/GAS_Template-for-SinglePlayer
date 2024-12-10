@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "Abilities/Tasks/AbilityTask_WaitTargetData.h"
+#include "EnhancedInputComponent.h"
 #include "GA_TargetBase.generated.h"
 
 /**
@@ -32,8 +33,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
 	TEnumAsByte<EGameplayTargetingConfirmation::Type> ConfirmationType = EGameplayTargetingConfirmation::Custom;
 
-	UAbilityTask_WaitTargetData* WaitTargetData;
-
+	TObjectPtr<UAbilityTask_WaitTargetData> WaitTargetData;
+	//TWeakObjectPtr<UAbilityTask_WaitTargetData> WaitTargetData;
 protected:
 
 	UFUNCTION()
@@ -43,9 +44,9 @@ protected:
 	virtual void OnGameplayEventCancelled(const FGameplayAbilityTargetDataHandle& Data);
 
 	UFUNCTION()
-	void ConfirmTargetingFromInput();
+	void ConfirmTargetingFromInput(const FInputActionValue& Value);
 
 	UFUNCTION()
-	void CancelAbilityFromInput();
+	void CancelAbilityFromInput(const FInputActionValue& Value);
 
 };

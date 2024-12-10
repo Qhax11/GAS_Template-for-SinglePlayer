@@ -83,7 +83,7 @@ void UGA_TargetBase::OnGameplayEventCancelled(const FGameplayAbilityTargetDataHa
 	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
 }
 
-void UGA_TargetBase::ConfirmTargetingFromInput()
+void UGA_TargetBase::ConfirmTargetingFromInput(const FInputActionValue& Value)
 {
 	StartupEffects();
 
@@ -93,16 +93,28 @@ void UGA_TargetBase::ConfirmTargetingFromInput()
 		return;
 	}
 
-	if (WaitTargetData)
+	if (!WaitTargetData.IsNull() && WaitTargetData->IsValidLowLevel())
 	{
+		// Force the actor to be destroyed by calling EndTask after NextTick
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+			{
+				WaitTargetData->EndTask();
+			});
+
 		WaitTargetData->ExternalConfirm(true);
 	}
 }
 
-void UGA_TargetBase::CancelAbilityFromInput()
+void UGA_TargetBase::CancelAbilityFromInput(const FInputActionValue& Value)
 {
-	if (WaitTargetData)
+	if (!WaitTargetData.IsNull() && WaitTargetData->IsValidLowLevel())
 	{
+		// Force the actor to be destroyed by calling EndTask after NextTick
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+			{
+				WaitTargetData->EndTask();
+			});
+
 		WaitTargetData->ExternalCancel();
 	}
 }

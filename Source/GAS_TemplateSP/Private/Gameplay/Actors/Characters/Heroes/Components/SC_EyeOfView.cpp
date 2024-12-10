@@ -27,21 +27,24 @@ void USC_EyeOfView::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	{
 		return;
 	}
+	
+	bool bIsHeroTargeting = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting);
+	if(bIsHeroTargeting)
+	{
+		FVector2D MouseInput;
+		PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
 
-	if(!HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting))
+		if (!MouseInput.IsNearlyZero())
+		{
+			UpdateRotationFromMouseInput(MouseInput);
+		}
+	}
+	else 
 	{
 		FVector Location;
 		FRotator Rotation;
 		PC->GetPlayerViewPoint(Location, Rotation);
 		SetWorldRotation(Rotation);
-	}
-
-	FVector2D MouseInput;
-	PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
-
-	if (!MouseInput.IsNearlyZero())
-	{
-		UpdateRotationFromMouseInput(MouseInput);
 	}
 }
 

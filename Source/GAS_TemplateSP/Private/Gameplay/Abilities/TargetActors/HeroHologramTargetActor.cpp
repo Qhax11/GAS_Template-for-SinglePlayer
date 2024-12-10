@@ -6,11 +6,9 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 
 
-void AHeroHologramTargetActor::StartTargeting(UGameplayAbility* Ability)
+void AHeroHologramTargetActor::BeginPlay()
 {
-	Super::StartTargeting(Ability);
-
-	HeroBase = Cast<AGAS_HeroBase>(OwningAbility->GetAvatarActorFromActorInfo());
+	HeroBase = Cast<AGAS_HeroBase>(GetInstigator());
 	if (!HeroBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
@@ -18,7 +16,7 @@ void AHeroHologramTargetActor::StartTargeting(UGameplayAbility* Ability)
 	}
 
 	EyeOfViewComponent = HeroBase->GetEyeOfViewComponent();
-	if(!EyeOfViewComponent)
+	if (!EyeOfViewComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EyeOfViewComponent is null in: %s"), *GetName());
 		return;
@@ -31,20 +29,12 @@ void AHeroHologramTargetActor::StartTargeting(UGameplayAbility* Ability)
 		return;
 	}
 
-	if (TargetLockSystemComponent->CurrentTarget) 
+	if (TargetLockSystemComponent->CurrentTarget)
 	{
 		CurrentTarget = TargetLockSystemComponent->CurrentTarget;
 	}
 	TargetLockSystemComponent->OnTargetChanged.AddDynamic(this, &AHeroHologramTargetActor::OnTargetChaned);
 	TargetLockSystemComponent->OnEndTargetLock.AddDynamic(this, &AHeroHologramTargetActor::OnEndTargetLock);
-}
-
-void AHeroHologramTargetActor::ConfirmTargetingAndContinue()
-{
-	TArray<TWeakObjectPtr<AActor>> TargetActorsArray;
-	TargetActorsArray.Add(TWeakObjectPtr<AActor>(this));  
-	FGameplayAbilityTargetDataHandle TargetDataHandle = StartLocation.MakeTargetDataHandleFromActors(TargetActorsArray);
-	TargetDataReadyDelegate.Broadcast(TargetDataHandle);
 }
 
 void AHeroHologramTargetActor::Tick(float DeltaSeconds)

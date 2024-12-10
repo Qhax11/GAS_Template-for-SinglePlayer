@@ -2,10 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Gameplay/Abilities/GA_MontageAbility.h"
-#include "Abilities/Tasks/AbilityTask_WaitTargetData.h"
-#include "EnhancedInputComponent.h"
+#include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
 #include "GA_TargetBase.generated.h"
 
 /**
@@ -22,19 +20,14 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	bool BindInputForTargeting();
+	bool BindInputForConfirmAndCancel();
 
-	virtual AGameplayAbilityTargetActor* SpawnAndSetupTargetActor();
+	virtual AGAS_TargetActorBase* SpawnAndSetupTargetActor();
 
-	/** The TargetActor that we spawned */
+	/** The TargetActor class that we spawned */
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
-	TSubclassOf<AGameplayAbilityTargetActor> TargetActorClass;
+	TSubclassOf<AGAS_TargetActorBase> TargetActorClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
-	TEnumAsByte<EGameplayTargetingConfirmation::Type> ConfirmationType = EGameplayTargetingConfirmation::Custom;
-
-	TObjectPtr<UAbilityTask_WaitTargetData> WaitTargetData;
-	//TWeakObjectPtr<UAbilityTask_WaitTargetData> WaitTargetData;
 protected:
 
 	UFUNCTION()
@@ -44,9 +37,14 @@ protected:
 	virtual void OnGameplayEventCancelled(const FGameplayAbilityTargetDataHandle& Data);
 
 	UFUNCTION()
-	void ConfirmTargetingFromInput(const FInputActionValue& Value);
+	void ConfirmTargetingFromInput();
 
 	UFUNCTION()
-	void CancelAbilityFromInput(const FInputActionValue& Value);
+	void CancelAbilityFromInput();
+
+private:
+
+	/** The TargetActor that we spawned */
+	AGAS_TargetActorBase* TargetActor;
 
 };

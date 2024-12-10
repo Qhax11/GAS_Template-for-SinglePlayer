@@ -4,9 +4,12 @@
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
 #include "Abilities/GameplayAbility.h"
 
-void AGAS_TargetActorBase::StartTargeting(UGameplayAbility* Ability)
+void AGAS_TargetActorBase::Confirm()
 {
-	Super::StartTargeting(Ability);
+	UE_LOG(LogTemp, Warning, TEXT("Confirm"));
+}
 
-	PrimaryPC = Cast<APlayerController>(Ability->GetAvatarActorFromActorInfo()->GetInstigatorController());
+void AGAS_TargetActorBase::Cancel()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Cancel"));
 }

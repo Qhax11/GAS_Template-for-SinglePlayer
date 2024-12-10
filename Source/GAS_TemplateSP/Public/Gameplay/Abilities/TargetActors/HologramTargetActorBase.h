@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
 #include "HologramTargetActorBase.generated.h"
 
@@ -16,8 +15,6 @@ class GAS_TEMPLATESP_API AHologramTargetActorBase : public AGAS_TargetActorBase
 
 public:
 
-	virtual void StartTargeting(UGameplayAbility* Ability) override;
-
-	virtual void ConfirmTargetingAndContinue() override;
+	
 
 };

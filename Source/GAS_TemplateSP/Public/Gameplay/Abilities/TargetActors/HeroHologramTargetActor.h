@@ -12,9 +12,8 @@ class GAS_TEMPLATESP_API AHeroHologramTargetActor : public AHologramTargetActorB
 	GENERATED_BODY()
 
 public:
-	virtual void StartTargeting(UGameplayAbility* Ability) override;
 
-	virtual void ConfirmTargetingAndContinue() override;
+	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
 

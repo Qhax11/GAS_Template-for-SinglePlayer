@@ -4,7 +4,6 @@
 #include "Gameplay/Abilities/GA_TargetBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
-#include "Abilities/Tasks/AbilityTask_WaitTargetData.h"
 
 UGA_TargetBase::UGA_TargetBase()
 {
@@ -16,19 +15,17 @@ void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	if (BindInputForTargeting())
+	if (BindInputForConfirmAndCancel())
 	{
-		if (AGameplayAbilityTargetActor* TargetActor = SpawnAndSetupTargetActor())
+		if (!SpawnAndSetupTargetActor()) 
 		{
-			WaitTargetData = UAbilityTask_WaitTargetData::WaitTargetDataUsingActor(this, "None", ConfirmationType, TargetActor);
-			WaitTargetData->ValidData.AddDynamic(this, &ThisClass::OnGameplayEventValidData);
-			WaitTargetData->Cancelled.AddDynamic(this, &ThisClass::OnGameplayEventCancelled);
-			WaitTargetData->Activate();
+			UE_LOG(LogTemp, Warning, TEXT("Actor cannot spawned in: %s"), *GetName());
+			EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
 		}
 	}
 }
 
-bool UGA_TargetBase::BindInputForTargeting()
+bool UGA_TargetBase::BindInputForConfirmAndCancel()
 {
 	AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
 	if (!HeroBase)
@@ -57,14 +54,16 @@ bool UGA_TargetBase::BindInputForTargeting()
 	return false;
 }
 
-AGameplayAbilityTargetActor* UGA_TargetBase::SpawnAndSetupTargetActor()
+AGAS_TargetActorBase* UGA_TargetBase::SpawnAndSetupTargetActor()
 {
 	if (UWorld* World = this->GetWorld())
 	{
 		if (TargetActorClass->IsValidLowLevelFast())
 		{
 			FTransform ActorTransform = FTransform(FRotator(0, 0, 0), FVector(0, 0, 0));
-			AGameplayAbilityTargetActor* TargetActor = World->SpawnActor<AGameplayAbilityTargetActor>(TargetActorClass, ActorTransform);
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
+			TargetActor = World->SpawnActor<AGAS_TargetActorBase>(TargetActorClass, ActorTransform, SpawnParams);
 
 			return TargetActor;
 		}
@@ -83,7 +82,7 @@ void UGA_TargetBase::OnGameplayEventCancelled(const FGameplayAbilityTargetDataHa
 	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
 }
 
-void UGA_TargetBase::ConfirmTargetingFromInput(const FInputActionValue& Value)
+void UGA_TargetBase::ConfirmTargetingFromInput()
 {
 	StartupEffects();
 
@@ -93,29 +92,17 @@ void UGA_TargetBase::ConfirmTargetingFromInput(const FInputActionValue& Value)
 		return;
 	}
 
-	if (!WaitTargetData.IsNull() && WaitTargetData->IsValidLowLevel())
+	if (TargetActor)
 	{
-		// Force the actor to be destroyed by calling EndTask after NextTick
-		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
-			{
-				WaitTargetData->EndTask();
-			});
-
-		WaitTargetData->ExternalConfirm(true);
+		TargetActor->Confirm();
 	}
 }
 
-void UGA_TargetBase::CancelAbilityFromInput(const FInputActionValue& Value)
+void UGA_TargetBase::CancelAbilityFromInput()
 {
-	if (!WaitTargetData.IsNull() && WaitTargetData->IsValidLowLevel())
+	if (TargetActor) 
 	{
-		// Force the actor to be destroyed by calling EndTask after NextTick
-		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
-			{
-				WaitTargetData->EndTask();
-			});
-
-		WaitTargetData->ExternalCancel();
+		TargetActor->Cancel();
 	}
 }
 

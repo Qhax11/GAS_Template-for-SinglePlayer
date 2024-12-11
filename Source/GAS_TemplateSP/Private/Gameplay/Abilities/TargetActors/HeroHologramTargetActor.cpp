@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_HologramAbilityHelper.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -17,10 +18,10 @@ void AHeroHologramTargetActor::BeginPlay()
 		return;
 	}
 
-	EyeOfViewComponent = HeroBase->GetEyeOfViewComponent();
-	if (!EyeOfViewComponent)
+	HologramAbilityHelperComponent = HeroBase->GetHologramAbilityHelperComponent();
+	if (!HologramAbilityHelperComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EyeOfViewComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("HologramAbilityHelperComponent is null in: %s"), *GetName());
 		return;
 	}
 
@@ -47,7 +48,6 @@ void AHeroHologramTargetActor::Tick(float DeltaSeconds)
 	{
 		SyncRotationWithHero(DeltaSeconds);
 	}
-
 }
 
 void AHeroHologramTargetActor::Confirm()

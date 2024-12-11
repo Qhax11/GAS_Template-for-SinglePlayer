@@ -54,7 +54,7 @@ private:
 	class AGAS_HeroBase* HeroBase;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USC_EyeOfView* EyeOfViewComponent;
+	class USC_HologramAbilityHelper* HologramAbilityHelperComponent;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAC_TargetLockSystem* TargetLockSystemComponent;

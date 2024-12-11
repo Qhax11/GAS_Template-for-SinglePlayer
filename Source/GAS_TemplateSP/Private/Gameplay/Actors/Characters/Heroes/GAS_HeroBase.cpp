@@ -6,7 +6,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAttributesListener.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroRespawn.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/SC_EyeOfView.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_HologramAbilityHelper.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
@@ -33,8 +33,8 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer):
 
     TargetLockSystemComponent = CreateDefaultSubobject<UAC_TargetLockSystem>(TEXT("TargetLockSystemComponent"));
 
-    EyeOfViewComponent = CreateDefaultSubobject<USC_EyeOfView>(TEXT("EyeOfViewComponent"));
-    EyeOfViewComponent->SetupAttachment(RootComponent);
+    HologramAbilityHelperComponent = CreateDefaultSubobject<USC_HologramAbilityHelper>(TEXT("HologramAbilityHelperComponent"));
+    HologramAbilityHelperComponent->SetupAttachment(RootComponent);
 }
 
 void AGAS_HeroBase::BeginPlay()

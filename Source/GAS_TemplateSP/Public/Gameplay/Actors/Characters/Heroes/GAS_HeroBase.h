@@ -28,7 +28,7 @@ public:
 
 	FORCEINLINE class UAC_HeroControl* GetHeroControlComponent() const { return HeroControlComponent; }
 
-	FORCEINLINE class USC_EyeOfView* GetEyeOfViewComponent() const { return EyeOfViewComponent; }
+	FORCEINLINE class USC_HologramAbilityHelper* GetHologramAbilityHelperComponent() const { return HologramAbilityHelperComponent; }
 
 	FORCEINLINE class UAC_TargetLockSystem* GetTargetLockSystemComponent() const { return TargetLockSystemComponent; }
 protected:
@@ -50,7 +50,7 @@ protected:
 	class UAC_TargetLockSystem* TargetLockSystemComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
-	class USC_EyeOfView* EyeOfViewComponent;
+	class USC_HologramAbilityHelper* HologramAbilityHelperComponent;
 
 private:
 	class UAC_AbilityInputBinding* AbilityInputBindingComponent;

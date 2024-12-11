@@ -4,7 +4,7 @@
 #include "Gameplay/Abilities/Hero/GA_HeroHologram.h"
 #include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/SC_EyeOfView.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_HologramAbilityHelper.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -37,7 +37,7 @@ AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotati
         return Super::SpawnAndSetupTargetActor(Rotation, Location);
     }
 
-    FVector HologramStartLocation = HeroBase->GetEyeOfViewComponent()->CalculateHologramTargetActorLocation(false);
+    FVector HologramStartLocation = HeroBase->GetHologramAbilityHelperComponent()->CalculateHologramTargetActorLocation(false);
     TArray<AActor*> OutResultActors;
     TraceData->Trace->CreateTraceWithTeamFilterAndLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, HologramStartLocation, OutResultActors);
 
@@ -49,6 +49,5 @@ AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotati
     else
     {
         return Super::SpawnAndSetupTargetActor(HeroBase->GetActorRotation(), HologramStartLocation);
-
     }
 }

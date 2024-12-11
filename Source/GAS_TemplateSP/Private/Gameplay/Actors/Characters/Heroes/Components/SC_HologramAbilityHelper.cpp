@@ -1,17 +1,17 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Actors/Characters/Heroes/Components/SC_EyeOfView.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_HologramAbilityHelper.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
-USC_EyeOfView::USC_EyeOfView()
+USC_HologramAbilityHelper::USC_HologramAbilityHelper()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void USC_EyeOfView::BeginPlay()
+void USC_HologramAbilityHelper::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -19,7 +19,7 @@ void USC_EyeOfView::BeginPlay()
 	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
 }
 
-void USC_EyeOfView::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -49,7 +49,7 @@ void USC_EyeOfView::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 }
 
-void USC_EyeOfView::UpdateRotationFromMouseInput(const FVector2D& MouseInput)
+void USC_HologramAbilityHelper::UpdateRotationFromMouseInput(const FVector2D& MouseInput)
 {
 	// 2.5f is the actual sensitivity value for the player camera.
 	FRotator DeltaRot;
@@ -66,7 +66,7 @@ void USC_EyeOfView::UpdateRotationFromMouseInput(const FVector2D& MouseInput)
 	SetWorldRotation(NewRotation);
 }
 
-FVector USC_EyeOfView::CalculateHologramTargetActorLocation(bool bDrawDebug)
+FVector USC_HologramAbilityHelper::CalculateHologramTargetActorLocation(bool bDrawDebug)
 {
 	if (!TraceDistanceCurve) 
 	{

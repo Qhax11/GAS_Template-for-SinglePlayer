@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
 #include "Curves/CurveFloat.h" 
-#include "SC_EyeOfView.generated.h"
+#include "SC_HologramAbilityHelper.generated.h"
 
 /**
- * USC_EyeOfView
+ * USC_HologramAbilityHelper
  *
  * This component is designed to mimic the rotation of the player's camera controlled by mouse inputs.
  * It is particularly useful in scenarios where the camera's viewpoint is locked or fixed, but an associated
@@ -20,12 +20,12 @@
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class GAS_TEMPLATESP_API USC_EyeOfView : public USceneComponent
+class GAS_TEMPLATESP_API USC_HologramAbilityHelper : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
-	USC_EyeOfView();
+	USC_HologramAbilityHelper();
 
 protected:
 	virtual void BeginPlay() override;

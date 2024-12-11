@@ -4,12 +4,13 @@
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
 #include "Abilities/GameplayAbility.h"
 
+
 void AGAS_TargetActorBase::Confirm()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Confirm"));
+	OnConfirm.Broadcast(FGAS_TargetActorData(this, nullptr));
 }
 
 void AGAS_TargetActorBase::Cancel()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Cancel"));
+	OnCancel.Broadcast(FGAS_TargetActorData(this, nullptr));
 }

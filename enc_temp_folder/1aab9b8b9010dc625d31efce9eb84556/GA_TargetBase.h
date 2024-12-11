@@ -45,7 +45,6 @@ protected:
 private:
 
 	/** The TargetActor that we spawned */
-	//TObjectPtr<AGAS_TargetActorBase> TargetActor;
 	AGAS_TargetActorBase* TargetActor;
 
 };

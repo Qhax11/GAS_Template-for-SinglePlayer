@@ -6,28 +6,26 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
-void UGA_HeroHologram::OnGameplayEventValidData(const FGameplayAbilityTargetDataHandle& Data)
+void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
-    if (!Data.IsValid(0))
+    AHeroHologramTargetActor* HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActorData.TargetActor);
+    if (!HeroHologramTargetActor)
     {
+        // Calling EndAbility
+        Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
 
-    TArray<AActor*> Actors = UAbilitySystemBlueprintLibrary::GetActorsFromTargetData(Data, 0);
-    if (Actors.IsValidIndex(0))
+    GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
+    GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
+    
+    if (HeroHologramTargetActor->AttackMontage && HeroHologramTargetActor->CurrentTarget)
     {
-        AHeroHologramTargetActor* HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(Actors[0]);
-        GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
-        GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
-
-        if (HeroHologramTargetActor->AttackMontage && HeroHologramTargetActor->CurrentTarget)
-        {
-            CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage, FName("Section2"));
-        }
-        else
-        {
-            // Calling EndAbility
-            Super::OnGameplayEventValidData(Data);
-        }
+        CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage, FName("Section2"));
     }
+    else
+    {
+        Super::OnTargetActorConfirm(TargetActorData);
+    }
+    
 }

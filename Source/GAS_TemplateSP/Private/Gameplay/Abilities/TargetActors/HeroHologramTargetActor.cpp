@@ -8,6 +8,8 @@
 
 void AHeroHologramTargetActor::BeginPlay()
 {
+	Super::BeginPlay();
+
 	HeroBase = Cast<AGAS_HeroBase>(GetInstigator());
 	if (!HeroBase)
 	{
@@ -28,18 +30,24 @@ void AHeroHologramTargetActor::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("TargetLockSystemComponent is null in: %s"), *GetName());
 		return;
 	}
-
-	if (TargetLockSystemComponent->CurrentTarget)
-	{
-		CurrentTarget = TargetLockSystemComponent->CurrentTarget;
-	}
 	TargetLockSystemComponent->OnTargetChanged.AddDynamic(this, &AHeroHologramTargetActor::OnTargetChaned);
 	TargetLockSystemComponent->OnEndTargetLock.AddDynamic(this, &AHeroHologramTargetActor::OnEndTargetLock);
+	//CurrentTarget = TargetLockSystemComponent->CurrentTarget;
 }
 
 void AHeroHologramTargetActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+}
+
+void AHeroHologramTargetActor::Confirm()
+{
+	OnConfirm.Broadcast(FGAS_TargetActorData(this, nullptr));
+}
+
+void AHeroHologramTargetActor::Cancel()
+{
+	OnCancel.Broadcast(FGAS_TargetActorData(this, nullptr));
 }
 
 void AHeroHologramTargetActor::OnTargetChaned(AActor* NewTarget)

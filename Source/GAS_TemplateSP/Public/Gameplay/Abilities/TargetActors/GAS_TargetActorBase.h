@@ -15,6 +15,31 @@
  * ensuring better performance and fewer errors when managing targets in gameplay.
  */
 
+
+USTRUCT(BlueprintType)
+struct FGAS_TargetActorData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "TargetActorData")
+	AActor* TargetActor;
+
+	UPROPERTY(BlueprintReadOnly, Category = "TargetActorData")
+	UObject* OptionalObject;
+
+	FGAS_TargetActorData() = default;
+
+	FGAS_TargetActorData(AActor* InTargetActor, UObject* InOptionalObject)
+		: TargetActor(InTargetActor),
+		OptionalObject(OptionalObject)
+	{}
+
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetActorConfirm, const FGAS_TargetActorData&, TargetActorData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetActorCancel, const FGAS_TargetActorData&, TargetActorData);
+
+
 UCLASS()
 class GAS_TEMPLATESP_API AGAS_TargetActorBase : public AActor
 {
@@ -26,4 +51,9 @@ public:
 
 	virtual void Cancel();
 
+	UPROPERTY(BlueprintAssignable)
+	FOnTargetActorConfirm OnConfirm;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTargetActorCancel OnCancel;
 };

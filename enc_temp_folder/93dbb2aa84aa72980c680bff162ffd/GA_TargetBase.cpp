@@ -85,7 +85,6 @@ void UGA_TargetBase::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActo
 
 void UGA_TargetBase::OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData)
 {
-	TargetActor->Destroy();
 	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
 }
 
@@ -93,7 +92,7 @@ void UGA_TargetBase::ConfirmTargetingFromInput()
 {
 	StartupEffects();
 
-	if (TargetActor)
+	if (TargetActor && !TargetActor->IsPendingKillEnabled())
 	{
 		TargetActor->Confirm();
 	}
@@ -107,7 +106,7 @@ void UGA_TargetBase::ConfirmTargetingFromInput()
 
 void UGA_TargetBase::CancelAbilityFromInput()
 {
-	if (TargetActor)
+	if (TargetActor && !TargetActor->IsPendingKillEnabled())
 	{
 		TargetActor->Cancel();
 	}

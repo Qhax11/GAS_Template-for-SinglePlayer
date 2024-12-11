@@ -17,13 +17,18 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void Confirm() override;
+
+	virtual void Cancel() override;
+
 public:
 	UPROPERTY(BlueprintReadWrite)
 	UAnimMontage* AttackMontage;
 
 	UPROPERTY(BlueprintReadWrite)
 	AActor* CurrentTarget;
-
+	//TObjectPtr<AActor> CurrentTarget;
+	
 public:
 	UFUNCTION()
 	void OnTargetChaned(AActor* NewTarget);

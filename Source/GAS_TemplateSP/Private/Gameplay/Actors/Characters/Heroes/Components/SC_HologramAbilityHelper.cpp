@@ -28,8 +28,9 @@ void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickTy
 		return;
 	}
 	
-	bool bIsHeroTargeting = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting);
-	if(bIsHeroTargeting)
+	bool bIsHeroTargetLocked = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
+	bool bIsHeroHologramAbilityTargeting = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
+	if(bIsHeroTargetLocked && bIsHeroHologramAbilityTargeting)
 	{
 		FVector2D MouseInput;
 		PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
@@ -61,7 +62,8 @@ void USC_HologramAbilityHelper::UpdateRotationFromMouseInput(const FVector2D& Mo
 
 	FRotator NewRotation = CurrentRotation + DeltaRot;
 
-	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch, -89.9f, 89.9f);
+	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch, -45.0f, 89.9f);
+	NewRotation.Yaw = FMath::Clamp(NewRotation.Yaw, -89.9f, 89.9f);
 
 	SetWorldRotation(NewRotation);
 }

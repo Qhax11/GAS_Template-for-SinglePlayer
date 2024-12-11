@@ -8,14 +8,14 @@
 #include "SC_HologramAbilityHelper.generated.h"
 
 /**
- * USC_HologramAbilityHelper
+ * USC_HologramAbilityHelper 
  *
- * This component is designed to mimic the rotation of the player's camera controlled by mouse inputs.
- * It is particularly useful in scenarios where the camera's viewpoint is locked or fixed, but an associated
- * actor or component needs to replicate the same rotational behavior as the camera.
+ * This component is designed to replicate the rotation behavior of the player's camera based on mouse inputs,
+ * specifically for hologram-based abilities. It synchronizes the rotation of the associated actor or component
+ * with the camera's viewpoint, making it ideal for visual effects that need to stay aligned with the camera's orientation.
  *
- * Ideal for abilities such as hologram-based effects or visual representations that need to stay
- * synchronized with the camera's orientation.
+ * Perfect for abilities like holograms or visual representations that must mimic the camera's rotation to maintain
+ * consistent alignment during gameplay.
  */
 
 

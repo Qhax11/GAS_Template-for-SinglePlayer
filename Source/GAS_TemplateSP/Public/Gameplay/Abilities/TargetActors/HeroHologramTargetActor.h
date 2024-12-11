@@ -23,11 +23,10 @@ public:
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	UAnimMontage* AttackMontage;
+	TObjectPtr<UAnimMontage> AttackMontage;
 
 	UPROPERTY(BlueprintReadWrite)
-	AActor* CurrentTarget;
-	//TObjectPtr<AActor> CurrentTarget;
+	TObjectPtr<AActor> CurrentTarget;
 	
 public:
 	UFUNCTION()

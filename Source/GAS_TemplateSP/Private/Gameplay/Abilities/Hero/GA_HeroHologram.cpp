@@ -11,9 +11,7 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
     AHeroHologramTargetActor* HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActorData.TargetActor);
     if (!HeroHologramTargetActor)
     {
-        // Calling EndAbility
         Super::OnTargetActorConfirm(TargetActorData);
-        return;
     }
 
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
@@ -23,9 +21,6 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
     {
         CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage, FName("Section2"));
     }
-    else
-    {
-        Super::OnTargetActorConfirm(TargetActorData);
-    }
-    
+   
+    Super::OnTargetActorConfirm(TargetActorData);
 }

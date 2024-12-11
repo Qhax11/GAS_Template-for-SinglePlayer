@@ -32,7 +32,7 @@ void AHeroHologramTargetActor::BeginPlay()
 	}
 	TargetLockSystemComponent->OnTargetChanged.AddDynamic(this, &AHeroHologramTargetActor::OnTargetChaned);
 	TargetLockSystemComponent->OnEndTargetLock.AddDynamic(this, &AHeroHologramTargetActor::OnEndTargetLock);
-	//CurrentTarget = TargetLockSystemComponent->CurrentTarget;
+	CurrentTarget = TargetLockSystemComponent->CurrentTarget;
 }
 
 void AHeroHologramTargetActor::Tick(float DeltaSeconds)

@@ -91,17 +91,17 @@ void UGA_TargetBase::OnTargetActorCancelled(const FGAS_TargetActorData& TargetAc
 
 void UGA_TargetBase::ConfirmTargetingFromInput()
 {
+	if (!CommitAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo()))
+	{
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, true);
+		return;
+	}
+
 	StartupEffects();
 
 	if (TargetActor)
 	{
 		TargetActor->Confirm();
-	}
-
-	if (!CommitAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo()))
-	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, true);
-		return;
 	}
 }
 

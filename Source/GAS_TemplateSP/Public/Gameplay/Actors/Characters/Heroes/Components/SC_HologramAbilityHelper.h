@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
 #include "Curves/CurveFloat.h" 
 #include "SC_HologramAbilityHelper.generated.h"

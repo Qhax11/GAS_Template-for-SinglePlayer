@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include <AbilitySystemGlobals.h>
 
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)

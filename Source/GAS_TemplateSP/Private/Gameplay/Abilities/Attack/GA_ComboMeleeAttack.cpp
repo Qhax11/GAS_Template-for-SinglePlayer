@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/GA_ComboMeleeAttack.h"
+#include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
 
 UGA_ComboMeleeAttack::UGA_ComboMeleeAttack()
 {

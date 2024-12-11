@@ -28,6 +28,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<AActor> CurrentTarget;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "HeroHologramTargetActor")
+	float RotationSpeed = 5.0f;
+
 public:
 	UFUNCTION()
 	void OnTargetChaned(AActor* NewTarget);
@@ -42,6 +45,11 @@ public:
 	void BP_OnEndTargetLock();
 
 private:
+
+	void RotateToTarget(AActor* TargetActor, float DeltaTime);
+
+	void SyncRotationWithHero(float DeltaTime);
+
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class AGAS_HeroBase* HeroBase;
 	

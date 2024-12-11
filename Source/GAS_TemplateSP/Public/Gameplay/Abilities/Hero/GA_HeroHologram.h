@@ -18,4 +18,6 @@ private:
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 	
+	virtual AGAS_TargetActorBase* SpawnAndSetupTargetActor(FRotator Rotation, FVector Location) override;
+
 };

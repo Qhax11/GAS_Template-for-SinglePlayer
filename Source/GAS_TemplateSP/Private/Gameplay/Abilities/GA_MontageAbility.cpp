@@ -38,7 +38,7 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	StartupEffects();
 }
 
-void UGA_MontageAbility::CreatePlayMontageWaitForEvent(UAnimMontage* Montage, FName SectionName)
+void UGA_MontageAbility::CreatePlayMontageWaitForEvent(UAnimMontage* Montage)
 {
 	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
 	Task->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);

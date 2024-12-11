@@ -17,11 +17,14 @@ public:
 	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	void CreatePlayMontageWaitForEvent(UAnimMontage* Montage, FName SectionName = NAME_None);
+	void CreatePlayMontageWaitForEvent(UAnimMontage* Montage);
 
 	/** List of animation montages you want to cycle through when activating this ability */
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	TArray<TObjectPtr<UAnimMontage>> Montages;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
+	FName SectionName = NAME_None;
 
 	/** Change to play the montage faster or slower */
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")

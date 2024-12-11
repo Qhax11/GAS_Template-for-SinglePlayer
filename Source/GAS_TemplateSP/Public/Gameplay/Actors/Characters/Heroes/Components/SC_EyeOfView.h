@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
+#include "Curves/CurveFloat.h" 
 #include "SC_EyeOfView.generated.h"
 
 /**
@@ -34,12 +35,18 @@ public:
 
 	void UpdateRotationFromMouseInput(const FVector2D& MouseInput);
 
-	UPROPERTY(EditDefaultsOnly)
-	float RotationSpeed = 2.5f;
+	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
+	FVector CalculateHologramTargetActorLocation(bool bDrawDebug);
+
+	UPROPERTY(EditDefaultsOnly, Category = "CalculateHologramTargetActorLocation")
+	UCurveFloat* TraceDistanceCurve;
+
+	UPROPERTY(BlueprintReadOnly, Category = "CalculateHologramTargetActorLocation")
+	float TraceDistance = 0.f;
 
 private:
-
 	class APlayerController* PC;
 
 	class AGAS_HeroBase* HeroBase;
+
 };

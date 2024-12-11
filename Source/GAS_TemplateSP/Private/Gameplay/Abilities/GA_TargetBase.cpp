@@ -59,13 +59,13 @@ bool UGA_TargetBase::BindInputForConfirmAndCancel()
 	return false;
 }
 
-AGAS_TargetActorBase* UGA_TargetBase::SpawnAndSetupTargetActor()
+AGAS_TargetActorBase* UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
 {
 	if (UWorld* World = this->GetWorld())
 	{
 		if (TargetActorClass->IsValidLowLevelFast())
 		{
-			FTransform ActorTransform = FTransform(FRotator(0, 0, 0), FVector(0, 0, 0));
+			FTransform ActorTransform = FTransform(Rotation, Location);
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
 			TargetActor = World->SpawnActor<AGAS_TargetActorBase>(TargetActorClass, ActorTransform, SpawnParams);

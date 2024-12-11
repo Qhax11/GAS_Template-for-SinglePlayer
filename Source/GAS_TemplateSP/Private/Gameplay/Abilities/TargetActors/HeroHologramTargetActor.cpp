@@ -4,7 +4,7 @@
 #include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
-
+#include "Kismet/KismetMathLibrary.h"
 
 void AHeroHologramTargetActor::BeginPlay()
 {
@@ -38,6 +38,16 @@ void AHeroHologramTargetActor::BeginPlay()
 void AHeroHologramTargetActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if (CurrentTarget) 
+	{
+		RotateToTarget(CurrentTarget, DeltaSeconds);
+	}
+	else 
+	{
+		SyncRotationWithHero(DeltaSeconds);
+	}
+
 }
 
 void AHeroHologramTargetActor::Confirm()
@@ -58,4 +68,35 @@ void AHeroHologramTargetActor::OnTargetChaned(AActor* NewTarget)
 void AHeroHologramTargetActor::OnEndTargetLock()
 {
 	BP_OnEndTargetLock();
+}
+
+void AHeroHologramTargetActor::RotateToTarget(AActor* TargetActor, float DeltaTime)
+{
+	if (!TargetActor) 
+	{
+		return;
+	} 
+
+	FVector CurrentLocation = GetActorLocation();
+	FVector TargetLocation = TargetActor->GetActorLocation();
+
+	FRotator CurrentRotation = GetActorRotation();
+	FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(CurrentLocation, TargetLocation);
+	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, RotationSpeed);
+
+	SetActorRotation(FRotator(CurrentRotation.Pitch, NewRotation.Yaw, CurrentRotation.Roll));
+}
+
+void AHeroHologramTargetActor::SyncRotationWithHero(float DeltaTime)
+{
+	if (!HeroBase)
+	{
+		return;
+	}
+
+	FRotator CurrentRotation = GetActorRotation();
+	FRotator HeroRotation = HeroBase->GetActorRotation();
+	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, HeroRotation, DeltaTime, RotationSpeed);
+
+	SetActorRotation(FRotator(CurrentRotation.Pitch, NewRotation.Yaw, CurrentRotation.Roll));
 }

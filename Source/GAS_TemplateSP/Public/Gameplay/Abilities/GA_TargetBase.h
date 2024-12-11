@@ -22,7 +22,7 @@ public:
 
 	bool BindInputForConfirmAndCancel();
 
-	virtual AGAS_TargetActorBase* SpawnAndSetupTargetActor();
+	virtual AGAS_TargetActorBase* SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
 	/** The TargetActor class that we spawned */
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")

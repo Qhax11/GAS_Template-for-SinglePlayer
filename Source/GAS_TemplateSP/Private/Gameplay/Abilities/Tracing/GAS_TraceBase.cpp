@@ -17,6 +17,17 @@ void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owne
 	MakeTeamFilter(OutActors, *Owner, TeamAttidue);
 }
 
+void UGAS_TraceBase::CreateTraceWithTeamFilterAndLocation(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, TArray<AActor*>& OutActors)
+{
+	FRotator StartRotation;
+
+	GetTraceStartLocationAndDirection(Owner, Location, StartRotation);
+
+	MakeTrace(Owner, World, Location, FRotator::ZeroRotator, OutActors);
+
+	MakeTeamFilter(OutActors, *Owner, TeamAttidue);
+}
+
 void UGAS_TraceBase::CreateTraceWithTeamFilterAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors)
 {
 	FVector StartLocation;
@@ -56,7 +67,6 @@ void UGAS_TraceBase::GetTraceStartLocationAndDirection(AActor* Owner, FVector& O
 		{
 			OutDirection = Owner->GetActorForwardVector().Rotation();
 		}
-
 	}
 }
 

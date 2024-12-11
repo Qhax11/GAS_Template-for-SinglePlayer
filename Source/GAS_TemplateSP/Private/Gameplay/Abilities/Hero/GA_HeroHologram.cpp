@@ -4,7 +4,10 @@
 #include "Gameplay/Abilities/Hero/GA_HeroHologram.h"
 #include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_EyeOfView.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
@@ -27,5 +30,25 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
 
 AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
 {
-    return Super::SpawnAndSetupTargetActor(Rotation, Location);
+    AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
+    if (!HeroBase || !TraceData) 
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HeroBase or TraceData is null in: %s"), *GetName());
+        return Super::SpawnAndSetupTargetActor(Rotation, Location);
+    }
+
+    FVector HologramStartLocation = HeroBase->GetEyeOfViewComponent()->CalculateHologramTargetActorLocation(false);
+    TArray<AActor*> OutResultActors;
+    TraceData->Trace->CreateTraceWithTeamFilterAndLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, HologramStartLocation, OutResultActors);
+
+    if (OutResultActors.IsValidIndex(0)) 
+    {
+        FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramStartLocation, OutResultActors[0]->GetActorLocation());
+        return Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramStartLocation);
+    }
+    else
+    {
+        return Super::SpawnAndSetupTargetActor(HeroBase->GetActorRotation(), HologramStartLocation);
+
+    }
 }

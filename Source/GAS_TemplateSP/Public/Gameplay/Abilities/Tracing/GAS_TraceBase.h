@@ -11,14 +11,15 @@ UENUM(BlueprintType)
 enum ETraceStartLocation: uint8
 {
 	Avatar,
-	Camera
+	Camera,
+	CustomLocation
 };
 
 UENUM(BlueprintType)
 enum ETraceDirectionType : uint8
 {
 	ForwardVector,
-	Custom
+	CustomDirection
 };
 
 #define ECC_DEAD ECC_GameTraceChannel1
@@ -35,6 +36,8 @@ protected:
 
 public:
 	void CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors);
+
+	void CreateTraceWithTeamFilterAndLocation(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, TArray<AActor*>& OutActors);
 
 	void CreateTraceWithTeamFilterAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors);
 

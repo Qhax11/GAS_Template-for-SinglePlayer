@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/SC_HologramAbilityHelper.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Gameplay/Tags/GAS_Tags.h"
@@ -16,7 +17,28 @@ void USC_HologramAbilityHelper::BeginPlay()
 	Super::BeginPlay();
 
 	PC = GetWorld()->GetFirstPlayerController();
+	if (!PC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PC is null in: %s"), *GetName());
+		return;
+	}
+
 	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
+	if (!HeroBase) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
+		return;
+	}
+
+	UAC_TargetLockSystem* TargetLockSystem = HeroBase->GetTargetLockSystemComponent();
+	if (!TargetLockSystem) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetLockSystem is null in: %s"), *GetName());
+		return;
+	}
+	TargetLockSystem->OnStartTargetLock.AddDynamic(this, &USC_HologramAbilityHelper::OnStartTargetLock);
+	TargetLockSystem->OnHeroRotationToTargetCompleted.AddDynamic(this, &USC_HologramAbilityHelper::OnHeroRotationToTargetCompleted);
+	TargetLockSystem->OnEndTargetLock.AddDynamic(this, &USC_HologramAbilityHelper::OnEndTargetLock);
 }
 
 void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -30,15 +52,18 @@ void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickTy
 	
 	bool bIsHeroTargetLocked = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	bool bIsHeroHologramAbilityTargeting = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
-	if(bIsHeroTargetLocked && bIsHeroHologramAbilityTargeting)
+
+	if(bIsHeroTargetLocked)
 	{
+		UpdateYawToActLikeRelative();
 		FVector2D MouseInput;
 		PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
-
+	
 		if (!MouseInput.IsNearlyZero())
 		{
-			UpdateRotationFromMouseInput(MouseInput);
 		}
+		UpdateRotationFromMouseInput(MouseInput);
+
 	}
 	else 
 	{
@@ -54,16 +79,24 @@ void USC_HologramAbilityHelper::UpdateRotationFromMouseInput(const FVector2D& Mo
 {
 	// 2.5f is the actual sensitivity value for the player camera.
 	FRotator DeltaRot;
-	DeltaRot.Pitch = MouseInput.Y * 2.5f; 
-	DeltaRot.Yaw = MouseInput.X * 2.5f; 
-	DeltaRot.Roll = 0.0f;                          
+	DeltaRot.Pitch = MouseInput.Y * 2.5f;
+	DeltaRot.Yaw = MouseInput.X * 2.5f;
+	DeltaRot.Roll = 0.0f;
 
 	FRotator CurrentRotation = GetComponentRotation();
 
 	FRotator NewRotation = CurrentRotation + DeltaRot;
 
 	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch, -45.0f, 89.9f);
-	NewRotation.Yaw = FMath::Clamp(NewRotation.Yaw, -89.9f, 89.9f);
+
+	// Yaw Clamp
+	float HeroBaseYaw = HeroBase->GetActorRotation().Yaw;
+	// Calculate the difference between the new yaw and character yaw
+	float YawDifference = FMath::FindDeltaAngleDegrees(HeroBaseYaw, NewRotation.Yaw);
+	// Clamp the yaw difference to the desired range, e.g., -90 to 90 degrees
+	float ClampedYawDifference = FMath::Clamp(YawDifference, -90.0f, 90.0f);
+	// Update NewRotation's yaw to respect the clamped difference
+	NewRotation.Yaw = HeroBaseYaw + ClampedYawDifference;
 
 	SetWorldRotation(NewRotation);
 }
@@ -109,3 +142,46 @@ FVector USC_HologramAbilityHelper::CalculateHologramTargetActorLocation(bool bDr
 	return HitResult.ImpactPoint;
 }
 
+void USC_HologramAbilityHelper::OnStartTargetLock()
+{
+	//SetWorldRotation(FRotator::ZeroRotator);
+	//SetUsingAbsoluteRotation(false);
+}
+
+void USC_HologramAbilityHelper::OnHeroRotationToTargetCompleted()
+{
+	//FRotator CurrentRotation = GetComponentRotation() - HeroBase->GetActorRotation();
+	//SetRelativeRotation(CurrentRotation);
+}
+
+void USC_HologramAbilityHelper::OnEndTargetLock()
+{
+
+}
+
+void USC_HologramAbilityHelper::UpdateYawToActLikeRelative()
+{
+	if (!HeroBase) // HeroBase kontrolü
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
+		return;
+	}
+
+	// Karakterin dünya rotasyonunu al
+	float HeroYaw = HeroBase->GetActorRotation().Yaw;
+
+	// Component'in dünya rotasyonunu al
+	FRotator ComponentWorldRotation = GetComponentRotation();
+
+	// Component'in relative yaw'unu hesapla
+	float RelativeYaw = FMath::FindDeltaAngleDegrees(HeroYaw, ComponentWorldRotation.Yaw);
+
+	// Yeni relative yaw'u karakterin dünya rotasyonuna ekleyerek yeni dünya rotasyonunu oluþtur
+	FRotator NewWorldRotation = FRotator(ComponentWorldRotation.Pitch, HeroYaw + RelativeYaw, ComponentWorldRotation.Roll);
+
+	// Dünya rotasyonunu uygula
+	SetWorldRotation(NewWorldRotation);
+
+	UE_LOG(LogTemp, Log, TEXT("Updated Component Yaw to act relative: HeroYaw=%f, RelativeYaw=%f, FinalYaw=%f"),
+		HeroYaw, RelativeYaw, NewWorldRotation.Yaw);
+}

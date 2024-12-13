@@ -43,9 +43,26 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "CalculateHologramTargetActorLocation")
 	float TraceDistance = 0.f;
 
+public:
+
+	UFUNCTION()
+	void OnStartTargetLock();
+
+	UFUNCTION()
+	void OnHeroRotationToTargetCompleted();
+
+	UFUNCTION()
+	void OnEndTargetLock();
+
 private:
 	class APlayerController* PC;
 
 	class AGAS_HeroBase* HeroBase;
 
+	FRotator LastKnownRotation;
+
+private:
+	float InitialRelativeYaw = 0.0f;  // Baþlangýçta yaw farkýný tutmak için bir deðiþken
+
+	void UpdateYawToActLikeRelative();
 };

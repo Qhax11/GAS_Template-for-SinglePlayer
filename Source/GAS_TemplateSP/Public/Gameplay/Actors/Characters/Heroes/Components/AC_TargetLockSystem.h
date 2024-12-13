@@ -6,6 +6,8 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "AC_TargetLockSystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartTargetLock);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHeroRotationToTargetCompleted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetChanged, AActor*, NewTarget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndTargetLock);
 
@@ -53,11 +55,17 @@ protected:
 
 public:
 	UPROPERTY(BlueprintAssignable)
+	FOnStartTargetLock OnStartTargetLock;
+
+
+
+	UPROPERTY(BlueprintAssignable)
 	FOnTargetChanged OnTargetChanged;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEndTargetLock OnEndTargetLock;
 
+public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
 	class UGAS_AbilityTraceData* TracingDataStart;
 
@@ -88,6 +96,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
 	float CameraOffsetZ = 100.0f;
 
+	UPROPERTY(BlueprintAssignable, Category = "TargetLockSystem|Rotate")
+	FOnHeroRotationToTargetCompleted OnHeroRotationToTargetCompleted;
+	bool bHasRotatedOnce = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
+	float YawToleranceForCompleted = 0.01f;
+
 protected:
 
 	UPROPERTY(BlueprintReadWrite)
@@ -107,4 +122,8 @@ private:
 
 	float TryToFindNewTargetLastExecutionTimeRight = 0.0f;
 	float TryToFindNewTargetLastExecutionTimeLeft = 0.0f;
+
+
+
+
 };

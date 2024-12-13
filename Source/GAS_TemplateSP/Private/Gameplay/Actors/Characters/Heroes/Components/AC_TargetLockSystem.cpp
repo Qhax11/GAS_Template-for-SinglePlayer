@@ -109,6 +109,8 @@ void UAC_TargetLockSystem::StartTargetLock()
 	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	bLocked = true;
 	SetComponentTickEnabled(true);
+
+	OnStartTargetLock.Broadcast();
 }
 
 void UAC_TargetLockSystem::EndTargetLock()
@@ -333,6 +335,17 @@ void UAC_TargetLockSystem::RotateHeroToTarget()
 	// Set the new rotation, but only update Yaw (Left-Right rotation), keep Pitch and Roll unchanged
 	NewHeroRotation.Pitch = CurrentHeroRotation.Pitch;
 	NewHeroRotation.Roll = CurrentHeroRotation.Roll;
+
+	// Calculate the yaw difference between the current rotation and the target rotation
+	float YawDifference = FMath::FindDeltaAngleDegrees(CurrentHeroRotation.Yaw, NewHeroRotation.Yaw);
+
+	// Check if the yaw difference is within the tolerance range (i.e., the hero has almost turned to the target)
+	if (FMath::Abs(YawDifference) <= YawToleranceForCompleted && !bHasRotatedOnce)
+	{
+		// Broadcast delegate if the hero is facing the target (within tolerance)
+		OnHeroRotationToTargetCompleted.Broadcast();
+		bHasRotatedOnce = true;
+	}
 
 	HeroBase->SetActorRotation(NewHeroRotation);
 }

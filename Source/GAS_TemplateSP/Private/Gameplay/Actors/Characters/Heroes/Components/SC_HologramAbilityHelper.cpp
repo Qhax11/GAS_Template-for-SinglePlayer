@@ -3,8 +3,10 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/SC_HologramAbilityHelper.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
+#include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "GameFramework/PlayerController.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
 USC_HologramAbilityHelper::USC_HologramAbilityHelper()
@@ -30,14 +32,13 @@ void USC_HologramAbilityHelper::BeginPlay()
 		return;
 	}
 
-	UAC_TargetLockSystem* TargetLockSystem = HeroBase->GetTargetLockSystemComponent();
+	TargetLockSystem = HeroBase->GetTargetLockSystemComponent();
 	if (!TargetLockSystem) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TargetLockSystem is null in: %s"), *GetName());
 		return;
 	}
 	TargetLockSystem->OnStartTargetLock.AddDynamic(this, &USC_HologramAbilityHelper::OnStartTargetLock);
-	TargetLockSystem->OnHeroRotationToTargetCompleted.AddDynamic(this, &USC_HologramAbilityHelper::OnHeroRotationToTargetCompleted);
 	TargetLockSystem->OnEndTargetLock.AddDynamic(this, &USC_HologramAbilityHelper::OnEndTargetLock);
 }
 
@@ -53,71 +54,31 @@ void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickTy
 	bool bIsHeroTargetLocked = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	bool bIsHeroHologramAbilityTargeting = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
 
-	if(bIsHeroTargetLocked)
-	{
-		UpdateYawToActLikeRelative();
-		FVector2D MouseInput;
-		PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
-	
-		if (!MouseInput.IsNearlyZero())
-		{
-		}
-		UpdateRotationFromMouseInput(MouseInput);
 
+	CalculateCumulativeMouseInputs();
+	UpdateTraceForwardDistance();
+
+	if (bIsHeroTargetLocked) 
+	{
+		LookAtTarget();
+		UpdateTraceRightDistance();
 	}
 	else 
 	{
-		FVector Location;
-		FRotator Rotation;
-		PC->GetPlayerViewPoint(Location, Rotation);
-		SetWorldRotation(Rotation);
+		FVector PlayerViewLocation;
+		FRotator PlayerViewRotation;
+		PC->GetPlayerViewPoint(PlayerViewLocation, PlayerViewRotation);
+		SetWorldRotation(FRotator(0, PlayerViewRotation.Yaw, 0));
 	}
-
 }
 
-void USC_HologramAbilityHelper::UpdateRotationFromMouseInput(const FVector2D& MouseInput)
+FVector USC_HologramAbilityHelper::PerformLineTraceNonTargetLocked(bool bDrawDebug)
 {
-	// 2.5f is the actual sensitivity value for the player camera.
-	FRotator DeltaRot;
-	DeltaRot.Pitch = MouseInput.Y * 2.5f;
-	DeltaRot.Yaw = MouseInput.X * 2.5f;
-	DeltaRot.Roll = 0.0f;
-
-	FRotator CurrentRotation = GetComponentRotation();
-
-	FRotator NewRotation = CurrentRotation + DeltaRot;
-
-	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch, -45.0f, 89.9f);
-
-	// Yaw Clamp
-	float HeroBaseYaw = HeroBase->GetActorRotation().Yaw;
-	// Calculate the difference between the new yaw and character yaw
-	float YawDifference = FMath::FindDeltaAngleDegrees(HeroBaseYaw, NewRotation.Yaw);
-	// Clamp the yaw difference to the desired range, e.g., -90 to 90 degrees
-	float ClampedYawDifference = FMath::Clamp(YawDifference, -90.0f, 90.0f);
-	// Update NewRotation's yaw to respect the clamped difference
-	NewRotation.Yaw = HeroBaseYaw + ClampedYawDifference;
-
-	SetWorldRotation(NewRotation);
-}
-
-FVector USC_HologramAbilityHelper::CalculateHologramTargetActorLocation(bool bDrawDebug)
-{
-	if (!TraceDistanceCurve) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TraceDistanceCurve is null in: %s"), *GetName());
-		return FVector::ZeroVector;
-	}
-	TraceDistance = TraceDistanceCurve->GetFloatValue(GetComponentRotation().Pitch);
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
 
 	FVector FirstTraceStart = GetComponentLocation();
-	FVector ForwardVector = GetForwardVector();
-
-	FVector TraceOffset = FVector(ForwardVector.X * TraceDistance, ForwardVector.Y * TraceDistance, ForwardVector.Z);
-	FVector FirstTraceEnd = FirstTraceStart + TraceOffset;
-
-	FHitResult HitResult; 
-	FCollisionQueryParams CollisionParams;
+	FVector FirstTraceEnd = FirstTraceStart + GetForwardVector() * TraceForwardDistance;
 
 	GetWorld()->LineTraceSingleByChannel(HitResult, FirstTraceStart, FirstTraceEnd, ECC_Visibility, CollisionParams);
 	if (bDrawDebug) 
@@ -132,11 +93,51 @@ FVector USC_HologramAbilityHelper::CalculateHologramTargetActorLocation(bool bDr
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, SecondTraceStart, SecondTraceEnd, ECC_Visibility, CollisionParams);
 	if (bDrawDebug)
 	{
-		DrawDebugLine(GetWorld(), SecondTraceStart, SecondTraceEnd, FColor::Green, false, 0.0f, 0, 1.0f);
+		DrawDebugLine(GetWorld(), SecondTraceStart, SecondTraceEnd, FColor::Blue, false, 0.0f, 0, 1.0f);
+		if (bHit)
+		{
+			DrawDebugPoint(GetWorld(), HitResult.ImpactPoint, 10.0f, FColor::Blue, false, 0.0f);
+		}
 	}
-	if (bDrawDebug && bHit)
+
+	return HitResult.ImpactPoint;
+}
+
+FVector USC_HologramAbilityHelper::PerformLineTraceTargetLocked(bool bDrawDebug)
+{
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+
+	FVector FirstTraceStart = GetComponentLocation();
+	FVector FirstTraceEnd = FirstTraceStart + GetRightVector() * TraceRightDistance;
+
+	GetWorld()->LineTraceSingleByChannel(HitResult, FirstTraceStart, FirstTraceEnd, ECC_Visibility, CollisionParams);
+	if (bDrawDebug)
 	{
-		DrawDebugPoint(GetWorld(), HitResult.ImpactPoint, 10.0f, FColor::Red, false, 0.0f);  
+		DrawDebugLine(GetWorld(), FirstTraceStart, FirstTraceEnd, FColor::Red, false, 0.0f, 0, 1.0f);
+	}
+
+	FVector SecondTraceStart = HitResult.TraceEnd;
+	FVector SecondTraceEnd = SecondTraceStart + GetForwardVector() * TraceForwardDistance;
+
+	GetWorld()->LineTraceSingleByChannel(HitResult, SecondTraceStart, SecondTraceEnd, ECC_Visibility, CollisionParams);
+	if (bDrawDebug)
+	{
+		DrawDebugLine(GetWorld(), SecondTraceStart, SecondTraceEnd, FColor::Red, false, 0.0f, 0, 1.0f);
+	}
+
+	FVector ThirdTraceStart = HitResult.TraceEnd;
+	FVector ThirdTraceEnd = HitResult.TraceEnd;
+	ThirdTraceEnd.Z *= -1.0f;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, ThirdTraceStart, ThirdTraceEnd, ECC_Visibility, CollisionParams);
+	if (bDrawDebug)
+	{
+		DrawDebugLine(GetWorld(), ThirdTraceStart, ThirdTraceEnd, FColor::Red, false, 0.0f, 0, 1.0f);
+		if (bHit)
+		{
+			DrawDebugPoint(GetWorld(), HitResult.ImpactPoint, 10.0f, FColor::Red, false, 0.0f);
+		}
 	}
 
 	return HitResult.ImpactPoint;
@@ -144,14 +145,9 @@ FVector USC_HologramAbilityHelper::CalculateHologramTargetActorLocation(bool bDr
 
 void USC_HologramAbilityHelper::OnStartTargetLock()
 {
-	//SetWorldRotation(FRotator::ZeroRotator);
-	//SetUsingAbsoluteRotation(false);
-}
-
-void USC_HologramAbilityHelper::OnHeroRotationToTargetCompleted()
-{
-	//FRotator CurrentRotation = GetComponentRotation() - HeroBase->GetActorRotation();
-	//SetRelativeRotation(CurrentRotation);
+	CumulativeMouseDeltaX = 0;
+	TraceRightDistance = 0;
+	TraceRightDistanceOffset = GetPointDistToLine();
 }
 
 void USC_HologramAbilityHelper::OnEndTargetLock()
@@ -159,29 +155,58 @@ void USC_HologramAbilityHelper::OnEndTargetLock()
 
 }
 
-void USC_HologramAbilityHelper::UpdateYawToActLikeRelative()
+void USC_HologramAbilityHelper::UpdateTraceForwardDistance()
 {
-	if (!HeroBase) // HeroBase kontrolü
+	if (!TraceDistanceCurve) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TraceDistanceCurve is null in: %s"), *GetName());
 		return;
 	}
 
-	// Karakterin dünya rotasyonunu al
-	float HeroYaw = HeroBase->GetActorRotation().Yaw;
-
-	// Component'in dünya rotasyonunu al
-	FRotator ComponentWorldRotation = GetComponentRotation();
-
-	// Component'in relative yaw'unu hesapla
-	float RelativeYaw = FMath::FindDeltaAngleDegrees(HeroYaw, ComponentWorldRotation.Yaw);
-
-	// Yeni relative yaw'u karakterin dünya rotasyonuna ekleyerek yeni dünya rotasyonunu oluþtur
-	FRotator NewWorldRotation = FRotator(ComponentWorldRotation.Pitch, HeroYaw + RelativeYaw, ComponentWorldRotation.Roll);
-
-	// Dünya rotasyonunu uygula
-	SetWorldRotation(NewWorldRotation);
-
-	UE_LOG(LogTemp, Log, TEXT("Updated Component Yaw to act relative: HeroYaw=%f, RelativeYaw=%f, FinalYaw=%f"),
-		HeroYaw, RelativeYaw, NewWorldRotation.Yaw);
+	float CurveValue = TraceDistanceCurve->GetFloatValue(CumulativeMouseDeltaY);
+	TraceForwardDistance = CurveValue + TraceForwardDistanceOffset;
 }
+
+void USC_HologramAbilityHelper::UpdateTraceRightDistance()
+{
+	TraceRightDistance = CumulativeMouseDeltaX + TraceRightDistanceOffset;
+}
+
+FVector2D USC_HologramAbilityHelper::CalculateCumulativeMouseInputs()
+{
+	if (!PC) 
+	{
+		return FVector2D();
+	}
+
+	FVector2D MouseInput;
+	PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
+	if (!MouseInput.IsNearlyZero())
+	{
+		CumulativeMouseDeltaX += MouseInput.X * SensitiveMultiplierX;
+		CumulativeMouseDeltaY += MouseInput.Y * SensitiveMultiplierY;
+	}
+
+	return FVector2D(CumulativeMouseDeltaX, CumulativeMouseDeltaY);
+}
+
+void USC_HologramAbilityHelper::LookAtTarget()
+{
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->CurrentTarget->GetActorLocation());
+	SetWorldRotation(FRotator(0, LookAtRotation.Yaw, 0));
+}
+
+float USC_HologramAbilityHelper::GetPointDistToLine()
+{
+	if (!HeroHologramTargetActor) 
+	{
+		return 0;
+	}
+	FVector ClosestPointOnLine;
+	FVector NormalizedDirection = HeroBase->GetActorLocation() - TargetLockSystem->CurrentTarget->GetActorLocation();
+	NormalizedDirection.Normalize();
+	float PointDistToLine = FMath::PointDistToLine(HeroHologramTargetActor->GetActorLocation(), NormalizedDirection, HeroBase->GetActorLocation(), ClosestPointOnLine);
+	return PointDistToLine;
+}
+
+

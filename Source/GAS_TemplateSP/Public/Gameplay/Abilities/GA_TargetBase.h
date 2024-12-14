@@ -42,7 +42,7 @@ protected:
 	UFUNCTION()
 	void CancelAbilityFromInput();
 
-private:
+protected:
 
 	/** The TargetActor that we spawned */
 	TObjectPtr<AGAS_TargetActorBase> TargetActor;

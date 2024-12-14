@@ -16,6 +16,8 @@ class GAS_TEMPLATESP_API UGA_HeroHologram : public UGA_TargetBase
 
 private:
 
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 	
 	virtual AGAS_TargetActorBase* SpawnAndSetupTargetActor(FRotator Rotation, FVector Location) override;

@@ -15,6 +15,12 @@ class GAS_TEMPLATESP_API AHologramTargetActorBase : public AGAS_TargetActorBase
 
 public:
 
-	
+	AHologramTargetActorBase();
+
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCapsuleComponent> CapsuleComponent;
+
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* SkeletalMesh;
 
 };

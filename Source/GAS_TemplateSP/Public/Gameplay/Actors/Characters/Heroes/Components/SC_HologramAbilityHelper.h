@@ -29,40 +29,66 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	class UAC_TargetLockSystem* TargetLockSystem;
+
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void UpdateRotationFromMouseInput(const FVector2D& MouseInput);
+	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
+	FVector PerformLineTraceNonTargetLocked(bool bDrawDebug);
 
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
-	FVector CalculateHologramTargetActorLocation(bool bDrawDebug);
+	FVector PerformLineTraceTargetLocked(bool bDrawDebug);
 
 	UPROPERTY(EditDefaultsOnly, Category = "CalculateHologramTargetActorLocation")
 	UCurveFloat* TraceDistanceCurve;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CalculateHologramTargetActorLocation")
-	float TraceDistance = 0.f;
-
 public:
+
+	TObjectPtr<class AHeroHologramTargetActor> HeroHologramTargetActor;
 
 	UFUNCTION()
 	void OnStartTargetLock();
 
 	UFUNCTION()
-	void OnHeroRotationToTargetCompleted();
-
-	UFUNCTION()
 	void OnEndTargetLock();
+
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper||MouseInputConfig")
+	float SensitiveMultiplierX = 100.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper||MouseInputConfig")
+	float SensitiveMultiplierY = 100.0f;
+
+
+
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper||Trace")
+	float TraceForwardDistance = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper||Trace")
+	float TraceForwardDistanceOffset = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper||Trace")
+	float TraceRightDistance = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper||Trace")
+	float TraceRightDistanceOffset = 0.f;
+
+
+	void UpdateTraceForwardDistance();
+
+	void UpdateTraceRightDistance();
 
 private:
 	class APlayerController* PC;
-
 	class AGAS_HeroBase* HeroBase;
 
-	FRotator LastKnownRotation;
+	FVector2D CalculateCumulativeMouseInputs();
+	float CumulativeMouseDeltaX;
+	float CumulativeMouseDeltaY;
 
-private:
-	float InitialRelativeYaw = 0.0f;  // Baþlangýçta yaw farkýný tutmak için bir deðiþken
+	void LookAtTarget();
 
-	void UpdateYawToActLikeRelative();
+	float GetPointDistToLine();
 };

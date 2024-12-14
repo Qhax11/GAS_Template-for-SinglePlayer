@@ -47,6 +47,7 @@ class GAS_TEMPLATESP_API AGAS_TargetActorBase : public AActor
 	
 public:
 
+
 	virtual void Confirm();
 
 	virtual void Cancel();

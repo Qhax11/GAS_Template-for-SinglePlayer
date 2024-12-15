@@ -51,11 +51,13 @@ void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickTy
 		return;
 	}
 	
-	bool bIsHeroTargetLocked = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
-	bool bIsHeroHologramAbilityTargeting = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
-
-
 	CalculateCumulativeMouseInputs();
+
+	if (!HeroHologramTargetActor->IsValidLowLevel())
+	{
+		return;
+	}
+
 	UpdateTraceForwardDistance();
 
 	if (bTargetLocked)
@@ -71,30 +73,26 @@ void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickTy
 		SetWorldRotation(FRotator(0, PlayerViewRotation.Yaw, 0));
 	}
 
-	// Target Location Setting
-	if (bIsHeroHologramAbilityTargeting)
-	{
-		if (!HeroHologramTargetActor)
-		{
-			return;
-		}
-		if (bTargetLocked)
-		{
-			FVector HeroHologramTargetLocation = PerformLineTraceTargetLocked();
-			HeroHologramTargetLocation.Z += 90;
-			HeroHologramTargetActor->SetActorLocation(HeroHologramTargetLocation);
-		}
-		else
-		{
-			FVector HeroHologramTargetLocation = PerformLineTraceNonTargetLocked();
-			HeroHologramTargetLocation.Z += 90;
-			HeroHologramTargetActor->SetActorLocation(HeroHologramTargetLocation);
-		}
-	}
-	
+	SetHeroHologramLocation();
 }
 
-FVector USC_HologramAbilityHelper::PerformLineTraceNonTargetLocked()
+void USC_HologramAbilityHelper::SetHeroHologramLocation()
+{
+	if (bTargetLocked) 
+	{
+		FVector HeroHologramTargetLocation = GetHeroHologramLocationFromLineTraceTargetLocked();
+		HeroHologramTargetLocation.Z += 90;
+		HeroHologramTargetActor->SetActorLocation(HeroHologramTargetLocation);
+	}
+	else
+	{
+		FVector HeroHologramTargetLocation = GetHeroHologramLocationFromLineTrace();
+		HeroHologramTargetLocation.Z += 90;
+		HeroHologramTargetActor->SetActorLocation(HeroHologramTargetLocation);
+	}
+}
+
+FVector USC_HologramAbilityHelper::GetHeroHologramLocationFromLineTrace()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
@@ -125,7 +123,7 @@ FVector USC_HologramAbilityHelper::PerformLineTraceNonTargetLocked()
 	return HitResult.ImpactPoint;
 }
 
-FVector USC_HologramAbilityHelper::PerformLineTraceTargetLocked()
+FVector USC_HologramAbilityHelper::GetHeroHologramLocationFromLineTraceTargetLocked()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
@@ -165,47 +163,9 @@ FVector USC_HologramAbilityHelper::PerformLineTraceTargetLocked()
 	return HitResult.ImpactPoint;
 }
 
-void USC_HologramAbilityHelper::OnStartTargetLock()
-{
-	CumulativeMouseDeltaX = 0;
-	TraceRightDistance = 0;
-	TraceRightDistanceOffset = GetPointDistToLine();
-
-	float TraceForwardDistancePow = TraceForwardDistance * TraceForwardDistance;
-	float TraceRightDistanceOffsetPow = TraceRightDistanceOffset * TraceRightDistanceOffset;
-	TraceForwardDistanceOffset = -(TraceForwardDistance - FMath::Sqrt(TraceForwardDistancePow - TraceRightDistanceOffsetPow)) ;
-
-	bTargetLocked = true;
-}
-
-void USC_HologramAbilityHelper::OnEndTargetLock()
-{
-	TraceRightDistance = 0;
-	TraceForwardDistanceOffset = 0;
-
-	bTargetLocked = false;
-}
-
-void USC_HologramAbilityHelper::UpdateTraceForwardDistance()
-{
-	if (!TraceDistanceCurve) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TraceDistanceCurve is null in: %s"), *GetName());
-		return;
-	}
-
-	float CurveValue = TraceDistanceCurve->GetFloatValue(CumulativeMouseDeltaY);
-	TraceForwardDistance = CurveValue + TraceForwardDistanceOffset;
-}
-
-void USC_HologramAbilityHelper::UpdateTraceRightDistance()
-{
-	TraceRightDistance = CumulativeMouseDeltaX + TraceRightDistanceOffset;
-}
-
 FVector2D USC_HologramAbilityHelper::CalculateCumulativeMouseInputs()
 {
-	if (!PC) 
+	if (!PC)
 	{
 		return FVector2D();
 	}
@@ -221,15 +181,18 @@ FVector2D USC_HologramAbilityHelper::CalculateCumulativeMouseInputs()
 	return FVector2D(CumulativeMouseDeltaX, CumulativeMouseDeltaY);
 }
 
-void USC_HologramAbilityHelper::LookAtTarget()
+void USC_HologramAbilityHelper::OnStartTargetLock()
 {
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->CurrentTarget->GetActorLocation());
-	SetWorldRotation(FRotator(0, LookAtRotation.Yaw, 0));
+	CumulativeMouseDeltaX = 0;
+	TraceRightDistance = 0;
+	TraceRightDistanceOffset = GetPointDistToLine();
+	TraceForwardDistanceOffset = CalculateTraceForwardDistanceOffset();
+	bTargetLocked = true;
 }
 
 float USC_HologramAbilityHelper::GetPointDistToLine()
 {
-	if (!HeroHologramTargetActor) 
+	if (!HeroHologramTargetActor)
 	{
 		return 0;
 	}
@@ -244,17 +207,60 @@ float USC_HologramAbilityHelper::GetPointDistToLine()
 		DrawDebugLine(GetWorld(), ClosestPointOnLine, HeroHologramTargetActor->GetActorLocation(), FColor::Red, false, 2.0f, 0, 2.0f);
 	}
 
-	FVector PointDirection = HeroHologramTargetActor->GetActorLocation() - HeroBase->GetActorLocation();  
+	FVector PointDirection = HeroHologramTargetActor->GetActorLocation() - HeroBase->GetActorLocation();
 	FVector CrossProductResult = FVector::CrossProduct(NormalizedDirection, PointDirection);
 
 	if (CrossProductResult.Z <= 0)
 	{
 		return PointDistToLine;
 	}
-	else 
+	else
 	{
 		return -PointDistToLine;
 	}
 }
 
+float USC_HologramAbilityHelper::CalculateTraceForwardDistanceOffset()
+{
+	float TraceForwardDistancePow = TraceForwardDistance * TraceForwardDistance;
+	float TraceRightDistanceOffsetPow = TraceRightDistanceOffset * TraceRightDistanceOffset;
+	return -(TraceForwardDistance - FMath::Sqrt(TraceForwardDistancePow - TraceRightDistanceOffsetPow));
+}
+
+void USC_HologramAbilityHelper::OnEndTargetLock()
+{
+	TraceRightDistance = 0;
+	TraceForwardDistanceOffset = 0;
+	bTargetLocked = false;
+}
+
+void USC_HologramAbilityHelper::UpdateTraceForwardDistance()
+{
+	if (!C_MouseInoutSensitiveY)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TraceDistanceCurve is null in: %s"), *GetName());
+		return;
+	}
+
+	float CurveValue = C_MouseInoutSensitiveY->GetFloatValue(CumulativeMouseDeltaY);
+	TraceForwardDistance = CurveValue + TraceForwardDistanceOffset;
+}
+
+void USC_HologramAbilityHelper::UpdateTraceRightDistance()
+{
+	if (!C_MouseInoutSensitiveX)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TraceDistanceCurve is null in: %s"), *GetName());
+		return;
+	}
+
+	float CurveValue = C_MouseInoutSensitiveX->GetFloatValue(CumulativeMouseDeltaX);
+	TraceRightDistance = CurveValue + TraceRightDistanceOffset;
+}
+
+void USC_HologramAbilityHelper::LookAtTarget()
+{
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->CurrentTarget->GetActorLocation());
+	SetWorldRotation(FRotator(0, LookAtRotation.Yaw, 0));
+}
 

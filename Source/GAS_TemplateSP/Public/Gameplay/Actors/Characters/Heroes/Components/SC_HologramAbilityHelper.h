@@ -29,39 +29,38 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	class APlayerController* PC;
+	class AGAS_HeroBase* HeroBase;
 	class UAC_TargetLockSystem* TargetLockSystem;
 
 public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void SetHeroHologramLocation();
 
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
-	FVector PerformLineTraceNonTargetLocked();
+	FVector GetHeroHologramLocationFromLineTrace();
 
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
-	FVector PerformLineTraceTargetLocked();
-
-	UPROPERTY(EditDefaultsOnly, Category = "CalculateHologramTargetActorLocation")
-	UCurveFloat* TraceDistanceCurve;
+	FVector GetHeroHologramLocationFromLineTraceTargetLocked();
 
 public:
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
+	UCurveFloat* C_MouseInoutSensitiveX;
 
-	TObjectPtr<class AHeroHologramTargetActor> HeroHologramTargetActor;
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
+	float SensitiveMultiplierX = 40.0f;
 
-	UFUNCTION()
-	void OnStartTargetLock();
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
+	UCurveFloat* C_MouseInoutSensitiveY;
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
+	float SensitiveMultiplierY = 40.0f;
 
-	UFUNCTION()
-	void OnEndTargetLock();
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Trace")
+	bool bDrawDebug;
 
-
-
-	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|MouseInputConfig")
-	float SensitiveMultiplierX = 100.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|MouseInputConfig")
-	float SensitiveMultiplierY = 100.0f;
-
-
+public:
+	TObjectPtr<class AHeroHologramTargetActor> HeroHologramTargetActor = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceForwardDistance = 0.f;
@@ -75,25 +74,24 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceRightDistanceOffset = 0.f;
 
-
-	void UpdateTraceForwardDistance();
-
-	void UpdateTraceRightDistance();
-
-	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Trace")
-	bool bDrawDebug;
-
-	bool bTargetLocked = false;
-
 private:
-	class APlayerController* PC;
-	class AGAS_HeroBase* HeroBase;
 
 	FVector2D CalculateCumulativeMouseInputs();
 	float CumulativeMouseDeltaX;
 	float CumulativeMouseDeltaY;
 
+	UFUNCTION()
+	void OnStartTargetLock();
+	float GetPointDistToLine();
+	float CalculateTraceForwardDistanceOffset();
+
+	UFUNCTION()
+	void OnEndTargetLock();
+
+	void UpdateTraceForwardDistance();
+	void UpdateTraceRightDistance();
+
 	void LookAtTarget();
 
-	float GetPointDistToLine();
+	bool bTargetLocked = false;
 };

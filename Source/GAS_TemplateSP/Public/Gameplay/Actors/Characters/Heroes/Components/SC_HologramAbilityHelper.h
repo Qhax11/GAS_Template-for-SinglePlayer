@@ -35,10 +35,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
-	FVector PerformLineTraceNonTargetLocked(bool bDrawDebug);
+	FVector PerformLineTraceNonTargetLocked();
 
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
-	FVector PerformLineTraceTargetLocked(bool bDrawDebug);
+	FVector PerformLineTraceTargetLocked();
 
 	UPROPERTY(EditDefaultsOnly, Category = "CalculateHologramTargetActorLocation")
 	UCurveFloat* TraceDistanceCurve;
@@ -55,30 +55,35 @@ public:
 
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper||MouseInputConfig")
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|MouseInputConfig")
 	float SensitiveMultiplierX = 100.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper||MouseInputConfig")
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|MouseInputConfig")
 	float SensitiveMultiplierY = 100.0f;
 
 
 
-	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper||Trace")
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceForwardDistance = 0.f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper||Trace")
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceForwardDistanceOffset = 0.f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper||Trace")
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceRightDistance = 0.f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper||Trace")
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceRightDistanceOffset = 0.f;
 
 
 	void UpdateTraceForwardDistance();
 
 	void UpdateTraceRightDistance();
+
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Trace")
+	bool bDrawDebug;
+
+	bool bTargetLocked = false;
 
 private:
 	class APlayerController* PC;

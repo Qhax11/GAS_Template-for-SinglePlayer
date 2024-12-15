@@ -58,7 +58,7 @@ void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickTy
 	CalculateCumulativeMouseInputs();
 	UpdateTraceForwardDistance();
 
-	if (bIsHeroTargetLocked) 
+	if (bTargetLocked)
 	{
 		LookAtTarget();
 		UpdateTraceRightDistance();
@@ -70,9 +70,31 @@ void USC_HologramAbilityHelper::TickComponent(float DeltaTime, ELevelTick TickTy
 		PC->GetPlayerViewPoint(PlayerViewLocation, PlayerViewRotation);
 		SetWorldRotation(FRotator(0, PlayerViewRotation.Yaw, 0));
 	}
+
+	// Target Location Setting
+	if (bIsHeroHologramAbilityTargeting)
+	{
+		if (!HeroHologramTargetActor)
+		{
+			return;
+		}
+		if (bTargetLocked)
+		{
+			FVector HeroHologramTargetLocation = PerformLineTraceTargetLocked();
+			HeroHologramTargetLocation.Z += 90;
+			HeroHologramTargetActor->SetActorLocation(HeroHologramTargetLocation);
+		}
+		else
+		{
+			FVector HeroHologramTargetLocation = PerformLineTraceNonTargetLocked();
+			HeroHologramTargetLocation.Z += 90;
+			HeroHologramTargetActor->SetActorLocation(HeroHologramTargetLocation);
+		}
+	}
+	
 }
 
-FVector USC_HologramAbilityHelper::PerformLineTraceNonTargetLocked(bool bDrawDebug)
+FVector USC_HologramAbilityHelper::PerformLineTraceNonTargetLocked()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
@@ -103,7 +125,7 @@ FVector USC_HologramAbilityHelper::PerformLineTraceNonTargetLocked(bool bDrawDeb
 	return HitResult.ImpactPoint;
 }
 
-FVector USC_HologramAbilityHelper::PerformLineTraceTargetLocked(bool bDrawDebug)
+FVector USC_HologramAbilityHelper::PerformLineTraceTargetLocked()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
@@ -148,11 +170,20 @@ void USC_HologramAbilityHelper::OnStartTargetLock()
 	CumulativeMouseDeltaX = 0;
 	TraceRightDistance = 0;
 	TraceRightDistanceOffset = GetPointDistToLine();
+
+	float TraceForwardDistancePow = TraceForwardDistance * TraceForwardDistance;
+	float TraceRightDistanceOffsetPow = TraceRightDistanceOffset * TraceRightDistanceOffset;
+	TraceForwardDistanceOffset = -(TraceForwardDistance - FMath::Sqrt(TraceForwardDistancePow - TraceRightDistanceOffsetPow)) ;
+
+	bTargetLocked = true;
 }
 
 void USC_HologramAbilityHelper::OnEndTargetLock()
 {
+	TraceRightDistance = 0;
+	TraceForwardDistanceOffset = 0;
 
+	bTargetLocked = false;
 }
 
 void USC_HologramAbilityHelper::UpdateTraceForwardDistance()
@@ -206,7 +237,24 @@ float USC_HologramAbilityHelper::GetPointDistToLine()
 	FVector NormalizedDirection = HeroBase->GetActorLocation() - TargetLockSystem->CurrentTarget->GetActorLocation();
 	NormalizedDirection.Normalize();
 	float PointDistToLine = FMath::PointDistToLine(HeroHologramTargetActor->GetActorLocation(), NormalizedDirection, HeroBase->GetActorLocation(), ClosestPointOnLine);
-	return PointDistToLine;
+
+	if (bDrawDebug)
+	{
+		DrawDebugLine(GetWorld(), HeroBase->GetActorLocation(), TargetLockSystem->CurrentTarget->GetActorLocation(), FColor::Red, false, 2.0f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), ClosestPointOnLine, HeroHologramTargetActor->GetActorLocation(), FColor::Red, false, 2.0f, 0, 2.0f);
+	}
+
+	FVector PointDirection = HeroHologramTargetActor->GetActorLocation() - HeroBase->GetActorLocation();  
+	FVector CrossProductResult = FVector::CrossProduct(NormalizedDirection, PointDirection);
+
+	if (CrossProductResult.Z <= 0)
+	{
+		return PointDistToLine;
+	}
+	else 
+	{
+		return -PointDistToLine;
+	}
 }
 
 

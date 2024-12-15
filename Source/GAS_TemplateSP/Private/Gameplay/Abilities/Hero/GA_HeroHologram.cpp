@@ -50,7 +50,7 @@ AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotati
         return Super::SpawnAndSetupTargetActor(Rotation, Location);
     }
 
-    FVector HologramStartLocation = HeroBase->GetHologramAbilityHelperComponent()->PerformLineTraceNonTargetLocked(false);
+    FVector HologramStartLocation = HeroBase->GetHologramAbilityHelperComponent()->PerformLineTraceNonTargetLocked();
     TArray<AActor*> OutResultActors;
     TraceData->Trace->CreateTraceWithTeamFilterAndLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, HologramStartLocation, OutResultActors);
 

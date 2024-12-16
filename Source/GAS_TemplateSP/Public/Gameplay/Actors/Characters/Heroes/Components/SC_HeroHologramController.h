@@ -7,14 +7,20 @@
 #include "SC_HeroHologramController.generated.h"
 
 /**
- * USC_HologramAbilityHelper 
+ * USC_HeroHologramController
  *
- * This component is designed to replicate the rotation behavior of the player's camera based on mouse inputs,
- * specifically for hologram-based abilities. It synchronizes the rotation of the associated actor or component
- * with the camera's viewpoint, making it ideal for visual effects that need to stay aligned with the camera's orientation.
+ * This component is responsible for managing and controlling the behavior of the hologram in the game.
+ * It provides functionality to set the hologram's location, handle detailed calculations for precise placement,
+ * and synchronize with gameplay elements such as mouse inputs or target locking.
  *
- * Perfect for abilities like holograms or visual representations that must mimic the camera's rotation to maintain
- * consistent alignment during gameplay.
+ * Key features include:
+ * - Setting and retrieving the hologram's location dynamically using line traces.
+ * - Handling mouse input sensitivity for smooth and responsive control.
+ * - Maintaining consistent trace lengths and offsets using geometric calculations.
+ * - Debugging support to visualize trace paths and adjustments.
+ *
+ * Ideal for gameplay systems where holograms need to interact seamlessly with the player's input
+ * and world environment, ensuring accurate alignment and placement.
  */
 
 
@@ -83,12 +89,16 @@ private:
 	UFUNCTION()
 	void OnStartTargetLock();
 	float GetPointDistToLine();
+
+	// Calculates the forward distance offset using the Pythagorean theorem. 
+    // Ensures that the total trace length stays constant even when there is an offset in the right direction or the trace direction changes.
 	float CalculateTraceForwardDistanceOffset();
 
 	UFUNCTION()
 	void OnEndTargetLock();
 
 	void UpdateTraceForwardDistance();
+
 	void UpdateTraceRightDistance();
 
 	void LookAtTarget();

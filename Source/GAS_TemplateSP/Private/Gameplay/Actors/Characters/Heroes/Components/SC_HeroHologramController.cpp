@@ -207,6 +207,11 @@ float USC_HeroHologramController::GetPointDistToLine()
 		DrawDebugLine(GetWorld(), ClosestPointOnLine, HeroHologramTargetActor->GetActorLocation(), FColor::Red, false, 2.0f, 0, 2.0f);
 	}
 
+	// Determines whether the hologram is to the right or left of a line defined by the normalized direction. 
+    // Uses the cross product to check the Z-axis value: 
+    // - If Z <= 0, the hologram is on the left side or on the line.
+    // - If Z > 0, the hologram is on the right side.
+    // Returns the distance to the line with a positive or negative sign based on the side.
 	FVector PointDirection = HeroHologramTargetActor->GetActorLocation() - HeroBase->GetActorLocation();
 	FVector CrossProductResult = FVector::CrossProduct(NormalizedDirection, PointDirection);
 

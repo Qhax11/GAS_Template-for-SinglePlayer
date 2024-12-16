@@ -4,7 +4,7 @@
 
 #include "Components/SceneComponent.h"
 #include "Curves/CurveFloat.h" 
-#include "SC_HologramAbilityHelper.generated.h"
+#include "SC_HeroHologramController.generated.h"
 
 /**
  * USC_HologramAbilityHelper 
@@ -19,12 +19,12 @@
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class GAS_TEMPLATESP_API USC_HologramAbilityHelper : public USceneComponent
+class GAS_TEMPLATESP_API USC_HeroHologramController : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
-	USC_HologramAbilityHelper();
+	USC_HeroHologramController();
 
 protected:
 	virtual void BeginPlay() override;
@@ -56,7 +56,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
 	float SensitiveMultiplierY = 40.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Trace")
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
 	bool bDrawDebug;
 
 public:

@@ -3,7 +3,7 @@
 
 #include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/SC_HologramAbilityHelper.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroHologramController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -18,8 +18,8 @@ void AHeroHologramTargetActor::BeginPlay()
 		return;
 	}
 
-	HologramAbilityHelperComponent = HeroBase->GetHologramAbilityHelperComponent();
-	if (!HologramAbilityHelperComponent)
+	HeroHologramControllerComponent = HeroBase->GetHeroHologramControllerComponent();
+	if (!HeroHologramControllerComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HologramAbilityHelperComponent is null in: %s"), *GetName());
 		return;

@@ -4,7 +4,7 @@
 #include "Gameplay/Abilities/Hero/GA_HeroHologram.h"
 #include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/SC_HologramAbilityHelper.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroHologramController.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -17,8 +17,8 @@ void UGA_HeroHologram::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
     if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
     {
-        USC_HologramAbilityHelper* HologramAbilityHelper = HeroBase->GetHologramAbilityHelperComponent();
-        HologramAbilityHelper->HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActor);
+        USC_HeroHologramController* HeroHologramController = HeroBase->GetHeroHologramControllerComponent();
+        HeroHologramController->HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActor);
     }
 }
 
@@ -50,7 +50,7 @@ AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotati
         return Super::SpawnAndSetupTargetActor(Rotation, Location);
     }
 
-    FVector HologramStartLocation = HeroBase->GetHologramAbilityHelperComponent()->GetHeroHologramLocationFromLineTrace();
+    FVector HologramStartLocation = HeroBase->GetHeroHologramControllerComponent()->GetHeroHologramLocationFromLineTrace();
     TArray<AActor*> OutResultActors;
     TraceData->Trace->CreateTraceWithTeamFilterAndLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, HologramStartLocation, OutResultActors);
 

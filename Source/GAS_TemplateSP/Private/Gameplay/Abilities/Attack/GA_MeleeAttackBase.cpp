@@ -10,6 +10,11 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 	TArray<AActor*> OutResultActors;
 	TraceForHostileUnits(OutResultActors);
 
+	if (OutResultActors.IsEmpty()) 
+	{
+		return;
+	}
+
 	FGameplayEffectSpec DamageSpec;
 	bool bIsDamageSpecValid = UGAS_EffectBlueprintFunctionLibary::CreateInstantEffectSpecWithSetByCallerValue(
 		DamageSpec,

@@ -38,7 +38,7 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
         CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage);
     }
    
-    Super::OnTargetActorConfirm(TargetActorData);
+    TargetActorData.TargetActor->Destroy();
 }
 
 AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)

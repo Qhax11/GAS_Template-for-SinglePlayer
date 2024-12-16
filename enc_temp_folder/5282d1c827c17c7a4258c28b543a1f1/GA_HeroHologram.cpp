@@ -64,5 +64,3 @@ AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotati
         return Super::SpawnAndSetupTargetActor(HeroBase->GetActorRotation(), HologramStartLocation);
     }
 }
-
-

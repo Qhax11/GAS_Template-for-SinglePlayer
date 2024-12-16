@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
+#include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "GA_MeleeAttackBase.generated.h"
 
 /**

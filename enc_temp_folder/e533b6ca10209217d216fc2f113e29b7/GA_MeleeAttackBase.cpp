@@ -2,7 +2,6 @@
 
 
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
-#include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include <AbilitySystemGlobals.h>
 
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)

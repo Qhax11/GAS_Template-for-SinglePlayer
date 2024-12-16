@@ -91,7 +91,7 @@ public:
 	float RotateInterpSpeed = 5.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
-	float CameraOffsetZ = 100.0f;
+	float CameraLookLocationOffsetZ = 100.0f;
 
 protected:
 

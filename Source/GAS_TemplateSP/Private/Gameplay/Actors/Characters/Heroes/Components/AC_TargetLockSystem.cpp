@@ -307,7 +307,8 @@ void UAC_TargetLockSystem::RotateCameraToTarget()
 	}
 
 	FVector CurrentTargetLocation = CurrentTarget->GetActorLocation();
-	CurrentTargetLocation.Z = CurrentTargetLocation.Z - CameraOffsetZ;
+	CurrentTargetLocation.Z = CurrentTargetLocation.Z - CameraLookLocationOffsetZ;
+	
 
 	FRotator LookAtTargetRotation = UKismetMathLibrary::FindLookAtRotation(HeroBase->GetActorLocation(), CurrentTargetLocation);
 

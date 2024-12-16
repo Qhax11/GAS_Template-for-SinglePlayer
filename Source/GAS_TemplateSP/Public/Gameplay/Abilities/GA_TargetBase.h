@@ -33,8 +33,14 @@ protected:
 	UFUNCTION()
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData);
+
 	UFUNCTION()
 	virtual void OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData);
 
 	UFUNCTION()
 	void ConfirmTargetingFromInput();

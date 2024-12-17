@@ -22,4 +22,5 @@ private:
 	
 	virtual AGAS_TargetActorBase* SpawnAndSetupTargetActor(FRotator Rotation, FVector Location) override;
 
+
 };

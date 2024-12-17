@@ -84,21 +84,56 @@ void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 {
 	const FVector2D LookMouseVector = Value.Get<FVector2D>();
 
-	if (LookMouseVector.X != 0.0f && !HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+	if (LookMouseVector.IsNearlyZero())
 	{
-		HeroBase->AddControllerYawInput(LookMouseVector.X);
+		return;
 	}
 
-	if (LookMouseVector.Y != 0.0f && !HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+	// New input received, update the LastLookMouseInput
+	LastLookMouseInput = LookMouseVector;
+	LastLookMouseInputTime = GetWorld()->GetTimeSeconds();
+
+	if (HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked)) 
 	{
-		HeroBase->AddControllerPitchInput(LookMouseVector.Y);
+		return;
 	}
 
-	if (!LookMouseVector.IsNearlyZero())
+	HeroBase->AddControllerYawInput(LookMouseVector.X);
+
+	FRotator HeroControlRotation = HeroBase->GetControlRotation();
+	float NewPitch = HeroControlRotation.Pitch + LookMouseVector.Y;
+	ClampingPitchValue(NewPitch, LookMouseVector.Y);
+}
+
+void UAC_HeroControl::ClampingPitchValue(const float NewPitchValue, const float LookMouseValueY)
+{
+	float NewPitch = FMath::Fmod(NewPitchValue + 360.0f, 360.0f);
+
+	// Check for looking up from below, NewPitch value is between MinPitchA and MaxPitchA
+	if (NewPitch >= MinPitchA && NewPitch <= MaxPitchA)
 	{
-		// New input received, update the LastLookMouseInput
-		LastLookMouseInput = LookMouseVector;
-		LastLookMouseInputTime = GetWorld()->GetTimeSeconds();
+		HeroBase->AddControllerPitchInput(LookMouseValueY);
+	}
+	// Check for looking down from above, NewPitch value is between MinPitchB and MaxPitchB
+	else if (NewPitch >= MinPitchB && NewPitch <= MaxPitchB)
+	{
+		HeroBase->AddControllerPitchInput(LookMouseValueY);
+	}
+	// NewPitch value is between MaxPitchA and MinPitchB
+	else if (NewPitch > MaxPitchA && NewPitch < MinPitchB)
+	{
+		float NewPitchDistanceTo45 = FMath::Abs(NewPitch - MaxPitchA);
+		float NewPitchDistanceTo320 = FMath::Abs(NewPitch - MinPitchB);
+		// If closer to 45 degrees 
+		if (NewPitchDistanceTo45 < NewPitchDistanceTo320 && LookMouseValueY > 0)
+		{
+			HeroBase->AddControllerPitchInput(LookMouseValueY);
+		}
+		// If closer to 320 degrees
+		else if (NewPitchDistanceTo45 > NewPitchDistanceTo320 && LookMouseValueY < 0)
+		{
+			HeroBase->AddControllerPitchInput(LookMouseValueY);
+		}
 	}
 }
 

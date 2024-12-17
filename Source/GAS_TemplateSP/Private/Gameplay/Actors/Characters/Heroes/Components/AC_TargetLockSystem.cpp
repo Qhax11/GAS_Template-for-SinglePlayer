@@ -315,8 +315,11 @@ void UAC_TargetLockSystem::RotateCameraToTarget()
 	FRotator CurrentCameraRotation = HeroBase->GetControlRotation();
 	FRotator NewCameraRotation = UKismetMathLibrary::RInterpTo(CurrentCameraRotation, LookAtTargetRotation, GetWorld()->GetDeltaSeconds(), RotateInterpSpeed);
 
-	// Clamp the pitch of the camera rotation
+	// Normalize pitch to the range [0, 360]
+	NewCameraRotation.Pitch = FMath::Fmod(NewCameraRotation.Pitch + 360.0f, 360.0f);
+	// Clamp the normalized pitch to your desired range
 	NewCameraRotation.Pitch = FMath::Clamp(NewCameraRotation.Pitch, CameraRotationMinPitch, CameraRotationMaxPitch);
+
 	HeroBase->GetController()->SetControlRotation(NewCameraRotation);
 }
 

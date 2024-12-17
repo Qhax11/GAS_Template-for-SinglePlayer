@@ -59,6 +59,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
 	UCurveFloat* C_MouseInoutSensitiveY;
+
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
 	float SensitiveMultiplierY = 40.0f;
 
@@ -80,12 +81,22 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceRightDistanceOffset = 0.f;
 
-private:
-
+public:
 	FVector2D CalculateCumulativeMouseInputs();
+
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")
 	float CumulativeMouseDeltaX;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")
 	float CumulativeMouseDeltaY;
 
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Input", Meta = (ToolTip = "The maximum cumulative mouse delta Y value that feeds into the forward distance value"))
+	float MaxCumulativeMouseDeltaY = 0;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Input", Meta = (ToolTip = "The minimum cumulative mouse delta Y value that feeds into the forward distance value"))
+	float MinCumulativeMouseDeltaY = -800;
+
+private:
 	UFUNCTION()
 	void OnStartTargetLock();
 	float GetPointDistToLine();

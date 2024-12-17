@@ -28,6 +28,8 @@ public:
 
 	void LookMouse(const FInputActionValue& Value);
 
+	void ClampingPitchValue(const float NewPitchValue, const float LookMouseValueY);
+
 	UPROPERTY(EditAnywhere)
 	const UInputAction* IA_Move;
 
@@ -46,16 +48,23 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D LastLookMouseInput;
 
-protected:
+	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = " Minimum limit for looking up from below"))
+	float MinPitchA = 0.0f;   
+	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking up from below"))
+	float MaxPitchA = 25.0f;  
 
+	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Minimum limit for looking down from above"))
+	float MinPitchB = 320.0f; 
+	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking down from above"))
+	float MaxPitchB = 360.0f; 
+
+protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	AGAS_HeroBase* HeroBase;
-
 	UAbilitySystemComponent* HeroASC;
 
 private:
-
 	UEnhancedInputComponent* EnhancedInputComponent;
 	
 	float LastMovementInputTime = 0.0f; // The time when the last movement input was received

@@ -178,6 +178,7 @@ FVector2D USC_HeroHologramController::CalculateCumulativeMouseInputs()
 		CumulativeMouseDeltaY += MouseInput.Y * SensitiveMultiplierY;
 	}
 
+	CumulativeMouseDeltaY = FMath::Clamp(CumulativeMouseDeltaY, MinCumulativeMouseDeltaY, MaxCumulativeMouseDeltaY);
 	return FVector2D(CumulativeMouseDeltaX, CumulativeMouseDeltaY);
 }
 

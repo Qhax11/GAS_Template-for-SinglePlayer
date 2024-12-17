@@ -76,7 +76,6 @@ AGAS_TargetActorBase* UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation
 	return nullptr;
 }
 
-
 void UGA_TargetBase::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
 	BP_OnTargetActorConfirm(TargetActorData);

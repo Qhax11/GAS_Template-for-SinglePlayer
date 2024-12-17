@@ -30,17 +30,20 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
         Super::OnTargetActorConfirm(TargetActorData);
     }
 
+    BP_OnTargetActorConfirm(TargetActorData);
+
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
     
     if (HeroHologramTargetActor->AttackMontage && HeroHologramTargetActor->CurrentTarget)
     {
         CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage);
+        TargetActorData.TargetActor->Destroy();
     }
-   
-    TargetActorData.TargetActor->Destroy();
-
-    BP_OnTargetActorConfirm(TargetActorData);
+    else
+    {
+        Super::OnTargetActorConfirm(TargetActorData);
+    }
 }
 
 AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)

@@ -308,7 +308,6 @@ void UAC_TargetLockSystem::RotateCameraToTarget()
 
 	FVector CurrentTargetLocation = CurrentTarget->GetActorLocation();
 	CurrentTargetLocation.Z = CurrentTargetLocation.Z - CameraLookLocationOffsetZ;
-	
 
 	FRotator LookAtTargetRotation = UKismetMathLibrary::FindLookAtRotation(HeroBase->GetActorLocation(), CurrentTargetLocation);
 
@@ -316,6 +315,8 @@ void UAC_TargetLockSystem::RotateCameraToTarget()
 	FRotator CurrentCameraRotation = HeroBase->GetControlRotation();
 	FRotator NewCameraRotation = UKismetMathLibrary::RInterpTo(CurrentCameraRotation, LookAtTargetRotation, GetWorld()->GetDeltaSeconds(), RotateInterpSpeed);
 
+	// Clamp the pitch of the camera rotation
+	NewCameraRotation.Pitch = FMath::Clamp(NewCameraRotation.Pitch, CameraRotationMinPitch, CameraRotationMaxPitch);
 	HeroBase->GetController()->SetControlRotation(NewCameraRotation);
 }
 

@@ -294,11 +294,11 @@ void UAC_TargetLockSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	RotateCameraToTarget();
-	RotateHeroToTarget();
+	RotateCameraToTarget(DeltaTime);
+	RotateHeroToTarget(DeltaTime);
 }
 
-void UAC_TargetLockSystem::RotateCameraToTarget()
+void UAC_TargetLockSystem::RotateCameraToTarget(float DeltaTime)
 {
 	if (!HeroBase || !CurrentTarget)
 	{
@@ -313,17 +313,27 @@ void UAC_TargetLockSystem::RotateCameraToTarget()
 
 	// Get the current camera rotation and interpolate towards the target for smooth transition
 	FRotator CurrentCameraRotation = HeroBase->GetControlRotation();
-	FRotator NewCameraRotation = UKismetMathLibrary::RInterpTo(CurrentCameraRotation, LookAtTargetRotation, GetWorld()->GetDeltaSeconds(), RotateInterpSpeed);
+	FRotator NewCameraRotation = UKismetMathLibrary::RInterpTo(CurrentCameraRotation, LookAtTargetRotation, DeltaTime, RotateInterpSpeed);
 
 	// Normalize pitch to the range [0, 360]
 	NewCameraRotation.Pitch = FMath::Fmod(NewCameraRotation.Pitch + 360.0f, 360.0f);
-	// Clamp the normalized pitch to your desired range
-	NewCameraRotation.Pitch = FMath::Clamp(NewCameraRotation.Pitch, CameraRotationMinPitch, CameraRotationMaxPitch);
 
-	HeroBase->GetController()->SetControlRotation(NewCameraRotation);
+	// Check for looking up from below, NewPitch value is between MinPitchA and MaxPitchA
+	if (NewCameraRotation.Pitch >= MinPitchA && NewCameraRotation.Pitch <= MaxPitchA)
+	{
+		NewCameraRotation.Pitch = FMath::Clamp(NewCameraRotation.Pitch, MinPitchA, MaxPitchA);
+		HeroBase->GetController()->SetControlRotation(NewCameraRotation);
+	}
+	// Check for looking down from above, NewPitch value is between MinPitchB and MaxPitchB
+	else if (NewCameraRotation.Pitch >= MinPitchB && NewCameraRotation.Pitch <= MaxPitchB)
+	{
+		NewCameraRotation.Pitch = FMath::Clamp(NewCameraRotation.Pitch, MinPitchB, MaxPitchB);
+		HeroBase->GetController()->SetControlRotation(NewCameraRotation);
+	}
+
 }
 
-void UAC_TargetLockSystem::RotateHeroToTarget()
+void UAC_TargetLockSystem::RotateHeroToTarget(float DeltaTime)
 {
 	if (!HeroBase || !CurrentTarget)
 	{
@@ -335,7 +345,7 @@ void UAC_TargetLockSystem::RotateHeroToTarget()
 	FRotator LookAtTargetRotation = UKismetMathLibrary::FindLookAtRotation(HeroBase->GetActorLocation(), CurrentTargetLocation);
 
 	FRotator CurrentHeroRotation = HeroBase->GetActorRotation();
-	FRotator NewHeroRotation = UKismetMathLibrary::RInterpTo(CurrentHeroRotation, LookAtTargetRotation, GetWorld()->GetDeltaSeconds(), RotateInterpSpeed);
+	FRotator NewHeroRotation = UKismetMathLibrary::RInterpTo(CurrentHeroRotation, LookAtTargetRotation, DeltaTime, RotateInterpSpeed);
 
 	// Set the new rotation, but only update Yaw (Left-Right rotation), keep Pitch and Roll unchanged
 	NewHeroRotation.Pitch = CurrentHeroRotation.Pitch;

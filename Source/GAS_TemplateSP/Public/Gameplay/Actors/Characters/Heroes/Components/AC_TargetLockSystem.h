@@ -46,12 +46,6 @@ protected:
 
 	void ChangeTarget(AActor* NewTarget);
 
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
-	void RotateCameraToTarget();
-
-	void RotateHeroToTarget();
-
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnStartTargetLock OnStartTargetLock;
@@ -87,20 +81,32 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem", meta = (ToolTip = "Time interval within which each direction can trigger the action only once."))
 	float TryToFindNewTargetExecutionCooldown = 1.0f;
 
+public:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void RotateCameraToTarget(float DeltaTime);
+
+	void RotateHeroToTarget(float DeltaTime);
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate", Meta = (ToolTip = " Minimum limit for looking up from below"))
+	float MinPitchA = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate", Meta = (ToolTip = "Maximum limit for looking up from below"))
+	float MaxPitchA = 25.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate", Meta = (ToolTip = "Minimum limit for looking down from above"))
+	float MinPitchB = 320.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate", Meta = (ToolTip = "Maximum limit for looking down from above"))
+	float MaxPitchB = 360.0f;
+
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
 	float RotateInterpSpeed = 5.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
-	float CameraRotationMaxPitch = 400.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
-	float CameraRotationMinPitch = -10.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
 	float CameraLookLocationOffsetZ = 100.0f;
 
 protected:
-
 	UPROPERTY(BlueprintReadWrite)
 	bool bLocked = false;
 
@@ -108,14 +114,12 @@ protected:
 	UAbilitySystemComponent* HeroASC;
 
 public:
-
 	UPROPERTY(BlueprintReadWrite)
 	AActor* CurrentTarget;
 
 	UAbilitySystemComponent* CurrentTargetASC;
 
 private:
-
 	float TryToFindNewTargetLastExecutionTimeRight = 0.0f;
 	float TryToFindNewTargetLastExecutionTimeLeft = 0.0f;
 

@@ -86,6 +86,8 @@ public:
 
 	void RotateCameraToTarget(float DeltaTime);
 
+	float RotateCameraToTargetClampPitch(float NewPitch);
+
 	void RotateHeroToTarget(float DeltaTime);
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate", Meta = (ToolTip = " Minimum limit for looking up from below"))

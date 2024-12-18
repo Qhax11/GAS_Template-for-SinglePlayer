@@ -48,16 +48,16 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D LastLookMouseInput;
 
-	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = " Minimum limit for looking up from below"))
+	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = " Minimum limit for looking down from below"))
 	float MinPitchA = 0.0f;  
 
-	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking up from below"))
+	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking down from below"))
 	float MaxPitchA = 20.0f;  
 
-	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Minimum limit for looking down from above"))
+	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Minimum limit for looking up from above"))
 	float MinPitchB = 340.0f; 
 
-	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking down from above"))
+	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking up from above"))
 	float MaxPitchB = 360.0f; 
 
 protected:

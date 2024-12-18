@@ -107,6 +107,7 @@ void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 
 void UAC_HeroControl::ClampingPitchValue(const float NewPitchValue, const float LookMouseValueY)
 {
+	// Normalize pitch to the range [0, 360]
 	float NewPitch = FMath::Fmod(NewPitchValue + 360.0f, 360.0f);
 
 	// Check for looking up from below, NewPitch value is between MinPitchA and MaxPitchA
@@ -120,17 +121,17 @@ void UAC_HeroControl::ClampingPitchValue(const float NewPitchValue, const float 
 		HeroBase->AddControllerPitchInput(LookMouseValueY);
 	}
 	// NewPitch value is between MaxPitchA and MinPitchB
-	else if (NewPitch > MaxPitchA && NewPitch < MinPitchB)
+	else 
 	{
-		float NewPitchDistanceTo45 = FMath::Abs(NewPitch - MaxPitchA);
-		float NewPitchDistanceTo320 = FMath::Abs(NewPitch - MinPitchB);
-		// If closer to 45 degrees 
-		if (NewPitchDistanceTo45 < NewPitchDistanceTo320 && LookMouseValueY > 0)
+		float NewPitchDistanceToMaxPitchA = FMath::Abs(NewPitch - MaxPitchA);
+		float NewPitchDistanceToMinPitchB = FMath::Abs(NewPitch - MinPitchB);
+		// If closer to MaxPitchA degrees 
+		if (NewPitchDistanceToMaxPitchA < NewPitchDistanceToMinPitchB && LookMouseValueY > 0)
 		{
 			HeroBase->AddControllerPitchInput(LookMouseValueY);
 		}
-		// If closer to 320 degrees
-		else if (NewPitchDistanceTo45 > NewPitchDistanceTo320 && LookMouseValueY < 0)
+		// If closer to MinPitchB degrees
+		else if (NewPitchDistanceToMaxPitchA > NewPitchDistanceToMinPitchB && LookMouseValueY < 0)
 		{
 			HeroBase->AddControllerPitchInput(LookMouseValueY);
 		}

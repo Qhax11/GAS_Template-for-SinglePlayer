@@ -315,22 +315,46 @@ void UAC_TargetLockSystem::RotateCameraToTarget(float DeltaTime)
 	FRotator CurrentCameraRotation = HeroBase->GetControlRotation();
 	FRotator NewCameraRotation = UKismetMathLibrary::RInterpTo(CurrentCameraRotation, LookAtTargetRotation, DeltaTime, RotateInterpSpeed);
 
+	NewCameraRotation.Pitch = RotateCameraToTargetClampPitch(NewCameraRotation.Pitch);
+
+	HeroBase->GetController()->SetControlRotation(NewCameraRotation);
+}
+
+float UAC_TargetLockSystem::RotateCameraToTargetClampPitch(float NewPitch)
+{
 	// Normalize pitch to the range [0, 360]
-	NewCameraRotation.Pitch = FMath::Fmod(NewCameraRotation.Pitch + 360.0f, 360.0f);
+	NewPitch = FMath::Fmod(NewPitch + 360.0f, 360.0f);
 
 	// Check for looking up from below, NewPitch value is between MinPitchA and MaxPitchA
-	if (NewCameraRotation.Pitch >= MinPitchA && NewCameraRotation.Pitch <= MaxPitchA)
+	if (NewPitch >= MinPitchA && NewPitch <= MaxPitchA)
 	{
-		NewCameraRotation.Pitch = FMath::Clamp(NewCameraRotation.Pitch, MinPitchA, MaxPitchA);
-		HeroBase->GetController()->SetControlRotation(NewCameraRotation);
+		NewPitch = FMath::Clamp(NewPitch, MinPitchA, MaxPitchA);
+		return NewPitch;
 	}
 	// Check for looking down from above, NewPitch value is between MinPitchB and MaxPitchB
-	else if (NewCameraRotation.Pitch >= MinPitchB && NewCameraRotation.Pitch <= MaxPitchB)
+	else if (NewPitch >= MinPitchB && NewPitch <= MaxPitchB)
 	{
-		NewCameraRotation.Pitch = FMath::Clamp(NewCameraRotation.Pitch, MinPitchB, MaxPitchB);
-		HeroBase->GetController()->SetControlRotation(NewCameraRotation);
+		NewPitch = FMath::Clamp(NewPitch, MinPitchB, MaxPitchB);
+		return NewPitch;
 	}
-
+	// NewPitch value is between MaxPitchA and MinPitchB
+	else
+	{
+		float NewPitchDistanceToMaxPitchA = FMath::Abs(NewPitch - MaxPitchA);
+		float NewPitchDistanceToMinPitchB = FMath::Abs(NewPitch - MinPitchB);
+		// If closer to MaxPitchA degrees 
+		if (NewPitchDistanceToMaxPitchA < NewPitchDistanceToMinPitchB)
+		{
+			NewPitch = MaxPitchA;
+			return NewPitch;
+		}
+		// If closer to MinPitchB degrees
+		else 
+		{
+			NewPitch = MinPitchB;
+			return NewPitch;
+		}
+	}
 }
 
 void UAC_TargetLockSystem::RotateHeroToTarget(float DeltaTime)

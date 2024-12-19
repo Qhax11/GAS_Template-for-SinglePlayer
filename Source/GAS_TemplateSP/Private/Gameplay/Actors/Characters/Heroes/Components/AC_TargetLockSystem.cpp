@@ -8,6 +8,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemGlobals.h"
+#include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
+
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
 {
@@ -44,6 +46,11 @@ void UAC_TargetLockSystem::BeginPlay()
 	if (!BindTargetLockSystemInputs()) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Binding is failed in %s, cannot initialize TargetLockSystem."), *GetName());
+	}
+
+	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
+	{
+		SpawnDelegatesSubsystem->OnEnemyDeSpawn.AddDynamic(this, &UAC_TargetLockSystem::OnEnemyDeSpawn);
 	}
 }
 
@@ -129,6 +136,14 @@ void UAC_TargetLockSystem::EndTargetLock()
 	OnEndTargetLock.Broadcast();
 
 	SetComponentTickEnabled(false);
+}
+
+void UAC_TargetLockSystem::OnEnemyDeSpawn(AGAS_CharacterBase* Enemy)
+{
+	if (Enemy == CurrentTarget) 
+	{
+		EndTargetLock();
+	}
 }
 
 void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)

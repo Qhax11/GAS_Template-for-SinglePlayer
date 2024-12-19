@@ -53,7 +53,7 @@ void USC_HeroHologramController::TickComponent(float DeltaTime, ELevelTick TickT
 	
 	CalculateCumulativeMouseInputs();
 
-	if (!HeroHologramTargetActor->IsValidLowLevel())
+	if (!HeroHologramTargetActor)
 	{
 		return;
 	}

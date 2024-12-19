@@ -38,6 +38,9 @@ protected:
 
 	void EndTargetLock();
 
+	UFUNCTION()
+	void OnEnemyDeSpawn(AGAS_CharacterBase* Enemy);
+
 	void TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection> TargetChangeDirection);
 
 	void SplitActorsByPositionRelativeToHero(const TArray<AActor*>& InActors, TArray<AActor*>& OutLeftActors, TArray<AActor*>& OutRightActors);

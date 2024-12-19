@@ -84,6 +84,8 @@ public:
 public:
 	FVector2D CalculateCumulativeMouseInputs();
 
+	void ResetRightTraceDistance();
+
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")
 	float CumulativeMouseDeltaX;
 

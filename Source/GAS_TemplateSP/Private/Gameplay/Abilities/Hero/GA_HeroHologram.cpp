@@ -60,7 +60,7 @@ AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotati
 
     if (HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        HeroBase->GetHeroHologramControllerComponent()->CumulativeMouseDeltaX = 0;
+        HeroBase->GetHeroHologramControllerComponent()->ResetRightTraceDistance();
         HologramStartLocation = HeroBase->GetTargetLockSystemComponent()->CurrentTarget->GetActorLocation();
         FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramStartLocation, HologramStartLocation);
         return Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramStartLocation);

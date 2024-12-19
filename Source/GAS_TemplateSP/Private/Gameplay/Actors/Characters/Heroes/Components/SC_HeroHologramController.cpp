@@ -182,6 +182,12 @@ FVector2D USC_HeroHologramController::CalculateCumulativeMouseInputs()
 	return FVector2D(CumulativeMouseDeltaX, CumulativeMouseDeltaY);
 }
 
+void USC_HeroHologramController::ResetRightTraceDistance()
+{
+	CumulativeMouseDeltaX = 0;
+	TraceRightDistanceOffset = 0;
+}
+
 void USC_HeroHologramController::OnStartTargetLock()
 {
 	CumulativeMouseDeltaX = 0;

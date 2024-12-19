@@ -93,7 +93,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_Death, "GameplayCue.Sound.Death");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_LevelUp, "GameplayCue.Sound.LevelUp");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Attack_HitPasue, "GameplayCue.Attack.HitPause");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_HitPasue, "GameplayCue.Combat.HitPause");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_CameraShake, "GameplayCue.Combat.CameraShake");
 
 	/************************************************
 	*-------------------<AI Tags>-------------------*

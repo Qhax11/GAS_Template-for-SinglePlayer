@@ -100,6 +100,9 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_Death);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_LevelUp);
 
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Attack_HitPasue);
+
+
 	/************************************************
 	*-------------------<AI Tags>-------------------*
 	* Add all of the AI related tags to here.       *

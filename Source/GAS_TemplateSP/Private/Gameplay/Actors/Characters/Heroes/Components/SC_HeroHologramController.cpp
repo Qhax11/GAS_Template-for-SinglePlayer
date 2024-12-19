@@ -197,14 +197,21 @@ float USC_HeroHologramController::GetPointDistToLine()
 	{
 		return 0;
 	}
-	FVector ClosestPointOnLine;
-	FVector NormalizedDirection = HeroBase->GetActorLocation() - TargetLockSystem->CurrentTarget->GetActorLocation();
+
+	FVector HeroLocation = HeroBase->GetActorLocation();
+	FVector TargetLocation = TargetLockSystem->CurrentTarget->GetActorLocation();
+
+	// Adjust the target's Z coordinate to match the hero's Z coordinate, focusing only on the XY plane for direction calculation.
+    // This effectively ignores the Z-axis difference, providing a direction vector confined to the horizontal plane.
+	FVector NormalizedDirection = HeroLocation - FVector(TargetLocation.X, TargetLocation.Y, HeroLocation.Z);
 	NormalizedDirection.Normalize();
+
+	FVector ClosestPointOnLine;
 	float PointDistToLine = FMath::PointDistToLine(HeroHologramTargetActor->GetActorLocation(), NormalizedDirection, HeroBase->GetActorLocation(), ClosestPointOnLine);
 
 	if (bDrawDebug)
 	{
-		DrawDebugLine(GetWorld(), HeroBase->GetActorLocation(), TargetLockSystem->CurrentTarget->GetActorLocation(), FColor::Red, false, 2.0f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), HeroLocation, FVector(TargetLocation.X, TargetLocation.Y, HeroLocation.Z), FColor::Red, false, 2.0f, 0, 2.0f);
 		DrawDebugLine(GetWorld(), ClosestPointOnLine, HeroHologramTargetActor->GetActorLocation(), FColor::Red, false, 2.0f, 0, 2.0f);
 	}
 
@@ -213,7 +220,7 @@ float USC_HeroHologramController::GetPointDistToLine()
     // - If Z <= 0, the hologram is on the left side or on the line.
     // - If Z > 0, the hologram is on the right side.
     // Returns the distance to the line with a positive or negative sign based on the side.
-	FVector PointDirection = HeroHologramTargetActor->GetActorLocation() - HeroBase->GetActorLocation();
+	FVector PointDirection = HeroHologramTargetActor->GetActorLocation() - HeroLocation;
 	FVector CrossProductResult = FVector::CrossProduct(NormalizedDirection, PointDirection);
 
 	if (CrossProductResult.Z <= 0)

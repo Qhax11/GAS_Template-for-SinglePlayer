@@ -13,8 +13,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndTargetLock);
 UENUM(BlueprintType)
 enum ETargetChangeDirection : uint8
 {
-	Left,
-	Right
+	TCD_Left,
+	TCD_Right
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))

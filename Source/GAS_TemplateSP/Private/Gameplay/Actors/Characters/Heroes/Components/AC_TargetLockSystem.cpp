@@ -160,13 +160,13 @@ void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)
 
 	if ((VectorValue.X > Threshold) && (CurrentTime - TryToFindNewTargetLastExecutionTimeRight >= TryToFindNewTargetExecutionCooldown))
 	{
-		TryToFindNewTarget(ETargetChangeDirection::Right);
+		TryToFindNewTarget(ETargetChangeDirection::TCD_Right);
 		TryToFindNewTargetLastExecutionTimeRight = CurrentTime;
 	}
 
 	if ((VectorValue.X < -Threshold) && (CurrentTime - TryToFindNewTargetLastExecutionTimeLeft >= TryToFindNewTargetExecutionCooldown))
 	{
-		TryToFindNewTarget(ETargetChangeDirection::Left);
+		TryToFindNewTarget(ETargetChangeDirection::TCD_Left);
 		TryToFindNewTargetLastExecutionTimeLeft = CurrentTime;
 	}
 }
@@ -201,11 +201,11 @@ void UAC_TargetLockSystem::TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection
 	SplitActorsByPositionRelativeToHero(OutResultActors, LeftActors, RightActors);
 
 	AActor* FoundNewTarget = nullptr;
-	if (TargetChangeDirection == ETargetChangeDirection::Left) 
+	if (TargetChangeDirection == ETargetChangeDirection::TCD_Left) 
 	{
 		FoundNewTarget = FindNearestActor(CurrentTarget, LeftActors);
 	}
-	else if(TargetChangeDirection == ETargetChangeDirection::Right)
+	else if(TargetChangeDirection == ETargetChangeDirection::TCD_Right)
 	{
 		FoundNewTarget = FindNearestActor(CurrentTarget, RightActors);
 	}

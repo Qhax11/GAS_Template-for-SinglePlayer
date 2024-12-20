@@ -22,11 +22,6 @@ public:
 	virtual void Cancel() override;
 
 public:
-	UPROPERTY(BlueprintReadWrite)
-	TObjectPtr<UAnimMontage> AttackMontage;
-
-	UPROPERTY(BlueprintReadWrite)
-	TObjectPtr<AActor> CurrentTarget;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "HeroHologramTargetActor")
 	float RotationSpeed = 5.0f;

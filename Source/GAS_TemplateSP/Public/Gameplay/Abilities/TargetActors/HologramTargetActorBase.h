@@ -23,16 +23,16 @@ class GAS_TEMPLATESP_API AHologramTargetActorBase : public AGAS_TargetActorBase
 public:
 	AHologramTargetActorBase();
 
+	virtual void BeginPlay() override;
+
 	virtual void Tick(float DeltaSeconds) override;
 
+	// Checks if the direction has changed.
 	UFUNCTION(BlueprintCallable)
-	void UpdateRelativeDirectionToTarget();
+	bool UpdateRelativeDirectionToTarget();
 
-	UFUNCTION(BlueprintCallable)
-	UAnimMontage* GetAttackMontageFromRelativePositionToTarget();
-
-	UPROPERTY(EditDefaultsOnly)
-	TMap<TEnumAsByte<EHologramDirectionToTarget>, UAnimMontage*> DirectionalAttackMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "AHologramTargetActorBase")
+	TMap<TEnumAsByte<EHologramDirectionToTarget>, UAnimMontage*> DirectionalAttackMontages;
 
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<AActor> CurrentTarget;
@@ -42,7 +42,11 @@ public:
 
 protected:
 
-	void OnDirectionChanged(EHologramDirectionToTarget NewDirection);
+	void OnDirectionToTargetChanged(EHologramDirectionToTarget NewDirection);
+
+	void UptadeAttackMontageFromRelativePositionToTarget();
+
+	UAnimMontage* GetAttackMontageFromRelativePositionToTarget();
 
 	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<EHologramDirectionToTarget> LastDirectionToTarget = EHologramDirectionToTarget::HDT_None;
@@ -54,4 +58,27 @@ public:
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* SkeletalMesh;
 
+	UPROPERTY(VisibleAnywhere, Category = "Collision", BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* EnemyDetectionSphere;
+
+protected:
+
+	UFUNCTION()
+	virtual void OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	void PlayMontageWithCallback(UAnimMontage* MontageToPlay);
+
+	UFUNCTION()
+	void OnPlayMontageNotify(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+
+	UFUNCTION()
+	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
+
+	class UAnimInstance* AnimInstance;
 };

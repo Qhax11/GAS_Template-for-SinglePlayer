@@ -6,6 +6,8 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroHologramController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "AbilitySystemGlobals.h"
+
 
 void AHeroHologramTargetActor::BeginPlay()
 {
@@ -100,3 +102,54 @@ void AHeroHologramTargetActor::SyncRotationWithHero(float DeltaTime)
 
 	SetActorRotation(FRotator(CurrentRotation.Pitch, NewRotation.Yaw, CurrentRotation.Roll));
 }
+
+void AHeroHologramTargetActor::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Super::OnEnemyDetectionBeginOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+
+	if (OtherActor == HeroBase)
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* OtherActorASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OtherActor);
+	if (!OtherActorASC)
+	{
+		return;
+	}
+
+	CurrentTarget = OtherActor;
+
+	// If the direction hasn't changed, we play the montage manually.
+	if (!UpdateRelativeDirectionToTarget()) 
+	{
+		PlayMontageWithCallback(AttackMontage);
+	}
+}
+
+void AHeroHologramTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnEnemyDetectionEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
+
+	if (OtherActor == HeroBase)
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* OtherActorASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OtherActor);
+	if (!OtherActorASC)
+	{
+		return;
+	}
+
+	SkeletalMesh->bPauseAnims = false;
+
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_StopWithBlendOut(0.5f, AttackMontage);
+	}
+}
+
+
+
+

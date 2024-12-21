@@ -2,23 +2,42 @@
 
 
 #include "Gameplay/Abilities/TargetActors/HologramTargetActorBase.h"
+#include "AbilitySystemGlobals.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/SphereComponent.h"
 
 AHologramTargetActorBase::AHologramTargetActorBase()
 {
     CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CollisionCylinder"));
     SetRootComponent(CapsuleComponent);
-
     CapsuleComponent->SetCapsuleHalfHeight(96.0f);
     CapsuleComponent->SetCapsuleRadius(42.0f);
-
     CapsuleComponent->SetCollisionProfileName(TEXT("Pawn"));
 
     SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
     SkeletalMesh->SetupAttachment(CapsuleComponent);
-
     SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+    EnemyDetectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+    EnemyDetectionSphere->SetupAttachment(CapsuleComponent);
+    EnemyDetectionSphere->InitSphereRadius(300.0f);
+    EnemyDetectionSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    EnemyDetectionSphere->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+    EnemyDetectionSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+    EnemyDetectionSphere->OnComponentBeginOverlap.AddDynamic(this, &AHologramTargetActorBase::OnEnemyDetectionBeginOverlap);
+    EnemyDetectionSphere->OnComponentEndOverlap.AddDynamic(this, &AHologramTargetActorBase::OnEnemyDetectionEndOverlap);
+}
+
+void AHologramTargetActorBase::BeginPlay()
+{
+    Super::BeginPlay();
+
+    AnimInstance = SkeletalMesh->GetAnimInstance();
+    if (!AnimInstance)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null in: %s"), *GetName());
+    }
 }
 
 void AHologramTargetActorBase::Tick(float DeltaSeconds)
@@ -28,11 +47,11 @@ void AHologramTargetActorBase::Tick(float DeltaSeconds)
     UpdateRelativeDirectionToTarget();
 }
 
-void AHologramTargetActorBase::UpdateRelativeDirectionToTarget()
+bool AHologramTargetActorBase::UpdateRelativeDirectionToTarget()
 {
     if (!CurrentTarget)
     {
-        return;
+        return false;
     }
 
     FVector HologramLocation = GetActorLocation();
@@ -63,24 +82,89 @@ void AHologramTargetActorBase::UpdateRelativeDirectionToTarget()
 
     if (NewDirection != LastDirectionToTarget)
     {
-        OnDirectionChanged(NewDirection);
         LastDirectionToTarget = NewDirection;
+        OnDirectionToTargetChanged(NewDirection);
+        return true;
     }
+
+    return false;
+}
+
+void AHologramTargetActorBase::OnDirectionToTargetChanged(EHologramDirectionToTarget NewDirection)
+{
+    UptadeAttackMontageFromRelativePositionToTarget();
+    PlayMontageWithCallback(AttackMontage);
+}
+
+void AHologramTargetActorBase::UptadeAttackMontageFromRelativePositionToTarget()
+{
+    AttackMontage = GetAttackMontageFromRelativePositionToTarget();
 }
 
 UAnimMontage* AHologramTargetActorBase::GetAttackMontageFromRelativePositionToTarget()
 {
-    UAnimMontage** MontagePtr = DirectionalAttackMontage.Find(LastDirectionToTarget);
+    UAnimMontage** MontagePtr = DirectionalAttackMontages.Find(LastDirectionToTarget);
 
     if (MontagePtr)
     {
-        return *MontagePtr;  
+        return *MontagePtr;
     }
 
     return nullptr;
 }
 
-void AHologramTargetActorBase::OnDirectionChanged(EHologramDirectionToTarget NewDirection)
+void AHologramTargetActorBase::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    AttackMontage = GetAttackMontageFromRelativePositionToTarget();
+    UAbilitySystemComponent* OtherActorASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OtherActor);
+    if (!OtherActorASC)
+    {
+        return;
+    }
+
+
+}
+
+void AHologramTargetActorBase::OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+   
+
+
+}
+
+void AHologramTargetActorBase::PlayMontageWithCallback(UAnimMontage* MontageToPlay)
+{
+    if (!MontageToPlay)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No montage provided to play."));
+        return;
+    }
+
+    if (!AnimInstance)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null in: %s "), *GetName());
+        return;
+    }
+
+    if (SkeletalMesh->bPauseAnims) 
+    {
+        SkeletalMesh->bPauseAnims = false;
+    }
+
+    float MontageDuration = AnimInstance->Montage_Play(MontageToPlay);
+    if (MontageDuration > 0.f)
+    {
+        AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &AHologramTargetActorBase::OnPlayMontageNotify);
+    }
+}
+
+void AHologramTargetActorBase::OnPlayMontageNotify(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
+{
+    if (NotifyName == FName(TEXT("FirstSectionFinished"))) 
+    {
+        SkeletalMesh->bPauseAnims = true;
+    }
+}
+
+void AHologramTargetActorBase::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
+{
 }

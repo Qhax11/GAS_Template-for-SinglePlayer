@@ -42,6 +42,8 @@ protected:
 	class UAC_TargetLockSystem* TargetLockSystem;
 
 public:
+	void LookAtTarget();
+
 	void SetHeroHologramLocation();
 
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
@@ -52,13 +54,16 @@ public:
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
-	UCurveFloat* C_MouseInoutSensitiveX;
+	UCurveFloat* C_TraceRightDistance;
 
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
 	float SensitiveMultiplierX = 40.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
-	UCurveFloat* C_MouseInoutSensitiveY;
+	UCurveFloat* C_TraceForwardDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config", Meta = (ToolTip = "Reverse curve of C_TraceForwardDistance"))
+	UCurveFloat* C_TraceForwardDistanceReverse;
 
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
 	float SensitiveMultiplierY = 40.0f;
@@ -85,6 +90,8 @@ public:
 	FVector2D CalculateCumulativeMouseInputs();
 
 	void ResetRightTraceDistance();
+
+	void SetCumulativeMouseDeltaYForForwardTraceDistaneValue(float Value);
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")
 	float CumulativeMouseDeltaX;
@@ -114,7 +121,8 @@ private:
 
 	void UpdateTraceRightDistance();
 
-	void LookAtTarget();
+	float GetTimeForTraceFowardDistance(float Value);
+
 
 	bool bTargetLocked = false;
 };

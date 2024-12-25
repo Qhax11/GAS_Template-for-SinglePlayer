@@ -38,6 +38,8 @@ void AHologramTargetActorBase::BeginPlay()
     {
         UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null in: %s"), *GetName());
     }
+
+    AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &AHologramTargetActorBase::OnPlayMontageNotify);
 }
 
 void AHologramTargetActorBase::Tick(float DeltaSeconds)
@@ -121,18 +123,25 @@ void AHologramTargetActorBase::OnEnemyDetectionBeginOverlap(UPrimitiveComponent*
         return;
     }
 
-
 }
 
 void AHologramTargetActorBase::OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-   
-
+    UAbilitySystemComponent* OtherActorASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OtherActor);
+    if (!OtherActorASC)
+    {
+        return;
+    }
 
 }
 
 void AHologramTargetActorBase::PlayMontageWithCallback(UAnimMontage* MontageToPlay)
 {
+    if (!bIsTargetInRange) 
+    {
+        return;
+    }
+
     if (!MontageToPlay)
     {
         UE_LOG(LogTemp, Warning, TEXT("No montage provided to play."));
@@ -150,11 +159,7 @@ void AHologramTargetActorBase::PlayMontageWithCallback(UAnimMontage* MontageToPl
         SkeletalMesh->bPauseAnims = false;
     }
 
-    float MontageDuration = AnimInstance->Montage_Play(MontageToPlay);
-    if (MontageDuration > 0.f)
-    {
-        AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &AHologramTargetActorBase::OnPlayMontageNotify);
-    }
+    AnimInstance->Montage_Play(MontageToPlay);
 }
 
 void AHologramTargetActorBase::OnPlayMontageNotify(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)

@@ -82,6 +82,12 @@ void USC_HeroHologramController::TickComponent(float DeltaTime, ELevelTick TickT
 	SetHeroHologramLocation();
 }
 
+void USC_HeroHologramController::LookAtTarget()
+{
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->CurrentTarget->GetActorLocation());
+	SetWorldRotation(FRotator(0, LookAtRotation.Yaw, 0));
+}
+
 void USC_HeroHologramController::SetHeroHologramLocation()
 {
 	if (bTargetLocked) 
@@ -194,6 +200,12 @@ void USC_HeroHologramController::ResetRightTraceDistance()
 	TraceRightDistanceOffset = 0;
 }
 
+void USC_HeroHologramController::SetCumulativeMouseDeltaYForForwardTraceDistaneValue(float Value)
+{
+	// Getting value from reverse curve
+	CumulativeMouseDeltaY = GetTimeForTraceFowardDistance(Value);
+}
+
 void USC_HeroHologramController::OnStartTargetLock()
 {
 	CumulativeMouseDeltaX = 0;
@@ -210,21 +222,25 @@ float USC_HeroHologramController::GetPointDistToLine()
 		return 0;
 	}
 
-	FVector HeroLocation = HeroBase->GetActorLocation();
+	FVector HeroHologramLocation = HeroHologramTargetActor->GetActorLocation();
 	FVector TargetLocation = TargetLockSystem->CurrentTarget->GetActorLocation();
+	FVector HeroLocation = HeroBase->GetActorLocation();
 
 	// Adjust the target's Z coordinate to match the hero's Z coordinate, focusing only on the XY plane for direction calculation.
     // This effectively ignores the Z-axis difference, providing a direction vector confined to the horizontal plane.
-	FVector NormalizedDirection = HeroLocation - FVector(TargetLocation.X, TargetLocation.Y, HeroLocation.Z);
+	FVector HeroLocationUpdated = FVector(HeroLocation.X, HeroLocation.Y, TargetLocation.Z);
+	FVector HeroHologramLocationUpdated = FVector(HeroHologramLocation.X, HeroHologramLocation.Y, TargetLocation.Z);
+
+	FVector NormalizedDirection = HeroLocationUpdated - TargetLocation;
 	NormalizedDirection.Normalize();
 
 	FVector ClosestPointOnLine;
-	float PointDistToLine = FMath::PointDistToLine(HeroHologramTargetActor->GetActorLocation(), NormalizedDirection, HeroBase->GetActorLocation(), ClosestPointOnLine);
+	float PointDistToLine = FMath::PointDistToLine(HeroHologramLocationUpdated, NormalizedDirection, HeroLocationUpdated, ClosestPointOnLine);
 
 	if (bDrawDebug)
 	{
-		DrawDebugLine(GetWorld(), HeroLocation, FVector(TargetLocation.X, TargetLocation.Y, HeroLocation.Z), FColor::Red, false, 2.0f, 0, 2.0f);
-		DrawDebugLine(GetWorld(), ClosestPointOnLine, HeroHologramTargetActor->GetActorLocation(), FColor::Red, false, 2.0f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), HeroLocationUpdated, TargetLocation, FColor::Red, false, 2.0f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), ClosestPointOnLine, HeroHologramLocationUpdated, FColor::Blue, false, 2.0f, 0, 2.0f);
 	}
 
 	// Determines whether the hologram is to the right or left of a line defined by the normalized direction. 
@@ -261,31 +277,46 @@ void USC_HeroHologramController::OnEndTargetLock()
 
 void USC_HeroHologramController::UpdateTraceForwardDistance()
 {
-	if (!C_MouseInoutSensitiveY)
+	if (!C_TraceForwardDistance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TraceDistanceCurve is null in: %s"), *GetName());
 		return;
 	}
 
-	float CurveValue = C_MouseInoutSensitiveY->GetFloatValue(CumulativeMouseDeltaY);
+	float CurveValue = C_TraceForwardDistance->GetFloatValue(CumulativeMouseDeltaY);
 	TraceForwardDistance = CurveValue + TraceForwardDistanceOffset;
 }
 
 void USC_HeroHologramController::UpdateTraceRightDistance()
 {
-	if (!C_MouseInoutSensitiveX)
+	if (!C_TraceRightDistance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TraceDistanceCurve is null in: %s"), *GetName());
 		return;
 	}
 
-	float CurveValue = C_MouseInoutSensitiveX->GetFloatValue(CumulativeMouseDeltaX);
+	float CurveValue = C_TraceRightDistance->GetFloatValue(CumulativeMouseDeltaX);
 	TraceRightDistance = CurveValue + TraceRightDistanceOffset;
 }
 
-void USC_HeroHologramController::LookAtTarget()
+float USC_HeroHologramController::GetTimeForTraceFowardDistance(float Value)
 {
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->CurrentTarget->GetActorLocation());
-	SetWorldRotation(FRotator(0, LookAtRotation.Yaw, 0));
+	if (!C_TraceForwardDistanceReverse)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TraceForwardDistanceReverse is null in: %s"), *GetName());
+		return -1.f;
+	}
+
+	TArray<FRichCurveEditInfo> RichCurveEditInfo = C_TraceForwardDistanceReverse->GetCurves();
+	FRealCurve* RealCurve = RichCurveEditInfo[0].CurveToEdit;
+
+	float MinValue, MaxValue;
+	RealCurve->GetValueRange(MinValue, MaxValue);
+
+	float ClampedValue = FMath::Clamp(C_TraceForwardDistanceReverse->GetFloatValue(Value), MinValue, MaxValue);
+
+	return ClampedValue;
 }
+
+
 

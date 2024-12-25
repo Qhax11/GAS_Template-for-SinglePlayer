@@ -118,13 +118,30 @@ void AHeroHologramTargetActor::OnEnemyDetectionBeginOverlap(UPrimitiveComponent*
 		return;
 	}
 
-	CurrentTarget = OtherActor;
+	bIsTargetInRange = true;
 
-	// If the direction hasn't changed, we play the montage manually.
-	if (!UpdateRelativeDirectionToTarget()) 
+	if (TargetLockSystemComponent->CurrentTarget)
 	{
-		PlayMontageWithCallback(AttackMontage);
+		if (TargetLockSystemComponent->CurrentTarget == OtherActor) 
+		{
+			// If the direction hasn't changed, we play the montage manually. This is for first time detection.
+			if (!UpdateRelativeDirectionToTarget())
+			{
+				PlayMontageWithCallback(AttackMontage);
+			}
+		}
 	}
+	else
+	{
+		CurrentTarget = OtherActor;
+
+		// If the direction hasn't changed, we play the montage manually. This is for first time detection.
+		if (!UpdateRelativeDirectionToTarget())
+		{
+			PlayMontageWithCallback(AttackMontage);
+		}
+	}
+	
 }
 
 void AHeroHologramTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -142,12 +159,32 @@ void AHeroHologramTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* O
 		return;
 	}
 
-	SkeletalMesh->bPauseAnims = false;
-
-	if (AnimInstance)
+	if (SkeletalMesh->bPauseAnims)
 	{
-		AnimInstance->Montage_StopWithBlendOut(0.5f, AttackMontage);
+		SkeletalMesh->bPauseAnims = false;
 	}
+
+	if (TargetLockSystemComponent->CurrentTarget) 
+	{
+		if (OtherActor == TargetLockSystemComponent->CurrentTarget) 
+		{
+			if (AnimInstance)
+			{
+				AnimInstance->Montage_StopWithBlendOut(0.5f, AttackMontage);
+			}
+		}
+	}
+	else
+	{
+		CurrentTarget = nullptr;
+
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_StopWithBlendOut(0.5f, AttackMontage);
+		}
+	}
+
+	bIsTargetInRange = false;
 }
 
 

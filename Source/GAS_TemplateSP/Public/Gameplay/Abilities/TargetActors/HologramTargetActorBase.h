@@ -63,6 +63,8 @@ public:
 
 protected:
 
+	bool bIsTargetInRange;
+
 	UFUNCTION()
 	virtual void OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,

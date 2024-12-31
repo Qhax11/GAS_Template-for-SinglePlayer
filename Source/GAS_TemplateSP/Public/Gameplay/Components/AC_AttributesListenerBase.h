@@ -29,6 +29,9 @@ public:
 
 	virtual bool Initialize(const AActor* OwnerActor);
 
+	UPROPERTY(EditDefaultsOnly)
+	float VulnerableHealthPercentage = 20;
+
 protected:
 	// For update "TAG_Gameplay_Health_Full" GameplayTag
 	UFUNCTION()

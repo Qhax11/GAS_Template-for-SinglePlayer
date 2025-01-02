@@ -4,6 +4,7 @@
 #include "Gameplay/Abilities/GA_TargetBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "EnvironmentQuery/EnvQueryManager.h"
 
 UGA_TargetBase::UGA_TargetBase()
 {
@@ -19,15 +20,13 @@ void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	if (BindInputForConfirmAndCancel())
 	{
-		if (SpawnAndSetupTargetActor()) 
+		if (bActorWillSpawnWithEQS) 
 		{
-			TargetActor->OnConfirm.AddDynamic(this, &UGA_TargetBase::OnTargetActorConfirm);
-			TargetActor->OnCancel.AddDynamic(this, &UGA_TargetBase::OnTargetActorCancelled);
+			StartEQSForTargetActorSpawnLocation();
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Actor cannot spawned in: %s"), *GetName());
-			EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
+			SpawnAndSetupTargetActor();
 		}
 	}
 }
@@ -61,7 +60,7 @@ bool UGA_TargetBase::BindInputForConfirmAndCancel()
 	return false;
 }
 
-AGAS_TargetActorBase* UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
+void UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
 {
 	if (UWorld* World = this->GetWorld())
 	{
@@ -71,11 +70,46 @@ AGAS_TargetActorBase* UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
 			TargetActor = World->SpawnActor<AGAS_TargetActorBase>(TargetActorClass, ActorTransform, SpawnParams);
-			return TargetActor;
+		}
+
+		if (TargetActor)
+		{
+			TargetActor->OnConfirm.AddDynamic(this, &UGA_TargetBase::OnTargetActorConfirm);
+			TargetActor->OnCancel.AddDynamic(this, &UGA_TargetBase::OnTargetActorCancelled);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Actor cannot spawned in: %s"), *GetName());
+			EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 		}
 	}
+}
 
-	return nullptr;
+void UGA_TargetBase::StartEQSForTargetActorSpawnLocation()
+{
+	if (!EQSQueryTemplate)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EQS Query Template is not set!"));
+		return;
+	}
+
+	FEnvQueryRequest QueryRequest(EQSQueryTemplate, this);
+
+	QueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &UGA_TargetBase::OnTargetActorSpawnLocationQueryFinished);
+}
+
+void UGA_TargetBase::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
+{
+	if (!Result.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EQS Query did not return any results."));
+		SpawnAndSetupTargetActor();
+		return;
+	}
+
+	FVector BestLocation = Result->GetItemAsLocation(0);
+
+	SpawnAndSetupTargetActor(FRotator::ZeroRotator, BestLocation);
 }
 
 void UGA_TargetBase::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)

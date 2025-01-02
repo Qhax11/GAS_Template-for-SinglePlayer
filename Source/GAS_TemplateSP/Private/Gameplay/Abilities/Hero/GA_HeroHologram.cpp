@@ -8,19 +8,18 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "EnvironmentQuery/EnvQueryManager.h"
 
 void UGA_HeroHologram::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
     const FGameplayAbilityActorInfo* ActorInfo, 
     const FGameplayAbilityActivationInfo ActivationInfo, 
     const FGameplayEventData* TriggerEventData)
 {
-    Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
-    if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        USC_HeroHologramController* HeroHologramController = HeroBase->GetHeroHologramControllerComponent();
-        HeroHologramController->HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActor);
+        bActorWillSpawnWithEQS = false;
     }
+    Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
 void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
@@ -47,42 +46,52 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
     }
 }
 
-AGAS_TargetActorBase* UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
+void UGA_HeroHologram::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
+{
+    Super::OnTargetActorSpawnLocationQueryFinished(Result);
+
+    if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
+    {
+        USC_HeroHologramController* HeroHologramController = HeroBase->GetHeroHologramControllerComponent();
+        HeroHologramController->HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActor);
+    }
+}
+
+void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
 {
     AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
     if (!HeroBase || !TraceData) 
     {
         UE_LOG(LogTemp, Warning, TEXT("HeroBase or TraceData is null in: %s"), *GetName());
-        return Super::SpawnAndSetupTargetActor(Rotation, Location);
+        Super::SpawnAndSetupTargetActor(Rotation, Location);
     }
 
-    FVector HologramStartLocation;
-    FVector HeroLocatoin = HeroBase->GetActorLocation();
+    FVector HologramSpawnLocation = Location;
 
     if (HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        FVector TargetLocation = HeroBase->GetTargetLockSystemComponent()->CurrentTarget->GetActorLocation();
+        AActor* LockedTarget = HeroBase->GetTargetLockSystemComponent()->CurrentTarget;
         HeroBase->GetHeroHologramControllerComponent()->ResetRightTraceDistance();
-        float Distance = FVector::Dist(TargetLocation, HeroLocatoin);
+        FVector HeroLocatoin = HeroBase->GetActorLocation();
+        float Distance = FVector::Dist(HologramSpawnLocation, HeroLocatoin);
         HeroBase->GetHeroHologramControllerComponent()->SetCumulativeMouseDeltaYForForwardTraceDistaneValue(Distance);
-        HologramStartLocation = TargetLocation;
-        FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramStartLocation, HologramStartLocation);
-        return Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramStartLocation);
+        FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramSpawnLocation, LockedTarget->GetActorLocation());
+        Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramSpawnLocation);
     }
     else
     {
-        HologramStartLocation = HeroBase->GetHeroHologramControllerComponent()->GetHeroHologramLocationFromLineTrace();
+        HologramSpawnLocation = HeroBase->GetHeroHologramControllerComponent()->GetHeroHologramLocationFromLineTrace();
         TArray<AActor*> OutResultActors;
-        TraceData->Trace->CreateTraceWithTeamFilterAndLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, HologramStartLocation, OutResultActors);
+        TraceData->Trace->CreateTraceWithTeamFilterAndLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, HologramSpawnLocation, OutResultActors);
 
         if (OutResultActors.IsValidIndex(0))
         {
-            FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramStartLocation, OutResultActors[0]->GetActorLocation());
-            return Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramStartLocation);
+            FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramSpawnLocation, OutResultActors[0]->GetActorLocation());
+            Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramSpawnLocation);
         }
         else
         {
-            return Super::SpawnAndSetupTargetActor(HeroBase->GetActorRotation(), HologramStartLocation);
+            Super::SpawnAndSetupTargetActor(HeroBase->GetActorRotation(), HologramSpawnLocation);
         }
     }
 }

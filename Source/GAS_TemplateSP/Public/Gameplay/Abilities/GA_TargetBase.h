@@ -4,6 +4,7 @@
 
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
+#include "EnvironmentQuery/EnvQueryTypes.h"
 #include "GA_TargetBase.generated.h"
 
 /**
@@ -22,7 +23,17 @@ public:
 
 	bool BindInputForConfirmAndCancel();
 
-	virtual AGAS_TargetActorBase* SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
+	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetBase")
+	bool bActorWillSpawnWithEQS = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetBase", meta = (EditCondition = "bActorWillSpawnWithEQS"))
+	UEnvQuery* EQSQueryTemplate;
+
+	virtual void StartEQSForTargetActorSpawnLocation();
+
+	virtual void OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
 
 	/** The TargetActor class that we spawned */
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")

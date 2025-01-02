@@ -200,10 +200,15 @@ void USC_HeroHologramController::ResetRightTraceDistance()
 	TraceRightDistanceOffset = 0;
 }
 
-void USC_HeroHologramController::SetCumulativeMouseDeltaYForForwardTraceDistaneValue(float Value)
+void USC_HeroHologramController::SetCumulativeMouseValuesRelatedWith2DLocation(FVector2D Location)
 {
-	// Getting value from reverse curve
-	CumulativeMouseDeltaY = GetTimeForTraceFowardDistance(Value);
+	if (Location.IsNearlyZero()) 
+	{
+		return;
+	}
+
+	SetCumulativeMouseDeltaXForRightTraceDistaneValue(Location.X);
+	SetCumulativeMouseDeltaYForForwardTraceDistaneValue(Location.Y);
 }
 
 void USC_HeroHologramController::OnStartTargetLock()
@@ -299,6 +304,18 @@ void USC_HeroHologramController::UpdateTraceRightDistance()
 	TraceRightDistance = CurveValue + TraceRightDistanceOffset;
 }
 
+void USC_HeroHologramController::SetCumulativeMouseDeltaXForRightTraceDistaneValue(float Value)
+{
+	// Getting value from reverse curve
+	CumulativeMouseDeltaX = GetTimeForTraceRightDistance(Value);
+}
+
+void USC_HeroHologramController::SetCumulativeMouseDeltaYForForwardTraceDistaneValue(float Value)
+{
+	// Getting value from reverse curve
+	CumulativeMouseDeltaY = GetTimeForTraceFowardDistance(Value);
+}
+
 float USC_HeroHologramController::GetTimeForTraceFowardDistance(float Value)
 {
 	if (!C_TraceForwardDistanceReverse)
@@ -314,6 +331,25 @@ float USC_HeroHologramController::GetTimeForTraceFowardDistance(float Value)
 	RealCurve->GetValueRange(MinValue, MaxValue);
 
 	float ClampedValue = FMath::Clamp(C_TraceForwardDistanceReverse->GetFloatValue(Value), MinValue, MaxValue);
+
+	return ClampedValue;
+}
+
+float USC_HeroHologramController::GetTimeForTraceRightDistance(float Value)
+{
+	if (!C_TraceRightDistanceReverse)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TraceForwardDistanceReverse is null in: %s"), *GetName());
+		return -1.f;
+	}
+
+	TArray<FRichCurveEditInfo> RichCurveEditInfo = C_TraceRightDistanceReverse->GetCurves();
+	FRealCurve* RealCurve = RichCurveEditInfo[0].CurveToEdit;
+
+	float MinValue, MaxValue;
+	RealCurve->GetValueRange(MinValue, MaxValue);
+
+	float ClampedValue = FMath::Clamp(C_TraceRightDistanceReverse->GetFloatValue(Value), MinValue, MaxValue);
 
 	return ClampedValue;
 }

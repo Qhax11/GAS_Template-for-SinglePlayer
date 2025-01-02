@@ -93,9 +93,9 @@ void UGA_TargetBase::StartEQSForTargetActorSpawnLocation()
 		return;
 	}
 
-	FEnvQueryRequest QueryRequest(EQSQueryTemplate, this);
+	FEnvQueryRequest QueryRequest(EQSQueryTemplate, GetOwningActorFromActorInfo());
 
-	QueryRequest.Execute(EEnvQueryRunMode::SingleResult, this, &UGA_TargetBase::OnTargetActorSpawnLocationQueryFinished);
+	QueryRequest.Execute(EEnvQueryRunMode::AllMatching, this, &UGA_TargetBase::OnTargetActorSpawnLocationQueryFinished);
 }
 
 void UGA_TargetBase::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)

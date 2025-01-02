@@ -17,7 +17,7 @@ void UGA_HeroHologram::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        bActorWillSpawnWithEQS = false;
+        //bActorWillSpawnWithEQS = false;
     }
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
@@ -73,8 +73,10 @@ void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locat
         AActor* LockedTarget = HeroBase->GetTargetLockSystemComponent()->CurrentTarget;
         HeroBase->GetHeroHologramControllerComponent()->ResetRightTraceDistance();
         FVector HeroLocatoin = HeroBase->GetActorLocation();
-        float Distance = FVector::Dist(HologramSpawnLocation, HeroLocatoin);
-        HeroBase->GetHeroHologramControllerComponent()->SetCumulativeMouseDeltaYForForwardTraceDistaneValue(Distance);
+        float DistanceBetweenHologramAndHero = FVector::Dist(HologramSpawnLocation, HeroLocatoin);
+        float DistanceBetweenHologramAndTarget = FVector::Dist(LockedTarget->GetActorLocation(), HologramSpawnLocation);
+        FVector2D Axises = FVector2D(DistanceBetweenHologramAndTarget, DistanceBetweenHologramAndHero);
+        HeroBase->GetHeroHologramControllerComponent()->SetCumulativeMouseValuesRelatedWith2DLocation(Axises);
         FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramSpawnLocation, LockedTarget->GetActorLocation());
         Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramSpawnLocation);
     }

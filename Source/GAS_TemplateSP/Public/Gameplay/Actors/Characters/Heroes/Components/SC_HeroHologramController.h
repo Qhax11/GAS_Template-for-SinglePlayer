@@ -56,6 +56,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
 	UCurveFloat* C_TraceRightDistance;
 
+	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config", Meta = (ToolTip = "Reverse curve of C_TraceRightDistanceReverse"))
+	UCurveFloat* C_TraceRightDistanceReverse;
+
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
 	float SensitiveMultiplierX = 40.0f;
 
@@ -91,7 +94,7 @@ public:
 
 	void ResetRightTraceDistance();
 
-	void SetCumulativeMouseDeltaYForForwardTraceDistaneValue(float Value);
+	void SetCumulativeMouseValuesRelatedWith2DLocation(FVector2D Location);
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")
 	float CumulativeMouseDeltaX;
@@ -121,7 +124,12 @@ private:
 
 	void UpdateTraceRightDistance();
 
+	void SetCumulativeMouseDeltaXForRightTraceDistaneValue(float Value);
+
+	void SetCumulativeMouseDeltaYForForwardTraceDistaneValue(float Value);
+
 	float GetTimeForTraceFowardDistance(float Value);
+	float GetTimeForTraceRightDistance(float Value);
 
 
 	bool bTargetLocked = false;

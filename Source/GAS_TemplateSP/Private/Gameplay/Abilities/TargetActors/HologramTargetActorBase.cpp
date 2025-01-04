@@ -37,6 +37,7 @@ void AHologramTargetActorBase::BeginPlay()
     if (!AnimInstance)
     {
         UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null in: %s"), *GetName());
+        return;
     }
 
     AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &AHologramTargetActorBase::OnPlayMontageNotify);

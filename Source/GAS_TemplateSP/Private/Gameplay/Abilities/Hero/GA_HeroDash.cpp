@@ -14,7 +14,7 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	
+
 	AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
 	if (!HeroBase) 
 	{
@@ -44,7 +44,11 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 					FinishSetVelocity,
 					FinishClampVelocity);
 
-			DashRootMotionTask->ReadyForActivation();
+			if (DashRootMotionTask)
+			{
+				DashRootMotionTask->OnTimedOutAndDestinationReached.AddDynamic(this, &UGA_HeroDash::OnTaskTimedOut);
+				DashRootMotionTask->ReadyForActivation();
+			}
 		}
 	}
 }
@@ -70,5 +74,10 @@ FVector UGA_HeroDash::GetDirectionFromLastMovementInput(const FVector2D& LastMov
 	FVector Direction = HeroForwardDirection * LastMovementInput.Y + HeroRightDirection * LastMovementInput.X;
 
 	return Direction;
+}
+
+void UGA_HeroDash::OnTaskTimedOut()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 

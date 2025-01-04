@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_MontageAbility.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "GameFramework/RootMotionSource.h"
 #include "GA_HeroDash.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_HeroDash : public UGA_MontageAbility
+class GAS_TEMPLATESP_API UGA_HeroDash : public UGAS_GameplayAbilityBase
 {
 	GENERATED_BODY()
 	
@@ -20,6 +20,9 @@ protected:
 	FVector GetDashDirection(const FVector2D& LastMovementInput);
 
 	FVector GetDirectionFromLastMovementInput(const FVector2D& LastMovementInput);
+
+	UFUNCTION()
+	void OnTaskTimedOut();
 	
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
 	float DistanceMultiplier = 300.0f;

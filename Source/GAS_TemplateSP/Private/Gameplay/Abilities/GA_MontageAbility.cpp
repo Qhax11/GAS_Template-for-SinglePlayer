@@ -19,10 +19,9 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	UAnimMontage* SelectedMontage = SelectSequence();
-	if (!SelectedMontage)
+	if (!AnimMontage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SelectedMontage is null in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("AnimMontage is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -33,7 +32,7 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	CreatePlayMontageWaitForEvent(SelectedMontage);
+	CreatePlayMontageWaitForEvent(AnimMontage);
 
 	StartupEffects();
 }
@@ -47,11 +46,6 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent(UAnimMontage* Montage)
 	Task->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
 	Task->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
 	Task->ReadyForActivation();
-}
-
-UAnimMontage* UGA_MontageAbility::SelectSequence()
-{
-	return Montages.IsValidIndex(0) ? Montages[0] : nullptr;
 }
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)

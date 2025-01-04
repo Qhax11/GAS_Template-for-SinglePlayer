@@ -14,14 +14,12 @@ class GAS_TEMPLATESP_API UGA_MontageAbility : public UGAS_GameplayAbilityBase
 	GENERATED_BODY()
 
 public:
-	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	void CreatePlayMontageWaitForEvent(UAnimMontage* Montage);
 
-	/** List of animation montages you want to cycle through when activating this ability */
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
-	TArray<TObjectPtr<UAnimMontage>> Montages;
+	TObjectPtr<UAnimMontage> AnimMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	FName SectionName = NAME_None;
@@ -43,8 +41,6 @@ public:
 	bool bStopWhenAbilityEnds = true;
 
 protected:
-	virtual UAnimMontage* SelectSequence();
-
 	UFUNCTION()
 	virtual void OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
 

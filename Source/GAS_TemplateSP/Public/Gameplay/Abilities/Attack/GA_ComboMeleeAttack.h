@@ -13,17 +13,9 @@ class GAS_TEMPLATESP_API UGA_ComboMeleeAttack : public UGA_MeleeAttackBase
 {
 	GENERATED_BODY()
 
-public:
-
-	UGA_ComboMeleeAttack();
-
 protected:
 
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
-	virtual UAnimMontage* SelectSequence() override;
-	
-	UAnimMontage* GetNextComboSequence();
 
-	int32 SequenceIndex = 0;
 };

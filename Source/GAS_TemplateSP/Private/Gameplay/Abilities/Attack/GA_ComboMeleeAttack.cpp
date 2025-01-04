@@ -6,7 +6,8 @@
 void UGA_ComboMeleeAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnEventReceived(EventTag, EventData);
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+
+	OnCanExecuteNextAttack.Broadcast();
 }
 
 

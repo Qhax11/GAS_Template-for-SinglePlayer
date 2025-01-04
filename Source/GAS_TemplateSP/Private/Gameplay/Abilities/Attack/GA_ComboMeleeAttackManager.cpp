@@ -15,14 +15,18 @@ void UGA_ComboMeleeAttackManager::ActivateAbility(const FGameplayAbilitySpecHand
 {
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-	if (AbilitySystemComponent)
+	if (TSubclassOf<UGameplayAbility> ComboAbilityClass = GetNextComboMeleeAttackAbility())
 	{
-		TSubclassOf<UGameplayAbility> ComboAbilityClass = GetNextComboMeleeAttackAbility();
-		AbilitySystemComponent->TryActivateAbilityByClass(ComboAbilityClass);
-		AbilitySystemComponent->OnAbilityEnded.AddUObject(this, &UGA_ComboMeleeAttackManager::OnComboMeleeAttackAbilityEnd);
+		if (GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(ComboAbilityClass))
+		{
+			FGameplayAbilitySpec* CurrentAbilitySpecHandle = GetAbilitySystemComponentFromActorInfo()->FindAbilitySpecFromClass(ComboAbilityClass);
+			if (UGA_ComboMeleeAttack* ComboAbility = Cast<UGA_ComboMeleeAttack>(CurrentAbilitySpecHandle->Ability))
+			{
+				ComboAbility->OnCanExecuteNextAttack.AddDynamic(this, &UGA_ComboMeleeAttackManager::OnCanExecuteNextAttack);
+				GetAbilitySystemComponentFromActorInfo()->OnAbilityEnded.AddUObject(this, &UGA_ComboMeleeAttackManager::OnComboMeleeAttackAbilityEnd);
+			}
+		}
 	}
-
 }
 
 TSubclassOf<UGA_ComboMeleeAttack> UGA_ComboMeleeAttackManager::GetNextComboMeleeAttackAbility()
@@ -43,12 +47,18 @@ TSubclassOf<UGA_ComboMeleeAttack> UGA_ComboMeleeAttackManager::GetNextComboMelee
 
 void UGA_ComboMeleeAttackManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	if (EndedData.bWasCancelled)
+	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
 	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+		return;
 	}
-	else
+
+	if (!EndedData.bWasCancelled)
 	{
 		AbilityIndex = 0;
 	}
+}
+
+void UGA_ComboMeleeAttackManager::OnCanExecuteNextAttack()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }

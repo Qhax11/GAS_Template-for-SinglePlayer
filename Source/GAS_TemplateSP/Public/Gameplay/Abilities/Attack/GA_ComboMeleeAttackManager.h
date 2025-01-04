@@ -25,6 +25,9 @@ protected:
 	UFUNCTION()
 	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
 
+	UFUNCTION()
+	void OnCanExecuteNextAttack();
+
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<UGA_ComboMeleeAttack>> ComboMeleeAttackAbilities;
 

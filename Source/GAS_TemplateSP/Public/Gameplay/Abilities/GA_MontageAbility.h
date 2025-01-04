@@ -5,9 +5,7 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "GA_MontageAbility.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API UGA_MontageAbility : public UGAS_GameplayAbilityBase
 {

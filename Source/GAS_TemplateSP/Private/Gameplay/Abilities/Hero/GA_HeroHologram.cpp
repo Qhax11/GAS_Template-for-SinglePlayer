@@ -19,26 +19,36 @@ void UGA_HeroHologram::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     {
         //bActorWillSpawnWithEQS = false;
     }
+    GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
 void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram))
+    {
+        GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram, 100);
+    }
+
     AHeroHologramTargetActor* HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActorData.TargetActor);
     if (!HeroHologramTargetActor)
     {
         Super::OnTargetActorConfirm(TargetActorData);
     }
-
+   
     BP_OnTargetActorConfirm(TargetActorData);
 
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
-    
+
     if (HeroHologramTargetActor->AttackMontage && HeroHologramTargetActor->CurrentTarget)
     {
-        CreatePlayMontageWaitForEvent(HeroHologramTargetActor->AttackMontage);
+        FGameplayEventData TriggerEventData;
+        TriggerEventData.EventTag = GAS_Tags::TAG_Gameplay_Event_ComboMelee;
+        TriggerEventData.Instigator = TargetActorData.TargetActor;
+        GetAbilitySystemComponentFromActorInfo()->HandleGameplayEvent(GAS_Tags::TAG_Gameplay_Event_ComboMelee, &TriggerEventData);
         TargetActorData.TargetActor->Destroy();
+        Super::OnTargetActorConfirm(TargetActorData);
     }
     else
     {

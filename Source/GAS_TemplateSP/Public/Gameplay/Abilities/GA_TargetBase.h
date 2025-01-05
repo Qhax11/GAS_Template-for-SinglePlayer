@@ -2,16 +2,14 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "GA_TargetBase.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
-class GAS_TEMPLATESP_API UGA_TargetBase : public UGA_MeleeAttackBase
+class GAS_TEMPLATESP_API UGA_TargetBase : public UGAS_GameplayAbilityBase
 {
 	GENERATED_BODY()
 	

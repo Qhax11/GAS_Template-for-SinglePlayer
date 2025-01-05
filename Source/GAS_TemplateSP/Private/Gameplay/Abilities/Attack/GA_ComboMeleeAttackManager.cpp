@@ -6,6 +6,14 @@
 UGA_ComboMeleeAttackManager::UGA_ComboMeleeAttackManager()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
+	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
+
+	FAbilityTriggerData TriggerData = FAbilityTriggerData();
+	TriggerData.TriggerSource = TriggerSource;
+	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_Event_ComboMelee;
+
+	AbilityTriggers.Add(TriggerData);
 }
 
 void UGA_ComboMeleeAttackManager::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -14,6 +22,7 @@ void UGA_ComboMeleeAttackManager::ActivateAbility(const FGameplayAbilitySpecHand
 	const FGameplayEventData* TriggerEventData)
 {
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	UE_LOG(LogTemp, Error, TEXT("UGA_ComboMeleeAttackManager"));
 
 	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = GetNextComboMeleeAttackAbility())
 	{

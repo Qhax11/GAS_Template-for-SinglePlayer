@@ -15,6 +15,8 @@ class GAS_TEMPLATESP_API UGA_ComboMeleeAttack : public UGA_MeleeAttackBase
 public:
 	UGA_ComboMeleeAttack();
 
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+
 	FCanExecuteNextAttack OnCanExecuteNextAttack;
 
 protected:

@@ -26,6 +26,7 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_TakeDamage, "Gameplay.Event.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_Death, "Gameplay.Event.Death");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_ComboMelee, "Gameplay.Event.ComboMelee");
 	
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff, "Gameplay.State.Debuff");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Stun, "Gameplay.State.Debuff.Stun");

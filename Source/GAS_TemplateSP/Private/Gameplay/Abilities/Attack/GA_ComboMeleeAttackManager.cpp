@@ -15,15 +15,17 @@ void UGA_ComboMeleeAttackManager::ActivateAbility(const FGameplayAbilitySpecHand
 {
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (TSubclassOf<UGameplayAbility> ComboAbilityClass = GetNextComboMeleeAttackAbility())
+	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = GetNextComboMeleeAttackAbility())
 	{
 		if (GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(ComboAbilityClass))
 		{
-			FGameplayAbilitySpec* CurrentAbilitySpecHandle = GetAbilitySystemComponentFromActorInfo()->FindAbilitySpecFromClass(ComboAbilityClass);
-			if (UGA_ComboMeleeAttack* ComboAbility = Cast<UGA_ComboMeleeAttack>(CurrentAbilitySpecHandle->Ability))
+			if (FGameplayAbilitySpec* SpecHandle = GetAbilitySystemComponentFromActorInfo()->FindAbilitySpecFromClass(ComboAbilityClass))
 			{
-				ComboAbility->OnCanExecuteNextAttack.AddDynamic(this, &UGA_ComboMeleeAttackManager::OnCanExecuteNextAttack);
-				GetAbilitySystemComponentFromActorInfo()->OnAbilityEnded.AddUObject(this, &UGA_ComboMeleeAttackManager::OnComboMeleeAttackAbilityEnd);
+				if (UGA_ComboMeleeAttack* LastAbility = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
+				{
+					LastAbility->OnCanExecuteNextAttack.AddDynamic(this, &UGA_ComboMeleeAttackManager::OnCanExecuteNextAttack);
+					GetAbilitySystemComponentFromActorInfo()->OnAbilityEnded.AddUObject(this, &UGA_ComboMeleeAttackManager::OnComboMeleeAttackAbilityEnd);
+				}
 			}
 		}
 	}

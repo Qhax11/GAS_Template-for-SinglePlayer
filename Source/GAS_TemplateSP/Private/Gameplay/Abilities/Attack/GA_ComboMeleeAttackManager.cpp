@@ -21,9 +21,12 @@ void UGA_ComboMeleeAttackManager::ActivateAbility(const FGameplayAbilitySpecHand
 		{
 			if (FGameplayAbilitySpec* SpecHandle = GetAbilitySystemComponentFromActorInfo()->FindAbilitySpecFromClass(ComboAbilityClass))
 			{
-				if (UGA_ComboMeleeAttack* LastAbility = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
+				if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
 				{
-					LastAbility->OnCanExecuteNextAttack.AddDynamic(this, &UGA_ComboMeleeAttackManager::OnCanExecuteNextAttack);
+					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound()) 
+					{
+						ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UGA_ComboMeleeAttackManager::OnCanExecuteNextAttack);
+					}
 					GetAbilitySystemComponentFromActorInfo()->OnAbilityEnded.AddUObject(this, &UGA_ComboMeleeAttackManager::OnComboMeleeAttackAbilityEnd);
 				}
 			}

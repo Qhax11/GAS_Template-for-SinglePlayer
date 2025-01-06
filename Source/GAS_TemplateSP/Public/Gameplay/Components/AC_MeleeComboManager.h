@@ -1,0 +1,41 @@
+// Qhax's GAS Template for SinglePlayer
+
+#pragma once
+
+#include "Components/ActorComponent.h"
+#include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
+#include "AC_MeleeComboManager.generated.h"
+
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class GAS_TEMPLATESP_API UAC_MeleeComboManager : public UActorComponent
+{
+	GENERATED_BODY()
+
+public:	
+	UAC_MeleeComboManager();
+
+	virtual void ActivateComboMeleeAttackAbility();
+
+protected:
+	virtual void BeginPlay() override;
+
+	class AGAS_CharacterBase* CharacterBase;
+	UAbilitySystemComponent* CharacterBaseASC;
+
+	TSubclassOf<UGA_ComboMeleeAttack> GetNextComboMeleeAttackAbility();
+
+	UFUNCTION()
+	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
+
+	UFUNCTION()
+	void OnCanActivateNextAttack();
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<UGA_ComboMeleeAttack>> ComboMeleeAttackAbilities;
+
+	int32 AbilityIndex = 0;
+
+	bool bCanActivateAbility = true;
+		
+};

@@ -8,7 +8,7 @@
 
 UGA_TargetBase::UGA_TargetBase()
 {
-	//ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting);
 }
 
 void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

@@ -6,11 +6,17 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroHologramController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
-void UGA_HeroHologram::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+UGA_HeroHologram::UGA_HeroHologram()
+{
+    ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
+}
+
+void UGA_HeroHologram::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     const FGameplayAbilityActorInfo* ActorInfo, 
     const FGameplayAbilityActivationInfo ActivationInfo, 
     const FGameplayEventData* TriggerEventData)
@@ -19,7 +25,6 @@ void UGA_HeroHologram::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     {
         //bActorWillSpawnWithEQS = false;
     }
-    GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
@@ -43,10 +48,8 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
 
     if (HeroHologramTargetActor->AttackMontage && HeroHologramTargetActor->CurrentTarget)
     {
-        FGameplayEventData TriggerEventData;
-        TriggerEventData.EventTag = GAS_Tags::TAG_Gameplay_Event_ComboMelee;
-        TriggerEventData.Instigator = TargetActorData.TargetActor;
-        GetAbilitySystemComponentFromActorInfo()->HandleGameplayEvent(GAS_Tags::TAG_Gameplay_Event_ComboMelee, &TriggerEventData);
+        AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
+        HeroBase->GetHeroMeleeComboManagerComponent()->ActivateComboMeleeAttackAbility();
         TargetActorData.TargetActor->Destroy();
         Super::OnTargetActorConfirm(TargetActorData);
     }

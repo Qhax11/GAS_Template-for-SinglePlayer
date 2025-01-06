@@ -49,7 +49,6 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
         }
         AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
         HeroBase->GetHeroMeleeComboManagerComponent()->ActivateComboMeleeAttackAbility(FName("Section2"));
-        TargetActorData.TargetActor->Destroy();
         Super::OnTargetActorConfirm(TargetActorData);
     }
     else

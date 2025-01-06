@@ -21,6 +21,7 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attack, "Gameplay.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attack_Event, "Gameplay.Attack.Event");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attack_CanActivateNextAttack, "Gameplay.Attack.CanActivateNextAttack");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageImmune, "Gameplay.DamageImmune");
 

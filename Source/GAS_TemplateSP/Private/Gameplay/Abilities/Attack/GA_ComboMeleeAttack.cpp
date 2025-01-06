@@ -19,8 +19,14 @@ void UGA_ComboMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UGA_ComboMeleeAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	Super::OnEventReceived(EventTag, EventData);
-	OnCanExecuteNextAttack.Broadcast();
+	if (EventTag == GAS_Tags::TAG_Gameplay_Attack_Event)
+	{
+		Super::OnEventReceived(EventTag, EventData);
+	}
+	else if (EventTag == GAS_Tags::TAG_Gameplay_Attack_CanActivateNextAttack) 
+	{
+		OnCanExecuteNextAttack.Broadcast();
+	}
 }
 
 

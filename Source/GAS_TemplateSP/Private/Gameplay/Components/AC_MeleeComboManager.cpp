@@ -30,8 +30,13 @@ void UAC_MeleeComboManager::BeginPlay()
 	CharacterBaseASC->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd);
 }
 
-void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility()
+void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
 {
+	if (!CharacterBaseASC) 
+	{
+		return;
+	}
+
 	if (!bCanActivateAbility) 
 	{
 		return;
@@ -39,11 +44,12 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility()
 
 	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = GetNextComboMeleeAttackAbility())
 	{
-		if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityClass))
+		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityClass))
 		{
-			if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityClass))
+			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
 			{
-				if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
+				ActivatedComboMeleeAttack->SectionName = MontageSection;
+				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityClass))
 				{
 					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
 					{

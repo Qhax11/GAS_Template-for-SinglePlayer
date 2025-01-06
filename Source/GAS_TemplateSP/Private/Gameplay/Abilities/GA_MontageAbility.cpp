@@ -10,7 +10,7 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	UGameplayAbility::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if (!AvatarActor)
@@ -32,14 +32,12 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	CreatePlayMontageWaitForEvent(AnimMontage);
-
-	StartupEffects();
+	CreatePlayMontageWaitForEvent();
 }
 
-void UGA_MontageAbility::CreatePlayMontageWaitForEvent(UAnimMontage* Montage)
+void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
-	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, Montage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
+	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
 	Task->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
 	Task->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
 	Task->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);

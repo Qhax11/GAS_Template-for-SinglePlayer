@@ -13,7 +13,9 @@ class GAS_TEMPLATESP_API UAC_HeroMeleeComboManager : public UAC_MeleeComboManage
 	GENERATED_BODY()
 
 public:
-	virtual void ActivateComboMeleeAttackAbility() override;
+	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None) override;
+
+	void OnComboMeleeAttackInput();
 
 protected:
 	virtual void BeginPlay() override;

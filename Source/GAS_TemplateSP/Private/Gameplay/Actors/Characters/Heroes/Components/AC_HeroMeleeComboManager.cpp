@@ -38,7 +38,7 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 
 	if (IA_ActivateMeleeCombo)
 	{
-		EnhancedInputComponent->BindAction(IA_ActivateMeleeCombo, ETriggerEvent::Triggered, this, &UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility);
+		EnhancedInputComponent->BindAction(IA_ActivateMeleeCombo, ETriggerEvent::Triggered, this, &UAC_HeroMeleeComboManager::OnComboMeleeAttackInput);
 		return true;
 	}
 	else
@@ -48,12 +48,17 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 	}
 }
 
-void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility()
+void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
 {
 	if (CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram)) 
 	{
 		return;
 	}
 
-	Super::ActivateComboMeleeAttackAbility();
+	Super::ActivateComboMeleeAttackAbility(MontageSection);
+}
+
+void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
+{
+	ActivateComboMeleeAttackAbility();
 }

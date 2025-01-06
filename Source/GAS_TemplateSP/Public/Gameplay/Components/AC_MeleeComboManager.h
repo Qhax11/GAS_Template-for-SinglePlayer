@@ -15,7 +15,7 @@ class GAS_TEMPLATESP_API UAC_MeleeComboManager : public UActorComponent
 public:	
 	UAC_MeleeComboManager();
 
-	virtual void ActivateComboMeleeAttackAbility();
+	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
 
 protected:
 	virtual void BeginPlay() override;

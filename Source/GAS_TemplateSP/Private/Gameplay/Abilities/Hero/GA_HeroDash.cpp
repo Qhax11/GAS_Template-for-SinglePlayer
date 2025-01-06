@@ -5,6 +5,7 @@
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
 
@@ -13,8 +14,6 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
 	AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
 	if (!HeroBase) 
 	{
@@ -46,10 +45,21 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 			if (DashRootMotionTask)
 			{
+				FGameplayTagContainer CancelAbilityTags;
+				CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
+				HeroBase->GetAbilitySystemComponent()->CancelAbilities(&CancelAbilityTags);
+				HeroBase->GetHeroMeleeComboManagerComponent()->ResetComboIndex();
+
 				DashRootMotionTask->OnTimedOutAndDestinationReached.AddDynamic(this, &UGA_HeroDash::OnTaskTimedOut);
 				DashRootMotionTask->ReadyForActivation();
+					
+				Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 			}
 		}
+	}
+	else
+	{
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 	}
 }
 

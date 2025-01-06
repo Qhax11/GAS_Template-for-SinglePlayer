@@ -62,6 +62,11 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection
 	}
 }
 
+void UAC_MeleeComboManager::ResetComboIndex()
+{
+	AbilityIndex = 0;
+}
+
 TSubclassOf<UGA_ComboMeleeAttack> UAC_MeleeComboManager::GetNextComboMeleeAttackAbility()
 {
 	if (ComboMeleeAttackAbilities.IsValidIndex(AbilityIndex))
@@ -71,7 +76,7 @@ TSubclassOf<UGA_ComboMeleeAttack> UAC_MeleeComboManager::GetNextComboMeleeAttack
 
 	else if (ComboMeleeAttackAbilities.IsValidIndex(0))
 	{
-		AbilityIndex = 0;
+		ResetComboIndex();
 		return ComboMeleeAttackAbilities[AbilityIndex++];
 	}
 
@@ -85,10 +90,13 @@ void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData
 		return;
 	}
 
+	// If ability is normal ended
 	if (!EndedData.bWasCancelled)
 	{
-		AbilityIndex = 0;
+		ResetComboIndex();
 	}
+
+	bCanActivateAbility = true;
 }
 
 void UAC_MeleeComboManager::OnCanActivateNextAttack()

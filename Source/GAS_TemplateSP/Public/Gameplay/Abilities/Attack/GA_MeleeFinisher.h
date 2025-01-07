@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "GA_MeleeFinisher.generated.h"
 

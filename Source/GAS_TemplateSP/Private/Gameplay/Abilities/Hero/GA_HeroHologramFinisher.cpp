@@ -3,6 +3,12 @@
 
 #include "Gameplay/Abilities/Hero/GA_HeroHologramFinisher.h"
 #include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
+#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+
+UGA_HeroHologramFinisher::UGA_HeroHologramFinisher()
+{
+    ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_CanActivateFinisher);
+}
 
 void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
@@ -17,9 +23,14 @@ void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& 
 
     if (HeroHologramTargetActor->AttackMontage && HeroHologramTargetActor->CurrentTarget)
     {
-        if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram))
+        if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_CanActivateFinisher))
         {
-            GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
+            GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_CanActivateFinisher);
+        }
+
+        if (GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(FinisherAbilityClass)) 
+        {
+
         }
 
         TargetActorData.TargetActor->Destroy();

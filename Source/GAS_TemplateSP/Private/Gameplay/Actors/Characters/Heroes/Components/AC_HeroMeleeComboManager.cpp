@@ -50,7 +50,7 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 
 void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
 {
-	if (CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram)) 
+	if (CharacterBaseASC->HasAnyMatchingGameplayTags(BlockedTags)) 
 	{
 		return;
 	}

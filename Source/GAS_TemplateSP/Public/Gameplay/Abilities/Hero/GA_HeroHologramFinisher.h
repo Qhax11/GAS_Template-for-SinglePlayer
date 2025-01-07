@@ -12,8 +12,13 @@ class GAS_TEMPLATESP_API UGA_HeroHologramFinisher : public UGA_TargetBase
 	GENERATED_BODY()
 
 protected:
+	UGA_HeroHologramFinisher();
+
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
 	virtual void OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result) override;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UGA_MeleeAttackBase> FinisherAbilityClass;
 
 };

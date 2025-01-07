@@ -5,9 +5,7 @@
 #include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "GA_MeleeAttackBase.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_MontageAbility
 {

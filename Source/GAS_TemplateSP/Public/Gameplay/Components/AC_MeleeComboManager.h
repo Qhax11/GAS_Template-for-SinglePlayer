@@ -17,8 +17,6 @@ public:
 
 	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
 
-	void ResetComboIndex();
-
 protected:
 	virtual void BeginPlay() override;
 

@@ -48,7 +48,6 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 				FGameplayTagContainer CancelAbilityTags;
 				CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
 				HeroBase->GetAbilitySystemComponent()->CancelAbilities(&CancelAbilityTags);
-				HeroBase->GetHeroMeleeComboManagerComponent()->ResetComboIndex();
 
 				DashRootMotionTask->OnTimedOutAndDestinationReached.AddDynamic(this, &UGA_HeroDash::OnTaskTimedOut);
 				DashRootMotionTask->ReadyForActivation();

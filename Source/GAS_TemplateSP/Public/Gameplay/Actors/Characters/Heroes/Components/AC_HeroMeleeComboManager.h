@@ -25,7 +25,7 @@ protected:
 	AGAS_HeroBase* HeroBase;
 
 public:
-	// The tags are blocks MeleeCombo
+	// The tags are blocks MeleeCombo because of same input
 	UPROPERTY(EditDefaultsOnly, Category = "HeroMeleeComboManager")
 	FGameplayTagContainer BlockedTags;
 

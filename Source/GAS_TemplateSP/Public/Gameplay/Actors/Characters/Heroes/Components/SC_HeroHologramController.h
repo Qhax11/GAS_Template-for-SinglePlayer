@@ -131,6 +131,5 @@ private:
 	float GetTimeForTraceFowardDistance(float Value);
 	float GetTimeForTraceRightDistance(float Value);
 
-
 	bool bTargetLocked = false;
 };

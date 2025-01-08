@@ -20,6 +20,13 @@ protected:
 	
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation, FVector Location) override;
 
+	void SetHologramToHologramController();
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bDrawDebug;
+
+	float GetPointDistToLine(FVector HologramSpawnLocation, FVector CurrentTargetLocation);
+
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
 	virtual void OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result) override;

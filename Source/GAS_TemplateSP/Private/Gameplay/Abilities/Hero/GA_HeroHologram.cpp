@@ -62,12 +62,6 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
 void UGA_HeroHologram::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
 {
     Super::OnTargetActorSpawnLocationQueryFinished(Result);
-
-    if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
-    {
-        USC_HeroHologramController* HeroHologramController = HeroBase->GetHeroHologramControllerComponent();
-        HeroHologramController->HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActor);
-    }
 }
 
 void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
@@ -83,14 +77,19 @@ void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locat
 
     if (HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        AActor* LockedTarget = HeroBase->GetTargetLockSystemComponent()->CurrentTarget;
+        FVector CurrentTargetLocation = HeroBase->GetTargetLockSystemComponent()->CurrentTarget->GetActorLocation();
+
         HeroBase->GetHeroHologramControllerComponent()->ResetRightTraceDistance();
         FVector HeroLocatoin = HeroBase->GetActorLocation();
+
         float DistanceBetweenHologramAndHero = FVector::Dist(HologramSpawnLocation, HeroLocatoin);
-        float DistanceBetweenHologramAndTarget = FVector::Dist(LockedTarget->GetActorLocation(), HologramSpawnLocation);
-        FVector2D Axises = FVector2D(DistanceBetweenHologramAndTarget, DistanceBetweenHologramAndHero);
-        HeroBase->GetHeroHologramControllerComponent()->SetCumulativeMouseValuesRelatedWith2DLocation(Axises);
-        FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramSpawnLocation, LockedTarget->GetActorLocation());
+        float DistanceBetweenHologramAndTarget = GetPointDistToLine(HologramSpawnLocation, CurrentTargetLocation);
+
+
+        FVector2D Axes = FVector2D(DistanceBetweenHologramAndTarget, DistanceBetweenHologramAndHero);
+        HeroBase->GetHeroHologramControllerComponent()->SetCumulativeMouseValuesRelatedWith2DLocation(Axes);
+
+        FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramSpawnLocation, CurrentTargetLocation);
         Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramSpawnLocation);
     }
     else
@@ -108,6 +107,56 @@ void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locat
         {
             Super::SpawnAndSetupTargetActor(HeroBase->GetActorRotation(), HologramSpawnLocation);
         }
+    }
+
+    SetHologramToHologramController();
+}
+
+void UGA_HeroHologram::SetHologramToHologramController()
+{
+    if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
+    {
+        USC_HeroHologramController* HeroHologramController = HeroBase->GetHeroHologramControllerComponent();
+        HeroHologramController->HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActor);
+    }
+}
+
+float UGA_HeroHologram::GetPointDistToLine(FVector HologramSpawnLocation, FVector CurrentTargetLocation)
+{
+    FVector HeroLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+
+    // Adjust the target's Z coordinate to match the hero's Z coordinate, focusing only on the XY plane for direction calculation.
+    // This effectively ignores the Z-axis difference, providing a direction vector confined to the horizontal plane.
+    FVector HeroLocationUpdated = FVector(HeroLocation.X, HeroLocation.Y, CurrentTargetLocation.Z);
+    FVector HeroHologramLocationUpdated = FVector(HologramSpawnLocation.X, HologramSpawnLocation.Y, CurrentTargetLocation.Z);
+
+    FVector NormalizedDirection = HeroLocationUpdated - CurrentTargetLocation;
+    NormalizedDirection.Normalize();
+
+    FVector ClosestPointOnLine;
+    float PointDistToLine = FMath::PointDistToLine(HeroHologramLocationUpdated, NormalizedDirection, HeroLocationUpdated, ClosestPointOnLine);
+
+    if (bDrawDebug)
+    {
+        DrawDebugLine(GetWorld(), HeroLocationUpdated, CurrentTargetLocation, FColor::Red, false, 10.0f, 0, 2.0f);
+        DrawDebugLine(GetWorld(), ClosestPointOnLine, HeroHologramLocationUpdated, FColor::Blue, false, 10.0f, 0, 2.0f);
+    }
+
+    // Determines whether the hologram is to the right or left of a line defined by the normalized direction. 
+    // Uses the cross product to check the Z-axis value: 
+    // - If Z <= 0, the hologram is on the left side or on the line.
+    // - If Z > 0, the hologram is on the right side.
+    // Returns the distance to the line with a positive or negative sign based on the side.
+    FVector PointDirection = HologramSpawnLocation - HeroLocation;
+    FVector CrossProductResult = FVector::CrossProduct(NormalizedDirection, PointDirection);
+
+    if (CrossProductResult.Z <= 0)
+    {
+        return PointDistToLine;
+    }
+    else
+    {
+        return -PointDistToLine;
     }
 }
 

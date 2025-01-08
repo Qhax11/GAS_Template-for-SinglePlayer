@@ -94,6 +94,7 @@ public:
 
 	void ResetRightTraceDistance();
 
+	// Setting location with CumulativeMouseValues
 	void SetCumulativeMouseValuesRelatedWith2DLocation(FVector2D Location);
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")

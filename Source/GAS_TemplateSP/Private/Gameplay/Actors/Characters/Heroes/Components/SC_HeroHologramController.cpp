@@ -54,12 +54,7 @@ void USC_HeroHologramController::TickComponent(float DeltaTime, ELevelTick TickT
 	CalculateCumulativeMouseInputs();
 
 	bool IsHologramActive = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
-	if (!IsHologramActive) 
-	{
-		return;
-	}
-
-	if (!HeroHologramTargetActor)
+	if (!IsHologramActive || !HeroHologramTargetActor)
 	{
 		return;
 	}

@@ -77,6 +77,25 @@ void USC_HeroHologramController::TickComponent(float DeltaTime, ELevelTick TickT
 	SetHeroHologramLocation();
 }
 
+FVector2D USC_HeroHologramController::CalculateCumulativeMouseInputs()
+{
+	if (!PC)
+	{
+		return FVector2D();
+	}
+
+	FVector2D MouseInput;
+	PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
+	if (!MouseInput.IsNearlyZero())
+	{
+		CumulativeMouseDeltaX += MouseInput.X * SensitiveMultiplierX;
+		CumulativeMouseDeltaY += MouseInput.Y * SensitiveMultiplierY;
+	}
+
+	CumulativeMouseDeltaY = FMath::Clamp(CumulativeMouseDeltaY, MinCumulativeMouseDeltaY, MaxCumulativeMouseDeltaY);
+	return FVector2D(CumulativeMouseDeltaX, CumulativeMouseDeltaY);
+}
+
 void USC_HeroHologramController::LookAtTarget()
 {
 	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->CurrentTarget->GetActorLocation());
@@ -170,23 +189,25 @@ FVector USC_HeroHologramController::GetHeroHologramLocationFromLineTraceTargetLo
 	return HitResult.ImpactPoint;
 }
 
-FVector2D USC_HeroHologramController::CalculateCumulativeMouseInputs()
+void USC_HeroHologramController::SetHologramLocationWithCumulativeMouseValuesTargetLocked()
 {
-	if (!PC)
+	if (!HeroHologram || !TargetLockSystem->CurrentTarget)
 	{
-		return FVector2D();
+		UE_LOG(LogTemp, Warning, TEXT("HeroHologram or CurrentTarget is null in: %s, Cannot set HologramLocation"), *GetName());
+		return;
 	}
 
-	FVector2D MouseInput;
-	PC->GetInputMouseDelta(MouseInput.X, MouseInput.Y);
-	if (!MouseInput.IsNearlyZero())
-	{
-		CumulativeMouseDeltaX += MouseInput.X * SensitiveMultiplierX;
-		CumulativeMouseDeltaY += MouseInput.Y * SensitiveMultiplierY;
-	}
+	FVector OutClosestPoint;
 
-	CumulativeMouseDeltaY = FMath::Clamp(CumulativeMouseDeltaY, MinCumulativeMouseDeltaY, MaxCumulativeMouseDeltaY);
-	return FVector2D(CumulativeMouseDeltaX, CumulativeMouseDeltaY);
+	// Update new RightTraceDistance
+	float PointDistToLine = GetPointDistToLine(HeroHologram, OutClosestPoint);
+	ResetRightTraceDistance();
+	SetCumulativeMouseDeltaXForRightTraceDistaneValue(PointDistToLine);
+
+	// Update new ForwardTraceDistance
+	float DistanceBetweenHologramAndHero = FVector::Dist(OutClosestPoint, HeroBase->GetActorLocation());
+	ResetForwardTraceDistance();
+	SetCumulativeMouseDeltaYForForwardTraceDistaneValue(DistanceBetweenHologramAndHero);
 }
 
 void USC_HeroHologramController::ResetForwardTraceDistance()
@@ -201,46 +222,12 @@ void USC_HeroHologramController::ResetRightTraceDistance()
 	TraceRightDistanceOffset = 0;
 }
 
-void USC_HeroHologramController::SetHologramLocationWithCumulativeMouseValues(FVector2D Location)
-{
-	if (Location.IsNearlyZero()) 
-	{
-		return;
-	}
-
-	ResetRightTraceDistance();
-	SetCumulativeMouseDeltaXForRightTraceDistaneValue(Location.X);
-	SetCumulativeMouseDeltaYForForwardTraceDistaneValue(Location.Y);
-}
-
-void USC_HeroHologramController::SetHologramLocationWithCumulativeMouseValuesTargetLocked()
-{
-	if (!HeroHologram)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroHologram is null in: %s"), *GetName());
-		return;
-	}
-
-	FVector OutClosestPoint;
-	float PointDistToLine = GetPointDistToLine(HeroHologram, OutClosestPoint);
-	ResetRightTraceDistance();
-	SetCumulativeMouseDeltaXForRightTraceDistaneValue(PointDistToLine);
-
-	// Update new ForwardTrace
-	float DistanceBetweenHologramAndHero = FVector::Dist(OutClosestPoint, HeroBase->GetActorLocation());
-	ResetForwardTraceDistance();
-	SetCumulativeMouseDeltaYForForwardTraceDistaneValue(DistanceBetweenHologramAndHero);
-}
-
 void USC_HeroHologramController::OnStartTargetLock()
 {
 	ResetRightTraceDistance();
-
 	FVector OutClosestPoint;
 	TraceRightDistanceOffset = GetPointDistToLine(HeroHologram, OutClosestPoint);
-
 	TraceForwardDistanceOffset = CalculateTraceForwardDistanceOffset();
-
 	bTargetLocked = true;
 }
 
@@ -298,8 +285,6 @@ float USC_HeroHologramController::CalculateTraceForwardDistanceOffset()
 
 void USC_HeroHologramController::OnEndTargetLock()
 {
-	TraceRightDistance = 0;
-	TraceForwardDistanceOffset = 0;
 	bTargetLocked = false;
 }
 

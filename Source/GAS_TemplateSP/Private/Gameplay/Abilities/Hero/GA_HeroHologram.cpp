@@ -80,8 +80,8 @@ void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locat
         FVector CurrentTargetLocation = HeroBase->GetTargetLockSystemComponent()->CurrentTarget->GetActorLocation();
         FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramSpawnLocation, CurrentTargetLocation);
         Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramSpawnLocation);
-        SetHologramToHologramController();
 
+        SetHologramToHologramController();
         HeroBase->GetHeroHologramControllerComponent()->SetHologramLocationWithCumulativeMouseValuesTargetLocked();
     }
     else
@@ -94,13 +94,13 @@ void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locat
         {
             FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HologramSpawnLocation, OutResultActors[0]->GetActorLocation());
             Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), HologramSpawnLocation);
-            SetHologramToHologramController();
         }
         else
         {
             Super::SpawnAndSetupTargetActor(HeroBase->GetActorRotation(), HologramSpawnLocation);
-            SetHologramToHologramController();
         }
+
+        SetHologramToHologramController();
     }
 
 }

@@ -41,11 +41,14 @@ protected:
 	class AGAS_HeroBase* HeroBase;
 	class UAC_TargetLockSystem* TargetLockSystem;
 
-public:
+private:
+	FVector2D CalculateCumulativeMouseInputs();
+
 	void LookAtTarget();
 
 	void SetHeroHologramLocation();
 
+public:
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
 	FVector GetHeroHologramLocationFromLineTrace();
 
@@ -90,14 +93,6 @@ public:
 	float TraceRightDistanceOffset = 0.f;
 
 public:
-	FVector2D CalculateCumulativeMouseInputs();
-
-	void ResetForwardTraceDistance();
-
-	void ResetRightTraceDistance();
-
-	void SetHologramLocationWithCumulativeMouseValues(FVector2D Location);
-
 	void SetHologramLocationWithCumulativeMouseValuesTargetLocked();
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")
@@ -113,6 +108,10 @@ public:
 	float MinCumulativeMouseDeltaY = -800;
 
 private:
+
+	void ResetForwardTraceDistance();
+	void ResetRightTraceDistance();
+
 	UFUNCTION()
 	void OnStartTargetLock();
 

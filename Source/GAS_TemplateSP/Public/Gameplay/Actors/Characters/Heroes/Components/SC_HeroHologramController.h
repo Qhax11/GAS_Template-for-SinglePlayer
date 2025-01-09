@@ -75,7 +75,7 @@ public:
 	bool bDrawDebug;
 
 public:
-	TObjectPtr<class AHeroHologramTargetActor> HeroHologramTargetActor = nullptr;
+	TObjectPtr<class AHeroHologramTargetActor> HeroHologram = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceForwardDistance = 0.f;
@@ -92,10 +92,13 @@ public:
 public:
 	FVector2D CalculateCumulativeMouseInputs();
 
+	void ResetForwardTraceDistance();
+
 	void ResetRightTraceDistance();
 
-	// Setting location with CumulativeMouseValues
-	void SetCumulativeMouseValuesRelatedWith2DLocation(FVector2D Location);
+	void SetHologramLocationWithCumulativeMouseValues(FVector2D Location);
+
+	void SetHologramLocationWithCumulativeMouseValuesTargetLocked();
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")
 	float CumulativeMouseDeltaX;
@@ -112,7 +115,8 @@ public:
 private:
 	UFUNCTION()
 	void OnStartTargetLock();
-	float GetPointDistToLine();
+
+	float GetPointDistToLine(AActor* ReferanceActor, FVector& OutClosestPoint);
 
 	// Calculates the forward distance offset using the Pythagorean theorem. 
     // Ensures that the total trace length stays constant even when there is an offset in the right direction or the trace direction changes.

@@ -59,11 +59,6 @@ void UGA_HeroHologram::OnTargetActorConfirm(const FGAS_TargetActorData& TargetAc
     }
 }
 
-void UGA_HeroHologram::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
-{
-    Super::OnTargetActorSpawnLocationQueryFinished(Result);
-}
-
 void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
 {
     AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
@@ -102,7 +97,6 @@ void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locat
 
         SetHologramToHologramController();
     }
-
 }
 
 void UGA_HeroHologram::SetHologramToHologramController()

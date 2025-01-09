@@ -23,11 +23,14 @@ public:
 
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetBase")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetBase|EQS")
 	bool bActorWillSpawnWithEQS = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetBase", meta = (EditCondition = "bActorWillSpawnWithEQS"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetBase|EQS", meta = (EditCondition = "bActorWillSpawnWithEQS"))
 	UEnvQuery* EQSQueryTemplate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetBase|EQS")
+	TEnumAsByte<EEnvQueryRunMode::Type> QueryRunMode = EEnvQueryRunMode::RandomBest25Pct;
 
 	virtual void StartEQSForTargetActorSpawnLocation();
 

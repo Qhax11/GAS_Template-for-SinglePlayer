@@ -22,7 +22,7 @@ public:
 
 	// This function is for creating effect specs using Calculation classes.
 	UFUNCTION(BlueprintCallable, Category = "GAS_EffectBlueprintFunctionLibary")
-	static bool CreateInstantEffectSpecWithSetByCallerValue(FGameplayEffectSpec& OutSpec, UAbilitySystemComponent* SourceASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const FGameplayTag SetByCallerTag, float SetByCallerValue);
+	static bool CreateInstantEffectSpecWithSetByCallerValue(FGameplayEffectSpec& OutSpec, UAbilitySystemComponent* SourceASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const FGameplayTag SetByCallerTag, float SetByCallerValue, const UGameplayAbility* InGameplayAbility = nullptr);
 	 
 	UFUNCTION(BlueprintCallable, Category = "GAS_EffectBlueprintFunctionLibary")
 	static UGameplayEffect* CreateInstantEffectWithModifier(FGameplayAttribute ModifierAttribute, TEnumAsByte<EGameplayModOp::Type> ModifierOp, float ModifierValue);

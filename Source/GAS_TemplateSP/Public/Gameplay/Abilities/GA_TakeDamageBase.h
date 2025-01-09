@@ -21,4 +21,10 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	UAnimMontage* GetHitMontage(UAnimMontage* AttackMontage);
+
+	void SetRotationToInstigator(const AActor* Instigator);
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<UAnimMontage*, UAnimMontage*> AttackAndHitMontages;
 };

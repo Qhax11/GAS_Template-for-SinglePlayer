@@ -2,6 +2,8 @@
 
 
 #include "Gameplay/Abilities/GA_TakeDamageBase.h"
+#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UGA_TakeDamageBase::UGA_TakeDamageBase()
 {
@@ -21,7 +23,37 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	// Play AnimSequence.
+	if (TriggerEventData) 
+	{
+		if (const UGA_MeleeAttackBase* MeleeAttackBase = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility()))
+		{
+			AnimMontage = GetHitMontage(MeleeAttackBase->AnimMontage);
+		}
+
+		SetRotationToInstigator(TriggerEventData->Instigator);
+	}
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	
+}
+
+UAnimMontage* UGA_TakeDamageBase::GetHitMontage(UAnimMontage* AttackMontage)
+{
+	if (AttackAndHitMontages.Contains(AttackMontage))
+	{
+		return AttackAndHitMontages[AttackMontage];
+	}
+
+	return nullptr;
+}
+
+void UGA_TakeDamageBase::SetRotationToInstigator(const AActor* Instigator)
+{
+	if (!Instigator) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Instigator is null in: %s"), *Instigator->GetName());
+		return;
+	}
+
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetAvatarActorFromActorInfo()->GetActorLocation(), Instigator->GetActorLocation());
+	GetAvatarActorFromActorInfo()->SetActorRotation(LookAtRotation);
 }

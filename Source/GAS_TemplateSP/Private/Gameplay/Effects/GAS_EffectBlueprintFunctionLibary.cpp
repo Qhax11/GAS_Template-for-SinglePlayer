@@ -16,9 +16,15 @@ UGameplayEffect* UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(T
 	return GameplayEffectClass;
 }
 
-bool UGAS_EffectBlueprintFunctionLibary::CreateInstantEffectSpecWithSetByCallerValue(FGameplayEffectSpec& OutSpec, UAbilitySystemComponent* SourceASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const FGameplayTag SetByCallerTag, float SetByCallerValue)
+bool UGAS_EffectBlueprintFunctionLibary::CreateInstantEffectSpecWithSetByCallerValue(FGameplayEffectSpec& OutSpec,
+	UAbilitySystemComponent* SourceASC,
+	TSubclassOf<UGameplayEffect> GameplayEffectClass,
+	const FGameplayTag SetByCallerTag,
+	float SetByCallerValue,
+	const UGameplayAbility* InGameplayAbility)
 {
 	FGameplayEffectContextHandle EffectContext = SourceASC->MakeEffectContext();
+	EffectContext.SetAbility(InGameplayAbility);
 	FGameplayEffectSpecHandle NewHandle = SourceASC->MakeOutgoingSpec(GameplayEffectClass, 1, EffectContext);
 	if (NewHandle.IsValid())
 	{

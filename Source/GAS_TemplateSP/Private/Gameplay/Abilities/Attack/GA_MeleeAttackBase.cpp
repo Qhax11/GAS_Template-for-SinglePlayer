@@ -21,7 +21,8 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 		GetAbilitySystemComponentFromActorInfo(),
 		GEPhysicalDamage,
 		GAS_Tags::TAG_Gameplay_EffectData_SetByCaller_DamageAmount,
-		Damage.GetValueAtLevel(GetAbilityLevel())
+		Damage.GetValueAtLevel(GetAbilityLevel()),
+		this
 		);
 
 	if (!bIsDamageSpecValid)

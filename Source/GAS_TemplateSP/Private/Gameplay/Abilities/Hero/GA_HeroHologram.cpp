@@ -82,6 +82,7 @@ void UGA_HeroHologram::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locat
     else
     {
         HologramSpawnLocation = HeroBase->GetHeroHologramControllerComponent()->GetHeroHologramLocationFromLineTrace();
+
         TArray<AActor*> OutResultActors;
         TraceData->Trace->CreateTraceWithTeamFilterAndLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, HologramSpawnLocation, OutResultActors);
 

@@ -134,7 +134,7 @@ void UGA_TargetBase::ConfirmTargetingFromInput()
 		return;
 	}
 
-	StartupEffects();
+	ApplyGameplayEffectToSelf(AbilityConfirmEffects);
 
 	if (TargetActor)
 	{

@@ -26,7 +26,7 @@ public:
 
 	virtual void StartupEffects();
 
-	virtual void ApplyGameplayEffectToSelf();
+	virtual void ApplyGameplayEffectToSelf(TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects);
 
 	UFUNCTION(BlueprintPure, Category = "GameplayAbilityBase")
 	float GetCost(int32 AbilityLevel) const;

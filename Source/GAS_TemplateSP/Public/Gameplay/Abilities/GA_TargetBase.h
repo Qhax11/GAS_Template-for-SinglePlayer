@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
 	TSubclassOf<AGAS_TargetActorBase> TargetActorClass;
 
+	UPROPERTY(EditAnywhere, Category = "UGA_TargetBase")
+	TArray<TSubclassOf<UGameplayEffect>> AbilityConfirmEffects;
+
 protected:
 
 	UFUNCTION()

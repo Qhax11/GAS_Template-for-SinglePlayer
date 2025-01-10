@@ -24,12 +24,12 @@ void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
 
 void UGAS_GameplayAbilityBase::StartupEffects()
 {
-	ApplyGameplayEffectToSelf();
+	ApplyGameplayEffectToSelf(AbilityActivationEffects);
 }
 
-void UGAS_GameplayAbilityBase::ApplyGameplayEffectToSelf()
+void UGAS_GameplayAbilityBase::ApplyGameplayEffectToSelf(TArray<TSubclassOf<UGameplayEffect>> Effects)
 {
-	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), GetAbilitySystemComponentFromActorInfo(), AbilityActivationEffects);
+	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), GetAbilitySystemComponentFromActorInfo(), Effects);
 }
 
 float UGAS_GameplayAbilityBase::GetCost(int32 AbilityLevel) const

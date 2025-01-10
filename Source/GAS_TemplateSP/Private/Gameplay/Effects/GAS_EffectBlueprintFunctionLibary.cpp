@@ -6,6 +6,12 @@
 
 UGameplayEffect* UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(TSubclassOf<UGameplayEffect> EffectSubClass)
 {
+	if (!EffectSubClass) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to create EffectSubClass in GAS_EffectBlueprintFunctionLibary."));
+		return nullptr;
+	}
+
 	UGameplayEffect* GameplayEffectClass = EffectSubClass->GetDefaultObject<UGameplayEffect>();
 	if (!GameplayEffectClass) 
 	{

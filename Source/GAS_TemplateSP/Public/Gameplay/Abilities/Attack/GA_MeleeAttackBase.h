@@ -14,7 +14,7 @@ class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_MontageAbility
 public:
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
-	void TraceForHostileUnits(TArray<AActor*>& OutActors);
+	void TraceForHostileUnits(TArray<FHitResult>& OutHitResults);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameters")
 	TSubclassOf<UGameplayEffect> GEPhysicalDamage;

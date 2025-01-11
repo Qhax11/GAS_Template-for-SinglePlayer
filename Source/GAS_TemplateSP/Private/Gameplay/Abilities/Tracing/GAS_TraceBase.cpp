@@ -48,6 +48,15 @@ void UGAS_TraceBase::CreateTraceWithTeamFilterWithLocationAndDirection(const UWo
 	MakeTeamFilter(OutActors, *Owner, TeamAttidue);
 }
 
+void UGAS_TraceBase::CreateTraceWithTeamFilterWithLocationAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, FRotator& Direction, TArray<FHitResult>& OutHitResults)
+{
+	GetTraceStartLocationAndDirection(Owner, Location, Direction);
+
+	MakeTrace(Owner, World, Location, Direction, OutHitResults);
+
+	MakeTeamFilter(OutHitResults, *Owner, TeamAttidue);
+}
+
 void UGAS_TraceBase::GetTraceStartLocationAndDirection(AActor* Owner, FVector& OutStartLocation, FRotator& OutDirection)
 {
 	// If TraceStartLocation is Camera, adjust the start location and direction based on Hero's camera
@@ -97,6 +106,28 @@ void UGAS_TraceBase::MakeTeamFilter(TArray<AActor*>& OutActors, const AActor& Ow
 	}
 }
 
+void UGAS_TraceBase::MakeTeamFilter(TArray<FHitResult>& OutHitResults, const AActor& Owner, ETeamAttitude::Type TeamAttidue)
+{
+	for (int32 i = OutHitResults.Num() - 1; i >= 0; --i)
+	{
+		FHitResult& CollectedResult = OutHitResults[i];
+		if (AActor* HitActor = CollectedResult.GetActor())
+		{
+			if (UAC_Team* TeamComp = HitActor->GetComponentByClass<UAC_Team>())
+			{
+				if (TeamComp->GetTeamAttitudeTowards(Owner) != TeamAttidue)
+				{
+					OutHitResults.RemoveAt(i);
+				}
+			}
+			else
+			{
+				OutHitResults.RemoveAt(i);
+			}
+		}
+	}
+}
+
 void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const FVector& Location, const FRotator& Direction, TArray<AActor*>& OutActors)
 {
 	if (!Owner)
@@ -136,6 +167,36 @@ void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const 
 	{
 		OutActors.AddUnique(HitResults[i].GetActor());
 	}
+}
+
+void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const FVector& Location, const FRotator& Direction, TArray<FHitResult>& OutHitResults)
+{
+	if (!Owner)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Owner can't be null! (This message comes from UGAS_TraceBase)"));
+		return;
+	}
+
+	Initialize(Owner, Direction);
+
+	FCollisionQueryParams QueryParams;
+	if (bIgnoreSelf)
+	{
+		QueryParams.AddIgnoredActor(OwnerActor);
+	}
+
+	FCollisionResponseContainer ResponseContainer;
+	ResponseContainer.SetAllChannels(CollisionResponse);
+
+	FCollisionResponseParams ResponseParams;
+	ResponseParams.CollisionResponse = ResponseContainer;
+
+	TraceLogic(World, Location, Direction, QueryParams, ResponseParams, OutHitResults);
+
+#if WITH_EDITOR
+	if (bDrawEnable)
+		DrawDebugShape(World, Location);
+#endif // WITH_EDITOR
 }
 
 void UGAS_TraceBase::Initialize(const UObject* Owner, FRotator Direction)

@@ -23,15 +23,19 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	if (TriggerEventData) 
+	if (!TriggerEventData) 
 	{
-		if (const UGA_MeleeAttackBase* MeleeAttackBase = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility()))
-		{
-			AnimMontage = GetHitMontage(MeleeAttackBase->AnimMontage);
-		}
-
-		SetRotationToInstigator(TriggerEventData->Instigator);
+		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s"), *GetName());
+		return;
 	}
+
+	if (const UGA_MeleeAttackBase* MeleeAttackBase = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility()))
+	{
+		AnimMontage = GetHitMontage(MeleeAttackBase->AnimMontage);
+	}
+
+	// Using Motion Warping insted of this
+	//SetRotationToInstigator(TriggerEventData->Instigator);
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
@@ -50,7 +54,7 @@ void UGA_TakeDamageBase::SetRotationToInstigator(const AActor* Instigator)
 {
 	if (!Instigator) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Instigator is null in: %s"), *Instigator->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Instigator is null in: %s"), *GetName());
 		return;
 	}
 

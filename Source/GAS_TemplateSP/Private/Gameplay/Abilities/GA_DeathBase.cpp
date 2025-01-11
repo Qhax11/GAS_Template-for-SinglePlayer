@@ -26,23 +26,25 @@ void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	BroadcastDeSpawn();
-
-	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
-	{
-		CharacterBase->DisableMovement();
-		CharacterBase->DisableCollision();
-
-		if (DeathEffectClass)
-		{
-			UGameplayEffect* ReSpawnEffect = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(DeathEffectClass);
-			CharacterBase->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(ReSpawnEffect, 1, FGameplayEffectContextHandle());
-		}
-	}
 }
 
 void UGA_DeathBase::BroadcastDeSpawn()
 {
 	// The logic will be implemented in the subclasses.
+}
+
+void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle, 
+	const FGameplayAbilityActorInfo* ActorInfo, 
+	const FGameplayAbilityActivationInfo ActivationInfo, 
+	bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
+	{
+		CharacterBase->DisableMovement();
+		CharacterBase->DisableCollision();
+	}
 }
 
 

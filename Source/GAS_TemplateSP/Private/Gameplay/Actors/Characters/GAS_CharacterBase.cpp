@@ -27,6 +27,9 @@ AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectIni
 	AttributesListenerComponent = CreateDefaultSubobject<UAC_AttributesListenerBase>(TEXT("AttributesListenerComponent"));
 
 	GameplayDataComponent = CreateDefaultSubobject<UAC_GameplayData>(TEXT("GameplayDataComponent"));
+
+	SM_Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SM_Weapon"));
+	SM_Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Katana"));
 }
 
 void AGAS_CharacterBase::BeginPlay()
@@ -35,7 +38,7 @@ void AGAS_CharacterBase::BeginPlay()
 
 	if (!CharacterASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PaperCharacterASC doesen't exist in %s"), *this->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("CharacterASC doesen't exist in %s"), *this->GetName());
 		return;
 	}
 

@@ -23,6 +23,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	UGAS_AbilitySystemComponent* CharacterASC;
 
+	FORCEINLINE class UStaticMeshComponent* GetWeapon() const { return SM_Weapon; }
+
 protected:
 
 	/* Components */
@@ -40,6 +42,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_TagDispatcher* TagDispatcherComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UStaticMeshComponent* SM_Weapon;
 
 private:
 	class UAC_TagDelegates* TagDelegatesComponent;

@@ -37,9 +37,11 @@ protected:
 public:
 	void CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors);
 
-	void CreateTraceWithTeamFilterAndLocation(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, TArray<AActor*>& OutActors);
+	void CreateTraceWithTeamFilterWithLocation(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, TArray<AActor*>& OutActors);
 
-	void CreateTraceWithTeamFilterAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors);
+	void CreateTraceWithTeamFilterWithDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors);
+
+	void CreateTraceWithTeamFilterWithLocationAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, FRotator& Direction, TArray<AActor*>& OutActors);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	TEnumAsByte<ETraceStartLocation> TraceStartLocation = ETraceStartLocation::Avatar;

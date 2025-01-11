@@ -3,6 +3,8 @@
 
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
+#include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include <AbilitySystemGlobals.h>
 
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -39,5 +41,19 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 		{
 			GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(DamageSpec, TargetASC);
 		}
+	}
+}
+
+void UGA_MeleeAttackBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
+{
+	if (TraceData)
+	{
+		if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
+		{
+			FVector TraceLocation = CharacterBase->GetWeapon()->GetComponentLocation();
+			FRotator TraceRotation = CharacterBase->GetWeapon()->GetComponentRotation();
+			TraceData->Trace->CreateTraceWithTeamFilterWithLocationAndDirection(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, TraceLocation, TraceRotation, OutActors);
+		}
+		//TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutActors);
 	}
 }

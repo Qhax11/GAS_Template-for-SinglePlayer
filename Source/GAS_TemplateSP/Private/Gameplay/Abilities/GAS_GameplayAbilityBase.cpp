@@ -2,7 +2,6 @@
 
 
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-#include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 
 void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
@@ -12,14 +11,6 @@ void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	StartupEffects();
-}
-
-void UGAS_GameplayAbilityBase::TraceForHostileUnits(TArray<AActor*>& OutActors)
-{
-	if (TraceData)
-	{
-		TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutActors);
-	}
 }
 
 void UGAS_GameplayAbilityBase::StartupEffects()

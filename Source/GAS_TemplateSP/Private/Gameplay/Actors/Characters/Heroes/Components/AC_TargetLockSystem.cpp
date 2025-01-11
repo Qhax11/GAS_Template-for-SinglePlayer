@@ -217,7 +217,7 @@ void UAC_TargetLockSystem::TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection
 	{
 		TArray<AActor*> CheckForFrontActors;
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(HeroBase->GetActorLocation(), FoundNewTarget->GetActorLocation());
-		TracingDataCheckForFrontActor->Trace->CreateTraceWithTeamFilterAndDirection(GetWorld(), HeroBase, ETeamAttitude::Hostile, LookAtRotation, CheckForFrontActors);
+		TracingDataCheckForFrontActor->Trace->CreateTraceWithTeamFilterWithDirection(GetWorld(), HeroBase, ETeamAttitude::Hostile, LookAtRotation, CheckForFrontActors);
 		if (CheckForFrontActors.IsValidIndex(0)) 
 		{
 			// If the actor in front of the player is different from the current target, set it as the new target.

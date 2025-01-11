@@ -103,6 +103,11 @@ void USC_HeroHologramController::LookAtTarget()
 
 void USC_HeroHologramController::SetHeroHologramLocation()
 {
+	if (!HeroHologram) 
+	{
+		return;
+	}
+
 	if (bTargetLocked) 
 	{
 		FVector HeroHologramTargetLocation = GetHeroHologramLocationFromLineTraceTargetLocked();

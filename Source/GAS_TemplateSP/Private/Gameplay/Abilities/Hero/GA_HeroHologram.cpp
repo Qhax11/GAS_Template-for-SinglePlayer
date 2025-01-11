@@ -21,10 +21,6 @@ void UGA_HeroHologram::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     const FGameplayAbilityActivationInfo ActivationInfo, 
     const FGameplayEventData* TriggerEventData)
 {
-    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
-    {
-        //bActorWillSpawnWithEQS = false;
-    }
     Super::ActivateAbility (Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 

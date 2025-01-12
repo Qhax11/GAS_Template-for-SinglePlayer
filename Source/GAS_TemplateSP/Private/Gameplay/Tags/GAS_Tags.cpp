@@ -19,9 +19,10 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Mana_Full, "Gameplay.Mana.Full");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Mana_Regen, "Gameplay.Mana.Regen");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attack, "Gameplay.Attack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attack_Event, "Gameplay.Attack.Event");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attack_CanActivateNextAttack, "Gameplay.Attack.CanActivateNextAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent, "Gameplay.AttackEvent");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_TraceStart, "Gameplay.AttackEvent.TraceStart");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_TraceEnd, "Gameplay.AttackEvent.TraceEnd");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_CanActivateNextAttack, "Gameplay.AttackEvent.CanActivateNextAttack");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageImmune, "Gameplay.DamageImmune");
 

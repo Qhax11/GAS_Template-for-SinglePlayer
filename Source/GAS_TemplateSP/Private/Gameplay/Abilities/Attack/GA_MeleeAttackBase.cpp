@@ -7,11 +7,54 @@
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include <AbilitySystemGlobals.h>
 
+void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+	const FGameplayAbilityActorInfo* ActorInfo, 
+	const FGameplayAbilityActivationInfo ActivationInfo, 
+	const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
+
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	TArray<FHitResult> OutHitResults;
-	TraceForHostileUnits(OutHitResults);
+	if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceStart)
+	{
+		// Tick is 0.01f
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle_TraceTick, this, &UGA_MeleeAttackBase::TraceTick, TraceTickValue, true, 0);
+	}
+	else if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceEnd) 
+	{
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
+	}
+}
 
+void UGA_MeleeAttackBase::TraceTick()
+{
+	TArray<FHitResult> OutHitResults;
+	if (TraceForHostileUnits(OutHitResults))
+	{
+		AttackLogic(OutHitResults);
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
+	}
+}
+
+bool UGA_MeleeAttackBase::TraceForHostileUnits(TArray<FHitResult>& OutHitResults)
+{
+	if (TraceData)
+	{
+		if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
+		{
+			FVector TraceLocation = CharacterBase->GetWeapon()->GetComponentLocation();
+			FRotator TraceRotation = CharacterBase->GetWeapon()->GetComponentRotation();
+			TraceData->Trace->CreateTraceWithTeamFilterWithLocationAndDirection(
+				GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, TraceLocation, TraceRotation, OutHitResults);
+		}
+	}
+	return OutHitResults.IsValidIndex(0);
+}
+
+void UGA_MeleeAttackBase::AttackLogic(TArray<FHitResult>& OutHitResults)
+{
 	if (!OutHitResults.IsValidIndex(0))
 	{
 		return;
@@ -26,7 +69,7 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 		Damage.GetValueAtLevel(GetAbilityLevel()),
 		OutHitResults[0],
 		this
-		);
+	);
 
 	if (!bIsDamageSpecValid)
 	{
@@ -42,19 +85,4 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 	}
 }
 
-void UGA_MeleeAttackBase::TraceForHostileUnits(TArray<FHitResult>& OutHitResults)
-{
-	if (TraceData)
-	{
-		if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
-		{
-			FVector TraceLocation = CharacterBase->GetWeapon()->GetComponentLocation();
-			FRotator TraceRotation = CharacterBase->GetWeapon()->GetComponentRotation();
-			TraceData->Trace->CreateTraceWithTeamFilterWithLocationAndDirection(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, TraceLocation, TraceRotation, OutHitResults);
 
-			if(OutHitResults.IsValidIndex(0))
-			UE_LOG(LogTemp, Error, TEXT("Location: %s"), *OutHitResults[0].Location.ToString());
-		}
-		//TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutActors);
-	}
-}

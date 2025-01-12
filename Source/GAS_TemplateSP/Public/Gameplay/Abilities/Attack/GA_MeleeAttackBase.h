@@ -12,9 +12,21 @@ class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_MontageAbility
 	GENERATED_BODY()
 
 public:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
-	void TraceForHostileUnits(TArray<FHitResult>& OutHitResults);
+	void TraceTick();
+	FTimerHandle TimerHandle_TraceTick;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Parameters")
+	float TraceTickValue = 0.01f;
+
+	bool TraceForHostileUnits(TArray<FHitResult>& OutHitResults);
+
+	void AttackLogic(TArray<FHitResult>& OutHitResults);
+
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameters")
 	TSubclassOf<UGameplayEffect> GEPhysicalDamage;

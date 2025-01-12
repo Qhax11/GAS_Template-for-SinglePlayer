@@ -108,18 +108,18 @@ void USC_HeroHologramController::SetHeroHologramLocation()
 		return;
 	}
 
+	FVector HeroHologramTargetLocation;
 	if (bTargetLocked) 
 	{
-		FVector HeroHologramTargetLocation = GetHeroHologramLocationFromLineTraceTargetLocked();
-		HeroHologramTargetLocation.Z += 90;
-		HeroHologram->SetActorLocation(HeroHologramTargetLocation);
+		HeroHologramTargetLocation = GetHeroHologramLocationFromLineTraceTargetLocked();
 	}
 	else
 	{
-		FVector HeroHologramTargetLocation = GetHeroHologramLocationFromLineTrace();
-		HeroHologramTargetLocation.Z += 90;
-		HeroHologram->SetActorLocation(HeroHologramTargetLocation);
+		HeroHologramTargetLocation = GetHeroHologramLocationFromLineTrace();
 	}
+
+	HeroHologramTargetLocation.Z += 90;
+	HeroHologram->SetActorLocation(HeroHologramTargetLocation);
 }
 
 FVector USC_HeroHologramController::GetHeroHologramLocationFromLineTrace()

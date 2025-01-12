@@ -19,7 +19,6 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 {
 	if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceStart)
 	{
-		// Tick is 0.01f
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle_TraceTick, this, &UGA_MeleeAttackBase::TraceTick, TraceTickValue, true, 0);
 	}
 	else if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceEnd) 

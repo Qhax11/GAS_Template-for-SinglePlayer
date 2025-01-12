@@ -26,7 +26,7 @@ public:
 
 	void AttackLogic(TArray<FHitResult>& OutHitResults);
 
-
+	class AGAS_CharacterBase* CharacterBase;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameters")
 	TSubclassOf<UGameplayEffect> GEPhysicalDamage;

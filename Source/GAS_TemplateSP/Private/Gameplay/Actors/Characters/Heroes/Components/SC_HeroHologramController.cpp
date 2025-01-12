@@ -119,6 +119,8 @@ void USC_HeroHologramController::SetHeroHologramLocation()
 	}
 
 	HeroHologramTargetLocation.Z += 90;
+
+	if(HeroHologram->IsValidLowLevel())
 	HeroHologram->SetActorLocation(HeroHologramTargetLocation);
 }
 

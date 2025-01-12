@@ -12,6 +12,13 @@ void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
+	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
+	if (!CharacterBase)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+	}
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
@@ -41,7 +48,7 @@ bool UGA_MeleeAttackBase::TraceForHostileUnits(TArray<FHitResult>& OutHitResults
 {
 	if (TraceData)
 	{
-		if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
+		if (CharacterBase->GetWeapon())
 		{
 			FVector TraceLocation = CharacterBase->GetWeapon()->GetComponentLocation();
 			FRotator TraceRotation = CharacterBase->GetWeapon()->GetComponentRotation();

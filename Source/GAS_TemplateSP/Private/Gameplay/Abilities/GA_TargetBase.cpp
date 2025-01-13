@@ -114,7 +114,6 @@ void UGA_TargetBase::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQuer
 
 void UGA_TargetBase::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
-	BP_OnTargetActorConfirm(TargetActorData);
 	TargetActor->Destroy();
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }

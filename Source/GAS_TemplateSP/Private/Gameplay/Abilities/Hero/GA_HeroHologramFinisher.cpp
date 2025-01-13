@@ -18,6 +18,8 @@ void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& 
         Super::OnTargetActorConfirm(TargetActorData);
     }
 
+    BP_OnTargetActorConfirm(TargetActorData);
+
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
 
@@ -33,7 +35,6 @@ void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& 
 
         }
 
-        TargetActorData.TargetActor->Destroy();
         Super::OnTargetActorConfirm(TargetActorData);
     }
     else

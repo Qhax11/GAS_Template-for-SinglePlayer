@@ -23,6 +23,9 @@ protected:
 
 	UFUNCTION()
 	void OnTaskTimedOut();
+
+	UFUNCTION()
+	void OnTimedOutAndDestinationReached();
 	
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
 	float DistanceMultiplier = 300.0f;

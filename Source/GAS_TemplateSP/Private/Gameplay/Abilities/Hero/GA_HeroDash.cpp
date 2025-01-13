@@ -48,10 +48,11 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 				FGameplayTagContainer CancelAbilityTags;
 				CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
 				HeroBase->GetAbilitySystemComponent()->CancelAbilities(&CancelAbilityTags);
-
-				DashRootMotionTask->OnTimedOutAndDestinationReached.AddDynamic(this, &UGA_HeroDash::OnTaskTimedOut);
+				
+				DashRootMotionTask->OnTimedOut.AddDynamic(this, &UGA_HeroDash::OnTaskTimedOut);
+				DashRootMotionTask->OnTimedOutAndDestinationReached.AddDynamic(this, &UGA_HeroDash::OnTimedOutAndDestinationReached);
 				DashRootMotionTask->ReadyForActivation();
-					
+
 				Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 			}
 		}
@@ -86,6 +87,11 @@ FVector UGA_HeroDash::GetDirectionFromLastMovementInput(const FVector2D& LastMov
 }
 
 void UGA_HeroDash::OnTaskTimedOut()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+}
+
+void UGA_HeroDash::OnTimedOutAndDestinationReached()
 {
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }

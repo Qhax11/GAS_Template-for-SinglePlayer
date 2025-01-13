@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Components/AC_MeleeComboManager.h"
+#include "Gameplay/Abilities/Hero/GA_HeroHologram.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 
 UAC_MeleeComboManager::UAC_MeleeComboManager()
@@ -82,7 +83,7 @@ void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData
 {
 	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
 	{
-		if (!EndedData.AbilityThatEnded->IsA<class UGA_HeroHologram>()) 
+		if (!EndedData.AbilityThatEnded->IsA<UGA_HeroHologram>()) 
 		{
 			// If it is another ability and not UGA_HeroHologram we need a reset. 
 			// If its UGA_HeroHologram we need contiune the combo, so we dont reset.

@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Gameplay/UI/AbilityData/W_AbilitySlot.h"
 #include "Components/HorizontalBox.h"

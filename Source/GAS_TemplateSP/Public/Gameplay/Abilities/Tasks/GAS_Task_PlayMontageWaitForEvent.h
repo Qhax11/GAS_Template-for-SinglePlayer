@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
 #include "Animation/AnimMontage.h"
 #include "GAS_Task_PlayMontageWaitForEvent.generated.h"

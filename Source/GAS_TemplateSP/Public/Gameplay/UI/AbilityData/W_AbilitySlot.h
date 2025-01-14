@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "W_AbilitySlot.generated.h"

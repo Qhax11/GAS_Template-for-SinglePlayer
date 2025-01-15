@@ -9,6 +9,11 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 
 
+UGA_HeroDash::UGA_HeroDash()
+{
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Dash);
+}
+
 void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo,

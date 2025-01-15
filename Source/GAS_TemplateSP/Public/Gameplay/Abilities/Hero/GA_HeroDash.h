@@ -14,6 +14,7 @@ class GAS_TEMPLATESP_API UGA_HeroDash : public UGAS_GameplayAbilityBase
 	
 
 protected:
+	UGA_HeroDash();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 

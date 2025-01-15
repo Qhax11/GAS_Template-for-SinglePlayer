@@ -52,10 +52,7 @@ public:
 	TEnumAsByte<ETraceDirectionType> TraceDirectionType = ETraceDirectionType::ForwardVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
-	bool bUseStartLocationForwardOffset = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true), meta = (EditCondition = "bUseStartLocationForwardOffset"))
-	float StartLocationForwardOffset = 1;
+	float StartLocationForwardVectorOffsetMultiplier = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	bool bIgnoreSelf = true;

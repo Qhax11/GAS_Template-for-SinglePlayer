@@ -3,6 +3,7 @@
 
 #include "Gameplay/Animation/AnimInstanceBase.h"
 #include "GameFramework/Character.h"
+#include "KismetAnimationLibrary.h"
 
 UAnimInstanceBase::UAnimInstanceBase()
 {
@@ -33,6 +34,8 @@ void UAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 	FVector Velocity = CharacterRef->GetVelocity();
 	Velocity.Z = 0.f;
 	Speed = Velocity.Size();
+
+	LocomationDirection = UKismetAnimationLibrary::CalculateDirection(CharacterRef->GetVelocity(), CharacterRef->GetActorRotation());
 
 	bIsInAir = CharacterMovement->IsFalling();
 

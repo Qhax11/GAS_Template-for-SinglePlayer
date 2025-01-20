@@ -18,7 +18,8 @@ public class GAS_TemplateSP : ModuleRules
             "EnhancedInput",
             "GameplayTasks",
             "GameplayTags",
-            "AIModule"
+            "AIModule",
+			"AnimGraphRuntime"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {

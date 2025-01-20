@@ -20,6 +20,7 @@ public:
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
 
 protected:
+	virtual void BeginPlay();
 
 	UFUNCTION()
 	void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
@@ -27,4 +28,15 @@ protected:
 public:
 
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+
+private:
+
+	UPROPERTY(EditDefaultsOnly, Category = "Detaour Crowd Avoidance Config")
+	bool bEnableDetourCrowdAvoidance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidance Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance", UIMin = "1", UIMax = "4"))
+	int32 DetourCrowdAvoidanceQuality = 4;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidance Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance"))
+	float CollisionQueryRange = 600.f;
 };

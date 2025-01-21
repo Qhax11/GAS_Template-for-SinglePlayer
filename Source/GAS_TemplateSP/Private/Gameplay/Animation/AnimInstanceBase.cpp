@@ -3,6 +3,7 @@
 
 #include "Gameplay/Animation/AnimInstanceBase.h"
 #include "GameFramework/Character.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "KismetAnimationLibrary.h"
 
 UAnimInstanceBase::UAnimInstanceBase()
@@ -14,10 +15,11 @@ UAnimInstanceBase::UAnimInstanceBase()
 
 void UAnimInstanceBase::NativeInitializeAnimation()
 {
-	CharacterRef = Cast<ACharacter>(TryGetPawnOwner());
-	if (CharacterRef)
+	OwnerCharacterBase = Cast<AGAS_CharacterBase>(TryGetPawnOwner());
+	if (OwnerCharacterBase)
 	{
-		CharacterMovement = CharacterRef->GetCharacterMovement();
+		CharacterMovement = OwnerCharacterBase->GetCharacterMovement();
+		OwnerASC = OwnerCharacterBase->GetAbilitySystemComponent();
 	}
 }
 
@@ -25,17 +27,17 @@ void UAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (!CharacterRef || !CharacterMovement)
+	if (!OwnerCharacterBase || !CharacterMovement)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterRef or CharacterMovement is null in: %s"), *GetName());
 		return;
 	}
 
-	FVector Velocity = CharacterRef->GetVelocity();
+	FVector Velocity = OwnerCharacterBase->GetVelocity();
 	Velocity.Z = 0.f;
 	Speed = Velocity.Size();
 
-	LocomationDirection = UKismetAnimationLibrary::CalculateDirection(CharacterRef->GetVelocity(), CharacterRef->GetActorRotation());
+	LocomationDirection = UKismetAnimationLibrary::CalculateDirection(OwnerCharacterBase->GetVelocity(), OwnerCharacterBase->GetActorRotation());
 
 	bIsInAir = CharacterMovement->IsFalling();
 
@@ -48,3 +50,15 @@ void UAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 		bIsAccelerating = false;
 	}
 }
+
+bool UAnimInstanceBase::DoesOwnerHaveTag(const FGameplayTag GameplayTag) const
+{
+	if (OwnerASC)
+	{
+		return OwnerASC->HasMatchingGameplayTag(GameplayTag);
+	}
+
+	return false;
+}
+
+

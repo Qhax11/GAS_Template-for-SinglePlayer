@@ -6,6 +6,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AnimInstanceBase.generated.h"
 
+struct FGameplayTag;
+class UAbilitySystemComponent;
+class AGAS_CharacterBase;
 
 UCLASS()
 class GAS_TEMPLATESP_API UAnimInstanceBase : public UAnimInstance
@@ -19,9 +22,15 @@ public:
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
+	bool DoesOwnerHaveTag(const FGameplayTag GameplayTag) const;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	ACharacter* CharacterRef;
+	AGAS_CharacterBase* OwnerCharacterBase;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	UAbilitySystemComponent* OwnerASC;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UCharacterMovementComponent* CharacterMovement;

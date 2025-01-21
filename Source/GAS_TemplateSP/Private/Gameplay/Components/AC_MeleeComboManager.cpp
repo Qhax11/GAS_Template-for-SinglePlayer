@@ -100,6 +100,8 @@ void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData
 	}
 
 	bCanActivateAbility = true;
+
+	OnComboMeleeEnded.Broadcast(EndedData);
 }
 
 void UAC_MeleeComboManager::OnCanActivateNextAttack()

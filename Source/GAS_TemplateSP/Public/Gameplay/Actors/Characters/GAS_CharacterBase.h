@@ -60,4 +60,9 @@ public:
 
 	void EnableCollision();
 
+	void DisableMesh();
+
+	void EnableMesh();
+
+
 };

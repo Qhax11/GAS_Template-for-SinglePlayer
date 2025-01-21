@@ -6,6 +6,8 @@
 #include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
 #include "AC_MeleeComboManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeEnded, const FAbilityEndedData&, EndedData);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_MeleeComboManager : public UActorComponent
@@ -17,6 +19,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnComboMeleeEnded OnComboMeleeEnded;
 
 protected:
 	virtual void BeginPlay() override;

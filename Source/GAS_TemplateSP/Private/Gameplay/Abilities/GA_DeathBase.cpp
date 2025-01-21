@@ -44,6 +44,7 @@ void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		CharacterBase->DisableMovement();
 		CharacterBase->DisableCollision();
+		CharacterBase->DisableMesh();
 	}
 }
 

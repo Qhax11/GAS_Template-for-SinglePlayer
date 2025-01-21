@@ -142,7 +142,7 @@ void UAC_TargetLockSystem::OnEnemyDeSpawn(AGAS_CharacterBase* Enemy)
 {
 	if (Enemy == CurrentTarget) 
 	{
-		//EndTargetLock();
+		EndTargetLock();
 	}
 }
 

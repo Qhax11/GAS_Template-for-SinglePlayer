@@ -6,6 +6,8 @@
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "AC_RespawnBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterReSpawn, AGAS_CharacterBase*, Character);
+
 class AGAS_CharacterBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -18,6 +20,9 @@ public:
 
 	UFUNCTION()
 	void StartCharacterReSpawnCountdown(AGAS_CharacterBase* CharacterBase);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnCharacterReSpawn OnCharacterReSpawn;
 
 protected:
 	virtual void BeginPlay() override;

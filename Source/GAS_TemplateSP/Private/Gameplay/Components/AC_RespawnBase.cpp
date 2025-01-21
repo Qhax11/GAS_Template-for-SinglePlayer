@@ -38,6 +38,9 @@ void UAC_RespawnBase::OnCharacterRespawn(AGAS_CharacterBase* CharacterBase)
 
 	CharacterBase->EnableMovement();
 	CharacterBase->EnableCollision();
+	CharacterBase->EnableMesh();
+
+	OnCharacterReSpawn.Broadcast(CharacterBase);
 }
 
 void UAC_RespawnBase::ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterBase)

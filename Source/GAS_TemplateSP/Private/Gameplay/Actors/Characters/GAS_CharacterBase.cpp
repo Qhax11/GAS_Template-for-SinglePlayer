@@ -79,10 +79,17 @@ void AGAS_CharacterBase::EnableMovement()
 
 void AGAS_CharacterBase::DisableCollision()
 {
-	// Dead object collision, you can check ProjectSettings->Engine->Collision->CollisionObject
+	// ECC_GameTraceChannel1 is Dead object collision, you can check ProjectSettings->Engine->Collision->CollisionObject
 	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent()) 
 	{
 		GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	if (USkeletalMeshComponent* CharacterMesh = GetMesh()) 
+	{
+		GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 
@@ -91,6 +98,29 @@ void AGAS_CharacterBase::EnableCollision()
 	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
 	{
 		GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+
+	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
+	{
+		GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+}
+
+void AGAS_CharacterBase::DisableMesh()
+{
+	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
+	{
+		GetMesh()->SetVisibility(false, true);
+	}
+}
+
+void AGAS_CharacterBase::EnableMesh()
+{
+	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
+	{
+		GetMesh()->SetVisibility(true, true);
 	}
 }
 

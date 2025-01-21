@@ -46,9 +46,6 @@ protected:
 	class UAC_HeroControl* HeroControlComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
-	class UAC_HeroRespawn* HeroRespawnComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_TargetLockSystem* TargetLockSystemComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")

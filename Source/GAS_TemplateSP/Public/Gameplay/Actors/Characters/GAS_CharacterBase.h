@@ -20,14 +20,18 @@ public:
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
-	UGAS_AbilitySystemComponent* CharacterASC;
+	FORCEINLINE class UAC_RespawnBase* GeRespawnBaseComponent() const { return RespawnBaseComponent; }
 
 	FORCEINLINE class UStaticMeshComponent* GetWeapon() const { return SM_Weapon; }
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
+	UGAS_AbilitySystemComponent* CharacterASC;
 
 	/* Components */
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
+	class UAC_RespawnBase* RespawnBaseComponent;
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_AbilitySet* AbilitySetComponent;
 
@@ -49,9 +53,7 @@ protected:
 private:
 	class UAC_TagDelegates* TagDelegatesComponent;
 
-
 public:
-
 	void DisableMovement();
 
 	void EnableMovement();
@@ -63,6 +65,5 @@ public:
 	void DisableMesh();
 
 	void EnableMesh();
-
 
 };

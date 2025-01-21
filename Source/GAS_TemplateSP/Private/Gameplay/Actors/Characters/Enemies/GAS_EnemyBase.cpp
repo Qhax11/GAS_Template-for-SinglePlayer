@@ -7,10 +7,8 @@
 
 
 AGAS_EnemyBase::AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer):
-	Super(ObjectInitializer)
+	Super(ObjectInitializer.SetDefaultSubobjectClass<UAC_EnemyRespawn>(TEXT("RespawnBase")))
 {
-	EnemyRespawnComponent = CreateDefaultSubobject<UAC_EnemyRespawn>(TEXT("EnemyRespawnComponent"));
-
 	MeleeComboManagerComponent = CreateDefaultSubobject<UAC_MeleeComboManager>(TEXT("MeleeComboManagerComponent"));
 }
 

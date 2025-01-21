@@ -12,8 +12,10 @@
 #include "InputMappingContext.h"
 
 
-AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer):
-    Super(ObjectInitializer.SetDefaultSubobjectClass<UAC_HeroAttributesListener>(TEXT("AttributesListenerBase")))
+AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer)
+    : Super(ObjectInitializer
+        .SetDefaultSubobjectClass<UAC_HeroAttributesListener>(TEXT("AttributesListenerBase")) 
+        .SetDefaultSubobjectClass<UAC_HeroRespawn>(TEXT("RespawnBase")))
 {
     // Create a camera boom (pulls in towards the player if there is a collision)
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -29,8 +31,6 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer):
     HeroControlComponent = CreateDefaultSubobject<UAC_HeroControl>(TEXT("HeroControlComponent"));
 
     AbilityInputBindingComponent = CreateDefaultSubobject<UAC_AbilityInputBinding>(TEXT("AbilityInputBindingComponent"));
-
-    HeroRespawnComponent = CreateDefaultSubobject<UAC_HeroRespawn>(TEXT("HeroRespawnComponent"));
 
     TargetLockSystemComponent = CreateDefaultSubobject<UAC_TargetLockSystem>(TEXT("TargetLockSystemComponent"));
 

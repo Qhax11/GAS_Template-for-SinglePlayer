@@ -25,6 +25,11 @@ void UAC_RespawnBase::BindCharacterDeSpawn()
 
 void UAC_RespawnBase::StartCharacterReSpawnCountdown(AGAS_CharacterBase* CharacterBase)
 {
+	if (CharacterBase != GetOwner()) 
+	{
+		return;
+	}
+
 	GetWorld()->GetTimerManager().SetTimer(CharacterDeSpawnCountDownTimerHandle, [this, CharacterBase]()
 		{
 			OnCharacterRespawn(CharacterBase);

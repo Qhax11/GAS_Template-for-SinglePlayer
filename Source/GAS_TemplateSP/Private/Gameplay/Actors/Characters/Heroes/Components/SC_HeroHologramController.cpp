@@ -239,12 +239,12 @@ void USC_HeroHologramController::OnStartTargetLock()
 
 float USC_HeroHologramController::GetPointDistToLine(AActor* ReferanceActor, FVector& OutClosestPoint)
 {
-	if (!ReferanceActor || !TargetLockSystem->CurrentTarget || !HeroHologram)
+	if (!ReferanceActor || !TargetLockSystem->CurrentTarget || !HeroHologram->IsValidLowLevel())
 	{
 		return 0;
 	}
-
-	FVector HeroHologramLocation = HeroHologram->GetActorLocation();
+	
+	FVector HeroHologramLocation = HeroHologram.Get()->GetActorLocation();
 	FVector TargetLocation = TargetLockSystem->CurrentTarget->GetActorLocation();
 	FVector HeroLocation = HeroBase->GetActorLocation();
 

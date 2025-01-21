@@ -124,7 +124,7 @@ void UAC_TargetLockSystem::EndTargetLock()
 {
 	if (!CurrentTargetASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerASC is null in %s, cannot initialize ability slots."), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("CurrentTargetASC is null in %s"), *GetName());
 		return;
 	}
 
@@ -293,7 +293,6 @@ void UAC_TargetLockSystem::ChangeTarget(AActor* NewTarget)
 		return;
 	}
 
-	// For StartTargetLock, CurrentTargetASC is null.
 	if (CurrentTargetASC) 
 	{
 		CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);

@@ -8,6 +8,7 @@
 
 
 // This class works with UAC_TagDelegates.
+// Usually for Blueprint side.
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGameplayTagTriggered, const UAbilitySystemComponent*, AbilitySystemComponent, const FGameplayTag&, Tag);
 

@@ -22,6 +22,10 @@ public:
 
 	FORCEINLINE class UAC_RespawnBase* GeRespawnBaseComponent() const { return RespawnBaseComponent; }
 
+	FORCEINLINE class UAC_TagDispatcher* GetTagDispatcherComponent() const { return TagDispatcherComponent; }
+
+	FORCEINLINE class UAC_TagDelegates* GetTagDelegatesComponent() const { return TagDelegatesComponent; }
+
 	FORCEINLINE class UStaticMeshComponent* GetWeapon() const { return SM_Weapon; }
 
 protected:
@@ -47,11 +51,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_TagDispatcher* TagDispatcherComponent;
 
+	class UAC_TagDelegates* TagDelegatesComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* SM_Weapon;
-
-private:
-	class UAC_TagDelegates* TagDelegatesComponent;
 
 public:
 	void DisableMovement();

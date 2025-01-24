@@ -16,4 +16,8 @@ void AGAS_EnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
+	{
+		SpawnDelegatesSubsystem->OnEnemySpawn.Broadcast(this);
+	}
 }

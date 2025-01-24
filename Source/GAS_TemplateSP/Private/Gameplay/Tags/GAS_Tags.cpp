@@ -116,6 +116,9 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI, "AI");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_MovingToAttack, "AI.State.MovingToAttack");
+
 	/************************************************
 	*-------------------<UI Tags>-------------------*
 	* Add all of the UI related tags to here.       *

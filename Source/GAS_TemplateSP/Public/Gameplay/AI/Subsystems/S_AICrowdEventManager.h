@@ -10,7 +10,7 @@ class AAIController;
 struct FGameplayTag;
 class UAbilitySystemComponent;
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS()
 class GAS_TEMPLATESP_API US_AICrowdEventManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -31,16 +31,13 @@ public:
 	void CheckUpdatedMovingToAttackCount(const UAbilitySystemComponent* UpdaterASC);
 
 protected:
-
 	TMap<UAbilitySystemComponent*, AAIController*> EnemyData;
 
 	void SetValueToBlackboards(const UAbilitySystemComponent* UpdaterASC, bool Value);
 
 	int32 MovingToAttackCount;
 
-	UPROPERTY(EditDefaultsOnly, Category = "CrowdAttackingParams")
-	int32 MaxMovingToAttackCount = 1;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "CrowdAttackingParams")
+private:
+	int32 MaxMovingToAttackCount = 0;
 	bool bDebug;
 };

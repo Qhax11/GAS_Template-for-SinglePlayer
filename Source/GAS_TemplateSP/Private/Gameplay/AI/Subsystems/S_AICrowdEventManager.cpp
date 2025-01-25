@@ -7,6 +7,7 @@
 #include "AIController.h"
 #include "Gameplay/Components/AC_TagDelegates.h"
 #include "Gameplay/Tags/GAS_Tags.h"
+#include "Gameplay/AI/DS_AICrowdEventManager.h"
 
 
 void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -19,6 +20,16 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
     {
         SpawnDelegatesSubsystem->OnEnemySpawn.AddDynamic(this, &US_AICrowdEventManager::OnEnemySpawn);
     }
+ 
+    const UDS_AICrowdEventManager* AICrowdEventManagerSettings = GetDefault<UDS_AICrowdEventManager>();
+    if (!AICrowdEventManagerSettings)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("AICrowdEventManager Settings is null in %s"), *this->GetName());
+        return;
+    }
+
+    MaxMovingToAttackCount = AICrowdEventManagerSettings->MaxMovingToAttackCount;
+    bDebug = AICrowdEventManagerSettings->bDebug;
 }
 
 void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
@@ -70,13 +81,20 @@ void US_AICrowdEventManager::OnMovingToAttackTagRemoved(const UAbilitySystemComp
 
 void US_AICrowdEventManager::CheckUpdatedMovingToAttackCount(const UAbilitySystemComponent* UpdaterASC)
 {
-    if (MovingToAttackCount == MaxMovingToAttackCount)
+    if (MovingToAttackCount >= MaxMovingToAttackCount)
     {
         SetValueToBlackboards(UpdaterASC, false);
-
-        if(bDebug)
+        if (bDebug)
         {
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Values set to false!"));
+        }
+    }
+    else 
+    {
+        SetValueToBlackboards(UpdaterASC, true);
+        if (bDebug)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Values set to true!"));
         }
     }
 }
@@ -95,3 +113,5 @@ void US_AICrowdEventManager::SetValueToBlackboards(const UAbilitySystemComponent
         }
     }
 }
+
+

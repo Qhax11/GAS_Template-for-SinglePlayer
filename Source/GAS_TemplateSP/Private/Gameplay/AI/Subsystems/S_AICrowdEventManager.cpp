@@ -54,7 +54,7 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
         return;
     }
 
-    EnemyData.Add(EnemyASC, EnemyController);
+    EnemyData.Add(FEnemyData(EnemyASC, EnemyController));
 
     UAC_TagDelegates* TagDelegatesComponent = CharacterBase->GetTagDelegatesComponent();
     if (!TagDelegatesComponent)
@@ -63,35 +63,29 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
         return;
     }
 
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnMovingToAttackTagAdded);
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnMovingToAttackTagRemoved);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnAttackStateTagAdded);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnAttackStateTagRemoved);
 }
 
-void US_AICrowdEventManager::OnMovingToAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void US_AICrowdEventManager::OnAttackStateTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
     MovingToAttackCount++;
-    CheckUpdatedMovingToAttackCount(AbilitySystemComponent);
-}
-
-void US_AICrowdEventManager::OnMovingToAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-    MovingToAttackCount--;
-    CheckUpdatedMovingToAttackCount(AbilitySystemComponent);
-}
-
-void US_AICrowdEventManager::CheckUpdatedMovingToAttackCount(const UAbilitySystemComponent* UpdaterASC)
-{
     if (MovingToAttackCount >= MaxMovingToAttackCount)
     {
-        SetValueToBlackboards(UpdaterASC, false);
+        SetValueToBlackboards(false);
         if (bDebug)
         {
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Values set to false!"));
         }
     }
-    else 
+}
+
+void US_AICrowdEventManager::OnAttackStateTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+    MovingToAttackCount--;
+    if (MovingToAttackCount < MaxMovingToAttackCount)
     {
-        SetValueToBlackboards(UpdaterASC, true);
+        SetValueToBlackboards(true);
         if (bDebug)
         {
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Values set to true!"));
@@ -99,14 +93,13 @@ void US_AICrowdEventManager::CheckUpdatedMovingToAttackCount(const UAbilitySyste
     }
 }
 
-void US_AICrowdEventManager::SetValueToBlackboards(const UAbilitySystemComponent* UpdaterASC, bool Value)
+void US_AICrowdEventManager::SetValueToBlackboards(bool Value)
 {
-    for (const TPair<UAbilitySystemComponent*, AAIController*>& Data : EnemyData)
+    for (FEnemyData& Data : EnemyData)
     {
-        UAbilitySystemComponent* EnemyASC = Data.Key;
-        AAIController* EnemyController = Data.Value;
+        UAbilitySystemComponent* EnemyASC = Data.EnemyASC;
+        AAIController* EnemyController = Data.EnemyController;
 
-        // We shouldn't set the updater because it has already started moving  
         if (!EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_AI_State_Attack))
         {
             EnemyController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("CanAttack")), Value);

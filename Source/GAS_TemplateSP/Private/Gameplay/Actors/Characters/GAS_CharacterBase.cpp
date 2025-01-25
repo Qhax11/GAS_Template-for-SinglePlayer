@@ -127,6 +127,60 @@ void AGAS_CharacterBase::EnableMesh()
 	}
 }
 
+void AGAS_CharacterBase::AddGameplayTagIfNotExist(FGameplayTag GameplayTag)
+{
+	if (!CharacterASC) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterASC is null in: %s"), *GetName());
+		return;
+	}
+
+	if (!CharacterASC->HasMatchingGameplayTag(GameplayTag)) 
+	{
+		CharacterASC->AddLooseGameplayTag(GameplayTag);
+	}
+}
+
+void AGAS_CharacterBase::RemoveGameplayTagIfExist(FGameplayTag GameplayTag)
+{
+	if (!CharacterASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterASC is null in: %s"), *GetName());
+		return;
+	}
+
+	if (CharacterASC->HasMatchingGameplayTag(GameplayTag))
+	{
+		CharacterASC->RemoveLooseGameplayTag(GameplayTag, 100);
+	}
+}
+
+void AGAS_CharacterBase::AddGameplayTagsIfNotExist(FGameplayTagContainer& GameplayTags)
+{
+	if (!CharacterASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterASC is null in: %s"), *GetName());
+		return;
+	}
+
+	CharacterASC->AddLooseGameplayTags(GameplayTags);
+}
+
+void AGAS_CharacterBase::RemoveGameplayTagsIfExist(FGameplayTagContainer& GameplayTags)
+{
+	if (!CharacterASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterASC is null in: %s"), *GetName());
+		return;
+	}
+
+	CharacterASC->RemoveLooseGameplayTags(GameplayTags);
+}
+
+
+
+
+
 
 
 

@@ -57,6 +57,7 @@ protected:
 	UStaticMeshComponent* SM_Weapon;
 
 public:
+	// Death state functions
 	void DisableMovement();
 
 	void EnableMovement();
@@ -69,4 +70,13 @@ public:
 
 	void EnableMesh();
 
+public:
+	// Generic
+	void AddGameplayTagIfNotExist(FGameplayTag GameplayTag);
+
+	void RemoveGameplayTagIfExist(FGameplayTag GameplayTag);
+
+	void AddGameplayTagsIfNotExist(FGameplayTagContainer& GameplayTags);
+
+	void RemoveGameplayTagsIfExist(FGameplayTagContainer& GameplayTags);
 };

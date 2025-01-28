@@ -16,7 +16,7 @@ class GAS_TEMPLATESP_API UDS_AICrowdEventManager : public UDeveloperSettings
 public:
 
 	UPROPERTY(Config, EditDefaultsOnly, Category = "CrowdAttackingParams")
-	int32 MaxMovingToAttackCount = 1;
+	int32 MaxEnemyAttackingCount = 2;
 	
 	UPROPERTY(Config, EditDefaultsOnly, Category = "CrowdAttackingParams")
 	bool bDebug = false;

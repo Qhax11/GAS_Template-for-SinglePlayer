@@ -37,22 +37,43 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	UFUNCTION()
+	void OnHeroSpawn(AGAS_CharacterBase* CharacterBase);
+	AGAS_CharacterBase* Hero;
+
+	UFUNCTION()
 	void OnEnemySpawn(AGAS_CharacterBase* CharacterBase);
 
+public:
+	// AI listening states
 	UFUNCTION()
-	void OnAttackStateTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	UFUNCTION()
-	void OnAttackStateTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnMoveToAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnMoveToAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnSoCloseToHeroTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnSoCloseToHeroTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 protected:
-	TArray<FEnemyData> EnemyData;
+	TArray<FEnemyData> AllEnemies;
+
+	TArray<FEnemyData> MoveToAttackEnemies;
 
 	void SetValueToBlackboards(bool Value);
 
-	int32 MovingToAttackCount;
-
+	TMap<UAbilitySystemComponent, AAIController> AllEnemiesData;
 private:
-	int32 MaxMovingToAttackCount = 0;
+	int32 MaxEnemyAttackingCount = 0;
+	int32 EnemyAttackingCount = 0;
 	bool bDebug;
+
 };

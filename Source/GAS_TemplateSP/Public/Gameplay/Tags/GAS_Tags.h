@@ -127,6 +127,7 @@ namespace GAS_Tags
 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_Attack);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_MovingToAttack);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_SoCloseToHero);
 
 	/************************************************
 	*-------------------<UI Tags>-------------------*

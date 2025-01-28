@@ -18,6 +18,7 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
 
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
+        SpawnDelegatesSubsystem->OnHeroSpawn.AddDynamic(this, &US_AICrowdEventManager::OnHeroSpawn);
         SpawnDelegatesSubsystem->OnEnemySpawn.AddDynamic(this, &US_AICrowdEventManager::OnEnemySpawn);
     }
  
@@ -28,8 +29,13 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
         return;
     }
 
-    MaxMovingToAttackCount = AICrowdEventManagerSettings->MaxMovingToAttackCount;
+    MaxEnemyAttackingCount = AICrowdEventManagerSettings->MaxEnemyAttackingCount;
     bDebug = AICrowdEventManagerSettings->bDebug;
+}
+
+void US_AICrowdEventManager::OnHeroSpawn(AGAS_CharacterBase* CharacterBase)
+{
+    Hero = CharacterBase;
 }
 
 void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
@@ -54,7 +60,8 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
         return;
     }
 
-    EnemyData.Add(FEnemyData(EnemyASC, EnemyController));
+    AllEnemies.Add(FEnemyData(EnemyASC, EnemyController));
+    AllEnemiesData.Add(*EnemyASC, *EnemyController);
 
     UAC_TagDelegates* TagDelegatesComponent = CharacterBase->GetTagDelegatesComponent();
     if (!TagDelegatesComponent)
@@ -63,14 +70,18 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
         return;
     }
 
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnAttackStateTagAdded);
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnAttackStateTagRemoved);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnAttackTagAdded);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnAttackTagRemoved);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_MovingToAttack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagAdded);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_MovingToAttack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagRemoved);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_SoCloseToHero, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnSoCloseToHeroTagAdded);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_SoCloseToHero, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnSoCloseToHeroTagAdded);
 }
 
-void US_AICrowdEventManager::OnAttackStateTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void US_AICrowdEventManager::OnAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-    MovingToAttackCount++;
-    if (MovingToAttackCount >= MaxMovingToAttackCount)
+    EnemyAttackingCount++;
+    if (EnemyAttackingCount >= MaxEnemyAttackingCount)
     {
         SetValueToBlackboards(false);
         if (bDebug)
@@ -80,10 +91,10 @@ void US_AICrowdEventManager::OnAttackStateTagAdded(const UAbilitySystemComponent
     }
 }
 
-void US_AICrowdEventManager::OnAttackStateTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void US_AICrowdEventManager::OnAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-    MovingToAttackCount--;
-    if (MovingToAttackCount < MaxMovingToAttackCount)
+    EnemyAttackingCount--;
+    if (EnemyAttackingCount < MaxEnemyAttackingCount)
     {
         SetValueToBlackboards(true);
         if (bDebug)
@@ -93,9 +104,28 @@ void US_AICrowdEventManager::OnAttackStateTagRemoved(const UAbilitySystemCompone
     }
 }
 
+void US_AICrowdEventManager::OnMoveToAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+    UAbilitySystemComponent* NonConstASC = const_cast<UAbilitySystemComponent*>(AbilitySystemComponent);
+    MoveToAttackEnemies.Add(FEnemyData(NonConstASC, AllEnemiesData.Find(*NonConstASC)));
+}
+
+void US_AICrowdEventManager::OnMoveToAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+
+}
+
+void US_AICrowdEventManager::OnSoCloseToHeroTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+}
+
+void US_AICrowdEventManager::OnSoCloseToHeroTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+}
+
 void US_AICrowdEventManager::SetValueToBlackboards(bool Value)
 {
-    for (FEnemyData& Data : EnemyData)
+    for (FEnemyData& Data : AllEnemies)
     {
         UAbilitySystemComponent* EnemyASC = Data.EnemyASC;
         AAIController* EnemyController = Data.EnemyController;

@@ -60,6 +60,11 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
         return;
     }
 
+    if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Boss)) 
+    {
+        return;
+    }
+
     AllEnemies.Add(FEnemyData(EnemyASC, EnemyController));
 
     UAC_TagDelegates* TagDelegatesComponent = CharacterBase->GetTagDelegatesComponent();

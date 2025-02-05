@@ -70,7 +70,6 @@ protected:
 
 	void SetValueToBlackboards(bool Value);
 
-	TMap<UAbilitySystemComponent, AAIController> AllEnemiesData;
 private:
 	int32 MaxEnemyAttackingCount = 0;
 	int32 EnemyAttackingCount = 0;

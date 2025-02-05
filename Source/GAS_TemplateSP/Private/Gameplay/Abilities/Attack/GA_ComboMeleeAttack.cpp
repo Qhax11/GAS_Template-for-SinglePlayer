@@ -6,7 +6,10 @@
 UGA_ComboMeleeAttack::UGA_ComboMeleeAttack()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
+	FGameplayTagContainer AssetTags;
+	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
+	SetAssetTags(AssetTags);
+	//AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Finisher);
 }
 

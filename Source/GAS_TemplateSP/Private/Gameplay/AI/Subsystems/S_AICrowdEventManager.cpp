@@ -61,7 +61,6 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
     }
 
     AllEnemies.Add(FEnemyData(EnemyASC, EnemyController));
-    AllEnemiesData.Add(*EnemyASC, *EnemyController);
 
     UAC_TagDelegates* TagDelegatesComponent = CharacterBase->GetTagDelegatesComponent();
     if (!TagDelegatesComponent)
@@ -107,7 +106,6 @@ void US_AICrowdEventManager::OnAttackTagRemoved(const UAbilitySystemComponent* A
 void US_AICrowdEventManager::OnMoveToAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
     UAbilitySystemComponent* NonConstASC = const_cast<UAbilitySystemComponent*>(AbilitySystemComponent);
-    MoveToAttackEnemies.Add(FEnemyData(NonConstASC, AllEnemiesData.Find(*NonConstASC)));
 }
 
 void US_AICrowdEventManager::OnMoveToAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

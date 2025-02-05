@@ -5,6 +5,9 @@
 
 UGA_MeleeFinisher::UGA_MeleeFinisher()
 {
-	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Finisher);
+	FGameplayTagContainer AssetTags;
+	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Finisher);
+	SetAssetTags(AssetTags);
+	//AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Finisher);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Finisher);
 }

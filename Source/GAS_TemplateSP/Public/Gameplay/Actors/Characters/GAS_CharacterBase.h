@@ -57,6 +57,10 @@ protected:
 	UStaticMeshComponent* SM_Weapon;
 
 public:
+	UPROPERTY(EditDefaultsOnly)
+	FName WeaponSocketName;
+
+public:
 	// Death state functions
 	void DisableMovement();
 

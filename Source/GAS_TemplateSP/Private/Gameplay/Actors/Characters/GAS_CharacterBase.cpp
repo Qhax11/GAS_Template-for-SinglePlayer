@@ -49,13 +49,13 @@ void AGAS_CharacterBase::BeginPlay()
 	CharacterASC->InitAbilityActorInfo(this, this);
 	AbilitySetComponent->Initialize(CharacterASC);
 
-	if (GetMesh()->DoesSocketExist(TEXT("Katana")))
+	if (GetMesh()->DoesSocketExist(WeaponSocketName))
 	{
-		SM_Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Katana"));
+		SM_Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Socket 'Katana' does not exist on mesh: %s"), *GetMesh()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("WeaponSocketName does not exist on mesh: %s"), *GetMesh()->GetName());
 	}
 }
 

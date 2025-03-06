@@ -18,6 +18,9 @@ public:
 	
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE USceneComponent* GetFinisherPointComponent() const { return FinisherPointComponent; }
+
 protected:
 
 	//* Components *//
@@ -27,4 +30,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
 	class UAC_MeleeComboManager* MeleeComboManagerComponent;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
+    USceneComponent* FinisherPointComponent;
 };

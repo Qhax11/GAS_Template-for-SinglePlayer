@@ -28,6 +28,13 @@ void UGA_EnemyDeath::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
+	UBrainComponent* EnemyBrainComponent = EnemyController->GetBrainComponent();
+	if (!EnemyBrainComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnemyBrainComponent is null in: %s"), *GetName());
+		return;
+	}
+
 	EnemyController->GetBrainComponent()->StopLogic(TEXT("Enemey is dead"));
 }
 

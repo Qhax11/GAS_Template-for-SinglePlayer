@@ -10,6 +10,9 @@ AGAS_EnemyBase::AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UAC_EnemyRespawn>(TEXT("RespawnBase")))
 {
 	MeleeComboManagerComponent = CreateDefaultSubobject<UAC_MeleeComboManager>(TEXT("MeleeComboManagerComponent"));
+
+	FinisherPointComponent = CreateDefaultSubobject<USceneComponent>(TEXT("FinisherPointComponent"));
+	FinisherPointComponent->SetupAttachment(RootComponent);
 }
 
 void AGAS_EnemyBase::BeginPlay()

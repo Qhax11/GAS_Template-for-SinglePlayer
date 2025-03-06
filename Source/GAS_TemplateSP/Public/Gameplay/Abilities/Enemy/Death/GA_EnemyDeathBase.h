@@ -3,13 +3,11 @@
 #pragma once
 
 #include "Gameplay/Abilities/GA_DeathBase.h"
-#include "GA_EnemyDeath.generated.h"
+#include "GA_EnemyDeathBase.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
-class GAS_TEMPLATESP_API UGA_EnemyDeath : public UGA_DeathBase
+class GAS_TEMPLATESP_API UGA_EnemyDeathBase : public UGA_DeathBase
 {
 	GENERATED_BODY()
 	

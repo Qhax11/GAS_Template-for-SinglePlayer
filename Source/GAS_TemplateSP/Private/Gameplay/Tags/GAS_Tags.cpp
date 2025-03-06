@@ -37,6 +37,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Strafing, "Gameplay.State.Strafing");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Dead, "Gameplay.State.Dead");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_DeadWithFinisher, "Gameplay.State.DeadWithFinisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat, "Gameplay.State.InCombat");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Vulnerable, "Gameplay.State.Vulnerable");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_CanActivateFinisher, "Gameplay.State.CanActivateFinisher");

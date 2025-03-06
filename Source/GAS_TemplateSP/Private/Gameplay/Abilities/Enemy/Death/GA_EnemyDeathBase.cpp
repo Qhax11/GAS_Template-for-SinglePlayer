@@ -1,13 +1,13 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Enemy/GA_EnemyDeath.h"
+#include "Gameplay/Abilities/Enemy/Death/GA_EnemyDeathBase.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "AIController.h"
 #include "BrainComponent.h"
 
 
-void UGA_EnemyDeath::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
@@ -38,7 +38,7 @@ void UGA_EnemyDeath::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	EnemyController->GetBrainComponent()->StopLogic(TEXT("Enemey is dead"));
 }
 
-void UGA_EnemyDeath::BroadcastDeSpawn()
+void UGA_EnemyDeathBase::BroadcastDeSpawn()
 {
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{

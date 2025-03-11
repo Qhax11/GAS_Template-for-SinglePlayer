@@ -31,7 +31,7 @@ AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectIni
 
 	GameplayDataComponent = CreateDefaultSubobject<UAC_GameplayData>(TEXT("GameplayDataComponent"));
 
-	SM_Weapon = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("SM_Weapon"));
+	SM_Weapon = CreateDefaultSubobject <UStaticMeshComponent>(TEXT("SM_Weapon"));
 	SM_Weapon->SetupAttachment(GetMesh());
 
 }

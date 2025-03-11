@@ -22,6 +22,8 @@ protected:
 
 	bool BindHeroMeleeComboInput();
 
+	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData) override;
+
 	AGAS_HeroBase* HeroBase;
 
 public:

@@ -32,7 +32,7 @@ protected:
 	TSubclassOf<UGA_ComboMeleeAttack> GetNextComboMeleeAttackAbility();
 
 	UFUNCTION()
-	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
+	virtual void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
 
 	UFUNCTION()
 	void OnCanActivateNextAttack();

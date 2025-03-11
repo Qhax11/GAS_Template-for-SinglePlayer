@@ -5,9 +5,7 @@
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "GAS_EnemyBase.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API AGAS_EnemyBase : public AGAS_CharacterBase
 {
@@ -28,7 +26,7 @@ protected:
 	class UAC_EnemyRespawn* EnemyRespawnComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
-	class UAC_MeleeComboManager* MeleeComboManagerComponent;
+	class UAC_EnemyMeleeComboManager* EnemyMeleeComboManagerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
     USceneComponent* FinisherPointComponent;

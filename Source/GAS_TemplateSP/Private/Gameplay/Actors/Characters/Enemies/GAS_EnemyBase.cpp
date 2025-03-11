@@ -3,13 +3,12 @@
 
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyRespawn.h"
-#include "Gameplay/Components/AC_MeleeComboManager.h"
-
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 
 AGAS_EnemyBase::AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer):
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UAC_EnemyRespawn>(TEXT("RespawnBase")))
 {
-	MeleeComboManagerComponent = CreateDefaultSubobject<UAC_MeleeComboManager>(TEXT("MeleeComboManagerComponent"));
+	EnemyMeleeComboManagerComponent = CreateDefaultSubobject<UAC_EnemyMeleeComboManager>(TEXT("EnemyMeleeComboManager"));
 
 	FinisherPointComponent = CreateDefaultSubobject<USceneComponent>(TEXT("FinisherPointComponent"));
 	FinisherPointComponent->SetupAttachment(RootComponent);

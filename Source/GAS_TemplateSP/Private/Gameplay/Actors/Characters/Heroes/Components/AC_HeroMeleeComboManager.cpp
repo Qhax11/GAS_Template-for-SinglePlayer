@@ -3,6 +3,7 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Abilities/Hero/GA_HeroHologram.h"
 
 void UAC_HeroMeleeComboManager::BeginPlay()
 {
@@ -46,6 +47,34 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 		UE_LOG(LogTemp, Warning, TEXT("Input actions are null in: %s"), *GetName());
 		return false;
 	}
+}
+
+void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
+{
+	// If it is another ability
+	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
+	{
+		// If it is UGA_HeroHologram we need a reset. 
+		if (EndedData.AbilityThatEnded->IsA<UGA_HeroHologram>())
+		{
+			return;
+		}
+		// If it is not UGA_HeroHologram we need contiune the combo, so we dont reset.
+		else
+		{
+			AbilityIndex = 0;
+		}
+	}
+
+	// If ComboMelee ability is normal ended
+	if (!EndedData.bWasCancelled)
+	{
+		AbilityIndex = 0;
+	}
+
+	bCanActivateAbility = true;
+
+	OnComboMeleeEnded.Broadcast(EndedData);
 }
 
 void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)

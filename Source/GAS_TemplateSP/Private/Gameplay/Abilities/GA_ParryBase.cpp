@@ -1,0 +1,19 @@
+// Qhax's GAS Template for SinglePlayer
+
+
+#include "Gameplay/Abilities/GA_ParryBase.h"
+
+UGA_ParryBase::UGA_ParryBase()
+{
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Parry);
+}
+
+void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, 
+	const FGameplayAbilityActivationInfo ActivationInfo, 
+	const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+
+}

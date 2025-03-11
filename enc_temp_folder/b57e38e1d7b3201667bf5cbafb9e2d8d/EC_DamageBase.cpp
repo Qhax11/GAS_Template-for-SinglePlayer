@@ -5,7 +5,6 @@
 #include "Gameplay/Attributes/AS_Hero.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Gameplay/Effects/GE_GainHealth.h"
-#include "Gameplay/Abilities/GA_ParryBase.h"
 
 
 void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -22,16 +21,6 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	{
 		if (CalculateParry(Params))
 		{
-			FGameplayTagContainer AbilityTags;
-			AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_State_Parry);
-			for (FGameplayAbilitySpec& Spec : Params.TargetASC->GetActivatableAbilities())
-			{
-				if (Spec.IsActive() && Spec.Ability && Spec.Ability->AbilityTags.HasAnyExact(AbilityTags))
-				{
-					UGA_ParryBase* TargetParryAbility = Cast<UGA_ParryBase>(Spec.Ability);
-					TargetParryAbility->Triggered();
-				}
-			}
 			return;
 		}
 	}
@@ -210,26 +199,19 @@ bool UEC_DamageBase::CalculateParry(FExecCalculationParameters& Params) const
 
 	float ToleranceAngle = 90.0f;
 
-	// Get locations of source (attacker) and target (defender)
 	FVector SourceLocation = Params.SourceActor->GetActorLocation();
 	FVector TargetLocation = Params.TargetActor->GetActorLocation();
 
-	// Get the forward vector of the target (the direction they are facing)
 	FVector TargetForward = Params.TargetActor->GetActorForwardVector();
 
-	// Calculate the direction from the target to the source (attacker)
 	FVector DirectionToMe = (SourceLocation - TargetLocation).GetSafeNormal();
 
-	// Compute the dot product: 
-	// -1 = completely opposite direction (back turned)
-	//  1 = directly facing
-	//  0 = exactly 90 degrees
+	// Dot product hesapla: -1 = tamamen ters, 1 = tamamen yüz yüze, 0 = 90 derece açýda
 	float DotProduct = FVector::DotProduct(TargetForward, DirectionToMe);
 
-	// Convert dot product to an angle in degrees
 	float Angle = FMath::RadiansToDegrees(FMath::Acos(DotProduct));
 
-	// If the angle is within the allowed tolerance, the target is facing the source
+	// Eðer açý tolerans açýsýnýn içinde ise hedef bana bakýyor
 	return Angle <= (ToleranceAngle / 2.0f);
 }
 

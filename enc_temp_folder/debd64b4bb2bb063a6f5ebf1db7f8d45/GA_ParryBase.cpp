@@ -17,8 +17,3 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 
 }
-
-void UGA_ParryBase::Triggered()
-{
-	UE_LOG(LogTemp, Warning, TEXT("DAMN!!!"));
-}

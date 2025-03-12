@@ -80,15 +80,7 @@ TSubclassOf<UGA_ComboMeleeAttack> UAC_MeleeComboManager::GetNextComboMeleeAttack
 
 void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	// If ComboMelee ability is normal ended
-	if (EndedData.bWasCancelled)
-	{
-		AbilityIndex = 0;
-	}
 
-	bCanActivateAbility = true;
-
-	OnComboMeleeEnded.Broadcast(EndedData);
 }
 
 void UAC_MeleeComboManager::OnCanActivateNextAttack()

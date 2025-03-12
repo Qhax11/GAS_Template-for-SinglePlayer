@@ -6,7 +6,7 @@
 #include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
 #include "AC_MeleeComboManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeEnded, const FAbilityEndedData&, EndedData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeEnded, const bool, bWasCancelled);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

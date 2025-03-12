@@ -54,16 +54,18 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 	// If it is another ability
 	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
 	{
-		// If it is UGA_HeroHologram we need a reset. 
-		if (EndedData.AbilityThatEnded->IsA<UGA_HeroHologram>())
-		{
-			return;
-		}
-		// If it is not UGA_HeroHologram we need contiune the combo, so we dont reset.
-		else
-		{
-			AbilityIndex = 0;
-		}
+		return;
+	}
+
+	// If it is UGA_HeroHologram we need a reset. 
+	if (EndedData.AbilityThatEnded->IsA<UGA_HeroHologram>())
+	{
+		return;
+	}
+	// If it is not UGA_HeroHologram we need contiune the combo, so we dont reset.
+	else
+	{
+		AbilityIndex = 0;
 	}
 
 	// If ComboMelee ability is normal ended
@@ -74,7 +76,7 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 
 	bCanActivateAbility = true;
 
-	OnComboMeleeEnded.Broadcast(EndedData);
+	OnComboMeleeEnded.Broadcast(EndedData.bWasCancelled);
 }
 
 void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)

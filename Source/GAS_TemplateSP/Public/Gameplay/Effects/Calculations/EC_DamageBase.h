@@ -38,4 +38,6 @@ public:
 	virtual void CalculateLifeSteal(FExecCalculationParameters& Params, float DamageDone, float& HealDone, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const;
 
 	virtual bool CalculateParry(FExecCalculationParameters& Params) const;
+
+	virtual void SendDataToParryAbility(FExecCalculationParameters& Params) const;
 };

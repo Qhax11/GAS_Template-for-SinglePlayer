@@ -23,16 +23,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		if (CalculateParry(Params))
 		{
 			// If parry is successful, send the data to the ability for further processing.
-			FGameplayTagContainer AbilityTags;
-			AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_State_Parry);
-			for (FGameplayAbilitySpec& Spec : Params.TargetASC->GetActivatableAbilities())
-			{
-				if (Spec.IsActive() && Spec.Ability && Spec.Ability->AbilityTags.HasAnyExact(AbilityTags))
-				{
-					UGA_ParryBase* TargetParryAbility = Cast<UGA_ParryBase>(Spec.Ability);
-					TargetParryAbility->Triggered(Params);
-				}
-			}
+			SendDataToParryAbility(Params);
 			return;
 		}
 	}
@@ -232,6 +223,22 @@ bool UEC_DamageBase::CalculateParry(FExecCalculationParameters& Params) const
 
 	// If the angle is within the allowed tolerance, the target is facing the source
 	return Angle <= (ToleranceAngle / 2.0f);
+}
+
+void UEC_DamageBase::SendDataToParryAbility(FExecCalculationParameters& Params) const
+{
+	FGameplayTagContainer AbilityTags;
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Parry);
+	for (FGameplayAbilitySpec& Spec : Params.TargetASC->GetActivatableAbilities())
+	{
+		if (Spec.IsActive() && Spec.Ability && Spec.Ability->AbilityTags.HasAnyExact(AbilityTags))
+		{
+			if (UGA_ParryBase* TargetParryAbility = Cast<UGA_ParryBase>(Spec.Ability)) 
+			{
+				TargetParryAbility->Triggered(Params);
+			}
+		}
+	}
 }
 
 

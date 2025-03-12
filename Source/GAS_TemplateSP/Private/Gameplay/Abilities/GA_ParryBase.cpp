@@ -7,6 +7,7 @@
 
 UGA_ParryBase::UGA_ParryBase()
 {
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Parry);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Parry);
 }
 
@@ -20,8 +21,6 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void UGA_ParryBase::Triggered(const FExecCalculationParameters& CalculationParams)
 {
-	UE_LOG(LogTemp, Warning, TEXT("DAMN!!!"));
-
 	UAbilitySystemComponent* OwnerASC = CalculationParams.TargetASC;
 	if (!ParryEffect && !OwnerASC)
 	{
@@ -29,7 +28,12 @@ void UGA_ParryBase::Triggered(const FExecCalculationParameters& CalculationParam
 	}
 	
 	FGameplayEffectSpecHandle EffectSpecHandle = OwnerASC->MakeOutgoingSpec(ParryEffect, 1.0f, CalculationParams.GetSpec().GetEffectContext());
-	if (!EffectSpecHandle.IsValid()) return;
+	if (!EffectSpecHandle.IsValid())
+	{
+		return;
+	}
 
 	OwnerASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+
+
 }

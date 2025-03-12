@@ -67,6 +67,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_MeleeCombo, "Gameplay.Ability.MeleeCombo");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Finisher, "Gameplay.Ability.Finisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Dash, "Gameplay.Ability.Dash");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Parry, "Gameplay.Ability.Parry");
 
 	/**********************************************
 	*----------------<Filter Tags>----------------*

@@ -39,5 +39,4 @@ public:
 
 	virtual bool CalculateParry(FExecCalculationParameters& Params) const;
 
-	virtual void SendDataToParryAbility(FExecCalculationParameters& Params) const;
 };

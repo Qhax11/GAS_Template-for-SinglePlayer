@@ -29,6 +29,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_TakeDamage, "Gameplay.Event.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_Death, "Gameplay.Event.Death");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_ComboMelee, "Gameplay.Event.ComboMelee");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_ParryKnockback, "Gameplay.Event.ParryKnockback");
 	
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff, "Gameplay.State.Debuff");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Stun, "Gameplay.State.Debuff.Stun");
@@ -67,7 +68,6 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_MeleeCombo, "Gameplay.Ability.MeleeCombo");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Finisher, "Gameplay.Ability.Finisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Dash, "Gameplay.Ability.Dash");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Parry, "Gameplay.Ability.Parry");
 
 	/**********************************************
 	*----------------<Filter Tags>----------------*

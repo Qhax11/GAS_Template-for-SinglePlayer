@@ -22,6 +22,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	{
 		if (CalculateParry(Params))
 		{
+			// If parry is successful, send the data to the ability for further processing.
 			FGameplayTagContainer AbilityTags;
 			AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_State_Parry);
 			for (FGameplayAbilitySpec& Spec : Params.TargetASC->GetActivatableAbilities())
@@ -29,7 +30,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 				if (Spec.IsActive() && Spec.Ability && Spec.Ability->AbilityTags.HasAnyExact(AbilityTags))
 				{
 					UGA_ParryBase* TargetParryAbility = Cast<UGA_ParryBase>(Spec.Ability);
-					TargetParryAbility->Triggered();
+					TargetParryAbility->Triggered(Params);
 				}
 			}
 			return;

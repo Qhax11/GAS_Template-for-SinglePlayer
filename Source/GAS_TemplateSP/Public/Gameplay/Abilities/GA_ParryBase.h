@@ -5,6 +5,7 @@
 #include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "GA_ParryBase.generated.h"
 
+struct FExecCalculationParameters;
 
 UCLASS()
 class GAS_TEMPLATESP_API UGA_ParryBase : public UGA_MontageAbility
@@ -16,5 +17,9 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	void Triggered();
+	// This function called from UEC_DamageBase
+	void Triggered(const FExecCalculationParameters& CalculationParams);
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> ParryEffect;
 };

@@ -17,7 +17,7 @@ public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* OwnerInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void BP_ApplyForce(AActor* SourceActor, AActor* TargetActor);
+	void BP_ApplyForce(const AActor* SourceActor);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> ParryKnockbackEffect;

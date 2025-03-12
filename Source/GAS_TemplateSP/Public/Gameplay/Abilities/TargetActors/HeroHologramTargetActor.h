@@ -12,7 +12,6 @@ class GAS_TEMPLATESP_API AHeroHologramTargetActor : public AHologramTargetActorB
 	GENERATED_BODY()
 
 public:
-
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
@@ -22,7 +21,6 @@ public:
 	virtual void Cancel() override;
 
 public:
-	
 	UPROPERTY(EditDefaultsOnly, Category = "HeroHologramTargetActor")
 	float RotationSpeed = 5.0f;
 
@@ -40,7 +38,6 @@ public:
 	void BP_OnEndTargetLock();
 
 private:
-
 	void RotateToTarget(AActor* TargetActor, float DeltaTime);
 
 	void SyncRotationWithHero(float DeltaTime);

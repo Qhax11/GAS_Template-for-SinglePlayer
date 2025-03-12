@@ -21,6 +21,7 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void UGA_ParryBase::Triggered(const FExecCalculationParameters& CalculationParams)
 {
+	// For some reason GetAbilitySystemComponentFromActorInfo() function returns nullptr, so we use CalculationParams insted.
 	UAbilitySystemComponent* OwnerASC = CalculationParams.TargetASC;
 	if (!ParryEffect && !OwnerASC)
 	{
@@ -35,5 +36,5 @@ void UGA_ParryBase::Triggered(const FExecCalculationParameters& CalculationParam
 
 	OwnerASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
 
-
+	BP_ApplyForce(CalculationParams.SourceActor, CalculationParams.TargetActor);
 }

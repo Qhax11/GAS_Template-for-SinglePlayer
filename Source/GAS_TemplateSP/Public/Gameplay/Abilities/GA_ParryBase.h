@@ -20,6 +20,10 @@ public:
 	// This function called from UEC_DamageBase
 	void Triggered(const FExecCalculationParameters& CalculationParams);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_ApplyForce(AActor* SourceActor, AActor* TargetActor);
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> ParryEffect;
+	
 };

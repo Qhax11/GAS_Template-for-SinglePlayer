@@ -3,6 +3,7 @@
 #pragma once
 
 #include "AIController.h"
+#include "Components/StateTreeComponent.h"
 #include "AIControllerBase.generated.h"
 
 class UAISenseConfig_Sight;
@@ -18,6 +19,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UStateTreeComponent> StateTreeComponent;
 
 protected:
 	virtual void BeginPlay();

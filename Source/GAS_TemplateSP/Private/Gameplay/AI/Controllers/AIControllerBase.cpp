@@ -23,6 +23,8 @@ AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer
 	PerceptionComponent->ConfigureSense(*AISenseConfig_Sight);
 	PerceptionComponent->SetDominantSense(AISenseConfig_Sight->GetSenseImplementation());
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIControllerBase::TargetPreceptionUpdated);
+
+	StateTreeComponent = CreateDefaultSubobject<UStateTreeComponent>(TEXT("StateTreeComponent"));
 }
 
 void AAIControllerBase::BeginPlay()

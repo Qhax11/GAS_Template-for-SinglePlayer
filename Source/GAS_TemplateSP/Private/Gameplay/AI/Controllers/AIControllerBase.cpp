@@ -7,6 +7,8 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Gameplay/Components/AC_Team.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/StateTreeAIComponent.h"
+#include "Gameplay/Tags/GAS_Tags.h"
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))
@@ -24,7 +26,7 @@ AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer
 	PerceptionComponent->SetDominantSense(AISenseConfig_Sight->GetSenseImplementation());
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIControllerBase::TargetPreceptionUpdated);
 
-	StateTreeComponent = CreateDefaultSubobject<UStateTreeComponent>(TEXT("StateTreeComponent"));
+	StateTreeAIComponent = CreateDefaultSubobject<UStateTreeAIComponent>(TEXT("StateTreeaAIComponent"));
 }
 
 void AAIControllerBase::BeginPlay()
@@ -59,6 +61,11 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 		if (UBlackboardComponent* BlackboradComponent = GetBlackboardComponent()) 
 		{
 			BlackboradComponent->SetValueAsObject(FName("TargetActor"), Actor);
+		}
+
+		if (StateTreeAIComponent) 
+		{
+			StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_ChasePlayer);
 		}
 	}
 }

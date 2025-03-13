@@ -20,7 +20,7 @@ public class GAS_TemplateSP : ModuleRules
             "GameplayTags",
             "AIModule",
 			"GameplayStateTreeModule",
-			"AnimGraphRuntime"
+            "AnimGraphRuntime"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {

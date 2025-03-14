@@ -44,6 +44,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_CanActivateFinisher, "Gameplay.State.CanActivateFinisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Parry, "Gameplay.State.Parry");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_MeleeCombo, "Gameplay.State.MeleeCombo");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting, "Gameplay.State.AbilityTargeting");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting_Hologram, "Gameplay.State.AbilityTargeting.Hologram");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, "Gameplay.State.TargetLockSystem.Hero.TargetLocked");
@@ -122,7 +123,8 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI, "AI");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ChasePlayer, "AI.StateTreeEvent.ChasePlayer");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_DetectedPlayer, "AI.StateTreeEvent.DetectedPlayer");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_PlayerStartedAttack, "AI.StateTreeEvent.PlayerStartedAttack");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_MovingToAttack, "AI.State.MovingToAttack");

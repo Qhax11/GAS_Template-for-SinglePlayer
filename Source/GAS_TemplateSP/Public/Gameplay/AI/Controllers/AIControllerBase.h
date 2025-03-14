@@ -3,6 +3,9 @@
 #pragma once
 
 #include "AIController.h"
+#include "Gameplay/Tags/GAS_Tags.h"
+#include "Perception/AISenseConfig_Sight.h"
+#include "Gameplay/AI/StateTree/ST_Base.h"
 #include "AIControllerBase.generated.h"
 
 class UAISenseConfig_Sight;
@@ -25,7 +28,7 @@ protected:
 	virtual void BeginPlay();
 
 	UFUNCTION()
-	void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+	virtual void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 public:
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;

@@ -3,12 +3,9 @@
 
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Navigation/CrowdFollowingComponent.h"
-#include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Gameplay/Components/AC_Team.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Gameplay/AI/StateTree/ST_Base.h"
-#include "Gameplay/Tags/GAS_Tags.h"
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))
@@ -65,7 +62,7 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 		if (StateTreeAIComponent) 
 		{
 			TargetActor = Actor;  
-			StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_ChasePlayer);
+			StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DetectedPlayer);
 		}
 	}
 }

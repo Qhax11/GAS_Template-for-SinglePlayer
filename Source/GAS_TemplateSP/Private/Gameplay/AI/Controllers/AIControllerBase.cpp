@@ -7,7 +7,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Gameplay/Components/AC_Team.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Components/StateTreeAIComponent.h"
+#include "Gameplay/AI/StateTree/ST_Base.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
@@ -26,7 +26,7 @@ AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer
 	PerceptionComponent->SetDominantSense(AISenseConfig_Sight->GetSenseImplementation());
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIControllerBase::TargetPreceptionUpdated);
 
-	StateTreeAIComponent = CreateDefaultSubobject<UStateTreeAIComponent>(TEXT("StateTreeaAIComponent"));
+	StateTreeAIComponent = CreateDefaultSubobject<UST_Base>(TEXT("StateTreeaAIComponent"));
 }
 
 void AAIControllerBase::BeginPlay()
@@ -50,7 +50,6 @@ void AAIControllerBase::BeginPlay()
 		CrowdComponent->SetAvoidanceGroup(1);
 		CrowdComponent->SetGroupsToAvoid(1);
 		CrowdComponent->SetCrowdCollisionQueryRange(CollisionQueryRange);
-
 	}
 }
 
@@ -65,6 +64,7 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 
 		if (StateTreeAIComponent) 
 		{
+			TargetActor = Actor;  
 			StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_ChasePlayer);
 		}
 	}

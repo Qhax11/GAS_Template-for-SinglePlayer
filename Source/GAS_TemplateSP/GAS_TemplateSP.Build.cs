@@ -20,6 +20,7 @@ public class GAS_TemplateSP : ModuleRules
             "GameplayTags",
             "AIModule",
 			"GameplayStateTreeModule",
+            "StateTreeModule",
             "AnimGraphRuntime"
         });
 

@@ -6,11 +6,10 @@
 #include "GameplayTagContainer.h"
 #include "Templates/SubclassOf.h"
 #include "Engine/DataAsset.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "GAS_AbilitySystemComponent.generated.h"
 
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityGiven, UAbilitySystemComponent*, ASC, FGameplayAbilitySpec&, AbilitySpec);
-
 
 USTRUCT(BlueprintType)
 struct FAbilityData
@@ -73,7 +72,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")
-	UGameplayAbility* TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass);
+	UGAS_GameplayAbilityBase* TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass);
 
 	bool GiveAbilitySet(const UGAS_GameplayAbilitySet* AbilitySet);
 	

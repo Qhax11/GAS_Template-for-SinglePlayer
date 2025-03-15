@@ -2,7 +2,6 @@
 
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
-#include "Abilities/GameplayAbility.h"
 
 
 void UGAS_AbilitySystemComponent::BeginPlay()
@@ -10,7 +9,7 @@ void UGAS_AbilitySystemComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-UGameplayAbility* UGAS_AbilitySystemComponent::TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass)
+UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass)
 {
 	if (!AbilityClass)
 	{
@@ -25,7 +24,7 @@ UGameplayAbility* UGAS_AbilitySystemComponent::TryActivateAbilityByClassAndRetur
 		{
 			if (TryActivateAbility(Spec.Handle))
 			{
-				return Spec.Ability;
+				return CastChecked<UGAS_GameplayAbilityBase>(Spec.Ability);
 			}
 		}
 	}

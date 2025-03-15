@@ -25,5 +25,5 @@ void AAIControllerBoss::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 
 void AAIControllerBoss::OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack);
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack, FConstStructView::Make(FMyStateTreePayload(23, FVector(100, 200, 300))));
 }

@@ -5,6 +5,18 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "AIControllerBoss.generated.h"
 
+USTRUCT(BlueprintType)
+struct FMyStateTreePayload
+{
+	GENERATED_BODY()
+public:
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 SomeValue;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector TargetLocation;
+};
 
 UCLASS()
 class GAS_TEMPLATESP_API AAIControllerBoss : public AAIControllerBase

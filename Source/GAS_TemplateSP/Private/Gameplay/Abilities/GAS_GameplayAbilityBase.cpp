@@ -82,3 +82,12 @@ void UGAS_GameplayAbilityBase::IncreaseLevel(UAbilitySystemComponent* AbilitySys
 	CDO_AbilityBase->OnAbilityCooldownChanged.Broadcast(this, NewCooldown);
 }
 
+void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	// We broadcast the event through the CDO, ensuring that even binders without access to the instance are triggered
+	UGAS_GameplayAbilityBase* CDO_AbilityBase = Cast<UGAS_GameplayAbilityBase>(GetClass()->GetDefaultObject());
+	CDO_AbilityBase->OnGameplayAbilityEndedWithData.Broadcast(FAbilityEndedData(this, Handle, bReplicateEndAbility, bWasCancelled));
+}
+

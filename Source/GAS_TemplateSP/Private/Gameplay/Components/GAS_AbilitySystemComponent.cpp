@@ -1,9 +1,38 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
 #include "Abilities/GameplayAbility.h"
 
+
+void UGAS_AbilitySystemComponent::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+UGameplayAbility* UGAS_AbilitySystemComponent::TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass)
+{
+	if (!AbilityClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: AbilityClass is invalid!"));
+		return nullptr;
+	}
+
+	const UGameplayAbility* const InAbilityCDO = AbilityClass.GetDefaultObject();
+	for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
+	{
+		if (Spec.Ability == InAbilityCDO)
+		{
+			if (TryActivateAbility(Spec.Handle))
+			{
+				return Spec.Ability;
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: No ability found for class %s!"), *AbilityClass->GetName());
+	return nullptr;
+}
 
 bool UGAS_AbilitySystemComponent::GiveAbilitySet(const UGAS_GameplayAbilitySet* AbilitySet)
 {

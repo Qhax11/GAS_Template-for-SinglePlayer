@@ -6,12 +6,14 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Attributes/AS_Base.h"
+#include "Abilities/GameplayAbilityTypes.h"
 #include "GAS_GameplayAbilityBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityLevelChanged, UGameplayAbility*, Ability, int32, NewLevel);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCostChanged, UGameplayAbility*, Ability, float, NewCost);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownChanged, UGameplayAbility*, Ability, float, NewCooldown);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameplayAbilityEnded, const FAbilityEndedData&, AbilityEndedData);
 
 UCLASS()
 class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
@@ -19,7 +21,6 @@ class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
-
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	virtual void StartupEffects();
@@ -51,6 +52,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase")
 	TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects;
 
+	UPROPERTY(BlueprintAssignable, Category = "GameplayAbilityBase|Delegates")
+	FGameplayAbilityEnded OnGameplayAbilityEndedWithData;
+
 protected:
 	/**
 	 * For "Instanced Per Actor" abilities:
@@ -61,5 +65,7 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void IncreaseLevel(UAbilitySystemComponent* AbilitySystemComp);
+
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 };

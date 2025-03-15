@@ -60,17 +60,26 @@ public:
 	FGameplayTagContainer PermenantTags;
 };
 
+// Delegate to broadcast when an ability with a specific tag ends
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameplayAbilityEnded_BP, FGameplayTag, AbilityTag);
+
 UCLASS()
 class GAS_TEMPLATESP_API UGAS_AbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
+
 public:
+	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")
+	UGameplayAbility* TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass);
 
 	bool GiveAbilitySet(const UGAS_GameplayAbilitySet* AbilitySet);
 	
 	void GiveAbilities(const UGAS_GameplayAbilitySet* AbilitySet);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")
 	void GiveAbilityWithInputAction(UInputAction* AbilityInput, const TSubclassOf<UGameplayAbility> Ability);
 
 	bool IsAbilityGivenAlready(const TSubclassOf<UGameplayAbility> Ability);

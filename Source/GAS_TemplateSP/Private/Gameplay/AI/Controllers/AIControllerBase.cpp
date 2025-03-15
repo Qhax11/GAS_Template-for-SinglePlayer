@@ -52,7 +52,7 @@ void AAIControllerBase::BeginPlay()
 
 void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	if (Stimulus.WasSuccessfullySensed() && Actor) 
+	if (Stimulus.WasSuccessfullySensed() && Actor && !bHasTargetBeenDetected)
 	{
 		if (UBlackboardComponent* BlackboradComponent = GetBlackboardComponent()) 
 		{
@@ -64,6 +64,8 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 			TargetActor = Actor;  
 			StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DetectedPlayer);
 		}
+
+		bHasTargetBeenDetected = true;
 	}
 }
 

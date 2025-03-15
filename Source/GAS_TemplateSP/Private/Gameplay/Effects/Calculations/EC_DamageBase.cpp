@@ -18,7 +18,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		return;
 	}
 
-	if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Parry))
+	if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry))
 	{
 		if (CalculateParry(Params))
 		{

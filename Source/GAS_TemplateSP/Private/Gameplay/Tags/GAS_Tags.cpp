@@ -39,12 +39,15 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Dead, "Gameplay.State.Dead");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_DeadWithFinisher, "Gameplay.State.DeadWithFinisher");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat, "Gameplay.State.InCombat");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Vulnerable, "Gameplay.State.Vulnerable");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_CanActivateFinisher, "Gameplay.State.CanActivateFinisher");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Parry, "Gameplay.State.Parry");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_MeleeCombo, "Gameplay.State.MeleeCombo");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat, "Gameplay.State.InCombat");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Parry, "Gameplay.State.InCombat.Parry");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo1, "Gameplay.State.InCombat.MeleeCombo1");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo2, "Gameplay.State.InCombat.MeleeCombo2");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo3, "Gameplay.State.InCombat.MeleeCombo3");
+
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting, "Gameplay.State.AbilityTargeting");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting_Hologram, "Gameplay.State.AbilityTargeting.Hologram");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, "Gameplay.State.TargetLockSystem.Hero.TargetLocked");

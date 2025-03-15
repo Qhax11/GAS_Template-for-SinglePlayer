@@ -30,6 +30,9 @@ protected:
 	UFUNCTION()
 	virtual void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
+	// bHasTargetBeenDetected prevents multiple triggers of TargetPerceptionUpdated during each tick, ensuring it is only triggered once when the target is detected.
+	bool bHasTargetBeenDetected = false;
+
 public:
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 

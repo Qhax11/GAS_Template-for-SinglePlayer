@@ -12,13 +12,20 @@ void AAIControllerBoss::BeginPlay()
 
 void AAIControllerBoss::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+	if (bHasTargetBeenDetected)
+	{
+		return; 
+	}
+
 	Super::TargetPreceptionUpdated(Actor, Stimulus);
 
 	if (AGAS_CharacterBase* TargetCharacter = Cast<AGAS_CharacterBase>(Actor)) 
 	{
 		if (UAC_TagDelegates* TargetCharacterTagDelegatesComp = TargetCharacter->GetTagDelegatesComponent())
 		{
-			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_MeleeCombo, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnPlayerStartedAttackTagAdded);
+			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo1, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnPlayerStartedAttackTagAdded);
+			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo2, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnPlayerStartedAttackTagAdded);
+			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo3, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnPlayerStartedAttackTagAdded);
 		}
 	}
 }

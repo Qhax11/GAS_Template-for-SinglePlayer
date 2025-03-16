@@ -15,4 +15,5 @@ void UGA_EnemyDeathWithFinisher::ActivateAbility(const FGameplayAbilitySpecHandl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	//DisableOwnerCollision();
 }

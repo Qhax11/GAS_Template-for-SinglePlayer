@@ -26,10 +26,18 @@ void AAIControllerBoss::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo1, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnPlayerStartedAttackTagAdded);
 			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo2, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnPlayerStartedAttackTagAdded);
 			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo3, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnPlayerStartedAttackTagAdded);
-
-			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_DeadWithFinisher, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnDeadWithFinisherTagAdded);
 		}
 	}
+
+	if (AGAS_CharacterBase* OwnerCharacter = Cast<AGAS_CharacterBase>(GetPawn()))
+	{
+		if (UAC_TagDelegates* TargetCharacterTagDelegatesComp = OwnerCharacter->GetTagDelegatesComponent())
+		{
+			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_DeadWithFinisher, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnDeadWithFinisherTagAdded);
+			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnVulnerableTagAdded);
+		}
+	}
+	
 }
 
 void AAIControllerBoss::OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -39,5 +47,10 @@ void AAIControllerBoss::OnPlayerStartedAttackTagAdded(const UAbilitySystemCompon
 
 void AAIControllerBoss::OnDeadWithFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DeadWithFinisher, FConstStructView::Make(FMyStateTreePayload(23, FVector(100, 200, 300))));
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DeadWithFinisher);
+}
+
+void AAIControllerBoss::OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Vulnerable);
 }

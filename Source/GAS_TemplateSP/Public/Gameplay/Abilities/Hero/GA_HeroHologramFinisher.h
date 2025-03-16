@@ -17,6 +17,8 @@ protected:
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
+	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
+
 	virtual void OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result) override;
 
 	UPROPERTY(EditDefaultsOnly)

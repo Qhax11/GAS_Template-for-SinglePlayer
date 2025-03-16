@@ -69,18 +69,24 @@ TSubclassOf<UGA_ComboMeleeAttack> UAC_MeleeComboManager::GetNextComboMeleeAttack
 		return ComboMeleeAttackAbilities[AbilityIndex++];
 	}
 
-	else if (ComboMeleeAttackAbilities.IsValidIndex(0))
+	else if (AbilityIndex > ComboMeleeAttackAbilities.Num() - 1)
 	{
-		AbilityIndex = 0;
-		return ComboMeleeAttackAbilities[AbilityIndex++];
+		if (ComboMeleeAttackAbilities.IsValidIndex(0))
+		{
+			AbilityIndex = 0;
+			return ComboMeleeAttackAbilities[AbilityIndex++];
+		}
 	}
-
+	
 	return nullptr;
 }
 
 void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
+	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
+	bCanActivateAbility = true;
 
+	OnComboMeleeEnded.Broadcast(EndedData.bWasCancelled);
 }
 
 void UAC_MeleeComboManager::OnCanActivateNextAttack()

@@ -12,7 +12,8 @@ class GAS_TEMPLATESP_API UGA_EnemyBasicDeath : public UGA_EnemyDeathBase
 	GENERATED_BODY()
 
 public:
-
 	UGA_EnemyBasicDeath();
 	
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
 };

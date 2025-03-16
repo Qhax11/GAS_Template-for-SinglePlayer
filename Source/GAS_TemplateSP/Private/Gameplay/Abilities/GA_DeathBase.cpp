@@ -47,6 +47,14 @@ void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 }
 
+void UGA_DeathBase::DisableOwnerCollision()
+{
+	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
+	{
+		CharacterBase->DisableCollision();
+	}
+}
+
 
 
 

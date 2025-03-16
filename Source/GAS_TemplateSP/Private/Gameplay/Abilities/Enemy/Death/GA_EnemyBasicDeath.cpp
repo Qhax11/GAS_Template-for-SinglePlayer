@@ -15,8 +15,5 @@ void UGA_EnemyBasicDeath::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
-	{
-		CharacterBase->DisableCollision();
-	}
+	DisableOwnerCollision();
 }

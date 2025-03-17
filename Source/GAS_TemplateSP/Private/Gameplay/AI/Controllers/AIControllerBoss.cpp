@@ -47,10 +47,10 @@ void AAIControllerBoss::OnPlayerStartedAttackTagAdded(const UAbilitySystemCompon
 
 void AAIControllerBoss::OnDeadWithFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DeadWithFinisher);
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_State_DeadWithFinisher);
 }
 
 void AAIControllerBoss::OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Vulnerable);
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_State_Vulnerable);
 }

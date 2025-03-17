@@ -27,6 +27,11 @@ protected:
 
 	UFUNCTION()
 	void OnTimedOutAndDestinationReached();
+
+	// Abilities that have the specified tags in this container will be canceled before executing this ability.
+    // This is useful when ensuring that conflicting abilities (e.g., those playing root motion montages) do not interfere.
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTagContainer CancelAbilityTags;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
 	float DistanceMultiplier = 300.0f;
@@ -58,4 +63,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "RootMotionMoveToForce")
 	float FinishClampVelocity = 0.f;
 	
+	
+
 };

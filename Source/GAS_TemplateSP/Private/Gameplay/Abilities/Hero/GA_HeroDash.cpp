@@ -50,8 +50,9 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 			if (DashRootMotionTask)
 			{
-				FGameplayTagContainer CancelAbilityTags;
-				CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
+				// The melee combo ability plays a root motion montage, which conflicts with the ApplyRootMotion task.
+                // Since two different root motion sources cannot be applied at the same time, we need to cancel the combo ability first.
+                // This ensures that the root motion montage is no longer active before applying a new root motion task.
 				HeroBase->GetAbilitySystemComponent()->CancelAbilities(&CancelAbilityTags);
 				
 				DashRootMotionTask->OnTimedOut.AddDynamic(this, &UGA_HeroDash::OnTaskTimedOut);

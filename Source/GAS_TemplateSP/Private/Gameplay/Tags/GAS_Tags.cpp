@@ -132,6 +132,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_DeadWithFinisher, "AI.StateTreeEvent.State_DeadWithFinisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Vulnerable, "AI.StateTreeEvent.State.Vulnerable");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Strafing, "AI.StateTreeEvent.State.Strafing");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Engage, "AI.StateTreeEvent.State.Engage");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_MovingToAttack, "AI.State.MovingToAttack");

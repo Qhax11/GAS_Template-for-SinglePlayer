@@ -139,6 +139,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_MovingToAttack, "AI.State.MovingToAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_SoCloseToHero, "AI.State.SoCloseToHero");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Cooldown_PhantomDash, "AI.Ability.Cooldown.PhantomDash");
+
 	/************************************************
 	*-------------------<UI Tags>-------------------*
 	* Add all of the UI related tags to here.       *

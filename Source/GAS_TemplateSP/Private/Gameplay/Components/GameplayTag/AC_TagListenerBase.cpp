@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/Components/GameplayTag/AC_TagListenerBase.h"
-#include "Gameplay/Components/AC_TagDelegates.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
@@ -15,6 +15,16 @@ UAC_TagListenerBase::UAC_TagListenerBase()
 void UAC_TagListenerBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	{
+		OwnerCharacterMoveComp = Character->GetCharacterMovement();
+		if (!OwnerCharacterMoveComp)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("OwnerCharacterMoveComp is null in %s"), *this->GetName());
+			return;
+		}
+	}
 
 	if (UAC_TagDelegates* TagDelegatesComponent = GetOwner()->GetComponentByClass<UAC_TagDelegates>())
 	{
@@ -35,35 +45,21 @@ void UAC_TagListenerBase::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("TagDelegatesComponent is null in %s, cannot listen tags."), *this->GetName());
 		return;
 	}
-
-	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
-	{
-		UCharacterMovementComponent* OwnerCharacterMoveComp = Character->GetCharacterMovement();
-		if (!OwnerCharacterMoveComp)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("OwnerCharacterMoveComp is null in %s"), *this->GetName());
-			return;
-		}
-	}
 }
 
 void UAC_TagListenerBase::OnStrafingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	OwnerCharacterMoveComp->bOrientRotationToMovement = false;
 }
 
 void UAC_TagListenerBase::OnStrafingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
 }
 
 void UAC_TagListenerBase::OnWalkingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
-	{
-		if (UCharacterMovementComponent* CharacterMoveComp = Character->GetCharacterMovement())
-		{
-			//CharacterMoveComp->MaxWalkSpeed = Data.CurrentValue;
-		}
-	}
+	OwnerCharacterMoveComp->MaxWalkSpeed = WalkingSpeed;
 }
 
 void UAC_TagListenerBase::OnWalkingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -72,6 +68,7 @@ void UAC_TagListenerBase::OnWalkingTagRemoved(const UAbilitySystemComponent* Abi
 
 void UAC_TagListenerBase::OnJoggingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	OwnerCharacterMoveComp->MaxWalkSpeed = JoggingSpeed;
 }
 
 void UAC_TagListenerBase::OnJoggingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -80,6 +77,7 @@ void UAC_TagListenerBase::OnJoggingTagRemoved(const UAbilitySystemComponent* Abi
 
 void UAC_TagListenerBase::OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	OwnerCharacterMoveComp->MaxWalkSpeed = RunningSpeed;
 }
 
 void UAC_TagListenerBase::OnRunningTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

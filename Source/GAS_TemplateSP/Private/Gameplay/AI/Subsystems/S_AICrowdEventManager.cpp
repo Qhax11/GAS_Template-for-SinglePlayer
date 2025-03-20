@@ -5,7 +5,7 @@
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
-#include "Gameplay/Components/AC_TagDelegates.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "Gameplay/AI/DS_AICrowdEventManager.h"
 

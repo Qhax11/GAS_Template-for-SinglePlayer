@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Components/AC_TagDelegates.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "AbilitySystemGlobals.h"
 
 

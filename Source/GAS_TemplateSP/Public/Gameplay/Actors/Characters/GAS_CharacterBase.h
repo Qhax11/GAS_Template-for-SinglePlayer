@@ -49,6 +49,9 @@ protected:
 	class UAC_GameplayData* GameplayDataComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
+	class UAC_TagListenerBase* TagListenerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_TagDispatcher* TagDispatcherComponent;
 
 	class UAC_TagDelegates* TagDelegatesComponent;

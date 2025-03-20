@@ -3,7 +3,7 @@
 
 #include "Gameplay/AI/Controllers/AIControllerBoss.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
-#include "Gameplay/Components/AC_TagDelegates.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 
 void AAIControllerBoss::BeginPlay()
 {

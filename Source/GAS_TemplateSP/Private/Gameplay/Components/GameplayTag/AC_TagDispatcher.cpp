@@ -1,8 +1,8 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Components/AC_TagDispatcher.h"
-#include "Gameplay/Components/AC_TagDelegates.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDispatcher.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 
 
 UAC_TagDispatcher::UAC_TagDispatcher()

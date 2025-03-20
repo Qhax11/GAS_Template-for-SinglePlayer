@@ -8,7 +8,6 @@
 
 UEQT_BossStrafing::UEQT_BossStrafing()
 {
-    // EQS Query'nin neyle çalışacağını belirtiyoruz
     Cost = EEnvTestCost::Low;
     ValidItemType = UEnvQueryItemType_VectorBase::StaticClass();
     SetWorkOnFloatValues(true);

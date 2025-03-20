@@ -44,5 +44,13 @@ protected:
 
 	UFUNCTION()
 	void OnRunningTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-		
+
+	UPROPERTY(EditDefaultsOnly)
+	float WalkingSpeed = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float JoggingSpeed = 400.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float RunningSpeed = 600.0f;
 };

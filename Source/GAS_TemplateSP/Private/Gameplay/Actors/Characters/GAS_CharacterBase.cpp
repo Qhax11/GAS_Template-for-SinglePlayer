@@ -6,8 +6,9 @@
 #include "Gameplay/Components/AC_AttributesListenerBase.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/Components/AC_Team.h"
-#include "Gameplay/Components/AC_TagDelegates.h"
-#include "Gameplay/Components/AC_TagDispatcher.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDispatcher.h"
+#include "Gameplay/Components/GameplayTag/AC_TagListenerBase.h"
 #include "Gameplay/Components/AC_GameplayData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -27,13 +28,14 @@ AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectIni
 
 	TagDispatcherComponent = CreateDefaultSubobject<UAC_TagDispatcher>(TEXT("TagDispatcherComponent"));
 
+	TagListenerComponent = CreateDefaultSubobject<UAC_TagListenerBase>(TEXT("TagListenerComponent"));
+
 	AttributesListenerComponent = CreateDefaultSubobject<UAC_AttributesListenerBase>(TEXT("AttributesListenerComponent"));
 
 	GameplayDataComponent = CreateDefaultSubobject<UAC_GameplayData>(TEXT("GameplayDataComponent"));
 
 	SM_Weapon = CreateDefaultSubobject <UStaticMeshComponent>(TEXT("SM_Weapon"));
 	SM_Weapon->SetupAttachment(GetMesh());
-
 }
 
 void AGAS_CharacterBase::BeginPlay()

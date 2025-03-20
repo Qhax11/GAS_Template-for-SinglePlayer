@@ -14,10 +14,8 @@ class GAS_TEMPLATESP_API UAC_HeroControl : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-
 	UAC_HeroControl();
 
-public:	
 	virtual void BeginPlay() override;
 
 	void TryBindControlInputs();
@@ -42,12 +40,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	const UInputAction* IA_CancelTarget;
 
-	UPROPERTY(BlueprintReadOnly)
-	FVector2D LastMovementInput;
-
-	UPROPERTY(BlueprintReadOnly)
-	FVector2D LastLookMouseInput;
-
 	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = " Minimum limit for looking down from below"))
 	float MinPitchA = 0.0f;  
 
@@ -59,6 +51,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking up from above"))
 	float MaxPitchB = 360.0f; 
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector2D LastMovementInput;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector2D LastLookMouseInput;
 
 protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

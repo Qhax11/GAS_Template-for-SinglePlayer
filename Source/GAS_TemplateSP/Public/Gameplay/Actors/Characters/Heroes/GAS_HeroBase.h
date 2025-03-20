@@ -54,6 +54,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class USC_HeroHologramController* HeroHologramControllerComponent;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
+	class UAC_MovementListener* MovementListenerComponent;
+
 private:
 	class UAC_AbilityInputBinding* AbilityInputBindingComponent;
 

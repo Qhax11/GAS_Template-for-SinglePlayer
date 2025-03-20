@@ -8,6 +8,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroRespawn.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroHologramController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_MovementListener.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
@@ -35,6 +36,8 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer)
     TargetLockSystemComponent = CreateDefaultSubobject<UAC_TargetLockSystem>(TEXT("TargetLockSystemComponent"));
 
     HeroMeleeComboManagerComponent = CreateDefaultSubobject<UAC_HeroMeleeComboManager>(TEXT("HeroMeleeComboManagerComponent"));
+
+    MovementListenerComponent = CreateDefaultSubobject<UAC_MovementListener>(TEXT("MovementListenerComponent"));
 
     HeroHologramControllerComponent = CreateDefaultSubobject<USC_HeroHologramController>(TEXT("HeroHologramControllerComponent"));
     HeroHologramControllerComponent->SetupAttachment(RootComponent);

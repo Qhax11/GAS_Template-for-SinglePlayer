@@ -54,11 +54,6 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 {
 	if (Stimulus.WasSuccessfullySensed() && Actor && !bHasTargetBeenDetected)
 	{
-		if (UBlackboardComponent* BlackboradComponent = GetBlackboardComponent()) 
-		{
-			BlackboradComponent->SetValueAsObject(FName("TargetActor"), Actor);
-		}
-
 		if (StateTreeAIComponent) 
 		{
 			TargetActor = Actor;  

@@ -23,7 +23,6 @@ public:
 	UAC_TagDispatcher();
 
 protected:
-
 	virtual void BeginPlay() override;
 
 	UFUNCTION()

@@ -39,6 +39,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Walking, "Gameplay.State.Moving.Walking");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Jogging, "Gameplay.State.Moving.Jogging");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Running, "Gameplay.State.Moving.Running");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Dash, "Gameplay.State.Moving.Dash");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Dead, "Gameplay.State.Dead");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_DeadWithFinisher, "Gameplay.State.DeadWithFinisher");

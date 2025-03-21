@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "KismetAnimationLibrary.h"
+#include "Gameplay/Tags/GAS_Tags.h"
 
 UAnimInstanceBase::UAnimInstanceBase()
 {
@@ -33,9 +34,15 @@ void UAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 		return;
 	}
 
-	FVector Velocity = OwnerCharacterBase->GetVelocity();
-	Velocity.Z = 0.f;
-	Speed = Velocity.Size();
+	// When in dash state, we don't need to update the speed value for animation.  
+    // This is because the dash ability doesn't have a montage, and if we don't use this condition, it will automatically play the entry animation in ABP.
+	if(!DoesOwnerHaveTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash))
+	{
+		FVector Velocity = OwnerCharacterBase->GetVelocity();
+		Velocity.Z = 0.f;
+		Speed = Velocity.Size();
+	}
+
 
 	LocomationDirection = UKismetAnimationLibrary::CalculateDirection(OwnerCharacterBase->GetVelocity(), OwnerCharacterBase->GetActorRotation());
 

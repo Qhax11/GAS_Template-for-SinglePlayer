@@ -2,70 +2,52 @@
 
 
 #include "Gameplay/Abilities/Hero/GA_HeroDash.h"
-#include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
 
-UGA_HeroDash::UGA_HeroDash()
-{
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Dash);
-}
-
 void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
-	AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
-	if (!HeroBase) 
+
+	HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
+	if (!HeroBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
-		return;
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 	}
 
 	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
-		if (UAC_HeroControl* GetHeroControlComponent = HeroBase->GetHeroControlComponent())
-		{
-			FVector DashDirection = GetDashDirection(GetHeroControlComponent->LastMovementInput);
-
-			FVector DashTargetLocation = DashDirection * DistanceMultiplier + HeroBase->GetActorLocation();
-
-			UAbilityTask_ApplyRootMotionMoveToForce* DashRootMotionTask =
-				UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
-					this,
-					TEXT("DashRootMotionTask"),
-					DashTargetLocation,
-					Duration,
-					bSetNewMovementMode,
-					NewMovementMode,
-					bRestrictSpeedToExpected,
-					DashCurve,
-					FinishVelocityMode,
-					FinishSetVelocity,
-					FinishClampVelocity);
-
-			if (DashRootMotionTask)
-			{
-				// The melee combo ability plays a root motion montage, which conflicts with the ApplyRootMotion task.
-                // Since two different root motion sources cannot be applied at the same time, we need to cancel the combo ability first.
-                // This ensures that the root motion montage is no longer active before applying a new root motion task.
-				HeroBase->GetAbilitySystemComponent()->CancelAbilities(&CancelAbilityTags);
-				
-				DashRootMotionTask->OnTimedOut.AddDynamic(this, &UGA_HeroDash::OnTaskTimedOut);
-				DashRootMotionTask->OnTimedOutAndDestinationReached.AddDynamic(this, &UGA_HeroDash::OnTimedOutAndDestinationReached);
-				DashRootMotionTask->ReadyForActivation();
-
-				Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-			}
-		}
+		// The melee combo ability plays a root motion montage, which conflicts with the ApplyRootMotion task.
+		// Since two different root motion sources cannot be applied at the same time, we need to cancel the combo ability first.
+		// This ensures that the root motion montage is no longer active before applying a new root motion task.
+		GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
+		Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	}
 	else
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	}
+
+}
+
+FVector UGA_HeroDash::CalculateDestination()
+{
+	if (UAC_HeroControl* GetHeroControlComponent = HeroBase->GetHeroControlComponent())
+	{
+		FVector DashDirection = GetDashDirection(GetHeroControlComponent->LastMovementInput);
+		FVector DashTargetLocation = DashDirection * DistanceMultiplier + HeroBase->GetActorLocation();
+		return DashTargetLocation;
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetHeroControlComponent is null in: %s"), *GetName());
+		return FVector::ZeroVector;
 	}
 }
 
@@ -92,13 +74,4 @@ FVector UGA_HeroDash::GetDirectionFromLastMovementInput(const FVector2D& LastMov
 	return Direction;
 }
 
-void UGA_HeroDash::OnTaskTimedOut()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-}
-
-void UGA_HeroDash::OnTimedOutAndDestinationReached()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-}
 

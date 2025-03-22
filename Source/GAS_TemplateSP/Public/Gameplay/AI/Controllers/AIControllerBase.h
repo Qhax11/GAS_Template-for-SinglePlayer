@@ -18,11 +18,16 @@ class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
 public:
 	AAIControllerBase(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FORCEINLINE class UST_Base* GetStateTreeComponent() const { return StateTreeAIComponent; }
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UST_Base> StateTreeAIComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class UAC_BehaviorDecision> BehaviorDecisionComponent;
 
 protected:
 	virtual void BeginPlay();

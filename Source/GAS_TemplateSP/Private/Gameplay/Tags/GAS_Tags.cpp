@@ -139,6 +139,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Strafing, "AI.StateTreeEvent.State.Strafing");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Engage, "AI.StateTreeEvent.State.Engage");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ExecuteSelectedAttack, "AI.StateTreeEvent.ExecuteSelectedAttack");
+
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_MovingToAttack, "AI.State.MovingToAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_SoCloseToHero, "AI.State.SoCloseToHero");

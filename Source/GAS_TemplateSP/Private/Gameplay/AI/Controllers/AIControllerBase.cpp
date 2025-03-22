@@ -6,6 +6,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Gameplay/Components/AC_Team.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))
@@ -24,6 +25,8 @@ AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIControllerBase::TargetPreceptionUpdated);
 
 	StateTreeAIComponent = CreateDefaultSubobject<UST_Base>(TEXT("StateTreeaAIComponent"));
+
+	BehaviorDecisionComponent = CreateDefaultSubobject<UAC_BehaviorDecision>(TEXT("BehaviorDecisionComponent"));
 }
 
 void AAIControllerBase::BeginPlay()

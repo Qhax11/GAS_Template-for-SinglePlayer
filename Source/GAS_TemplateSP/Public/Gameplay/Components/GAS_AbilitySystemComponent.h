@@ -74,6 +74,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")
 	UGAS_GameplayAbilityBase* TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass);
 
+	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")
+	UGAS_GameplayAbilityBase* TryActivateAbilityByTagAndReturnInstance(FGameplayTag AbilityTag);
+
 	bool GiveAbilitySet(const UGAS_GameplayAbilitySet* AbilitySet);
 	
 	void GiveAbilities(const UGAS_GameplayAbilitySet* AbilitySet);

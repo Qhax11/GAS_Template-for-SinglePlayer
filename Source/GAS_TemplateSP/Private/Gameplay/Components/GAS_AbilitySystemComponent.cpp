@@ -33,6 +33,29 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 	return nullptr;
 }
 
+UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByTagAndReturnInstance(FGameplayTag AbilityTag)
+{
+	if (!AbilityTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByTagAndReturnInstance: AbilityTag is invalid!"));
+		return nullptr;
+	}
+
+	for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
+	{
+		if (Spec.Ability->AbilityTags.HasTagExact(AbilityTag))
+		{
+			if (TryActivateAbility(Spec.Handle))
+			{
+				return CastChecked<UGAS_GameplayAbilityBase>(Spec.Ability);
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByTagAndReturnInstance: No ability found for Tag %s!"), *AbilityTag.GetTagName().ToString());
+	return nullptr;
+}
+
 bool UGAS_AbilitySystemComponent::GiveAbilitySet(const UGAS_GameplayAbilitySet* AbilitySet)
 {
 	if (AbilitySet)

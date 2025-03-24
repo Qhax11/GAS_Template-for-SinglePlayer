@@ -49,6 +49,25 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 	}
 }
 
+TSubclassOf<UGA_ComboMeleeAttack> UAC_HeroMeleeComboManager::GetNextComboMeleeAttackAbility()
+{
+	if (ComboMeleeAttackAbilities.IsValidIndex(AbilityIndex))
+	{
+		return ComboMeleeAttackAbilities[AbilityIndex++];
+	}
+
+	else if (AbilityIndex > ComboMeleeAttackAbilities.Num() - 1)
+	{
+		if (ComboMeleeAttackAbilities.IsValidIndex(0))
+		{
+			AbilityIndex = 0;
+			return ComboMeleeAttackAbilities[AbilityIndex++];
+		}
+	}
+
+	return nullptr;
+}
+
 void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
 	// If it is another ability or if it is UGA_HeroHologram we need a reset. 
@@ -57,7 +76,6 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 		return;
 	}
 
-	Super::OnComboMeleeAttackAbilityEnd(EndedData);
 
 	// If ComboMelee ability is normal ended
 	if (!EndedData.bWasCancelled)
@@ -66,14 +84,40 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 	}
 }
 
+void UAC_HeroMeleeComboManager::OnCanActivateNextAttack()
+{
+}
+
 void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
 {
-	if (CharacterBaseASC->HasAnyMatchingGameplayTags(BlockedTags)) 
+	if (!CharacterBaseASC)
 	{
 		return;
 	}
 
-	Super::ActivateComboMeleeAttackAbility(MontageSection);
+	if (!bCanActivateAbility)
+	{
+		return;
+	}
+
+	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = GetNextComboMeleeAttackAbility())
+	{
+		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityClass))
+		{
+			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
+			{
+				ActivatedComboMeleeAttack->SectionName = MontageSection;
+				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityClass))
+				{
+					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
+					{
+						ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_HeroMeleeComboManager::OnCanActivateNextAttack);
+					}
+					bCanActivateAbility = false;
+				}
+			}
+		}
+	}
 }
 
 void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()

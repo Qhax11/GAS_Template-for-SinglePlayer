@@ -26,8 +26,5 @@ protected:
 	class UAC_EnemyRespawn* EnemyRespawnComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
-	class UAC_EnemyMeleeComboManager* EnemyMeleeComboManagerComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
     USceneComponent* FinisherPointComponent;
 };

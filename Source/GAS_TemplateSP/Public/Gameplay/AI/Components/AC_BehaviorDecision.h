@@ -5,7 +5,6 @@
 #include "Components/ActorComponent.h"
 #include "AC_BehaviorDecision.generated.h"
 
-struct FGameplayTag;
 
 USTRUCT(BlueprintType)
 struct FAttackAbilityData
@@ -14,9 +13,6 @@ struct FAttackAbilityData
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class UGA_MeleeAttackBase> AbilityClass;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FGameplayTag AbilityTag;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float MinRange;
@@ -32,7 +28,6 @@ struct FAttackAbilityData
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float ScoreBias;
-
 };
 
 UCLASS(BlueprintType)

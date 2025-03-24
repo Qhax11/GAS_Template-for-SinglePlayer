@@ -1,8 +1,9 @@
-// Qhax's GAS Template for 2D SinglePlayer
+﻿// Qhax's GAS Template for 2D SinglePlayer
 
 
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
+#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 
 void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 
@@ -86,8 +87,18 @@ void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	// We broadcast the event through the CDO, ensuring that even binders without access to the instance are triggered
-	UGAS_GameplayAbilityBase* CDO_AbilityBase = Cast<UGAS_GameplayAbilityBase>(GetClass()->GetDefaultObject());
-	CDO_AbilityBase->OnGameplayAbilityEndedWithData.Broadcast(FAbilityEndedData(this, Handle, bReplicateEndAbility, bWasCancelled));
+	
+	UGAS_GameplayAbilityBase* CDO = Cast<UGAS_GameplayAbilityBase>(GetClass()->GetDefaultObject());
+	if (CDO)
+	{
+		// We broadcast the event through the CDO, ensuring that even binders without access to the instance are triggered
+		CDO->OnGameplayAbilityEndedWithData.Broadcast(FAbilityEndedData(this, Handle, bReplicateEndAbility, bWasCancelled));
+	}
+
+	if (InstancingPolicy == EGameplayAbilityInstancingPolicy::InstancedPerActor)
+	{
+		OnGameplayAbilityEndedWithData.Broadcast(FAbilityEndedData(this, Handle, bReplicateEndAbility, bWasCancelled));
+	}
+	
 }
 

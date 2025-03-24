@@ -7,8 +7,6 @@
 #include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
 #include "AC_HeroMeleeComboManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeEnded, const bool, bWasCancelled);
-
 
 UCLASS()
 class GAS_TEMPLATESP_API UAC_HeroMeleeComboManager : public UActorComponent
@@ -29,12 +27,10 @@ public:
 
 	TSubclassOf<UGA_ComboMeleeAttack> GetNextComboMeleeAttackAbility();
 
-	UPROPERTY(BlueprintAssignable)
-	FOnComboMeleeEnded OnComboMeleeEnded;
-
 	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
 
 	AGAS_HeroBase* HeroBase;
+	UAbilitySystemComponent* HeroASC;
 
 public:
 	// The tags are blocks MeleeCombo because of same input
@@ -44,10 +40,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HeroMeleeComboManager")
 	const UInputAction* IA_ActivateMeleeCombo;
 
-
 protected:
-	UAbilitySystemComponent* HeroASC;
-
 	UFUNCTION()
 	void OnCanActivateNextAttack();
 

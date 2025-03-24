@@ -137,8 +137,6 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 	}
 
 	bCanActivateAbility = true;
-
-	OnComboMeleeEnded.Broadcast(EndedData.bWasCancelled);
 }
 
 void UAC_HeroMeleeComboManager::OnCanActivateNextAttack()

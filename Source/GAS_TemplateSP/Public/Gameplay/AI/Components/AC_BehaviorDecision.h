@@ -13,10 +13,7 @@ struct FAttackAbilityData
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<class UGA_MeleeAttackBase> AbilityClass;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FGameplayTag AbilityTag;
+    TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float MinRange;

@@ -4,7 +4,6 @@
 
 #include "StateTreeTaskBase.h"
 #include "StateTreeExecutionContext.h"
-#include "StateTreeTypes.h"
 #include "STT_Test.generated.h"
 
 // For just testing how works state tree tasks in C++

@@ -16,18 +16,21 @@ class GAS_TEMPLATESP_API UAC_HeroMeleeComboManager : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
+	UAC_HeroMeleeComboManager();
 
-	UPROPERTY(BlueprintAssignable)
-	FOnComboMeleeEnded OnComboMeleeEnded;
-
-	void OnComboMeleeAttackInput();
-
-protected:
 	virtual void BeginPlay() override;
 
 	bool BindHeroMeleeComboInput();
+
+	void OnComboMeleeAttackInput();
+
+	UFUNCTION(BlueprintCallable)
+	void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
+
+	TSubclassOf<UGA_ComboMeleeAttack> GetNextComboMeleeAttackAbility();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnComboMeleeEnded OnComboMeleeEnded;
 
 	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
 
@@ -43,10 +46,7 @@ public:
 
 
 protected:
-	class AGAS_CharacterBase* CharacterBase;
-	UAbilitySystemComponent* CharacterBaseASC;
-
-	TSubclassOf<UGA_ComboMeleeAttack> GetNextComboMeleeAttackAbility();
+	UAbilitySystemComponent* HeroASC;
 
 	UFUNCTION()
 	void OnCanActivateNextAttack();

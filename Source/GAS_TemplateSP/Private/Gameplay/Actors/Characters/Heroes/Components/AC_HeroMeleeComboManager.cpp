@@ -5,20 +5,31 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "Gameplay/Abilities/Hero/GA_HeroHologram.h"
 
+UAC_HeroMeleeComboManager::UAC_HeroMeleeComboManager()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
 void UAC_HeroMeleeComboManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	HeroBase = Cast<AGAS_HeroBase>(CharacterBase);
-	if (HeroBase)
-	{
-		BindHeroMeleeComboInput();
-	}
-	else
+	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
+	if (!HeroBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
 		return;
 	}
+
+	HeroASC = HeroBase->GetAbilitySystemComponent();
+	if (!HeroASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in: %s"), *GetName());
+		return;
+	}
+
+	HeroASC->OnAbilityEnded.AddUObject(this, &UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd);
+	BindHeroMeleeComboInput();
 }
 
 bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
@@ -49,6 +60,49 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 	}
 }
 
+void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
+{
+	ActivateComboMeleeAttackAbility();
+}
+
+void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+{
+	if (HeroASC->HasAnyMatchingGameplayTags(BlockedTags)) 
+	{
+		return;
+	}
+
+	if (!HeroASC)
+	{
+		return;
+	}
+
+	if (!bCanActivateAbility)
+	{
+		return;
+	}
+
+	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = GetNextComboMeleeAttackAbility())
+	{
+		if (FGameplayAbilitySpec* SpecHandle = HeroASC->FindAbilitySpecFromClass(ComboAbilityClass))
+		{
+			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
+			{
+				ActivatedComboMeleeAttack->SectionName = MontageSection;
+				if (HeroASC->TryActivateAbilityByClass(ComboAbilityClass))
+				{
+					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
+					{
+						ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_HeroMeleeComboManager::OnCanActivateNextAttack);
+					}
+					bCanActivateAbility = false;
+				}
+			}
+		}
+	}
+}
+
+
 TSubclassOf<UGA_ComboMeleeAttack> UAC_HeroMeleeComboManager::GetNextComboMeleeAttackAbility()
 {
 	if (ComboMeleeAttackAbilities.IsValidIndex(AbilityIndex))
@@ -76,51 +130,21 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 		return;
 	}
 
-
 	// If ComboMelee ability is normal ended
 	if (!EndedData.bWasCancelled)
 	{
 		AbilityIndex = 0;
 	}
+
+	bCanActivateAbility = true;
+
+	OnComboMeleeEnded.Broadcast(EndedData.bWasCancelled);
 }
 
 void UAC_HeroMeleeComboManager::OnCanActivateNextAttack()
 {
+	bCanActivateAbility = true;
 }
 
-void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
-{
-	if (!CharacterBaseASC)
-	{
-		return;
-	}
 
-	if (!bCanActivateAbility)
-	{
-		return;
-	}
 
-	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = GetNextComboMeleeAttackAbility())
-	{
-		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityClass))
-		{
-			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
-			{
-				ActivatedComboMeleeAttack->SectionName = MontageSection;
-				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityClass))
-				{
-					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
-					{
-						ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_HeroMeleeComboManager::OnCanActivateNextAttack);
-					}
-					bCanActivateAbility = false;
-				}
-			}
-		}
-	}
-}
-
-void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
-{
-	ActivateComboMeleeAttackAbility();
-}

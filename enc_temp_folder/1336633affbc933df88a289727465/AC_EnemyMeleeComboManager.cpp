@@ -8,13 +8,9 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 	Super::OnComboMeleeAttackAbilityEnd(EndedData);
 
 	// This means we've reached the end of the combo
-	if (AbilityIndex == ComboMeleeAttackAbilities.Num())
+	if (AbilityIndex == ComboMeleeAttackAbilities.Num() - 1)
 	{
 		OnComboEnded.Broadcast();
-	}
-	else
-	{
-		ActivateComboMeleeAttackAbility();
 	}
 }
 

@@ -7,23 +7,15 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 {
 	Super::OnComboMeleeAttackAbilityEnd(EndedData);
 
-	// If it is another ability
-	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
+	// This means we've reached the end of the combo
+	if (AbilityIndex == ComboMeleeAttackAbilities.Num() - 1)
 	{
-		return;
+		OnComboEnded.Broadcast();
 	}
+}
 
-	// If ComboMelee ability is cancelled
-	if (EndedData.bWasCancelled)
-	{
-		AbilityIndex = 0;
-	}
-	else
-	{
-
-	}
-
-	bCanActivateAbility = true;
-
-	OnComboMeleeEnded.Broadcast(EndedData.bWasCancelled);
+void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbilityWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)
+{
+	AbilityIndex = ComboMeleeAttackAbilities.Find(ComboMeleeAttackAbilityClass);
+	ActivateComboMeleeAttackAbility();
 }

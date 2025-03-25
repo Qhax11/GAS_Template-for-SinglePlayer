@@ -21,17 +21,17 @@ void UAC_BehaviorDecision::BeginPlay()
     }
 }
 
-FAttackAbilityData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
+FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 {
     if (!AttackAbilityData)
     {
-        return FAttackAbilityData(); // Empty
+        return FAttackData(); 
     }
 
     float BestScore = -FLT_MAX;
-    FAttackAbilityData BestAttack;
+    FAttackData BestAttack;
 
-    for (const FAttackAbilityData& Attack : AttackAbilityData->AttackAbilities)
+    for (const FAttackData& Attack : AttackAbilityData->AttackAbilities)
     {
         if (!Attack.AbilityClass) 
         {

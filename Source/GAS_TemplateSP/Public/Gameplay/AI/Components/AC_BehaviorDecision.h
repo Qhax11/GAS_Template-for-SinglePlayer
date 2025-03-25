@@ -7,7 +7,7 @@
 
 
 USTRUCT(BlueprintType)
-struct FAttackAbilityData
+struct FAttackData
 {
     GENERATED_BODY()
 
@@ -37,7 +37,7 @@ class UAttackAbilityDataAsset : public UPrimaryDataAsset
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<FAttackAbilityData> AttackAbilities;
+    TArray<FAttackData> AttackAbilities;
 
 };
 
@@ -58,12 +58,12 @@ protected:
 
 public:
     UFUNCTION(BlueprintCallable)
-    FAttackAbilityData GetBestAttack(float DistanceToTarget);
+    FAttackData GetBestAttack(float DistanceToTarget);
 
     UFUNCTION(BlueprintCallable)
     void SendSelectedAttackData();
 
 private:
 
-    FAttackAbilityData SelectedAttackAbilityData;
+    FAttackData SelectedAttackAbilityData;
 };

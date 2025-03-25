@@ -11,6 +11,7 @@ struct FAttackData
 {
     GENERATED_BODY()
 
+public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class UGA_MeleeAttackBase> AbilityClass;
 
@@ -38,7 +39,50 @@ class UAttackAbilityDataAsset : public UPrimaryDataAsset
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<FAttackData> AttackAbilities;
+};
 
+UENUM(BlueprintType)
+enum class EMovementType : uint8
+{
+    Walk         UMETA(DisplayName = "Walk"),
+    Run          UMETA(DisplayName = "Run"),
+    Dash         UMETA(DisplayName = "Dash")
+};
+
+UENUM(BlueprintType)
+enum class EMovementDirection : uint8
+{
+    None         UMETA(DisplayName = "None"),
+    Forward      UMETA(DisplayName = "Forward"),
+    Backward     UMETA(DisplayName = "Backward"),
+    Left         UMETA(DisplayName = "Left"),
+    Right        UMETA(DisplayName = "Right")
+};
+
+USTRUCT(BlueprintType)
+struct FMovementData
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    EMovementType MovementType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    EMovementDirection Direction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float ScoreBias = 0.0f;
+};
+
+UCLASS(BlueprintType)
+class UMovementDataAsset : public UPrimaryDataAsset
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TArray<FMovementData> Movements;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -54,7 +98,8 @@ protected:
     UPROPERTY(EditDefaultsOnly)
     UAttackAbilityDataAsset* AttackAbilityData;
 
-    class AAIControllerBase* OwnerController;
+    UPROPERTY(EditDefaultsOnly)
+    UMovementDataAsset* MovementData;
 
 public:
     UFUNCTION(BlueprintCallable)
@@ -66,4 +111,6 @@ public:
 private:
 
     FAttackData SelectedAttackAbilityData;
+
+    class AAIControllerBase* OwnerController;
 };

@@ -54,17 +54,51 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
         }
     }
 
-    SelectedAttackAbilityData = BestAttack;
+    LastSelectedAttackAbilityData = BestAttack;
     return BestAttack;
+}
+
+FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget)
+{
+    if (!AttackAbilityData)
+    {
+        return FMovementData();
+    }
+
+    float BestScore = -FLT_MAX;
+    FMovementData BestMovement;
+    /*
+    for (const FMovementData& Movement : MovementData->Movements)
+    {
+        // DistanceScore
+        float IdealDistance = Attack.MaxRange;
+        float DistanceFactor = 1.f - (DistanceToTarget - IdealDistance) / IdealDistance;
+
+        float TotalScore = DistanceFactor;
+
+        // Debug
+        UE_LOG(LogTemp, Log, TEXT("[AI] Attack %s → Score: %.1f"), *Attack.AbilityClass->GetName(), TotalScore);
+
+        if (TotalScore > BestScore)
+        {
+            BestScore = TotalScore;
+            BestAttack = Attack;
+        }
+    }
+    */
+    LastSelectedMovementyData = MovementData->Movements[0];
+    return LastSelectedMovementyData;
 }
 
 void UAC_BehaviorDecision::SendSelectedAttackData()
 {
+    /*
     if (OwnerController) 
     {
         OwnerController->GetStateTreeComponent()->SendStateTreeEvent(
             GAS_Tags::TAG_AI_StateTreeEvent_ExecuteSelectedAttack, FConstStructView::Make(SelectedAttackAbilityData));
 
     }
+    */
 }
 

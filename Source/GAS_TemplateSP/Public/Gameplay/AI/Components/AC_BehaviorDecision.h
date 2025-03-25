@@ -106,11 +106,15 @@ public:
     FAttackData GetBestAttack(float DistanceToTarget);
 
     UFUNCTION(BlueprintCallable)
+    FMovementData GetBestMovement(float DistanceToTarget);
+
+    UFUNCTION(BlueprintCallable)
     void SendSelectedAttackData();
 
 private:
 
-    FAttackData SelectedAttackAbilityData;
+    FAttackData LastSelectedAttackAbilityData;
+    FMovementData LastSelectedMovementyData;
 
     class AAIControllerBase* OwnerController;
 };

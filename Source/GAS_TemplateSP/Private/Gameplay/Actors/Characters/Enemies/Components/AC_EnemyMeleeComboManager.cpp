@@ -7,6 +7,11 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 {
 	Super::OnComboMeleeAttackAbilityEnd(EndedData);
 
+	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
+	{
+		return;
+	}
+
 	// This means we've reached the end of the combo
 	if (AbilityIndex == ComboMeleeAttackAbilities.Num())
 	{

@@ -19,13 +19,25 @@ void UAC_BehaviorDecision::BeginPlay()
     {
         UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
     }
+
+    EnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
+    if (!EnemyBase)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("EnemyBase is null in: %s !"), *GetName());
+    }
+
+    EnemyASC = EnemyBase->GetAbilitySystemComponent();
+    if (!EnemyASC)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("EnemyASC is null in: %s !"), *GetName());
+    }
 }
 
 FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 {
     if (!AttackAbilityData)
     {
-        return FAttackData(); 
+        return FAttackData();
     }
 
     float BestScore = -FLT_MAX;
@@ -38,14 +50,18 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
             continue;
         }
 
-        // DistanceScore
-        float IdealDistance = Attack.MaxRange;
-        float DistanceFactor = 1.f - (DistanceToTarget - IdealDistance) / IdealDistance;
+        bool bIsOnCooldown = EnemyASC->HasMatchingGameplayTag(Attack.AbilityCooldownTag);
+        bool bWasBlockedRecently = false; // dış sistemden okunmalı
 
-        float TotalScore = DistanceFactor;
+        float DistanceScore = CalculateAttackAbilityDistanceScore(DistanceToTarget, Attack.MinRange, Attack.MaxRange);
 
-        // Debug
-        UE_LOG(LogTemp, Log, TEXT("[AI] Attack %s → Score: %.1f"), *Attack.AbilityClass->GetName(), TotalScore);
+        float TotalScore = Attack.ScoreBias + DistanceScore;
+        if (bIsOnCooldown) 
+        {
+            TotalScore = 0;
+        }
+
+        UE_LOG(LogTemp, Log, TEXT("[AI] Attack %s → Score: %.2f"), *Attack.AbilityClass->GetName(), TotalScore);
 
         if (TotalScore > BestScore)
         {
@@ -100,5 +116,27 @@ void UAC_BehaviorDecision::SendSelectedAttackData()
 
     }
     */
+}
+
+float UAC_BehaviorDecision::CalculateAttackAbilityDistanceScore(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange)
+{
+    if (AbilityMaxRange <= 0.f)
+    {
+        return 0.0f;
+    }
+
+    // Saldırının ideal noktası: MaxRange
+    float DistanceFromIdeal = FMath::Abs(DistanceToTarget - AbilityMaxRange);
+
+    // Skoru mesafeye göre ters orantılı olarak hesapla
+    float Score = 1.f - (DistanceFromIdeal / AbilityMaxRange);
+
+    // Minimum Range'in ALTINDA mesafedeyse ekstra ceza uygula (isteğe bağlı)
+    if (DistanceToTarget < AbilityMinRange)
+    {
+        Score *= 0.5f; // Çok yakınsa etkisizleştir
+    }
+
+    return FMath::Clamp(Score, 0.f, 1.f);
 }
 

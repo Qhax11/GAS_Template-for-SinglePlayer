@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "AC_BehaviorDecision.generated.h"
 
 
@@ -14,6 +15,9 @@ struct FAttackData
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class UGA_MeleeAttackBase> AbilityClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGameplayTag AbilityCooldownTag;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float MinRange;
@@ -113,8 +117,12 @@ public:
 
 private:
 
+    float CalculateAttackAbilityDistanceScore(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
+
     FAttackData LastSelectedAttackAbilityData;
     FMovementData LastSelectedMovementyData;
 
     class AAIControllerBase* OwnerController;
+    class AGAS_EnemyBase* EnemyBase;
+    class UAbilitySystemComponent* EnemyASC;
 };

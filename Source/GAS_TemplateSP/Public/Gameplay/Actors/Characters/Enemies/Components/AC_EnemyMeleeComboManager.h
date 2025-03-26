@@ -12,16 +12,27 @@ class GAS_TEMPLATESP_API UAC_EnemyMeleeComboManager : public UAC_MeleeComboManag
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void BeginPlay() override;
+
 public:
 	UFUNCTION(BlueprintCallable)
-	void ActivateComboMeleeAttackAbilityWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
+	void StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
+	
+protected:
+	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None) override;
 
 	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData) override;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnComboEnded OnComboEnded;
 
-private:
+	// Ranges of combo attack abilities.
+	UPROPERTY(EditDefaultsOnly)
+	TArray<float> ComboRanges;
 
-	bool bListenComboEnds = false;
+private:
+	class AAIControllerBase* AIController;
+
+	float GetTargetDistance();
 };

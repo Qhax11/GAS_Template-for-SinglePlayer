@@ -2,14 +2,41 @@
 
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
+
+void UAC_EnemyMeleeComboManager::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AIController = Cast<AAIControllerBase>(CharacterBase->GetController());
+	if (!AIController) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AIController is null in: %s"), *GetName());
+		return;
+	}
+}
+
+void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)
+{
+	AbilityIndex = ComboMeleeAttackAbilities.Find(ComboMeleeAttackAbilityClass);
+	ActivateComboMeleeAttackAbility();
+}
+
+void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+{
+	if (GetTargetDistance() < ComboRanges[AbilityIndex])
+	{
+		Super::ActivateComboMeleeAttackAbility();
+	}
+	// If target out of combo attack's range end combo
+	else
+	{
+		OnComboEnded.Broadcast();
+	}
+}
 
 void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	if (!bListenComboEnds) 
-	{
-		return;
-	}
-
 	Super::OnComboMeleeAttackAbilityEnd(EndedData);
 
 	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
@@ -21,7 +48,6 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 	if (AbilityIndex == ComboMeleeAttackAbilities.Num())
 	{
 		OnComboEnded.Broadcast();
-		bListenComboEnds = false;
 	}
 	else
 	{
@@ -29,9 +55,15 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 	}
 }
 
-void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbilityWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)
+float UAC_EnemyMeleeComboManager::GetTargetDistance()
 {
-	AbilityIndex = ComboMeleeAttackAbilities.Find(ComboMeleeAttackAbilityClass);
-	ActivateComboMeleeAttackAbility();
-	bListenComboEnds = true;
+	if (!CharacterBase || !AIController || !AIController->TargetActor)
+	{
+		return -1.f; 
+	}
+
+	FVector MyLocation = CharacterBase->GetActorLocation();
+	FVector TargetLocation = AIController->TargetActor->GetActorLocation();
+
+	return FVector::Dist(MyLocation, TargetLocation);
 }

@@ -4,6 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "AC_MeleeComboManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeAbilityEnded, const bool, bWasCancelled);
@@ -23,7 +24,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	class AGAS_CharacterBase* CharacterBase;
+	AGAS_CharacterBase* CharacterBase;
 	UAbilitySystemComponent* CharacterBaseASC;
 
 	TSubclassOf<UGA_ComboMeleeAttack> GetNextComboMeleeAttackAbility();

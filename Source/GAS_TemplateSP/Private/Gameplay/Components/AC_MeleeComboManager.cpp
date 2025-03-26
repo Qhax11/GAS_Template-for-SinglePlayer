@@ -2,7 +2,6 @@
 
 
 #include "Gameplay/Components/AC_MeleeComboManager.h"
-#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 
 UAC_MeleeComboManager::UAC_MeleeComboManager()
 {

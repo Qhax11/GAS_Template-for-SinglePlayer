@@ -56,7 +56,7 @@ void UGA_MontageAbility::ActivateMotionWarping()
 		FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
 		FVector TargetLocation = StartLocation + (Forward * MotionWarpingForwardForce);
 
-		CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, TargetLocation, CharacterBase->GetActorRotation());
+		CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
 	}
 	else
 	{

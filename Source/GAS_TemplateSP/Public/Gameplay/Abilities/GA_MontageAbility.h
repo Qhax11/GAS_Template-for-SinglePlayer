@@ -14,7 +14,18 @@ class GAS_TEMPLATESP_API UGA_MontageAbility : public UGAS_GameplayAbilityBase
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	void ActivateMotionWarping();
+
 	void CreatePlayMontageWaitForEvent();
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
+	bool bEnableMotionWarping = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	FName MotionWarpingName = NAME_None;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	float MotionWarpingForwardForce = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	TObjectPtr<UAnimMontage> AnimMontage;
@@ -48,4 +59,5 @@ protected:
 	UFUNCTION()
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
 
+	
 };

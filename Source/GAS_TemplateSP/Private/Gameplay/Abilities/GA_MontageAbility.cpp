@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "Gameplay/Abilities/Tasks/GAS_Task_PlayMontageWaitForEvent.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 
 
 void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -12,8 +13,8 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	AActor* AvatarActor = GetAvatarActorFromActorInfo();
-	if (!AvatarActor)
+	AActor* OwnerActor = GetAvatarActorFromActorInfo();
+	if (!OwnerActor)
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
@@ -32,7 +33,35 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
+	if (bEnableMotionWarping) 
+	{
+		ActivateMotionWarping();
+	}
+
 	CreatePlayMontageWaitForEvent();
+}
+
+void UGA_MontageAbility::ActivateMotionWarping()
+{
+	AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
+	if (!CharacterBase)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, ability cannot motion warping"), *GetName());
+		return;
+	}
+
+	if (UMotionWarpingComponent* CharacterMotionWarpingComp = CharacterBase->GetMotionWarpingComponent())
+	{
+		FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+		FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+		FVector TargetLocation = StartLocation + (Forward * MotionWarpingForwardForce);
+
+		CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, TargetLocation, CharacterBase->GetActorRotation());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterMotionWarpingComp is null in: %s, ability cannot motion warping"), *GetName());
+	}
 }
 
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()

@@ -20,8 +20,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
 
-	FOnComboMeleeAbilityEnded OnComboMeleeEnded;
-
 protected:
 	virtual void BeginPlay() override;
 

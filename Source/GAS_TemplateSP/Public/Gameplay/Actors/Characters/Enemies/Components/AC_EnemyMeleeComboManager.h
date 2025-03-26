@@ -20,4 +20,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnComboEnded OnComboEnded;
+
+private:
+
+	bool bListenComboEnds = false;
 };

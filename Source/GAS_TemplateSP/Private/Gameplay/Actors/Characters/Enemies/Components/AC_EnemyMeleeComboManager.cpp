@@ -5,6 +5,11 @@
 
 void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
+	if (!bListenComboEnds) 
+	{
+		return;
+	}
+
 	Super::OnComboMeleeAttackAbilityEnd(EndedData);
 
 	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
@@ -16,6 +21,7 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 	if (AbilityIndex == ComboMeleeAttackAbilities.Num())
 	{
 		OnComboEnded.Broadcast();
+		bListenComboEnds = false;
 	}
 	else
 	{
@@ -27,4 +33,5 @@ void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbilityWithClass(TSubcl
 {
 	AbilityIndex = ComboMeleeAttackAbilities.Find(ComboMeleeAttackAbilityClass);
 	ActivateComboMeleeAttackAbility();
+	bListenComboEnds = true;
 }

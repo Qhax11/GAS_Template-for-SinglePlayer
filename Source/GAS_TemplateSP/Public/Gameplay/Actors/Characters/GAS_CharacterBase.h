@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
+#include "MotionWarpingComponent.h"
 #include "GAS_CharacterBase.generated.h"
 
 
@@ -27,6 +28,8 @@ public:
 	FORCEINLINE class UAC_TagDelegates* GetTagDelegatesComponent() const { return TagDelegatesComponent; }
 
 	FORCEINLINE class UStaticMeshComponent* GetWeapon() const { return SM_Weapon; }
+
+	FORCEINLINE UMotionWarpingComponent* GetMotionWarpingComponent() const { return MotionWarpingComp; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
@@ -56,8 +59,11 @@ protected:
 
 	class UAC_TagDelegates* TagDelegatesComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterBase|Components")
 	UStaticMeshComponent* SM_Weapon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase|Components")
+	UMotionWarpingComponent* MotionWarpingComp;
 
 public:
 	UPROPERTY(EditDefaultsOnly)

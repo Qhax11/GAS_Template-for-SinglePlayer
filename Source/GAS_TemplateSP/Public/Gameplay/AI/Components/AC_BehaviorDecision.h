@@ -100,24 +100,22 @@ protected:
 	virtual void BeginPlay() override;
 
     UPROPERTY(EditDefaultsOnly)
-    UAttackAbilityDataAsset* AttackAbilityData;
+    UAttackAbilityDataAsset* AttackAbilityDataAsset;
 
     UPROPERTY(EditDefaultsOnly)
-    UMovementDataAsset* MovementData;
+    UMovementDataAsset* MovementDataAsset;
 
 public:
     UFUNCTION(BlueprintCallable)
     FAttackData GetBestAttack(float DistanceToTarget);
 
     UFUNCTION(BlueprintCallable)
-    FMovementData GetBestMovement(float DistanceToTarget);
-
-    UFUNCTION(BlueprintCallable)
-    void SendSelectedAttackData();
+    FMovementData GetBestMovement(float DistanceToTarget, FAttackData SelectedAttackAbilityData);
 
 private:
-
     float CalculateAttackAbilityDistanceScore(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
+
+    float CalculateMovementDistanceScore(float DistanceToTarget, FMovementData MovementData, FAttackData SelectedAttackAbilityData);
 
     FAttackData LastSelectedAttackAbilityData;
     FMovementData LastSelectedMovementyData;

@@ -83,15 +83,8 @@ TSubclassOf<UGA_ComboMeleeAttack> UAC_MeleeComboManager::GetNextComboMeleeAttack
 
 void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	if (EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
-	{
-		OnComboMeleeEnded.Broadcast(EndedData.bWasCancelled);
-	}
-
 	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
 	bCanActivateAbility = true;
-
-	OnComboMeleeEnded.Broadcast(EndedData.bWasCancelled);
 }
 
 void UAC_MeleeComboManager::OnCanActivateNextAttack()

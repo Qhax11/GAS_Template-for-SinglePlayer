@@ -36,6 +36,8 @@ AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectIni
 
 	SM_Weapon = CreateDefaultSubobject <UStaticMeshComponent>(TEXT("SM_Weapon"));
 	SM_Weapon->SetupAttachment(GetMesh());
+
+	MotionWarpingComp = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComp"));
 }
 
 void AGAS_CharacterBase::BeginPlay()

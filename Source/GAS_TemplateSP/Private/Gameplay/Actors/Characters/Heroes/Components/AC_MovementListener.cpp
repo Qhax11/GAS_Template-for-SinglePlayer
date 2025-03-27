@@ -84,12 +84,12 @@ float UAC_MovementListener::GetDisplacementInLastSeconds(float Seconds) const
     }
 }
 
-ERelativeDirection UAC_MovementListener::GetRelativeMovementDirection(float Seconds, AActor* ReferenceActor) const
+EHeroRelativeDirectionToTarget UAC_MovementListener::GetRelativeMovementDirection(float Seconds, AActor* ReferenceActor) const
 {
-    if (!ReferenceActor) return ERelativeDirection::None;
+    if (!ReferenceActor) return EHeroRelativeDirectionToTarget::None;
 
     FVector DisplacementDir = GetDisplacementDirectionInLastSeconds(Seconds);
-    if (DisplacementDir.IsNearlyZero()) return ERelativeDirection::None;
+    if (DisplacementDir.IsNearlyZero()) return EHeroRelativeDirectionToTarget::None;
 
     FVector RefForward = ReferenceActor->GetActorForwardVector();
     FVector RefRight = ReferenceActor->GetActorRightVector();
@@ -99,11 +99,11 @@ ERelativeDirection UAC_MovementListener::GetRelativeMovementDirection(float Seco
 
     if (FMath::Abs(ForwardDot) > FMath::Abs(RightDot))
     {
-        return ForwardDot > 0 ? ERelativeDirection::Forward : ERelativeDirection::Backward;
+        return ForwardDot > 0 ? EHeroRelativeDirectionToTarget::Forward : EHeroRelativeDirectionToTarget::Backward;
     }
     else
     {
-        return RightDot > 0 ? ERelativeDirection::Right : ERelativeDirection::Left;
+        return RightDot > 0 ? EHeroRelativeDirectionToTarget::Right : EHeroRelativeDirectionToTarget::Left;
     }
 }
 

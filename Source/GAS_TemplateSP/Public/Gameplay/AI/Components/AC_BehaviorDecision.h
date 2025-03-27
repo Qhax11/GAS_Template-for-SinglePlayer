@@ -4,6 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_MovementListener.h"
 #include "AC_BehaviorDecision.generated.h"
 
 
@@ -70,10 +71,22 @@ struct FMovementData
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FName MovementName = NAME_None;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     EMovementType MovementType;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     EMovementDirection Direction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TMap<EHeroRelativeDirectionToTarget, float> HeroRelativeDirectionToTargetScoreModifiers;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float ScoreModifierWhenTargetIsMoving = 0.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float ScoreModifierWhenTargetIsIdle = 0.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float ScoreBias = 0.0f;
@@ -99,12 +112,17 @@ protected:
 
 	virtual void BeginPlay() override;
 
+    UFUNCTION()
+    void OnTargetDetected(AActor* Target);
+
     UPROPERTY(EditDefaultsOnly)
     UAttackAbilityDataAsset* AttackAbilityDataAsset;
 
     UPROPERTY(EditDefaultsOnly)
     UMovementDataAsset* MovementDataAsset;
 
+    UPROPERTY(EditDefaultsOnly)
+    bool EnableDebug = false;
 public:
     UFUNCTION(BlueprintCallable)
     FAttackData GetBestAttack(float DistanceToTarget);
@@ -113,14 +131,19 @@ public:
     FMovementData GetBestMovement(float DistanceToTarget, FAttackData SelectedAttackAbilityData);
 
 private:
-    float CalculateAttackAbilityDistanceScore(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
+    float CalculateAttackAbilityScoreBasedOnTargetDistance(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
 
-    float CalculateMovementDistanceScore(float DistanceToTarget, FMovementData MovementData, FAttackData SelectedAttackAbilityData);
+    float CalculateMovementScoreBasedOnTargetDistance(float DistanceToTarget, FMovementData MovementData, FAttackData SelectedAttackAbilityData);
+
+    float CalculateMovementScoreBasedOnTargetMovement(FMovementData MovementData, FAttackData SelectedAttackAbilityData);
 
     FAttackData LastSelectedAttackAbilityData;
     FMovementData LastSelectedMovementyData;
 
     class AAIControllerBase* OwnerController;
-    class AGAS_EnemyBase* EnemyBase;
-    class UAbilitySystemComponent* EnemyASC;
+    class AGAS_EnemyBase* OwnerEnemyBase;
+    class UAbilitySystemComponent* OwnerEnemyASC;
+    class AGAS_HeroBase* HeroBase;
+    UAC_MovementListener* HeroMovementListenerComp;
+
 };

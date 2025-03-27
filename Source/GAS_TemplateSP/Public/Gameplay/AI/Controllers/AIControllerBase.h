@@ -10,6 +10,8 @@
 
 class UAISenseConfig_Sight;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, Target);
+
 UCLASS()
 class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
 {
@@ -39,6 +41,11 @@ protected:
 	bool bHasTargetBeenDetected = false;
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StateTree|Params")
+	AActor* Target;
+
+	FOnTargetDetected OnTargetDetected;
+
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 
 private:
@@ -50,9 +57,5 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidance Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance"))
 	float CollisionQueryRange = 600.f;
-
-public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StateTree|Params")
-	AActor* TargetActor;
 
 };

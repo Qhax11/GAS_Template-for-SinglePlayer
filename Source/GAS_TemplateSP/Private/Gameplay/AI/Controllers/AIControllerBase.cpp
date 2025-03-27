@@ -59,7 +59,8 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 	{
 		if (StateTreeAIComponent) 
 		{
-			TargetActor = Actor;  
+			Target = Actor;  
+			OnTargetDetected.Broadcast(Target);
 			StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DetectedPlayer);
 		}
 

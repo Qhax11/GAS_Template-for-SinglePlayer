@@ -4,6 +4,7 @@
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 UAC_BehaviorDecision::UAC_BehaviorDecision()
 {
@@ -18,18 +19,40 @@ void UAC_BehaviorDecision::BeginPlay()
     if (!OwnerController) 
     {
         UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
+        return;
     }
 
-    EnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
-    if (!EnemyBase)
+    OwnerEnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
+    if (!OwnerEnemyBase)
     {
-        UE_LOG(LogTemp, Warning, TEXT("EnemyBase is null in: %s !"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
+        return;
     }
 
-    EnemyASC = EnemyBase->GetAbilitySystemComponent();
-    if (!EnemyASC)
+    OwnerEnemyASC = OwnerEnemyBase->GetAbilitySystemComponent();
+    if (!OwnerEnemyASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("EnemyASC is null in: %s !"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
+        return;
+    }
+
+    OwnerController->OnTargetDetected.AddDynamic(this, &UAC_BehaviorDecision::OnTargetDetected);
+}
+
+void UAC_BehaviorDecision::OnTargetDetected(AActor* Target)
+{
+    HeroBase = Cast<AGAS_HeroBase>(Target);
+    if (!HeroBase)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s !"), *GetName());
+        return;
+    }
+
+    HeroMovementListenerComp = HeroBase->GetMovementListenerComponent();
+    if (!HeroMovementListenerComp)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HeroMovementListenerComp is null in: %s !"), *GetName());
+        return;
     }
 }
 
@@ -50,7 +73,7 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
             continue;
         }
 
-        bool bIsOnCooldown = EnemyASC->HasMatchingGameplayTag(Attack.AbilityCooldownTag);
+        bool bIsOnCooldown = OwnerEnemyASC->HasMatchingGameplayTag(Attack.AbilityCooldownTag);
         if (bIsOnCooldown) 
         {
             continue;
@@ -58,7 +81,7 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 
         bool bWasBlockedRecently = false; // dış sistemden okunmalı
 
-        float DistanceScore = CalculateAttackAbilityDistanceScore(DistanceToTarget, Attack.MinRange, Attack.MaxRange);
+        float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(DistanceToTarget, Attack.MinRange, Attack.MaxRange);
 
         float TotalScore = Attack.ScoreBias + DistanceScore;
 
@@ -84,13 +107,15 @@ FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAtt
 
     float BestScore = -FLT_MAX;
     FMovementData BestMovement;
-    
+
+    float DistanceScore = 0.f;
+    float TargetMovementScore = 0.f;
     for (const FMovementData& Movement : MovementDataAsset->Movements)
     {
-        // DistanceScore
-        float DistanceScore = CalculateMovementDistanceScore(DistanceToTarget, Movement, SelectedAttackAbilityData);
+        DistanceScore = CalculateMovementScoreBasedOnTargetDistance(DistanceToTarget, Movement, SelectedAttackAbilityData);
+        TargetMovementScore = CalculateMovementScoreBasedOnTargetMovement(Movement, SelectedAttackAbilityData);
 
-        float TotalScore = Movement.ScoreBias + DistanceScore;
+        float TotalScore = Movement.ScoreBias + DistanceScore + TargetMovementScore;
 
         if (TotalScore > BestScore)
         {
@@ -98,11 +123,19 @@ FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAtt
             BestMovement = Movement;
         }
     }
+
+    if (GEngine && EnableDebug)
+    {
+        GEngine->AddOnScreenDebugMessage(10, 3.5f, FColor::Cyan,
+            FString::Printf(TEXT(">> Selected Movement: %s | DistanceScore: %.1f | TargetMovementScore: %.1f"),
+                *BestMovement.MovementName.ToString(), DistanceScore, TargetMovementScore));
+    }
+
     LastSelectedMovementyData = BestMovement;
     return LastSelectedMovementyData;
 }
 
-float UAC_BehaviorDecision::CalculateAttackAbilityDistanceScore(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange)
+float UAC_BehaviorDecision::CalculateAttackAbilityScoreBasedOnTargetDistance(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange)
 {
     if (AbilityMaxRange <= 0.f)
     {
@@ -124,9 +157,10 @@ float UAC_BehaviorDecision::CalculateAttackAbilityDistanceScore(float DistanceTo
     return FMath::Clamp(Score, 0.f, 1.f);
 }
 
-float UAC_BehaviorDecision::CalculateMovementDistanceScore(float DistanceToTarget, FMovementData MovementData, FAttackData SelectedAttackAbilityData)
+float UAC_BehaviorDecision::CalculateMovementScoreBasedOnTargetDistance(float DistanceToTarget, FMovementData MovementData, FAttackData SelectedAttackAbilityData)
 {
     float Score = 0.0f;
+
 
     // If the distance is shorter than the attack's minimum range, moving backward helps to increase distance and reach effective range.
     if ((DistanceToTarget < SelectedAttackAbilityData.MinRange) && (MovementData.Direction == EMovementDirection::Backward))
@@ -150,6 +184,31 @@ float UAC_BehaviorDecision::CalculateMovementDistanceScore(float DistanceToTarge
     return Score;
 }
 
+float UAC_BehaviorDecision::CalculateMovementScoreBasedOnTargetMovement(FMovementData MovementData, FAttackData SelectedAttackAbilityData)
+{
+    float Score = 0.0f;
+
+    EHeroRelativeDirectionToTarget HeroDirection = HeroMovementListenerComp->GetRelativeMovementDirection(2, OwnerEnemyBase);
+    float Displacement = HeroMovementListenerComp->GetDisplacementInLastSeconds(2);
+
+    if (MovementData.HeroRelativeDirectionToTargetScoreModifiers.Contains(HeroDirection))
+    {
+        Score += MovementData.HeroRelativeDirectionToTargetScoreModifiers[HeroDirection];
+    }
+
+    // 2. Oyuncu gerçekten anlamlı bir şekilde hareket etti mi?
+    if (Displacement > 50.f) // örnek eşik değeri, ayarlanabilir
+    {
+        // Daha hareketli bir oyuncuya göre bazı hareket türleri (örneğin Dash) tercih edilebilir
+        Score += MovementData.ScoreModifierWhenTargetIsMoving;
+    }
+    else
+    {
+        Score += MovementData.ScoreModifierWhenTargetIsIdle;
+    }
+
+    return Score;
+}
 
 
 

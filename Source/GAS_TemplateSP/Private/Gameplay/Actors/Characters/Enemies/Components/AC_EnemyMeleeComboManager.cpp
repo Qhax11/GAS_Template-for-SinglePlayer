@@ -57,13 +57,13 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 
 float UAC_EnemyMeleeComboManager::GetTargetDistance()
 {
-	if (!CharacterBase || !AIController || !AIController->TargetActor)
+	if (!CharacterBase || !AIController || !AIController->Target)
 	{
 		return -1.f; 
 	}
 
 	FVector MyLocation = CharacterBase->GetActorLocation();
-	FVector TargetLocation = AIController->TargetActor->GetActorLocation();
+	FVector TargetLocation = AIController->Target->GetActorLocation();
 
 	return FVector::Dist(MyLocation, TargetLocation);
 }

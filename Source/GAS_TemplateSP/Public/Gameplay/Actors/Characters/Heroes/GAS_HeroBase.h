@@ -34,6 +34,8 @@ public:
 
 	FORCEINLINE class UAC_HeroMeleeComboManager* GetHeroMeleeComboManagerComponent() const { return HeroMeleeComboManagerComponent; }
 
+	FORCEINLINE class UAC_MovementListener* GetMovementListenerComponent() const { return MovementListenerComponent; }
+
 protected:
 	//* Components *//
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components|Camera")

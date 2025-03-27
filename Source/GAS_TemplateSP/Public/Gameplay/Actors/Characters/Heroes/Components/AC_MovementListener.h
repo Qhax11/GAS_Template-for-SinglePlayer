@@ -8,7 +8,7 @@
 // Recommendation: make function that calculate how far have you traveled for ai.
 
 UENUM(BlueprintType)
-enum class ERelativeDirection : uint8
+enum class EHeroRelativeDirectionToTarget : uint8
 {
 	None     UMETA(DisplayName = "None"),
 	Forward  UMETA(DisplayName = "Forward"),
@@ -53,10 +53,11 @@ public:
 	float GetDisplacementInLastSeconds(float Seconds) const;
 
 	UFUNCTION(BlueprintCallable)
-	ERelativeDirection GetRelativeMovementDirection(float Seconds, AActor* ReferenceActor) const;
-	FVector GetDisplacementDirectionInLastSeconds(float Seconds) const;
+	EHeroRelativeDirectionToTarget GetRelativeMovementDirection(float Seconds, AActor* ReferenceActor) const;
 
 private:
+	FVector GetDisplacementDirectionInLastSeconds(float Seconds) const;
+
 	float LastMovementTime = 0.0f;
 	TArray<FMotionSample> MotionHistory;
 	float MaxHistoryTime = 2.0f;

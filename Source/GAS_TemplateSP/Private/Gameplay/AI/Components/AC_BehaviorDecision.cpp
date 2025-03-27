@@ -51,15 +51,16 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
         }
 
         bool bIsOnCooldown = EnemyASC->HasMatchingGameplayTag(Attack.AbilityCooldownTag);
+        if (bIsOnCooldown) 
+        {
+            continue;
+        }
+
         bool bWasBlockedRecently = false; // dış sistemden okunmalı
 
         float DistanceScore = CalculateAttackAbilityDistanceScore(DistanceToTarget, Attack.MinRange, Attack.MaxRange);
 
         float TotalScore = Attack.ScoreBias + DistanceScore;
-        if (bIsOnCooldown) 
-        {
-            TotalScore = 0;
-        }
 
         UE_LOG(LogTemp, Log, TEXT("[AI] Attack %s → Score: %.2f"), *Attack.AbilityClass->GetName(), TotalScore);
 
@@ -126,6 +127,12 @@ float UAC_BehaviorDecision::CalculateAttackAbilityDistanceScore(float DistanceTo
 float UAC_BehaviorDecision::CalculateMovementDistanceScore(float DistanceToTarget, FMovementData MovementData, FAttackData SelectedAttackAbilityData)
 {
     float Score = 0.0f;
+
+    // If the distance is shorter than the attack's minimum range, moving backward helps to increase distance and reach effective range.
+    if ((DistanceToTarget < SelectedAttackAbilityData.MinRange) && (MovementData.Direction == EMovementDirection::Backward))
+    {
+        Score += 1.0f;
+    }
 
     if (DistanceToTarget < 300.f && MovementData.MovementType == EMovementType::Walk)
     {

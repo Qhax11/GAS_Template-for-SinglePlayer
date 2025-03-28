@@ -70,28 +70,34 @@ struct FMovementData
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     FName MovementName = NAME_None;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     EMovementType MovementType;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     EMovementDirection Direction;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     UCurveFloat* DistanceScoreCurve;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     TMap<EHeroRelativeDirection, float> HeroRelativeDirectionScoreModifiers;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     float ScoreModifierWhenTargetIsMoving = 0.0f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     float ScoreModifierWhenTargetIsIdle = 0.0f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly, Transient, meta = (ToolTip = "Only used if MovementType is Dash"))
+    bool bIsDashType = false;
+
+    UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bIsDashType"))
+    FGameplayTag MovementCooldownTag;
+
+    UPROPERTY(EditDefaultsOnly)
     float ScoreBias = 0.0f;
 };
 
@@ -136,6 +142,9 @@ public:
     UFUNCTION(BlueprintCallable)
     FMovementData GetBestMovement(float DistanceToTarget, FAttackData SelectedAttackAbilityData);
 
+    FAttackData LastSelectedAttackAbilityData;
+    FMovementData LastSelectedMovementyData;
+
 private:
     float CalculateAttackAbilityScoreBasedOnTargetDistance(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
 
@@ -143,13 +152,9 @@ private:
 
     float CalculateMovementScoreBasedOnTargetMovement(FMovementData MovementData, FAttackData SelectedAttackAbilityData);
 
-    FAttackData LastSelectedAttackAbilityData;
-    FMovementData LastSelectedMovementyData;
-
     class AAIControllerBase* OwnerController;
     class AGAS_EnemyBase* OwnerEnemyBase;
     class UAbilitySystemComponent* OwnerEnemyASC;
     class AGAS_HeroBase* HeroBase;
     UAC_HeroMovementListener* HeroMovementListenerComp;
-
 };

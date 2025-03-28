@@ -58,7 +58,7 @@ void UAC_BehaviorDecision::OnTargetDetected(AActor* Target)
 
 FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 {
-    if (!AttackAbilityDataAsset)
+    if (!AttackAbilityDataAsset || !OwnerEnemyASC)
     {
         return FAttackData();
     }
@@ -100,7 +100,7 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 
 FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAttackData SelectedAttackAbilityData)
 {
-    if (!MovementDataAsset)
+    if (!MovementDataAsset || !OwnerEnemyASC)
     {
         return FMovementData();
     }
@@ -112,6 +112,12 @@ FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAtt
     float BestMovementTargetMovementScore = 0.f;
     for (const FMovementData& Movement : MovementDataAsset->Movements)
     {
+        bool bIsOnCooldown = OwnerEnemyASC->HasMatchingGameplayTag(Movement.MovementCooldownTag);
+        if (bIsOnCooldown)
+        {
+            continue;
+        }
+
         float DistanceScore = CalculateMovementScoreBasedOnTargetDistance(DistanceToTarget, Movement, SelectedAttackAbilityData);
         float TargetMovementScore = CalculateMovementScoreBasedOnTargetMovement(Movement, SelectedAttackAbilityData);
 

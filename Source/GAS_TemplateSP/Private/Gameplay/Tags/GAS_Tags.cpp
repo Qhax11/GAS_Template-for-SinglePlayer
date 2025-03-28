@@ -148,6 +148,9 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash, "AI.Ability.PhantomDash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash_Cooldown, "AI.Ability.PhantomDash.Cooldown");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash, "AI.Ability.Dash");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash_Cooldown, "AI.Ability.Dash.Cooldown");
+
 	/************************************************
 	*-------------------<UI Tags>-------------------*
 	* Add all of the UI related tags to here.       *

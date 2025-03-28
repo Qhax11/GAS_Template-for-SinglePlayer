@@ -22,6 +22,9 @@ public:
 
 	FORCEINLINE class UST_Base* GetStateTreeComponent() const { return StateTreeAIComponent; }
 
+	FORCEINLINE class UAC_BehaviorDecision* GetBehaviorDecisionComponent() const { return BehaviorDecisionComponent; }
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
 

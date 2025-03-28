@@ -157,6 +157,9 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_PhantomDash);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_PhantomDash_Cooldown);
 
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_Dash);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_Dash_Cooldown);
+
 	/************************************************
 	*-------------------<UI Tags>-------------------*
 	* Add all of the UI related tags to here.       *

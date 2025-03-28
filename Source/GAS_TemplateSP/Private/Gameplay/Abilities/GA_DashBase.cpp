@@ -1,4 +1,4 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/Abilities/GA_DashBase.h"
@@ -15,6 +15,7 @@ void UGA_DashBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
+	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
 
 	DashRootMotionTask = UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
 			this,

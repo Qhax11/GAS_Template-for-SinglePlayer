@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Gameplay/Abilities/GA_DashBase.h"
+#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "GA_BossDash.generated.h"
 
 
@@ -12,8 +13,13 @@ class GAS_TEMPLATESP_API UGA_BossDash : public UGA_DashBase
 	GENERATED_BODY()
 	
 protected:
+	UGA_BossDash();
+
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	virtual FVector CalculateDestination() override;
 
+	EMovementDirection DashDirection;
 
+	class AAIControllerBase* BossController;
 };

@@ -125,6 +125,9 @@ protected:
     UMovementDataAsset* MovementDataAsset;
 
     UPROPERTY(EditDefaultsOnly)
+    float SecondsCheckMovement = 1.0f;
+
+    UPROPERTY(EditDefaultsOnly)
     bool EnableDebug = false;
 public:
     UFUNCTION(BlueprintCallable)

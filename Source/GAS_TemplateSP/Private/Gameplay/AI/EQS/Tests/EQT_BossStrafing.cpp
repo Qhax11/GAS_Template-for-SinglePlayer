@@ -15,13 +15,7 @@ UEQT_BossStrafing::UEQT_BossStrafing()
 
 void UEQT_BossStrafing::RunTest(FEnvQueryInstance& QueryInstance) const
 {
-    UObject* Owner = QueryInstance.Owner.Get();
-    if (!Owner)
-    {
-        return;
-    }
-
-    AAIControllerBoss* AIBossController = Cast<AAIControllerBoss>(Owner);
+    AAIControllerBoss* AIBossController = Cast<AAIControllerBoss>(QueryInstance.Owner.Get());
     if (!AIBossController)
     {
         return;
@@ -40,21 +34,28 @@ void UEQT_BossStrafing::RunTest(FEnvQueryInstance& QueryInstance) const
     {
         FVector QueryPoint = GetItemLocation(QueryInstance, It.GetIndex());
 
-        // Boss location to point, direction
-        FVector ToPoint = QueryPoint - BossLocation;
+        FVector BossLocationToPointDirection = QueryPoint - BossLocation;
 
-        if (ToPoint.IsNearlyZero())
+        if (BossLocationToPointDirection.IsNearlyZero())
         {
             continue;
         }
 
-        FVector ToPointNormalized = ToPoint.GetSafeNormal();
+        FVector BossLocationToPointDirectionNormalized = BossLocationToPointDirection.GetSafeNormal();
 
-        float CrossZ = FVector::CrossProduct(BossForward, ToPointNormalized).Z;
+        float CrossZ = FVector::CrossProduct(BossForward, BossLocationToPointDirectionNormalized).Z;
         bool bIsRight = (CrossZ > 0.0f);  // Pozitifse sağ, negatifse sol
 
+        // ✅ Enum'a göre yön filtresi (sadece doğru yönü skorla)
+        if ((StrafeDirection == EStrafeDirection::Left && bIsRight) ||
+            (StrafeDirection == EStrafeDirection::Right && !bIsRight))
+        {
+            It.SetScore(EEnvTestPurpose::Score, EEnvTestFilterType::Range, 0.0f, 0.0f, 1.0f);
+            continue; // Yanlış yön → atla
+        }
+
         // 2️⃣ **Açıya Göre Skorlama (Dot Product ile)**
-        float AngleScore = FVector::DotProduct(BossForward, ToPointNormalized);
+        float AngleScore = FVector::DotProduct(BossForward, BossLocationToPointDirectionNormalized);
 
         // Ön taraf kötü, sağ/sol uç noktalar iyi (Strafing için)
         float StrafingScore = 1.0f - FMath::Abs(AngleScore);

@@ -184,7 +184,7 @@ float UAC_BehaviorDecision::CalculateMovementScoreBasedOnTargetMovement(FMovemen
     float Score = 0.0f;
 
     EHeroRelativeDirection HeroDirection = HeroMovementListenerComp->GetHeroLastMovementDirectionByInput();
-    float Displacement = HeroMovementListenerComp->GetDisplacementInLastSeconds(2);
+    float Displacement = HeroMovementListenerComp->GetDisplacementInLastSeconds(SecondsCheckMovement);
 
     if (MovementData.HeroRelativeDirectionScoreModifiers.Contains(HeroDirection))
     {

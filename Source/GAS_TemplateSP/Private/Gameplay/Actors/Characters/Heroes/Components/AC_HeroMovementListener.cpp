@@ -94,8 +94,9 @@ EHeroRelativeDirection UAC_HeroMovementListener::GetHeroLastMovementDirectionByI
 
     if (Input.IsNearlyZero()) return EHeroRelativeDirection::None;
 
-    // En baskýn yönü bul
-    if (FMath::Abs(Input.Y) > FMath::Abs(Input.X))
+
+    // Y (Forward/Backward) yönü eþit veya daha baskýnsa onu önceliklendir
+    if (FMath::Abs(Input.Y) >= FMath::Abs(Input.X))
     {
         return Input.Y > 0 ? EHeroRelativeDirection::Forward : EHeroRelativeDirection::Backward;
     }

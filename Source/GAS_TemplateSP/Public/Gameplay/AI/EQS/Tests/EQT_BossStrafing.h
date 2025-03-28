@@ -6,6 +6,14 @@
 #include "EQT_BossStrafing.generated.h"
 
 
+UENUM()
+enum class EStrafeDirection : uint8
+{
+	Left,
+	Right,
+	Both
+};
+
 UCLASS()
 class GAS_TEMPLATESP_API UEQT_BossStrafing : public UEnvQueryTest
 {
@@ -16,5 +24,6 @@ public:
 
 	virtual void RunTest(FEnvQueryInstance& QueryInstance) const;
 
-	
+	UPROPERTY(EditDefaultsOnly, Category = "Strafing")
+	EStrafeDirection StrafeDirection = EStrafeDirection::Both;
 };

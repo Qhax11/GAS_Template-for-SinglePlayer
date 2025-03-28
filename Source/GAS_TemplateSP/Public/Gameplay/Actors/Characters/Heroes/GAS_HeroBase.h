@@ -34,7 +34,7 @@ public:
 
 	FORCEINLINE class UAC_HeroMeleeComboManager* GetHeroMeleeComboManagerComponent() const { return HeroMeleeComboManagerComponent; }
 
-	FORCEINLINE class UAC_MovementListener* GetMovementListenerComponent() const { return MovementListenerComponent; }
+	FORCEINLINE class UAC_HeroMovementListener* GetMovementListenerComponent() const { return HeroMovementListenerComponent; }
 
 protected:
 	//* Components *//
@@ -57,7 +57,7 @@ protected:
 	class USC_HeroHologramController* HeroHologramControllerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
-	class UAC_MovementListener* MovementListenerComponent;
+	class UAC_HeroMovementListener* HeroMovementListenerComponent;
 
 private:
 	class UAC_AbilityInputBinding* AbilityInputBindingComponent;

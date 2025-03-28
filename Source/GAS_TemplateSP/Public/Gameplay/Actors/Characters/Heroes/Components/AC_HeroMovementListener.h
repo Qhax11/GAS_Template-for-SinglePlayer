@@ -3,12 +3,12 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "AC_MovementListener.generated.h"
+#include "AC_HeroMovementListener.generated.h"
 
 // Recommendation: make function that calculate how far have you traveled for ai.
 
 UENUM(BlueprintType)
-enum class EHeroRelativeDirectionToTarget : uint8
+enum class EHeroRelativeDirection : uint8
 {
 	None     UMETA(DisplayName = "None"),
 	Forward  UMETA(DisplayName = "Forward"),
@@ -30,18 +30,19 @@ struct FMotionSample
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GAS_TEMPLATESP_API UAC_MovementListener : public UActorComponent
+class GAS_TEMPLATESP_API UAC_HeroMovementListener : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UAC_MovementListener();
+	UAC_HeroMovementListener();
 
 protected:
 	virtual void BeginPlay() override;
 
-	ACharacter* OwnerCharacter;
+	class AGAS_HeroBase* OwnerHero;
 	class UCharacterMovementComponent* OwnerMovementComp;
+	class UAC_HeroControl* HeroControlComp;
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -53,11 +54,9 @@ public:
 	float GetDisplacementInLastSeconds(float Seconds) const;
 
 	UFUNCTION(BlueprintCallable)
-	EHeroRelativeDirectionToTarget GetRelativeMovementDirection(float Seconds, AActor* ReferenceActor) const;
+	EHeroRelativeDirection GetHeroLastMovementDirectionByInput() const;
 
 private:
-	FVector GetDisplacementDirectionInLastSeconds(float Seconds) const;
-
 	float LastMovementTime = 0.0f;
 	TArray<FMotionSample> MotionHistory;
 	float MaxHistoryTime = 2.0f;

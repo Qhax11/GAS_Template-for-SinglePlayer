@@ -4,7 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/AC_MovementListener.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "AC_BehaviorDecision.generated.h"
 
 
@@ -80,7 +80,10 @@ public:
     EMovementDirection Direction;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TMap<EHeroRelativeDirectionToTarget, float> HeroRelativeDirectionToTargetScoreModifiers;
+    UCurveFloat* DistanceScoreCurve;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TMap<EHeroRelativeDirection, float> HeroRelativeDirectionScoreModifiers;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float ScoreModifierWhenTargetIsMoving = 0.0f;
@@ -144,6 +147,6 @@ private:
     class AGAS_EnemyBase* OwnerEnemyBase;
     class UAbilitySystemComponent* OwnerEnemyASC;
     class AGAS_HeroBase* HeroBase;
-    UAC_MovementListener* HeroMovementListenerComp;
+    UAC_HeroMovementListener* HeroMovementListenerComp;
 
 };

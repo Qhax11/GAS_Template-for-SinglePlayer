@@ -108,18 +108,20 @@ FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAtt
     float BestScore = -FLT_MAX;
     FMovementData BestMovement;
 
-    float DistanceScore = 0.f;
-    float TargetMovementScore = 0.f;
+    float BestMovementDistanceScore = 0.f;
+    float BestMovementTargetMovementScore = 0.f;
     for (const FMovementData& Movement : MovementDataAsset->Movements)
     {
-        DistanceScore = CalculateMovementScoreBasedOnTargetDistance(DistanceToTarget, Movement, SelectedAttackAbilityData);
-        TargetMovementScore = CalculateMovementScoreBasedOnTargetMovement(Movement, SelectedAttackAbilityData);
+        float DistanceScore = CalculateMovementScoreBasedOnTargetDistance(DistanceToTarget, Movement, SelectedAttackAbilityData);
+        float TargetMovementScore = CalculateMovementScoreBasedOnTargetMovement(Movement, SelectedAttackAbilityData);
 
         float TotalScore = Movement.ScoreBias + DistanceScore + TargetMovementScore;
 
         if (TotalScore > BestScore)
         {
             BestScore = TotalScore;
+            BestMovementDistanceScore = DistanceScore;
+            BestMovementTargetMovementScore = TargetMovementScore;
             BestMovement = Movement;
         }
     }
@@ -128,7 +130,7 @@ FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAtt
     {
         GEngine->AddOnScreenDebugMessage(10, 3.5f, FColor::Cyan,
             FString::Printf(TEXT(">> Selected Movement: %s | DistanceScore: %.1f | TargetMovementScore: %.1f"),
-                *BestMovement.MovementName.ToString(), DistanceScore, TargetMovementScore));
+                *BestMovement.MovementName.ToString(), BestMovementDistanceScore, BestMovementTargetMovementScore));
     }
 
     LastSelectedMovementyData = BestMovement;
@@ -168,17 +170,10 @@ float UAC_BehaviorDecision::CalculateMovementScoreBasedOnTargetDistance(float Di
         Score += 1.0f;
     }
 
-    if (DistanceToTarget < 300.f && MovementData.MovementType == EMovementType::Walk)
+    if (MovementData.DistanceScoreCurve)
     {
-        Score += 1.0f;
-    }
-    else if (DistanceToTarget >= 300.f && DistanceToTarget <= 800.f && MovementData.MovementType == EMovementType::Run)
-    {
-        Score += 0.8f;
-    }
-    else if (DistanceToTarget > 800.f && MovementData.MovementType == EMovementType::Dash)
-    {
-        Score += 1.0f;
+        float CurveScore = MovementData.DistanceScoreCurve->GetFloatValue(DistanceToTarget);
+        Score += CurveScore;
     }
 
     return Score;
@@ -188,12 +183,12 @@ float UAC_BehaviorDecision::CalculateMovementScoreBasedOnTargetMovement(FMovemen
 {
     float Score = 0.0f;
 
-    EHeroRelativeDirectionToTarget HeroDirection = HeroMovementListenerComp->GetRelativeMovementDirection(2, OwnerEnemyBase);
+    EHeroRelativeDirection HeroDirection = HeroMovementListenerComp->GetHeroLastMovementDirectionByInput();
     float Displacement = HeroMovementListenerComp->GetDisplacementInLastSeconds(2);
 
-    if (MovementData.HeroRelativeDirectionToTargetScoreModifiers.Contains(HeroDirection))
+    if (MovementData.HeroRelativeDirectionScoreModifiers.Contains(HeroDirection))
     {
-        Score += MovementData.HeroRelativeDirectionToTargetScoreModifiers[HeroDirection];
+        Score += MovementData.HeroRelativeDirectionScoreModifiers[HeroDirection];
     }
 
     // 2. Oyuncu gerçekten anlamlı bir şekilde hareket etti mi?

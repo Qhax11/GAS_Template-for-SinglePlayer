@@ -34,9 +34,14 @@ void UAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 		return;
 	}
 
-	FVector Velocity = OwnerCharacterBase->GetVelocity();
-	Velocity.Z = 0.f;
-	Speed = Velocity.Size();
+	// Only update speed if the character is not dashing.
+    // This prevents sudden speed drops during dash animations, which could negatively affect animation blending.
+	if (!DoesOwnerHaveTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash)) 
+	{
+		FVector Velocity = OwnerCharacterBase->GetVelocity();
+		Velocity.Z = 0.f;
+		Speed = Velocity.Size();
+	}
 
 	LocomationDirection = UKismetAnimationLibrary::CalculateDirection(OwnerCharacterBase->GetVelocity(), OwnerCharacterBase->GetActorRotation());
 

@@ -22,7 +22,7 @@ void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
-	DashDirection = BossController->GetBehaviorDecisionComponent()->LastSelectedMovementyData.Direction;
+	DashDirection = BossController->GetBehaviorDecisionComponent()->LastSelectedMovementData.Direction;
 	if (DashDirection == EMovementDirection::None) 
 	{
 		DashDirection = EMovementDirection::Forward;

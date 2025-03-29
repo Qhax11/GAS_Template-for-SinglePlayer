@@ -82,8 +82,13 @@ public:
     UPROPERTY(EditDefaultsOnly)
     UCurveFloat* DistanceScoreCurve;
 
-    UPROPERTY(EditDefaultsOnly)
+    // Increases the movement score based on the hero’s most recent movement direction (e.g. if the hero moved left, movements matching that direction receive a bonus).
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Score modifier based on the hero's last input direction. Used to react to player's movement more responsively."))
     TMap<EHeroRelativeDirection, float> HeroRelativeDirectionScoreModifiers;
+
+    // Increases the movement score if the previous AI movement was in the same or similar direction (e.g. continuing a dash in the same direction).
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Score modifier based on the direction of the last selected AI movement. Encourages directional consistency, especially after dashes."))
+    TMap<EMovementDirection, float> LastMovementDirectionScoreModifiers;
 
     UPROPERTY(EditDefaultsOnly)
     float ScoreModifierWhenTargetIsMoving = 0.0f;
@@ -91,7 +96,7 @@ public:
     UPROPERTY(EditDefaultsOnly)
     float ScoreModifierWhenTargetIsIdle = 0.0f;
 
-    UPROPERTY(EditDefaultsOnly, Transient, meta = (ToolTip = "Only used if MovementType is Dash"))
+    UPROPERTY(EditDefaultsOnly, Transient, meta = (ToolTip = "Only used if MovementType is Dash or any movement ability."))
     bool bIsDashType = false;
 
     UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bIsDashType"))
@@ -143,7 +148,7 @@ public:
     FMovementData GetBestMovement(float DistanceToTarget, FAttackData SelectedAttackAbilityData);
 
     FAttackData LastSelectedAttackAbilityData;
-    FMovementData LastSelectedMovementyData;
+    FMovementData LastSelectedMovementData;
 
 private:
     float CalculateAttackAbilityScoreBasedOnTargetDistance(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
@@ -151,6 +156,8 @@ private:
     float CalculateMovementScoreBasedOnTargetDistance(float DistanceToTarget, FMovementData MovementData, FAttackData SelectedAttackAbilityData);
 
     float CalculateMovementScoreBasedOnTargetMovement(FMovementData MovementData, FAttackData SelectedAttackAbilityData);
+
+    float CalculateMovementChainScoreBasedOnLastSelectedMovement(FMovementData MovementData, FMovementData LastMovementData);
 
     class AAIControllerBase* OwnerController;
     class AGAS_EnemyBase* OwnerEnemyBase;

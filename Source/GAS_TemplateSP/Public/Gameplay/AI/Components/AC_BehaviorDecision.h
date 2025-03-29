@@ -139,7 +139,10 @@ protected:
     float SecondsCheckMovement = 1.0f;
 
     UPROPERTY(EditDefaultsOnly)
-    bool EnableDebug = false;
+    bool EnableSelectedDebug = false;
+
+    UPROPERTY(EditDefaultsOnly)
+    bool EnableAllDataDebug = false;
 public:
     UFUNCTION(BlueprintCallable)
     FAttackData GetBestAttack(float DistanceToTarget);

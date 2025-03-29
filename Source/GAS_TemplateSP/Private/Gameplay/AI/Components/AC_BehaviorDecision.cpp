@@ -125,7 +125,7 @@ FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAtt
 
         float TotalScore = Movement.ScoreBias + DistanceScore + TargetMovementScore + ChainScore;
 
-        if (GEngine && EnableDebug)
+        if (GEngine && EnableAllDataDebug)
         {
             GEngine->AddOnScreenDebugMessage(INDEX_NONE, 100.f, FColor::Green,
                 FString::Printf(TEXT(">> Movement: %s | DistanceScore: %.1f | TargetMovementScore: %.1f | ChainScore: %.1f "),
@@ -142,7 +142,7 @@ FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAtt
         }
     }
 
-    if (GEngine && EnableDebug)
+    if (GEngine && EnableSelectedDebug)
     {
         GEngine->AddOnScreenDebugMessage(10, 3.5f, FColor::Cyan,
             FString::Printf(TEXT(">> Selected Movement: %s | DistanceScore: %.1f | TargetMovementScore: %.1f | ChainScore: %.1f "),

@@ -9,7 +9,7 @@ UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
 
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_Event_ParryKnockback;
+	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback;
 
 	AbilityTriggers.Add(TriggerData);
 }

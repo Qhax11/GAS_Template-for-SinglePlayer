@@ -10,7 +10,7 @@ UGA_DeathBase::UGA_DeathBase()
 
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_Event_Death;
+	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death;
 
 	AbilityTriggers.Add(TriggerData);
 

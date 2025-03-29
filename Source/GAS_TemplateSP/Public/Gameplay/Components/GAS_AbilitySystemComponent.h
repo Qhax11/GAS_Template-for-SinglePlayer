@@ -72,6 +72,9 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")
+	UGAS_GameplayAbilityBase* TryActivateAbilityByClassWithEventData(TSubclassOf<UGameplayAbility> AbilityClass, const FGameplayEventData& EventData);
+
+	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")
 	UGAS_GameplayAbilityBase* TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass);
 
 	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")

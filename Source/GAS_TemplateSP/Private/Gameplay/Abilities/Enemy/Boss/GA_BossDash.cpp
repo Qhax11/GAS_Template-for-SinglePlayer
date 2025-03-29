@@ -2,30 +2,41 @@
 
 
 #include "Gameplay/Abilities/Enemy/Boss/GA_BossDash.h"
-#include "Gameplay/AI/Controllers/AIControllerBase.h"
 
 UGA_BossDash::UGA_BossDash()
 {
 	FinishVelocityMode = ERootMotionFinishVelocityMode::SetVelocity;
+
+	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
+
+	FAbilityTriggerData TriggerData = FAbilityTriggerData();
+	TriggerData.TriggerSource = TriggerSource;
+	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Dash;
+
+	AbilityTriggers.Add(TriggerData);
 }
 
 void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, 
-	const FGameplayAbilityActivationInfo ActivationInfo, 
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
-	BossController = Cast<AAIControllerBase>(GetAvatarActorFromActorInfo()->GetInstigatorController());
-	if (!BossController)
+	if (!TriggerEventData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BossController is null in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
 
-	DashDirection = BossController->GetBehaviorDecisionComponent()->LastSelectedMovementData.Direction;
-	if (DashDirection == EMovementDirection::None) 
+	if (TriggerEventData->InstigatorTags.IsValidIndex(0)) 
 	{
-		DashDirection = EMovementDirection::Forward;
+		DirectionTag = TriggerEventData->InstigatorTags.GetByIndex(0);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("There is no direction tag in: %s, ability cannot initialize"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
 	}
 	
 	// Set the final velocity after root motion ends to match the dash direction and magnitude.
@@ -43,29 +54,23 @@ FVector UGA_BossDash::CalculateDestination()
 		return FVector::ZeroVector;
 	}
 
-	FVector DirectionVector;
+	FVector DirectionVector = FVector::ZeroVector;
 
-	switch (DashDirection)
+	if (DirectionTag == GAS_Tags::TAG_Gameplay_Utilities_Direction_Forward)
 	{
-	case EMovementDirection::Forward:
 		DirectionVector = AvatarActor->GetActorForwardVector();
-		break;
-
-	case EMovementDirection::Backward:
+	}
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Utilities_Direction_Backward)
+	{
 		DirectionVector = -AvatarActor->GetActorForwardVector();
-		break;
-
-	case EMovementDirection::Right:
-		DirectionVector = AvatarActor->GetActorRightVector();
-		break;
-
-	case EMovementDirection::Left:
+	}
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Utilities_Direction_Left)
+	{
 		DirectionVector = -AvatarActor->GetActorRightVector();
-		break;
-
-	default:
-		DirectionVector = FVector::ZeroVector;
-		break;
+	}
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Utilities_Direction_Right)
+	{
+		DirectionVector = AvatarActor->GetActorRightVector();
 	}
 
 	return AvatarActor->GetActorLocation() + DirectionVector * DistanceMultiplier;

@@ -9,6 +9,28 @@ void UGAS_AbilitySystemComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
+UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClassWithEventData(TSubclassOf<UGameplayAbility> AbilityClass, const FGameplayEventData& EventData)
+{
+	if (!AbilityClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: AbilityClass is invalid!"));
+		return nullptr;
+	}
+
+	const UGameplayAbility* const InAbilityCDO = AbilityClass.GetDefaultObject();
+	for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
+	{
+		if (Spec.Ability == InAbilityCDO)
+		{
+			HandleGameplayEvent(EventData.EventTag, &EventData);
+			return CastChecked<UGAS_GameplayAbilityBase>(Spec.Ability);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: No ability found for class %s!"), *AbilityClass->GetName());
+	return nullptr;
+}
+
 UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClassAndReturnInstance(TSubclassOf<UGameplayAbility> AbilityClass)
 {
 	if (!AbilityClass)

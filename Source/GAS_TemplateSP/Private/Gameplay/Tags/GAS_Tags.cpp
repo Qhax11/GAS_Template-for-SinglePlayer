@@ -26,10 +26,11 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageImmune, "Gameplay.DamageImmune");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_TakeDamage, "Gameplay.Event.TakeDamage");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_Death, "Gameplay.Event.Death");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_ComboMelee, "Gameplay.Event.ComboMelee");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_ParryKnockback, "Gameplay.Event.ParryKnockback");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_TakeDamage, "Gameplay.AbilityTriggerEvent.TakeDamage");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Death, "Gameplay.AbilityTriggerEvent.Death");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ComboMelee, "Gameplay.AbilityTriggerEvent.ComboMelee");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ParryKnockback, "Gameplay.AbilityTriggerEvent.ParryKnockback");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Dash, "Gameplay.AbilityTriggerEvent.Dash");
 	
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff, "Gameplay.State.Debuff");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Stun, "Gameplay.State.Debuff.Stun");
@@ -78,6 +79,13 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Finisher, "Gameplay.Ability.Finisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Dash, "Gameplay.Ability.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Parry, "Gameplay.Ability.Parry");
+
+	// ****** UTILITIES ****** //
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction, "Gameplay.Utilities.Direction");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Forward, "Gameplay.Utilities.Direction.Forward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Backward, "Gameplay.Utilities.Direction.Backward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Left, "Gameplay.Utilities.Direction.Left");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Right, "Gameplay.Utilities.Direction.Right");
 
 	/**********************************************
 	*----------------<Filter Tags>----------------*

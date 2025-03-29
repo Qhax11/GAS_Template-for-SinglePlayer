@@ -11,7 +11,7 @@ UGA_TakeDamageBase::UGA_TakeDamageBase()
 
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_Event_TakeDamage;
+	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage;
 
 	AbilityTriggers.Add(TriggerData);
 

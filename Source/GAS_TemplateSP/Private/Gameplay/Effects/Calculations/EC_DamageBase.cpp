@@ -23,7 +23,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		if (CalculateParry(Params))
 		{
 			// If parry is successful, send the data to the ability for further processing.
-			TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_Event_ParryKnockback);
+			TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback);
 			return;
 		}
 	}
@@ -39,12 +39,12 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	// Trigger events based on the damage dealt
 	if (DamageDealt > 0 && !Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack))
 	{
-		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_Event_TakeDamage, DamageDealt);
+		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, DamageDealt);
 	}
 
 	if (MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())
 	{
-		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_Event_Death);
+		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death);
 	}
 	
 	float LifeStealDone = .0f;

@@ -19,7 +19,5 @@ protected:
 
 	virtual FVector CalculateDestination() override;
 
-	EMovementDirection DashDirection;
-
-	class AAIControllerBase* BossController;
+	FGameplayTag DirectionTag;
 };

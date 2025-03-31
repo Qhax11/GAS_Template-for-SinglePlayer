@@ -18,7 +18,7 @@ void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	// Logic will be implmeneted in subclasses.
+	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
 }
 
 void UGA_TargetBase::StartEQSForTargetActorSpawnLocation()

@@ -16,10 +16,10 @@ void UAC_EnemyMeleeComboManager::BeginPlay()
 	}
 }
 
-void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)
+void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass, FName MontageSection)
 {
 	AbilityIndex = ComboMeleeAttackAbilities.Find(ComboMeleeAttackAbilityClass);
-	ActivateComboMeleeAttackAbility();
+	ActivateComboMeleeAttackAbility(MontageSection);
 }
 
 void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)

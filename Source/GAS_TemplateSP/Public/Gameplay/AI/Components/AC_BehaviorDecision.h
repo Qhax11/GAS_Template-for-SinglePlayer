@@ -15,7 +15,7 @@ struct FAttackData
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<class UGA_MeleeAttackBase> AbilityClass;
+    TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGameplayTag AbilityCooldownTag;

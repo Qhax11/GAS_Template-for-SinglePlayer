@@ -15,15 +15,14 @@ void UGA_BossShadowAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	FTimerHandle ConfirmTimerHandle;
-	// Timer kurulumunu baþlat
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().SetTimer(
-			ConfirmTimerHandle,                       // Timer handle
-			this,                              // Timer’ý çaðýracak nesne
-			&UGA_BossShadowAttack::OnTimerConfirm,  // Çaðýrýlacak fonksiyon
-			2.0f,                              // Ne kadar süre sonra
-			false                              // Tek seferlik mi? (false: evet)
+			ConfirmTimerHandle,                      
+			this,                              
+			&UGA_BossShadowAttack::OnTimerConfirm,  
+			ExecuteTime,                              
+			false                              
 		);
 	}
 }

@@ -31,25 +31,29 @@ void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
     if (!HeroShadowTargetActor)
     {
         Super::OnTargetActorConfirm(TargetActorData);
+        return;
     }
-   
-    BP_OnTargetActorConfirm(TargetActorData);
+
+    if (!TargetActorData.AbilityClass || !HeroShadowTargetActor->GetCurrentTarget())
+    {
+        Super::OnTargetActorConfirm(TargetActorData);
+        return;
+    }
 
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroShadowTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroShadowTargetActor->GetActorRotation());
 
-    if (HeroShadowTargetActor->GetSelectedShadowAbilityClass() && HeroShadowTargetActor->GetCurrentTarget())
+    // Temporarily remove the targeting state tag to prevent HeroComboManager from responding to input while this ability is active.
+    // The tag will be re-applied automatically when the ability ends, but we need it removed earlier for proper input blocking.
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow))
     {
-        if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow))
-        {
-            GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
-        }
-        Super::OnTargetActorConfirm(TargetActorData);
+        GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
     }
-    else
-    {
-        Super::OnTargetActorConfirm(TargetActorData);
-    }
+
+    // Triggers the actual attack abilities.
+    BP_OnTargetActorConfirm(TargetActorData);
+
+    Super::OnTargetActorConfirm(TargetActorData);
 }
 
 void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)

@@ -37,7 +37,6 @@ void AAIControllerBoss::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 			TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBoss::OnVulnerableTagAdded);
 		}
 	}
-	
 }
 
 void AAIControllerBoss::OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

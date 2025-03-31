@@ -55,7 +55,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnstoppableAttack, "Gameplay.State.InCombat.UnstoppableAttack");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting, "Gameplay.State.AbilityTargeting");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting_Hologram, "Gameplay.State.AbilityTargeting.Hologram");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting_Shadow, "Gameplay.State.AbilityTargeting.Shadow");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, "Gameplay.State.TargetLockSystem.Hero.TargetLocked");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted, "Gameplay.State.TargetLockSystem.Enemy.Targeted");
 
@@ -148,6 +148,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Engage, "AI.StateTreeEvent.State.Engage");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ExecuteSelectedAttack, "AI.StateTreeEvent.ExecuteSelectedAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ExecuteShadowAttack, "AI.StateTreeEvent.ExecuteShadowAttack");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_MovingToAttack, "AI.State.MovingToAttack");

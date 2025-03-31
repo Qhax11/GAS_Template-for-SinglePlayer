@@ -18,10 +18,10 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
-	
-protected:
+
 	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None) override;
 
+protected:
 	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData) override;
 
 	UPROPERTY(BlueprintAssignable)

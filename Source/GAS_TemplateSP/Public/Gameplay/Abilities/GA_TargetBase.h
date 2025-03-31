@@ -18,10 +18,6 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	bool BindInputForConfirmAndCancel();
-
-	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetBase|EQS")
 	bool bActorWillSpawnWithEQS = false;
 
@@ -34,6 +30,8 @@ public:
 	virtual void StartEQSForTargetActorSpawnLocation();
 
 	virtual void OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
+
+	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
 	/** The TargetActor class that we spawned */
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
@@ -55,12 +53,6 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BP_OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData);
-
-	UFUNCTION()
-	void ConfirmTargetingFromInput();
-
-	UFUNCTION()
-	void CancelAbilityFromInput();
 
 protected:
 

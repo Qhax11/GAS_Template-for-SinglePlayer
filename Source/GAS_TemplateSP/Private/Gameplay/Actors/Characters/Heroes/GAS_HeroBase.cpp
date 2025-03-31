@@ -6,7 +6,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAttributesListener.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroRespawn.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroHologramController.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroShadowController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "EnhancedInputSubsystems.h"
@@ -39,8 +39,8 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer)
 
     HeroMovementListenerComponent = CreateDefaultSubobject<UAC_HeroMovementListener>(TEXT("HeroMovementListenerComponent"));
 
-    HeroHologramControllerComponent = CreateDefaultSubobject<USC_HeroHologramController>(TEXT("HeroHologramControllerComponent"));
-    HeroHologramControllerComponent->SetupAttachment(RootComponent);
+    HeroShadowControllerComponent = CreateDefaultSubobject<USC_HeroShadowController>(TEXT("HeroShadowControllerComponent"));
+    HeroShadowControllerComponent->SetupAttachment(RootComponent);
 }
 
 void AGAS_HeroBase::BeginPlay()

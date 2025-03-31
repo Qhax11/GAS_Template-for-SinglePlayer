@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/Abilities/Hero/GA_HeroHologramFinisher.h"
-#include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
+#include "Gameplay/Abilities/TargetActors/Shadows/HeroShadowTargetActor.h"
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
@@ -15,7 +15,7 @@ UGA_HeroHologramFinisher::UGA_HeroHologramFinisher()
 
 void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
-    AHeroHologramTargetActor* HeroHologramTargetActor = Cast<AHeroHologramTargetActor>(TargetActorData.TargetActor);
+    AHeroShadowTargetActor* HeroHologramTargetActor = Cast<AHeroShadowTargetActor>(TargetActorData.TargetActor);
     if (!HeroHologramTargetActor)
     {
         Super::OnTargetActorConfirm(TargetActorData);
@@ -26,7 +26,7 @@ void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& 
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
 
-    if (HeroHologramTargetActor->AttackMontage && HeroHologramTargetActor->CurrentTarget)
+    if (HeroHologramTargetActor->GetSelectedShadowAbility() && HeroHologramTargetActor->GetCurrentTarget())
     {
         if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_CanActivateFinisher))
         {

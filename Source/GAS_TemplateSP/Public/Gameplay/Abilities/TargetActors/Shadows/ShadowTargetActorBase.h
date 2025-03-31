@@ -3,10 +3,12 @@
 #pragma once
 
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
-#include "HologramTargetActorBase.generated.h"
+#include "AbilitySystemGlobals.h"
+#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "ShadowTargetActorBase.generated.h"
 
 UENUM(BlueprintType)
-enum EHologramDirectionToTarget : uint8
+enum EShadowDirectionToTarget : uint8
 {
 	HDT_None,
 	HDT_Left,
@@ -16,40 +18,61 @@ enum EHologramDirectionToTarget : uint8
 };
 
 UCLASS()
-class GAS_TEMPLATESP_API AHologramTargetActorBase : public AGAS_TargetActorBase
+class GAS_TEMPLATESP_API AShadowTargetActorBase : public AGAS_TargetActorBase
 {
 	GENERATED_BODY()
 
-public:
-	AHologramTargetActorBase();
+protected:
+	AShadowTargetActorBase();
 
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void Confirm() override;
+
+	virtual void Cancel() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HeroHologramTargetActor")
+	float RotationSpeed = 5.0f;
+
+	void RotateToTarget(AActor* TargetActor, float DeltaTime);
+
 	// Checks if the direction has changed.
 	UFUNCTION(BlueprintCallable)
 	bool UpdateRelativeDirectionToTarget();
 
+	UPROPERTY(EditDefaultsOnly, Category = "ShadowTargetActorBase")
+	TArray<TSubclassOf<UGA_MeleeAttackBase>> ShadowAbilities;
+
 	UPROPERTY(EditDefaultsOnly, Category = "AHologramTargetActorBase")
-	TMap<TEnumAsByte<EHologramDirectionToTarget>, UAnimMontage*> DirectionalAttackMontages;
+	TMap<TEnumAsByte<EShadowDirectionToTarget>, TSubclassOf<UGA_MeleeAttackBase>> DirectionalAttackAbilities;
+
+public:
+	void SetCurrentTarget(AActor* NewCurrentTarget);
+
+	AActor* GetCurrentTarget();
+
+	TSubclassOf<UGA_MeleeAttackBase> GetSelectedShadowAbility();
+
+protected:
+	TSubclassOf<UGA_MeleeAttackBase> SelectedShadowAbility;
+
+	UAnimMontage* AttackMontage;
 
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<AActor> CurrentTarget;
 
-	UPROPERTY(BlueprintReadOnly)
-	UAnimMontage* AttackMontage;
+	class AGAS_CharacterBase* InstigatorCharacter;
 
-protected:
-
-	void OnDirectionToTargetChanged(EHologramDirectionToTarget NewDirection);
+	void OnDirectionToTargetChanged(EShadowDirectionToTarget NewDirection);
 
 	void UptadeAttackMontageFromRelativePositionToTarget();
 
-	UAnimMontage* GetAttackMontageFromRelativePositionToTarget();
+	UGA_MeleeAttackBase* GetAttackAbilityFromRelativePositionToTarget();
 
 	UPROPERTY(BlueprintReadOnly)
-	TEnumAsByte<EHologramDirectionToTarget> LastDirectionToTarget = EHologramDirectionToTarget::HDT_None;
+	TEnumAsByte<EShadowDirectionToTarget> LastDirectionToTarget = EShadowDirectionToTarget::HDT_None;
 
 public:
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -62,7 +85,6 @@ public:
 	class USphereComponent* EnemyDetectionSphere;
 
 protected:
-
 	bool bIsTargetInRange;
 
 	UFUNCTION()

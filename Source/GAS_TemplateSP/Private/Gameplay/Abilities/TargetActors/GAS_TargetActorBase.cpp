@@ -7,10 +7,10 @@
 
 void AGAS_TargetActorBase::Confirm()
 {
-	OnConfirm.Broadcast(FGAS_TargetActorData(this, nullptr));
+	// Logic will be implmeneted in subclasses.
 }
 
 void AGAS_TargetActorBase::Cancel()
 {
-	OnCancel.Broadcast(FGAS_TargetActorData(this, nullptr));
+	// Logic will be implmeneted in subclasses.
 }

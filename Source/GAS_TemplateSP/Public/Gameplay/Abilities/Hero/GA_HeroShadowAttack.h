@@ -2,25 +2,23 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_TargetBase.h"
-#include "GA_HeroHologram.generated.h"
+#include "Gameplay/Abilities/Hero/GA_HeroTargetBase.h"
+#include "GA_HeroShadowAttack.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
-class GAS_TEMPLATESP_API UGA_HeroHologram : public UGA_TargetBase
+class GAS_TEMPLATESP_API UGA_HeroShadowAttack : public UGA_HeroTargetBase
 {
 	GENERATED_BODY()
 
 protected:
-	UGA_HeroHologram();
+	UGA_HeroShadowAttack();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 	
-	virtual void SpawnAndSetupTargetActor(FRotator Rotation, FVector Location) override;
+	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector) override;
 
-	void SetHologramToHologramController();
+	void SetShadowToShadowController();
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 

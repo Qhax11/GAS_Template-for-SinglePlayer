@@ -26,7 +26,7 @@ void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSe
 {
 	if (GetTargetDistance() < ComboRanges[AbilityIndex])
 	{
-		Super::ActivateComboMeleeAttackAbility();
+		Super::ActivateComboMeleeAttackAbility(MontageSection);
 	}
 	// If target out of combo attack's range end combo
 	else
@@ -57,13 +57,13 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 
 float UAC_EnemyMeleeComboManager::GetTargetDistance()
 {
-	if (!CharacterBase || !AIController || !AIController->Target)
+	if (!CharacterBase || !AIController || !AIController->GetTarget())
 	{
 		return -1.f; 
 	}
 
 	FVector MyLocation = CharacterBase->GetActorLocation();
-	FVector TargetLocation = AIController->Target->GetActorLocation();
+	FVector TargetLocation = AIController->GetTarget()->GetActorLocation();
 
 	return FVector::Dist(MyLocation, TargetLocation);
 }

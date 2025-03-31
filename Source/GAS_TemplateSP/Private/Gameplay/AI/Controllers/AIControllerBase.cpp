@@ -68,6 +68,18 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 	}
 }
 
+AActor* AAIControllerBase::GetTarget()
+{
+	if (Target) 
+	{
+		return Target;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 ETeamAttitude::Type AAIControllerBase::GetTeamAttitudeTowards(const AActor& Other) const
 {
 	if (APawn* ControlledPawn = GetPawn())

@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_TargetBase.h"
+#include "Gameplay/Abilities/Hero/GA_HeroTargetBase.h"
 #include "GA_HeroHologramFinisher.generated.h"
 
 // The UGA_HeroHologramFinisher class is responsible for triggering the actual finisher class  
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_HeroHologramFinisher : public UGA_TargetBase
+class GAS_TEMPLATESP_API UGA_HeroHologramFinisher : public UGA_HeroTargetBase
 {
 	GENERATED_BODY()
 

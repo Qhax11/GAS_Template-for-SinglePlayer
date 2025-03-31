@@ -28,7 +28,7 @@ public:
 
 	FORCEINLINE class UAC_HeroControl* GetHeroControlComponent() const { return HeroControlComponent; }
 
-	FORCEINLINE class USC_HeroHologramController* GetHeroHologramControllerComponent() const { return HeroHologramControllerComponent; }
+	FORCEINLINE class USC_HeroShadowController* GetHeroShadowControllerComponent() const { return HeroShadowControllerComponent; }
 
 	FORCEINLINE class UAC_TargetLockSystem* GetTargetLockSystemComponent() const { return TargetLockSystemComponent; }
 
@@ -54,7 +54,7 @@ protected:
 	class UAC_HeroMeleeComboManager* HeroMeleeComboManagerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
-	class USC_HeroHologramController* HeroHologramControllerComponent;
+	class USC_HeroShadowController* HeroShadowControllerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_HeroMovementListener* HeroMovementListenerComponent;

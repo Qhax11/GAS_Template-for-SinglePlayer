@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/TargetActors/HologramTargetActorBase.h"
-#include "HeroHologramTargetActor.generated.h"
+#include "Gameplay/Abilities/TargetActors/Shadows/ShadowTargetActorBase.h"
+#include "HeroShadowTargetActor.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API AHeroHologramTargetActor : public AHologramTargetActorBase
+class GAS_TEMPLATESP_API AHeroShadowTargetActor : public AShadowTargetActorBase
 {
 	GENERATED_BODY()
 
@@ -15,14 +15,6 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
-
-	virtual void Confirm() override;
-
-	virtual void Cancel() override;
-
-public:
-	UPROPERTY(EditDefaultsOnly, Category = "HeroHologramTargetActor")
-	float RotationSpeed = 5.0f;
 
 public:
 	UFUNCTION()
@@ -38,15 +30,13 @@ public:
 	void BP_OnEndTargetLock();
 
 private:
-	void RotateToTarget(AActor* TargetActor, float DeltaTime);
-
 	void SyncRotationWithHero(float DeltaTime);
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class AGAS_HeroBase* HeroBase;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USC_HeroHologramController* HeroHologramControllerComponent;
+	class USC_HeroShadowController* HeroShadowControllerComponent;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAC_TargetLockSystem* TargetLockSystemComponent;

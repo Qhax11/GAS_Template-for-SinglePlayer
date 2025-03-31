@@ -21,17 +21,18 @@ struct FGAS_TargetActorData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category = "TargetActorData")
-	AActor* TargetActor;
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetActorData")
+	TSubclassOf<class UGA_MeleeAttackBase> AbilityClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "TargetActorData")
-	UObject* OptionalObject;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetActorData")
+	AActor* TargetActor;
 
 	FGAS_TargetActorData() = default;
 
-	FGAS_TargetActorData(AActor* InTargetActor, UObject* InOptionalObject)
-		: TargetActor(InTargetActor),
-		OptionalObject(OptionalObject)
+	FGAS_TargetActorData(TSubclassOf<class UGA_MeleeAttackBase> InAbilityClass, AActor* InTargetActor)
+		: AbilityClass(InAbilityClass),
+		TargetActor(InTargetActor)
 	{}
 
 };
@@ -46,8 +47,6 @@ class GAS_TEMPLATESP_API AGAS_TargetActorBase : public AActor
 	GENERATED_BODY()
 	
 public:
-
-
 	virtual void Confirm();
 
 	virtual void Cancel();

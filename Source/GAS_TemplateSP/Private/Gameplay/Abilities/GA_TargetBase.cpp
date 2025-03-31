@@ -18,71 +18,7 @@ void UGA_TargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (BindInputForConfirmAndCancel())
-	{
-		if (bActorWillSpawnWithEQS) 
-		{
-			StartEQSForTargetActorSpawnLocation();
-		}
-		else
-		{
-			SpawnAndSetupTargetActor();
-		}
-	}
-}
-
-bool UGA_TargetBase::BindInputForConfirmAndCancel()
-{
-	AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
-	if (!HeroBase)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in %s. Cannot bind input for targeting because the Avatar Actor is not a valid hero."), *GetName());
-		return false;
-	}
-
-	if (UAC_HeroControl* GetHeroControlComponent = HeroBase->GetHeroControlComponent())
-	{
-		if (UEnhancedInputComponent* EnhancedInputComponent = GetHeroControlComponent->GetEnhancedInputComponent())
-		{
-			if (GetHeroControlComponent->IA_ConfirmTarget && GetHeroControlComponent->IA_CancelTarget)
-			{
-				EnhancedInputComponent->BindAction(GetHeroControlComponent->IA_ConfirmTarget, ETriggerEvent::Triggered, this, &UGA_TargetBase::ConfirmTargetingFromInput);
-				EnhancedInputComponent->BindAction(GetHeroControlComponent->IA_CancelTarget, ETriggerEvent::Triggered, this, &UGA_TargetBase::CancelAbilityFromInput);
-				return true;
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Input actions are null in: %s"), *GetName());
-			}
-		}
-	}
-
-	return false;
-}
-
-void UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
-{
-	if (UWorld* World = this->GetWorld())
-	{
-		if (TargetActorClass->IsValidLowLevelFast())
-		{
-			FTransform ActorTransform = FTransform(Rotation, Location);
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
-			TargetActor = World->SpawnActor<AGAS_TargetActorBase>(TargetActorClass, ActorTransform, SpawnParams);
-		}
-
-		if (TargetActor)
-		{
-			TargetActor->OnConfirm.AddDynamic(this, &UGA_TargetBase::OnTargetActorConfirm);
-			TargetActor->OnCancel.AddDynamic(this, &UGA_TargetBase::OnTargetActorCancelled);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Actor cannot spawned in: %s"), *GetName());
-			EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-		}
-	}
+	// Logic will be implmeneted in subclasses.
 }
 
 void UGA_TargetBase::StartEQSForTargetActorSpawnLocation()
@@ -112,6 +48,31 @@ void UGA_TargetBase::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQuer
 	SpawnAndSetupTargetActor(FRotator::ZeroRotator, BestLocation);
 }
 
+void UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
+{
+	if (UWorld* World = this->GetWorld())
+	{
+		if (TargetActorClass->IsValidLowLevelFast())
+		{
+			FTransform ActorTransform = FTransform(Rotation, Location);
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
+			TargetActor = World->SpawnActor<AGAS_TargetActorBase>(TargetActorClass, ActorTransform, SpawnParams);
+		}
+
+		if (TargetActor)
+		{
+			TargetActor->OnConfirm.AddDynamic(this, &UGA_TargetBase::OnTargetActorConfirm);
+			TargetActor->OnCancel.AddDynamic(this, &UGA_TargetBase::OnTargetActorCancelled);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Actor cannot spawned in: %s"), *GetName());
+			EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+		}
+	}
+}
+
 void UGA_TargetBase::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
 	TargetActor->Destroy();
@@ -125,28 +86,5 @@ void UGA_TargetBase::OnTargetActorCancelled(const FGAS_TargetActorData& TargetAc
 	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
 }
 
-void UGA_TargetBase::ConfirmTargetingFromInput()
-{
-	if (!CommitAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo()))
-	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, true);
-		return;
-	}
-
-	ApplyGameplayEffectToSelf(AbilityConfirmEffects);
-
-	if (TargetActor)
-	{
-		TargetActor->Confirm();
-	}
-}
-
-void UGA_TargetBase::CancelAbilityFromInput()
-{
-	if (TargetActor)
-	{
-		TargetActor->Cancel();
-	}
-}
 
 

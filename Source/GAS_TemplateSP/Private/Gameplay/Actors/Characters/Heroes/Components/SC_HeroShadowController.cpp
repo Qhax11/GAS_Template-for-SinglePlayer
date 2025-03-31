@@ -1,20 +1,20 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroHologramController.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroShadowController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
-#include "Gameplay/Abilities/TargetActors/HeroHologramTargetActor.h"
+#include "Gameplay/Abilities/TargetActors/Shadows/HeroShadowTargetActor.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
-USC_HeroHologramController::USC_HeroHologramController()
+USC_HeroShadowController::USC_HeroShadowController()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void USC_HeroHologramController::BeginPlay()
+void USC_HeroShadowController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -38,11 +38,11 @@ void USC_HeroHologramController::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("TargetLockSystem is null in: %s"), *GetName());
 		return;
 	}
-	TargetLockSystem->OnStartTargetLock.AddDynamic(this, &USC_HeroHologramController::OnStartTargetLock);
-	TargetLockSystem->OnEndTargetLock.AddDynamic(this, &USC_HeroHologramController::OnEndTargetLock);
+	TargetLockSystem->OnStartTargetLock.AddDynamic(this, &USC_HeroShadowController::OnStartTargetLock);
+	TargetLockSystem->OnEndTargetLock.AddDynamic(this, &USC_HeroShadowController::OnEndTargetLock);
 }
 
-void USC_HeroHologramController::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USC_HeroShadowController::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -54,8 +54,8 @@ void USC_HeroHologramController::TickComponent(float DeltaTime, ELevelTick TickT
 	CalculateCumulativeMouseInputs();
 	UpdateTraceForwardDistance();
 
-	bool IsHologramActive = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Hologram);
-	if (!IsHologramActive || !HeroHologram)
+	bool IsHologramActive = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
+	if (!IsHologramActive || !HeroShadow)
 	{
 		return;
 	}
@@ -73,10 +73,10 @@ void USC_HeroHologramController::TickComponent(float DeltaTime, ELevelTick TickT
 		SetWorldRotation(FRotator(0, PlayerViewRotation.Yaw, 0));
 	}
 
-	SetHeroHologramLocation();
+	SetHeroShadowLocation();
 }
 
-FVector2D USC_HeroHologramController::CalculateCumulativeMouseInputs()
+FVector2D USC_HeroShadowController::CalculateCumulativeMouseInputs()
 {
 	if (!PC)
 	{
@@ -95,36 +95,36 @@ FVector2D USC_HeroHologramController::CalculateCumulativeMouseInputs()
 	return FVector2D(CumulativeMouseDeltaX, CumulativeMouseDeltaY);
 }
 
-void USC_HeroHologramController::LookAtTarget()
+void USC_HeroShadowController::LookAtTarget()
 {
 	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->CurrentTarget->GetActorLocation());
 	SetWorldRotation(FRotator(0, LookAtRotation.Yaw, 0));
 }
 
-void USC_HeroHologramController::SetHeroHologramLocation()
+void USC_HeroShadowController::SetHeroShadowLocation()
 {
-	if (!HeroHologram) 
+	if (!HeroShadow)
 	{
 		return;
 	}
 
-	FVector HeroHologramTargetLocation;
+	FVector HeroShadowTargetLocation;
 	if (bTargetLocked) 
 	{
-		HeroHologramTargetLocation = GetHeroHologramLocationFromLineTraceTargetLocked();
+		HeroShadowTargetLocation = GetHeroShadowLocationFromLineTraceTargetLocked();
 	}
 	else
 	{
-		HeroHologramTargetLocation = GetHeroHologramLocationFromLineTrace();
+		HeroShadowTargetLocation = GetHeroShadowLocationFromLineTrace();
 	}
 
-	HeroHologramTargetLocation.Z += 90;
+	HeroShadowTargetLocation.Z += 90;
 
-	if(HeroHologram->IsValidLowLevel())
-	HeroHologram->SetActorLocation(HeroHologramTargetLocation);
+	if(HeroShadow->IsValidLowLevel())
+	HeroShadow->SetActorLocation(HeroShadowTargetLocation);
 }
 
-FVector USC_HeroHologramController::GetHeroHologramLocationFromLineTrace()
+FVector USC_HeroShadowController::GetHeroShadowLocationFromLineTrace()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
@@ -155,7 +155,7 @@ FVector USC_HeroHologramController::GetHeroHologramLocationFromLineTrace()
 	return HitResult.ImpactPoint;
 }
 
-FVector USC_HeroHologramController::GetHeroHologramLocationFromLineTraceTargetLocked()
+FVector USC_HeroShadowController::GetHeroShadowLocationFromLineTraceTargetLocked()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
@@ -195,9 +195,9 @@ FVector USC_HeroHologramController::GetHeroHologramLocationFromLineTraceTargetLo
 	return HitResult.ImpactPoint;
 }
 
-void USC_HeroHologramController::SetHologramLocationWithCumulativeMouseValuesTargetLocked()
+void USC_HeroShadowController::SetShadowLocationWithCumulativeMouseValuesTargetLocked()
 {
-	if (!HeroHologram || !TargetLockSystem->CurrentTarget)
+	if (!HeroShadow || !TargetLockSystem->CurrentTarget)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroHologram or CurrentTarget is null in: %s, Cannot set HologramLocation"), *GetName());
 		return;
@@ -206,7 +206,7 @@ void USC_HeroHologramController::SetHologramLocationWithCumulativeMouseValuesTar
 	FVector OutClosestPoint;
 
 	// Update new RightTraceDistance
-	float PointDistToLine = GetPointDistToLine(HeroHologram, OutClosestPoint);
+	float PointDistToLine = GetPointDistToLine(HeroShadow, OutClosestPoint);
 	ResetRightTraceDistance();
 	SetCumulativeMouseDeltaXForRightTraceDistaneValue(PointDistToLine);
 
@@ -216,52 +216,52 @@ void USC_HeroHologramController::SetHologramLocationWithCumulativeMouseValuesTar
 	SetCumulativeMouseDeltaYForForwardTraceDistaneValue(DistanceBetweenHologramAndHero);
 }
 
-void USC_HeroHologramController::ResetForwardTraceDistance()
+void USC_HeroShadowController::ResetForwardTraceDistance()
 {
 	CumulativeMouseDeltaY = 0;
 	TraceForwardDistanceOffset = 0;
 }
 
-void USC_HeroHologramController::ResetRightTraceDistance()
+void USC_HeroShadowController::ResetRightTraceDistance()
 {
 	CumulativeMouseDeltaX = 0;
 	TraceRightDistanceOffset = 0;
 }
 
-void USC_HeroHologramController::OnStartTargetLock()
+void USC_HeroShadowController::OnStartTargetLock()
 {
 	ResetRightTraceDistance();
 	FVector OutClosestPoint;
-	TraceRightDistanceOffset = GetPointDistToLine(HeroHologram, OutClosestPoint);
+	TraceRightDistanceOffset = GetPointDistToLine(HeroShadow, OutClosestPoint);
 	TraceForwardDistanceOffset = CalculateTraceForwardDistanceOffset();
 	bTargetLocked = true;
 }
 
-float USC_HeroHologramController::GetPointDistToLine(AActor* ReferanceActor, FVector& OutClosestPoint)
+float USC_HeroShadowController::GetPointDistToLine(AActor* ReferanceActor, FVector& OutClosestPoint)
 {
-	if (!ReferanceActor || !TargetLockSystem->CurrentTarget || !HeroHologram->IsValidLowLevel())
+	if (!ReferanceActor || !TargetLockSystem->CurrentTarget || !HeroShadow->IsValidLowLevel())
 	{
 		return 0;
 	}
 	
-	FVector HeroHologramLocation = HeroHologram.Get()->GetActorLocation();
+	FVector HeroShadowLocation = HeroShadow.Get()->GetActorLocation();
 	FVector TargetLocation = TargetLockSystem->CurrentTarget->GetActorLocation();
 	FVector HeroLocation = HeroBase->GetActorLocation();
 
 	// Adjust the target's Z coordinate to match the hero's Z coordinate, focusing only on the XY plane for direction calculation.
     // This effectively ignores the Z-axis difference, providing a direction vector confined to the horizontal plane.
 	FVector HeroLocationUpdated = FVector(HeroLocation.X, HeroLocation.Y, TargetLocation.Z);
-	FVector HeroHologramLocationUpdated = FVector(HeroHologramLocation.X, HeroHologramLocation.Y, TargetLocation.Z);
+	FVector HeroShadowLocationUpdated = FVector(HeroShadowLocation.X, HeroShadowLocation.Y, TargetLocation.Z);
 
 	FVector NormalizedDirection = HeroLocationUpdated - TargetLocation;
 	NormalizedDirection.Normalize();
 
-	float PointDistToLine = FMath::PointDistToLine(HeroHologramLocationUpdated, NormalizedDirection, HeroLocationUpdated, OutClosestPoint);
+	float PointDistToLine = FMath::PointDistToLine(HeroShadowLocationUpdated, NormalizedDirection, HeroLocationUpdated, OutClosestPoint);
 
 	if (bDrawDebug)
 	{
 		DrawDebugLine(GetWorld(), HeroLocationUpdated, TargetLocation, FColor::Red, false, 2.0f, 0, 2.0f);
-		DrawDebugLine(GetWorld(), OutClosestPoint, HeroHologramLocationUpdated, FColor::Blue, false, 2.0f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), OutClosestPoint, HeroShadowLocationUpdated, FColor::Blue, false, 2.0f, 0, 2.0f);
 	}
 
 	// Determines whether the hologram is to the right or left of a line defined by the normalized direction. 
@@ -269,7 +269,7 @@ float USC_HeroHologramController::GetPointDistToLine(AActor* ReferanceActor, FVe
     // - If Z <= 0, the hologram is on the left side or on the line.
     // - If Z > 0, the hologram is on the right side.
     // Returns the distance to the line with a positive or negative sign based on the side.
-	FVector PointDirection = HeroHologramLocation - HeroLocation;
+	FVector PointDirection = HeroShadowLocation - HeroLocation;
 	FVector CrossProductResult = FVector::CrossProduct(NormalizedDirection, PointDirection);
 
 	if (CrossProductResult.Z <= 0)
@@ -282,19 +282,19 @@ float USC_HeroHologramController::GetPointDistToLine(AActor* ReferanceActor, FVe
 	}
 }
 
-float USC_HeroHologramController::CalculateTraceForwardDistanceOffset()
+float USC_HeroShadowController::CalculateTraceForwardDistanceOffset()
 {
 	float TraceForwardDistancePow = TraceForwardDistance * TraceForwardDistance;
 	float TraceRightDistanceOffsetPow = TraceRightDistanceOffset * TraceRightDistanceOffset;
 	return -(TraceForwardDistance - FMath::Sqrt(TraceForwardDistancePow - TraceRightDistanceOffsetPow));
 }
 
-void USC_HeroHologramController::OnEndTargetLock()
+void USC_HeroShadowController::OnEndTargetLock()
 {
 	bTargetLocked = false;
 }
 
-void USC_HeroHologramController::UpdateTraceForwardDistance()
+void USC_HeroShadowController::UpdateTraceForwardDistance()
 {
 	if (!C_TraceForwardDistance)
 	{
@@ -306,7 +306,7 @@ void USC_HeroHologramController::UpdateTraceForwardDistance()
 	TraceForwardDistance = CurveValue + TraceForwardDistanceOffset;
 }
 
-void USC_HeroHologramController::UpdateTraceRightDistance()
+void USC_HeroShadowController::UpdateTraceRightDistance()
 {
 	if (!C_TraceRightDistance)
 	{
@@ -318,19 +318,19 @@ void USC_HeroHologramController::UpdateTraceRightDistance()
 	TraceRightDistance = CurveValue + TraceRightDistanceOffset;
 }
 
-void USC_HeroHologramController::SetCumulativeMouseDeltaXForRightTraceDistaneValue(float Value)
+void USC_HeroShadowController::SetCumulativeMouseDeltaXForRightTraceDistaneValue(float Value)
 {
 	// Getting value from reverse curve
 	CumulativeMouseDeltaX = GetTimeForTraceRightDistance(Value);
 }
 
-void USC_HeroHologramController::SetCumulativeMouseDeltaYForForwardTraceDistaneValue(float Value)
+void USC_HeroShadowController::SetCumulativeMouseDeltaYForForwardTraceDistaneValue(float Value)
 {
 	// Getting value from reverse curve
 	CumulativeMouseDeltaY = GetTimeForTraceFowardDistance(Value);
 }
 
-float USC_HeroHologramController::GetTimeForTraceFowardDistance(float Value)
+float USC_HeroShadowController::GetTimeForTraceFowardDistance(float Value)
 {
 	if (!C_TraceForwardDistanceReverse)
 	{
@@ -349,7 +349,7 @@ float USC_HeroHologramController::GetTimeForTraceFowardDistance(float Value)
 	return ClampedValue;
 }
 
-float USC_HeroHologramController::GetTimeForTraceRightDistance(float Value)
+float USC_HeroShadowController::GetTimeForTraceRightDistance(float Value)
 {
 	if (!C_TraceRightDistanceReverse)
 	{

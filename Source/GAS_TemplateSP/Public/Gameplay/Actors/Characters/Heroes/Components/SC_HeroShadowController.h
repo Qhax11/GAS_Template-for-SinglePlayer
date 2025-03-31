@@ -4,33 +4,33 @@
 
 #include "Components/SceneComponent.h"
 #include "Curves/CurveFloat.h" 
-#include "SC_HeroHologramController.generated.h"
+#include "SC_HeroShadowController.generated.h"
 
 /**
- * USC_HeroHologramController
+ * USC_HeroShadowController
  *
- * This component is responsible for managing and controlling the behavior of the hologram in the game.
- * It provides functionality to set the hologram's location, handle detailed calculations for precise placement,
+ * This component is responsible for managing and controlling the behavior of the shadow in the game.
+ * It provides functionality to set the shadow's location, handle detailed calculations for precise placement,
  * and synchronize with gameplay elements such as mouse inputs or target locking.
  *
  * Key features include:
- * - Setting and retrieving the hologram's location dynamically using line traces.
+ * - Setting and retrieving the shadow's location dynamically using line traces.
  * - Handling mouse input sensitivity for smooth and responsive control.
  * - Maintaining consistent trace lengths and offsets using geometric calculations.
  * - Debugging support to visualize trace paths and adjustments.
  *
- * Ideal for gameplay systems where holograms need to interact seamlessly with the player's input
+ * Ideal for gameplay systems where shadow need to interact seamlessly with the player's input
  * and world environment, ensuring accurate alignment and placement.
  */
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class GAS_TEMPLATESP_API USC_HeroHologramController : public USceneComponent
+class GAS_TEMPLATESP_API USC_HeroShadowController : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
-	USC_HeroHologramController();
+	USC_HeroShadowController();
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,14 +46,14 @@ private:
 
 	void LookAtTarget();
 
-	void SetHeroHologramLocation();
+	void SetHeroShadowLocation();
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
-	FVector GetHeroHologramLocationFromLineTrace();
+	FVector GetHeroShadowLocationFromLineTrace();
 
 	UFUNCTION(BlueprintCallable, Category = "CalculateHologramTargetActorLocation")
-	FVector GetHeroHologramLocationFromLineTraceTargetLocked();
+	FVector GetHeroShadowLocationFromLineTraceTargetLocked();
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "HologramAbilityHelper|Config")
@@ -78,7 +78,7 @@ public:
 	bool bDrawDebug;
 
 public:
-	TObjectPtr<class AHeroHologramTargetActor> HeroHologram = nullptr;
+	TObjectPtr<class AHeroShadowTargetActor> HeroShadow = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")
 	float TraceForwardDistance = 0.f;
@@ -93,7 +93,7 @@ public:
 	float TraceRightDistanceOffset = 0.f;
 
 public:
-	void SetHologramLocationWithCumulativeMouseValuesTargetLocked();
+	void SetShadowLocationWithCumulativeMouseValuesTargetLocked();
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Input")
 	float CumulativeMouseDeltaX;

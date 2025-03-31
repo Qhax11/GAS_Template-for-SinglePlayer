@@ -19,6 +19,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE USceneComponent* GetFinisherPointComponent() const { return FinisherPointComponent; }
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class UAC_EnemyMeleeComboManager* GetEnemyMeleeComboManagerComponent() const { return EnemyMeleeComboManagerComponent; }
+
 protected:
 
 	//* Components *//

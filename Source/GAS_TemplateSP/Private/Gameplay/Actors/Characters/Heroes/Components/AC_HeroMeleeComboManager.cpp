@@ -3,7 +3,7 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
-#include "Gameplay/Abilities/Hero/GA_HeroHologram.h"
+#include "Gameplay/Abilities/Hero/GA_HeroShadowAttack.h"
 
 void UAC_HeroMeleeComboManager::BeginPlay()
 {
@@ -52,7 +52,7 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
 	// If it is another ability or if it is UGA_HeroHologram we need a reset. 
-	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>() || EndedData.AbilityThatEnded->IsA<UGA_HeroHologram>())
+	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>() || EndedData.AbilityThatEnded->IsA<UGA_HeroShadowAttack>())
 	{
 		return;
 	}

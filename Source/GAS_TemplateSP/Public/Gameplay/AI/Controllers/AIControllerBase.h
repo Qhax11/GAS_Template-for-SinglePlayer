@@ -10,7 +10,7 @@
 
 class UAISenseConfig_Sight;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, Target);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, DetectedTarget);
 
 UCLASS()
 class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
@@ -43,9 +43,12 @@ protected:
 	// bHasTargetBeenDetected prevents multiple triggers of TargetPerceptionUpdated during each tick, ensuring it is only triggered once when the target is detected.
 	bool bHasTargetBeenDetected = false;
 
-public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StateTree|Params")
 	AActor* Target;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	AActor* GetTarget();
 
 	FOnTargetDetected OnTargetDetected;
 

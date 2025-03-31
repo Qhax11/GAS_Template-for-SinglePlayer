@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
-#include "AbilitySystemGlobals.h"
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "AbilitySystemGlobals.h"
 #include "ShadowTargetActorBase.generated.h"
 
 UENUM(BlueprintType)
@@ -33,6 +33,7 @@ protected:
 
 	virtual void Cancel() override;
 
+protected:
 	UPROPERTY(EditDefaultsOnly, Category = "HeroHologramTargetActor")
 	float RotationSpeed = 5.0f;
 
@@ -53,10 +54,10 @@ public:
 
 	AActor* GetCurrentTarget();
 
-	TSubclassOf<UGA_MeleeAttackBase> GetSelectedShadowAbility();
+	TSubclassOf<UGA_MeleeAttackBase> GetSelectedShadowAbilityClass();
 
 protected:
-	TSubclassOf<UGA_MeleeAttackBase> SelectedShadowAbility;
+	TSubclassOf<UGA_MeleeAttackBase> SelectedShadowAbilityClass;
 
 	UAnimMontage* AttackMontage;
 
@@ -67,25 +68,24 @@ protected:
 
 	void OnDirectionToTargetChanged(EShadowDirectionToTarget NewDirection);
 
-	void UptadeAttackMontageFromRelativePositionToTarget();
+	void UptadeAttackAbilityClassAndMontageFromRelativePositionToTarget();
 
-	UGA_MeleeAttackBase* GetAttackAbilityFromRelativePositionToTarget();
+	TSubclassOf<UGA_MeleeAttackBase> GetAttackAbilityFromRelativePositionToTarget();
 
 	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<EShadowDirectionToTarget> LastDirectionToTarget = EShadowDirectionToTarget::HDT_None;
 
-public:
+protected:
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCapsuleComponent> CapsuleComponent;
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* SkeletalMesh;
 
+	bool bIsTargetInRange;
+
 	UPROPERTY(VisibleAnywhere, Category = "Collision", BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* EnemyDetectionSphere;
-
-protected:
-	bool bIsTargetInRange;
 
 	UFUNCTION()
 	virtual void OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -96,6 +96,8 @@ protected:
 	virtual void OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	class UAnimInstance* AnimInstance;
+
 	void PlayMontageWithCallback(UAnimMontage* MontageToPlay);
 
 	UFUNCTION()
@@ -103,6 +105,4 @@ protected:
 
 	UFUNCTION()
 	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
-
-	class UAnimInstance* AnimInstance;
 };

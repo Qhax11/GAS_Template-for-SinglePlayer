@@ -26,7 +26,7 @@ void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& 
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
 
-    if (HeroHologramTargetActor->GetSelectedShadowAbility() && HeroHologramTargetActor->GetCurrentTarget())
+    if (HeroHologramTargetActor->GetSelectedShadowAbilityClass() && HeroHologramTargetActor->GetCurrentTarget())
     {
         if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_CanActivateFinisher))
         {

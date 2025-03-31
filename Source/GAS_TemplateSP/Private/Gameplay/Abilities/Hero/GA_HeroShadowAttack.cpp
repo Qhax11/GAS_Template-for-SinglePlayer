@@ -10,6 +10,7 @@
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 
 UGA_HeroShadowAttack::UGA_HeroShadowAttack()
 {
@@ -37,15 +38,11 @@ void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroShadowTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroShadowTargetActor->GetActorRotation());
 
-    if (HeroShadowTargetActor->GetSelectedShadowAbility() && HeroShadowTargetActor->GetCurrentTarget())
+    if (HeroShadowTargetActor->GetSelectedShadowAbilityClass() && HeroShadowTargetActor->GetCurrentTarget())
     {
         if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow))
         {
             GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
-        }
-        if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
-        {
-            HeroBase->GetHeroMeleeComboManagerComponent()->ActivateComboMeleeAttackAbility(FName("Section2"));
         }
         Super::OnTargetActorConfirm(TargetActorData);
     }
@@ -62,6 +59,7 @@ void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
     {
         UE_LOG(LogTemp, Warning, TEXT("HeroBase or TraceData is null in: %s"), *GetName());
         Super::SpawnAndSetupTargetActor(Rotation, Location);
+        return;
     }
 
     FVector ShadowSpawnLocation = Location;
@@ -91,7 +89,6 @@ void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
         {
             Super::SpawnAndSetupTargetActor(HeroBase->GetActorRotation(), ShadowSpawnLocation);
         }
-
         SetShadowToShadowController();
     }
 }

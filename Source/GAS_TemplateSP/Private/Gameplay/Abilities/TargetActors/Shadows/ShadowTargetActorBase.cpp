@@ -29,6 +29,8 @@ AShadowTargetActorBase::AShadowTargetActorBase()
     EnemyDetectionSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
     EnemyDetectionSphere->OnComponentBeginOverlap.AddDynamic(this, &AShadowTargetActorBase::OnEnemyDetectionBeginOverlap);
     EnemyDetectionSphere->OnComponentEndOverlap.AddDynamic(this, &AShadowTargetActorBase::OnEnemyDetectionEndOverlap);
+
+    PrimaryActorTick.bCanEverTick = true;
 }
 
 void AShadowTargetActorBase::BeginPlay()
@@ -62,12 +64,12 @@ void AShadowTargetActorBase::Tick(float DeltaSeconds)
 
 void AShadowTargetActorBase::Confirm()
 {
-    OnConfirm.Broadcast(FGAS_TargetActorData(SelectedShadowAbility, this));
+    OnConfirm.Broadcast(FGAS_TargetActorData(SelectedShadowAbilityClass, this));
 }
 
 void AShadowTargetActorBase::Cancel()
 {
-    OnCancel.Broadcast(FGAS_TargetActorData(SelectedShadowAbility, this));
+    OnCancel.Broadcast(FGAS_TargetActorData(SelectedShadowAbilityClass, this));
 }
 
 void AShadowTargetActorBase::RotateToTarget(AActor* TargetActor, float DeltaTime)
@@ -154,11 +156,11 @@ AActor* AShadowTargetActorBase::GetCurrentTarget()
     }
 }
 
-TSubclassOf<UGA_MeleeAttackBase> AShadowTargetActorBase::GetSelectedShadowAbility()
+TSubclassOf<UGA_MeleeAttackBase> AShadowTargetActorBase::GetSelectedShadowAbilityClass()
 {
-    if (SelectedShadowAbility) 
+    if (SelectedShadowAbilityClass)
     {
-        return SelectedShadowAbility;
+        return SelectedShadowAbilityClass;
     }
 
     return nullptr;
@@ -166,29 +168,27 @@ TSubclassOf<UGA_MeleeAttackBase> AShadowTargetActorBase::GetSelectedShadowAbilit
 
 void AShadowTargetActorBase::OnDirectionToTargetChanged(EShadowDirectionToTarget NewDirection)
 {
-    UptadeAttackMontageFromRelativePositionToTarget();
+    UptadeAttackAbilityClassAndMontageFromRelativePositionToTarget();
     PlayMontageWithCallback(AttackMontage);
 }
 
-void AShadowTargetActorBase::UptadeAttackMontageFromRelativePositionToTarget()
+void AShadowTargetActorBase::UptadeAttackAbilityClassAndMontageFromRelativePositionToTarget()
 {
-    if (GetAttackAbilityFromRelativePositionToTarget()) 
+    if (GetAttackAbilityFromRelativePositionToTarget())
     {
-        AttackMontage = GetAttackAbilityFromRelativePositionToTarget()->AnimMontage;
+        SelectedShadowAbilityClass = GetAttackAbilityFromRelativePositionToTarget();
+        if (UGA_MeleeAttackBase* NewMeleeAttack = Cast<UGA_MeleeAttackBase>(SelectedShadowAbilityClass->GetDefaultObject())) 
+        {
+            AttackMontage = NewMeleeAttack->AnimMontage;
+        }
     }
 }
 
-UGA_MeleeAttackBase* AShadowTargetActorBase::GetAttackAbilityFromRelativePositionToTarget()
+TSubclassOf<UGA_MeleeAttackBase> AShadowTargetActorBase::GetAttackAbilityFromRelativePositionToTarget()
 {
-    if (!DirectionalAttackAbilities.Contains(LastDirectionToTarget))
+    if (const TSubclassOf<UGA_MeleeAttackBase>* FoundAbility = DirectionalAttackAbilities.Find(LastDirectionToTarget))
     {
-        return nullptr;
-    }
-
-    UGA_MeleeAttackBase* AttackAbilityCDO = DirectionalAttackAbilities.Find(LastDirectionToTarget)->GetDefaultObject();
-    if (AttackAbilityCDO)
-    {
-        return AttackAbilityCDO;
+        return *FoundAbility;
     }
 
     return nullptr;

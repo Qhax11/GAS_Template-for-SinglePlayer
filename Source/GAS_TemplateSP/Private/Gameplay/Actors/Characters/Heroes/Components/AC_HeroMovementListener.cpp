@@ -17,15 +17,17 @@ void UAC_HeroMovementListener::BeginPlay()
 	Super::BeginPlay();
 
     OwnerHero = Cast<AGAS_HeroBase>(GetOwner());
-    if (OwnerHero)
+    if (!OwnerHero)
     {
         UE_LOG(LogTemp, Warning, TEXT("OwnerHero is null in: %s"), *GetName());
+        return;
     }
 
     OwnerMovementComp = OwnerHero->GetCharacterMovement();
-    if (OwnerMovementComp)
+    if (!OwnerMovementComp)
     {
         UE_LOG(LogTemp, Warning, TEXT("OwnerMovementComp is null in: %s"), *GetName());
+        return;
     }
 
     MotionHistory.Empty();

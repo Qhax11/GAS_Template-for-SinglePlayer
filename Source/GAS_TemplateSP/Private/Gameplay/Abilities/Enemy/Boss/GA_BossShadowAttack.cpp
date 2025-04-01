@@ -57,18 +57,45 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 	ABossShadowTargetActor* BossShadowTargetActor = Cast<ABossShadowTargetActor>(TargetActorData.TargetActor);
 	if (!BossShadowTargetActor)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("BossShadowTargetActor is null in: %s"), *GetName());
 		Super::OnTargetActorConfirm(TargetActorData);
+		return;
 	}
 
-	BP_OnTargetActorConfirm(TargetActorData);
-
-	GetAvatarActorFromActorInfo()->SetActorLocation(BossShadowTargetActor->GetActorLocation());
-	GetAvatarActorFromActorInfo()->SetActorRotation(BossShadowTargetActor->GetActorRotation());
-
-	if (UST_Base* BossST = BossController->GetStateTreeComponent())
+	if (!TargetActorData.AbilityClass || !TargetActorData.AbilityCDO) 
 	{
-		BossST->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_ExecuteShadowAttack, FConstStructView::Make(TargetActorData));
+		UE_LOG(LogTemp, Warning, TEXT("AbilityClass or AbilityCDO is null in: %s"), *GetName());
+		Super::OnTargetActorConfirm(TargetActorData);
+		return;
+	}
+
+	// If we're within range, proceed to perform the attack
+	if (GetTargetDistance(BossShadowTargetActor) < TargetActorData.AbilityCDO->MaxRange)
+	{
+		// Ensure all shadow attacks start from Section2 of the montage
+		TargetActorData.AbilityCDO->SectionName = FName("Section2");
+
+		GetAvatarActorFromActorInfo()->SetActorLocation(BossShadowTargetActor->GetActorLocation());
+		GetAvatarActorFromActorInfo()->SetActorRotation(BossShadowTargetActor->GetActorRotation());
+
+		if (UST_Base* BossST = BossController->GetStateTreeComponent())
+		{
+			BossST->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_ExecuteShadowAttack, FConstStructView::Make(TargetActorData));
+		}
 	}
 
 	Super::OnTargetActorConfirm(TargetActorData);
+}
+
+float UGA_BossShadowAttack::GetTargetDistance(AActor* ShadowTargetActor)
+{
+	if (!BossController || !BossController->GetTarget() || !ShadowTargetActor)
+	{
+		return -1.f;
+	}
+
+	FVector MyLocation = ShadowTargetActor->GetActorLocation();
+	FVector TargetLocation = BossController->GetTarget()->GetActorLocation();
+
+	return FVector::Dist(MyLocation, TargetLocation);
 }

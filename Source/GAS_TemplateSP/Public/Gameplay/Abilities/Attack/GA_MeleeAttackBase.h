@@ -36,4 +36,7 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameters")
     FScalableFloat Damage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameters")
+	float MaxRange;
 };

@@ -59,6 +59,8 @@ public:
 protected:
 	TSubclassOf<UGA_MeleeAttackBase> SelectedShadowAbilityClass;
 
+	UGA_MeleeAttackBase* SelectedShadowAbilityCDO;
+
 	UAnimMontage* AttackMontage;
 
 	UPROPERTY(BlueprintReadWrite)

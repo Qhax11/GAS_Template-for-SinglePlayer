@@ -64,12 +64,12 @@ void AShadowTargetActorBase::Tick(float DeltaSeconds)
 
 void AShadowTargetActorBase::Confirm()
 {
-    OnConfirm.Broadcast(FGAS_TargetActorData(SelectedShadowAbilityClass, this));
+    OnConfirm.Broadcast(FGAS_TargetActorData(SelectedShadowAbilityClass, SelectedShadowAbilityCDO, this));
 }
 
 void AShadowTargetActorBase::Cancel()
 {
-    OnCancel.Broadcast(FGAS_TargetActorData(SelectedShadowAbilityClass, this));
+    OnCancel.Broadcast(FGAS_TargetActorData(SelectedShadowAbilityClass, SelectedShadowAbilityCDO, this));
 }
 
 void AShadowTargetActorBase::RotateToTarget(AActor* TargetActor, float DeltaTime)
@@ -179,6 +179,7 @@ void AShadowTargetActorBase::UptadeAttackAbilityClassAndMontageFromRelativePosit
         SelectedShadowAbilityClass = GetAttackAbilityFromRelativePositionToTarget();
         if (UGA_MeleeAttackBase* NewMeleeAttack = Cast<UGA_MeleeAttackBase>(SelectedShadowAbilityClass->GetDefaultObject())) 
         {
+            SelectedShadowAbilityCDO = NewMeleeAttack;
             AttackMontage = NewMeleeAttack->AnimMontage;
         }
     }
@@ -220,6 +221,7 @@ void AShadowTargetActorBase::OnEnemyDetectionEndOverlap(UPrimitiveComponent* Ove
     {
         return;
     }
+
 }
 
 void AShadowTargetActorBase::PlayMontageWithCallback(UAnimMontage* MontageToPlay)

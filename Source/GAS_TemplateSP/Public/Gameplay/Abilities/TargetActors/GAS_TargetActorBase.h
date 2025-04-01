@@ -26,12 +26,16 @@ public:
 	TSubclassOf<class UGA_MeleeAttackBase> AbilityClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetActorData")
+	class UGA_MeleeAttackBase* AbilityCDO;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TargetActorData")
 	AActor* TargetActor;
 
 	FGAS_TargetActorData() = default;
 
-	FGAS_TargetActorData(TSubclassOf<class UGA_MeleeAttackBase> InAbilityClass, AActor* InTargetActor)
+	FGAS_TargetActorData(TSubclassOf<class UGA_MeleeAttackBase> InAbilityClass, class UGA_MeleeAttackBase* InAbilityCDO, AActor* InTargetActor)
 		: AbilityClass(InAbilityClass),
+		AbilityCDO(InAbilityCDO),
 		TargetActor(InTargetActor)
 	{}
 

@@ -22,4 +22,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float ExecuteTime = 0.5f;
+
+	float GetTargetDistance(AActor* ShadowTargetActor);
+
 };

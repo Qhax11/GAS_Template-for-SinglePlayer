@@ -17,6 +17,5 @@ public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	AAIControllerBase* BossController;
-
 	AGAS_EnemyBase* BossCharacter;
 };

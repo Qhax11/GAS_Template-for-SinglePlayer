@@ -235,7 +235,7 @@ float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnLastSelectedMoveme
     }
 
     float ChainScore = 0.0f;
-
+    /*
     if (MovementData.MovementChainDataBasedOnLastMovementData.LastMovementDirectionScoreModifiers.Contains(LastMovementData.Direction))
     {
         ChainScore += MovementData.MovementChainDataBasedOnLastMovementData.LastMovementDirectionScoreModifiers[LastMovementData.Direction];
@@ -248,7 +248,7 @@ float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnLastSelectedMoveme
 
     // Weight multiplier
     ChainScore *= MovementData.MovementChainDataBasedOnLastMovementData.ChainScoreWeight;
-
+    */
     return ChainScore;
 }
 

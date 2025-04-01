@@ -4,8 +4,6 @@
 #include "Gameplay/Components/GameplayTag/AC_TagListenerBase.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Tags/GAS_Tags.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/Character.h"
 
 UAC_TagListenerBase::UAC_TagListenerBase()
 {
@@ -47,19 +45,21 @@ void UAC_TagListenerBase::BeginPlay()
 	}
 }
 
+
+// ** TODO: REMOVE we are handle with ability right now.
 void UAC_TagListenerBase::OnStrafingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	OwnerCharacterMoveComp->bOrientRotationToMovement = false;
+	//OwnerCharacterMoveComp->bOrientRotationToMovement = false;
 }
 
 void UAC_TagListenerBase::OnStrafingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+	//OwnerCharacterMoveComp->bOrientRotationToMovement = true;
 }
 
 void UAC_TagListenerBase::OnWalkingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	OwnerCharacterMoveComp->MaxWalkSpeed = WalkingSpeed;
+	//OwnerCharacterMoveComp->MaxWalkSpeed = WalkingSpeed;
 }
 
 void UAC_TagListenerBase::OnWalkingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -68,7 +68,7 @@ void UAC_TagListenerBase::OnWalkingTagRemoved(const UAbilitySystemComponent* Abi
 
 void UAC_TagListenerBase::OnJoggingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	OwnerCharacterMoveComp->MaxWalkSpeed = JoggingSpeed;
+	//OwnerCharacterMoveComp->MaxWalkSpeed = JoggingSpeed;
 }
 
 void UAC_TagListenerBase::OnJoggingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -77,7 +77,7 @@ void UAC_TagListenerBase::OnJoggingTagRemoved(const UAbilitySystemComponent* Abi
 
 void UAC_TagListenerBase::OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	OwnerCharacterMoveComp->MaxWalkSpeed = RunningSpeed;
+	//OwnerCharacterMoveComp->MaxWalkSpeed = RunningSpeed;
 }
 
 void UAC_TagListenerBase::OnRunningTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

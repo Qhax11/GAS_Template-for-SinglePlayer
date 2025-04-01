@@ -72,7 +72,7 @@ enum class EMovementDirection : uint8
     Left         UMETA(DisplayName = "Left"),
     Right        UMETA(DisplayName = "Right")
 };
-
+/*
 USTRUCT(BlueprintType)
 struct FMovementChainData
 {
@@ -93,7 +93,7 @@ public:
     UPROPERTY(EditDefaultsOnly)
     float ChainScoreWeight = 1.0f;
 };
-
+*/
 USTRUCT(BlueprintType)
 struct FMovementData
 {
@@ -112,8 +112,8 @@ public:
     UPROPERTY(EditDefaultsOnly)
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
 
-    UPROPERTY(EditDefaultsOnly)
-    FMovementChainData MovementChainDataBasedOnLastMovementData;
+  //  UPROPERTY(EditDefaultsOnly)
+   // FMovementChainData MovementChainDataBasedOnLastMovementData;
 
     UPROPERTY(EditDefaultsOnly)
     TMap<EHeroRelativeDirection, float> HeroRelativeDirectionScoreModifiers;

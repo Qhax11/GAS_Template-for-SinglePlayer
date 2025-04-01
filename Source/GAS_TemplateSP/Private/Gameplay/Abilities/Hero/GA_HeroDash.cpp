@@ -13,7 +13,6 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
-
 	HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
 	if (!HeroBase)
 	{
@@ -33,7 +32,6 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 	}
-
 }
 
 FVector UGA_HeroDash::CalculateDestination()

@@ -119,6 +119,11 @@ FMovementData UAC_BehaviorDecision::GetBestMovement(float DistanceToTarget, FAtt
             continue;
         }
 
+        if (DistanceToTarget < Movement.MinRange) 
+        {
+            continue;
+        }
+
         float DistanceScore = CalculateMovementScoreBasedOnTargetDistance(DistanceToTarget, Movement, SelectedAttackAbilityData);
         float TargetMovementScore = CalculateMovementScoreBasedOnTargetMovement(Movement, SelectedAttackAbilityData);
         float ChainScore = CalculateMovementChainScoreBasedOnLastSelectedMovement(Movement, LastSelectedMovementData);
@@ -224,17 +229,25 @@ float UAC_BehaviorDecision::CalculateMovementScoreBasedOnTargetMovement(FMovemen
 float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnLastSelectedMovement(FMovementData MovementData, FMovementData LastMovementData)
 {
     // Chain works only on Dashes
-    if (LastMovementData.MovementName == NAME_None || LastMovementData.MovementType != EMovementType::Dash)
+    if (LastMovementData.MovementName == NAME_None)
     {
         return 0.0f;
     }
 
     float ChainScore = 0.0f;
 
-    if (MovementData.LastMovementDirectionScoreModifiers.Contains(LastMovementData.Direction))
+    if (MovementData.MovementChainDataBasedOnLastMovementData.LastMovementDirectionScoreModifiers.Contains(LastMovementData.Direction))
     {
-        ChainScore += MovementData.LastMovementDirectionScoreModifiers[LastMovementData.Direction];
+        ChainScore += MovementData.MovementChainDataBasedOnLastMovementData.LastMovementDirectionScoreModifiers[LastMovementData.Direction];
     }
+
+    if (MovementData.MovementChainDataBasedOnLastMovementData.LastMovementTypeScoreModifiers.Contains(LastMovementData.MovementType))
+    {
+        ChainScore += MovementData.MovementChainDataBasedOnLastMovementData.LastMovementTypeScoreModifiers[LastMovementData.MovementType];
+    }
+
+    // Weight multiplier
+    ChainScore *= MovementData.MovementChainDataBasedOnLastMovementData.ChainScoreWeight;
 
     return ChainScore;
 }

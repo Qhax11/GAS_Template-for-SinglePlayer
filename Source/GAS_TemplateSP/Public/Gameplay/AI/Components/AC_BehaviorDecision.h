@@ -27,9 +27,6 @@ public:
     float MaxRange;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float CooldownPenalty;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float CounterPenalty;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -65,6 +62,27 @@ enum class EMovementDirection : uint8
 };
 
 USTRUCT(BlueprintType)
+struct FMovementChainData
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Score modifier based on the last selected selected ability class."))
+    TMap<TSubclassOf<class UGAS_GameplayAbilityBase>, float> LastSelectedAbilityClassScoreModifiers;
+
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Score modifier based on the direction of the last selected AI movement type."))
+    TMap<EMovementType, float> LastMovementTypeScoreModifiers;
+
+    // Increases the movement score if the previous AI movement was in the same or similar direction (e.g. continuing a dash in the same direction).
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Score modifier based on the direction of the last selected AI movement direction. Encourages directional consistency, especially after dashes."))
+    TMap<EMovementDirection, float> LastMovementDirectionScoreModifiers;
+
+    // Weight multiplier
+    UPROPERTY(EditDefaultsOnly)
+    float ChainScoreWeight = 1.0f;
+};
+
+USTRUCT(BlueprintType)
 struct FMovementData
 {
     GENERATED_BODY()
@@ -82,13 +100,11 @@ public:
     UPROPERTY(EditDefaultsOnly)
     UCurveFloat* DistanceScoreCurve;
 
-    // Increases the movement score based on the hero’s most recent movement direction (e.g. if the hero moved left, movements matching that direction receive a bonus).
-    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Score modifier based on the hero's last input direction. Used to react to player's movement more responsively."))
-    TMap<EHeroRelativeDirection, float> HeroRelativeDirectionScoreModifiers;
+    UPROPERTY(EditDefaultsOnly)
+    FMovementChainData MovementChainDataBasedOnLastMovementData;
 
-    // Increases the movement score if the previous AI movement was in the same or similar direction (e.g. continuing a dash in the same direction).
-    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Score modifier based on the direction of the last selected AI movement. Encourages directional consistency, especially after dashes."))
-    TMap<EMovementDirection, float> LastMovementDirectionScoreModifiers;
+    UPROPERTY(EditDefaultsOnly)
+    TMap<EHeroRelativeDirection, float> HeroRelativeDirectionScoreModifiers;
 
     UPROPERTY(EditDefaultsOnly)
     float ScoreModifierWhenTargetIsMoving = 0.0f;
@@ -101,6 +117,9 @@ public:
 
     UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bIsDashType"))
     FGameplayTag MovementCooldownTag;
+
+    UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bIsDashType"))
+    float MinRange;
 
     UPROPERTY(EditDefaultsOnly)
     float ScoreBias = 0.0f;

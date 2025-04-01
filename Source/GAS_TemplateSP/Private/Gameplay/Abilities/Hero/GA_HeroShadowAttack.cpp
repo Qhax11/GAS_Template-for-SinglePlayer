@@ -2,15 +2,12 @@
 
 
 #include "Gameplay/Abilities/Hero/GA_HeroShadowAttack.h"
-#include "Gameplay/Abilities/TargetActors/Shadows/HeroShadowTargetActor.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroShadowController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
+#include "Gameplay/Abilities/TargetActors/Shadows/HeroShadowTargetActor.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "EnvironmentQuery/EnvQueryManager.h"
-#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 
 UGA_HeroShadowAttack::UGA_HeroShadowAttack()
 {

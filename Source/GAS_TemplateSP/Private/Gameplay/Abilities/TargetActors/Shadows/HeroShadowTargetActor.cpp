@@ -2,9 +2,8 @@
 
 
 #include "Gameplay/Abilities/TargetActors/Shadows/HeroShadowTargetActor.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroShadowController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 
 void AHeroShadowTargetActor::BeginPlay()

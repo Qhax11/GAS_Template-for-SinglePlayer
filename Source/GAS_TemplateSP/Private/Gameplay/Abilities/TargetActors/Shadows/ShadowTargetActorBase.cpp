@@ -2,11 +2,10 @@
 
 
 #include "Gameplay/Abilities/TargetActors/Shadows/ShadowTargetActorBase.h"
-#include "AbilitySystemGlobals.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/SphereComponent.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AShadowTargetActorBase::AShadowTargetActorBase()

@@ -7,6 +7,15 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "AC_BehaviorDecision.generated.h"
 
+UENUM(BlueprintType)
+enum class EBehaviorState : uint8
+{
+    None        UMETA(DisplayName = "None"),
+    Passive     UMETA(DisplayName = "Passive"),
+    Aggressive  UMETA(DisplayName = "Aggressive"),
+    Defensive   UMETA(DisplayName = "Defensive"),
+    Confused    UMETA(DisplayName = "Confused") 
+};
 
 USTRUCT(BlueprintType)
 struct FAttackData
@@ -14,22 +23,25 @@ struct FAttackData
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     FGameplayTag AbilityCooldownTag;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
+    TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
+
+    UPROPERTY(EditDefaultsOnly)
     float MinRange;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     float MaxRange;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     float CounterPenalty;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly)
     float ScoreBias;
 };
 
@@ -98,7 +110,7 @@ public:
     EMovementDirection Direction;
 
     UPROPERTY(EditDefaultsOnly)
-    UCurveFloat* DistanceScoreCurve;
+    TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
 
     UPROPERTY(EditDefaultsOnly)
     FMovementChainData MovementChainDataBasedOnLastMovementData;
@@ -162,6 +174,7 @@ protected:
 
     UPROPERTY(EditDefaultsOnly)
     bool EnableAllDataDebug = false;
+
 public:
     UFUNCTION(BlueprintCallable)
     FAttackData GetBestAttack(float DistanceToTarget);
@@ -172,7 +185,10 @@ public:
     FAttackData LastSelectedAttackAbilityData;
     FMovementData LastSelectedMovementData;
 
-private:
+protected:
+    UPROPERTY(EditDefaultsOnly)
+    EBehaviorState BehaviorState = EBehaviorState::None;
+
     float CalculateAttackAbilityScoreBasedOnTargetDistance(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
 
     float CalculateMovementScoreBasedOnTargetDistance(float DistanceToTarget, FMovementData MovementData, FAttackData SelectedAttackAbilityData);
@@ -180,6 +196,8 @@ private:
     float CalculateMovementScoreBasedOnTargetMovement(FMovementData MovementData, FAttackData SelectedAttackAbilityData);
 
     float CalculateMovementChainScoreBasedOnLastSelectedMovement(FMovementData MovementData, FMovementData LastMovementData);
+
+    float CalculateBehaviorStateScore(FMovementData MovementData);
 
     class AAIControllerBase* OwnerController;
     class AGAS_EnemyBase* OwnerEnemyBase;

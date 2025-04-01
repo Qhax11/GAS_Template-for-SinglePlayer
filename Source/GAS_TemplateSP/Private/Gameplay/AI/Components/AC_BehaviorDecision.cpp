@@ -191,12 +191,13 @@ float UAC_BehaviorDecision::CalculateMovementScoreBasedOnTargetDistance(float Di
         Score += 1.0f;
     }
 
+    /*
     if (MovementData.DistanceScoreCurve)
     {
         float CurveScore = MovementData.DistanceScoreCurve->GetFloatValue(DistanceToTarget);
         Score += CurveScore;
     }
-
+    */
     return Score;
 }
 
@@ -228,7 +229,6 @@ float UAC_BehaviorDecision::CalculateMovementScoreBasedOnTargetMovement(FMovemen
 
 float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnLastSelectedMovement(FMovementData MovementData, FMovementData LastMovementData)
 {
-    // Chain works only on Dashes
     if (LastMovementData.MovementName == NAME_None)
     {
         return 0.0f;

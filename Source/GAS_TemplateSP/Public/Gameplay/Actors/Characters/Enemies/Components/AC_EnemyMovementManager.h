@@ -6,6 +6,9 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_EnemyMovementManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
+
+
 USTRUCT(BlueprintType)
 struct FMovementChainData
 {
@@ -65,10 +68,12 @@ protected:
 
 	virtual void BeginPlay() override;
 
-
 public:
 	UFUNCTION(BlueprintCallable)
 	void StartMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass);
+
+	UFUNCTION(BlueprintCallable)
+	void CancelMovementAbilities();
 
 protected:
 	const TArray<FMovementChainData>* GetMovementChainForAbility(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass) const;
@@ -82,6 +87,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementManager")
 	UAbilityMovementChainSet* AbilityMovementChainSet;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnMovementChainEnded OnMovementChainEnded;
 		
 private:
 	TArray<FMovementChainData> ActiveMovementChain;

@@ -6,6 +6,7 @@
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
+#include "Gameplay/Tags/GAS_Tags.h"
 
 UAC_EnemyMovementManager::UAC_EnemyMovementManager()
 {
@@ -56,6 +57,20 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 	}
 }
 
+void UAC_EnemyMovementManager::CancelMovementAbilities()
+{
+	if (!OwnerEnemyASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CancelMovementAbilities: ASC is null"));
+		return;
+	}
+
+	FGameplayTagContainer CancelTags;
+	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement);
+
+	OwnerEnemyASC->CancelAbilities(&CancelTags);
+}
+
 const TArray<FMovementChainData>* UAC_EnemyMovementManager::GetMovementChainForAbility(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass) const
 {
 	for (const FAbilityMovementChain& Mapping : AbilityMovementChainSet->ChainMappings)
@@ -77,6 +92,7 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	if (!ActiveMovementChain.IsValidIndex(CurrentMovementChainIndex))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Movement chain finished on %s"), *GetName());
+		OnMovementChainEnded.Broadcast();
 		return;
 	}
 
@@ -97,11 +113,9 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 	UGAS_GameplayAbilityBase* MovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementChainData.MovementAbilityClass, MovementAbilityEventData);
 	if (MovementAbility) 
 	{
-		UGAS_GameplayAbilityBase* CDO = MovementChainData.MovementAbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-
-		if (!CDO->OnGameplayAbilityEndedWithData.IsAlreadyBound(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded))
+		if (!MovementAbility->OnGameplayAbilityEndedWithData.IsAlreadyBound(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded))
 		{
-			CDO->OnGameplayAbilityEndedWithData.AddDynamic(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
+			MovementAbility->OnGameplayAbilityEndedWithData.AddDynamic(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
 		}
 	}
 	else

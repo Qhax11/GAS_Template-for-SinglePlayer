@@ -5,6 +5,7 @@
 
 UGA_EnemyMovementBase::UGA_EnemyMovementBase()
 {
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement);
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 

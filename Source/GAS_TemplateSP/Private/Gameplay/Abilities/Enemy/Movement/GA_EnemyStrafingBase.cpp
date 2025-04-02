@@ -1,12 +1,19 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyStrafingBase.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 {
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
+
+	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
+
+	FAbilityTriggerData TriggerData = FAbilityTriggerData();
+	TriggerData.TriggerSource = TriggerSource;
+	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_AI_Movement_Strafing;
+
+	AbilityTriggers.Add(TriggerData);
 }
 
 void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -16,16 +23,7 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UCharacterMovementComponent* EnemyMovementComp = EnemyCharacter->GetCharacterMovement();
-	if (!EnemyMovementComp)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("EnemyMovementComp is null in: %s!, Ability cannot initialize"), *GetName());
-		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
-		return;
-	}
-
-	EnemyCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
-	EnemyCharacter->GetCharacterMovement()->MaxWalkSpeed = StrafingSpeed;
+	EnemyMovementComp->bOrientRotationToMovement = false;
 	EnemyCharacter->bUseControllerRotationYaw = false;
 
 	StartEQSForStrafingLocation();
@@ -55,5 +53,19 @@ void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQuery
 
 	FVector BestLocation = Result->GetItemAsLocation(0);
 
-	EnemyController->MoveToLocation(BestLocation, AcceptanceRadius, false, true, true, true, nullptr, false);
+	RequestMoveToLocation(BestLocation);
+}
+
+void UGA_EnemyStrafingBase::EndAbility(const FGameplayAbilitySpecHandle Handle, 
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	bool bReplicateEndAbility, 
+	bool bWasCancelled)
+{
+	EnemyMovementComp->bOrientRotationToMovement = true;
+	EnemyCharacter->bUseControllerRotationYaw = true;
+
+	// Super::EndAbility must be called last because it broadcasts the end event immediately.
+    // Calling it early may trigger delegates or cleanup logic before this ability finishes its own cleanup.
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

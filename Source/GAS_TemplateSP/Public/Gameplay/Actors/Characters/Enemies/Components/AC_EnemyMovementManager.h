@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_EnemyMovementManager.generated.h"
 
 USTRUCT(BlueprintType)
@@ -12,9 +13,21 @@ struct FMovementChainData
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UGAS_GameplayAbilityBase> MovementAbilityClass;
+	TSubclassOf<UGAS_GameplayAbilityBase> MovementAbilityClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag TriggerTag;
 };
 
+UCLASS(BlueprintType)
+class UMovementChainSet : public UPrimaryDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FMovementChainData> Movements;
+};
 
 USTRUCT(BlueprintType)
 struct FAbilityMovementChain
@@ -23,10 +36,10 @@ struct FAbilityMovementChain
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class UGAS_GameplayAbilityBase> Ability;
+	TSubclassOf<UGAS_GameplayAbilityBase> Ability;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FMovementChainData> Movements;
+	TArray<UMovementChainSet*> MovementChains;
 };
 
 UCLASS(BlueprintType)
@@ -49,7 +62,29 @@ protected:
 
 	virtual void BeginPlay() override;
 
-public:	
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void StartMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass);
+
+protected:
+	const TArray<FMovementChainData>* GetMovementChainForAbility(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass) const;
+
+	void TryExecuteNextMovementAbilityInChain();
+
+	void TryActivateMovementAbilityWithEventData(FMovementChainData MovementChainData);
+
+	UFUNCTION()
+	void OnMovementAbilityEnded(const FAbilityEndedData& AbilityEndedData);
+
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementManager")
+	UAbilityMovementChainSet* AbilityMovementChainSet;
 		
+private:
+	TArray<FMovementChainData> ActiveMovementChain;
+	int32 CurrentMovementChainIndex = 0;
+
+	class AAIControllerBase* OwnerController;
+	class AGAS_EnemyBase* OwnerEnemyBase;
+	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
 };

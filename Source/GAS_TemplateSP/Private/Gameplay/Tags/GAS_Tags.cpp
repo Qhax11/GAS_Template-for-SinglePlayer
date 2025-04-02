@@ -31,6 +31,9 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ComboMelee, "Gameplay.AbilityTriggerEvent.ComboMelee");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ParryKnockback, "Gameplay.AbilityTriggerEvent.ParryKnockback");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Dash, "Gameplay.AbilityTriggerEvent.Dash");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_AI_Movement, "Gameplay.AbilityTriggerEvent.AI.Movement");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_AI_Movement_Strafing, "Gameplay.AbilityTriggerEvent.AI.Movement.Strafing");
 	
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff, "Gameplay.State.Debuff");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Stun, "Gameplay.State.Debuff.Stun");

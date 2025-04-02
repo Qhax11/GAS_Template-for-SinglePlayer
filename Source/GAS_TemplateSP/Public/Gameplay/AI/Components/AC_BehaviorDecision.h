@@ -94,6 +94,7 @@ public:
     float ChainScoreWeight = 1.0f;
 };
 */
+
 USTRUCT(BlueprintType)
 struct FMovementData
 {

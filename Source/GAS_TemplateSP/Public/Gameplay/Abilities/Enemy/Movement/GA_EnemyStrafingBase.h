@@ -28,9 +28,5 @@ protected:
 
 	virtual void OnStrafingLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
 
-	UPROPERTY(EditDefaultsOnly)
-	float AcceptanceRadius = 20.0f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float StrafingSpeed = 200.0f;
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 };

@@ -11,4 +11,7 @@ class GAS_TEMPLATESP_API UGA_EnemyChaseTarget : public UGA_EnemyMovementBase
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+
 };

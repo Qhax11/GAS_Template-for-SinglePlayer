@@ -37,6 +37,9 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityTriggerEvent_ParryKnockback);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityTriggerEvent_Dash);
 
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityTriggerEvent_AI_Movement);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityTriggerEvent_AI_Movement_Strafing);
+
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Debuff);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Debuff_Stun);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Debuff_Slow);
@@ -170,6 +173,8 @@ namespace GAS_Tags
 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_Dash);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_Dash_Cooldown);
+
+
 
 	/************************************************
 	*-------------------<UI Tags>-------------------*

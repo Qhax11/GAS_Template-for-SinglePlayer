@@ -22,14 +22,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class UAC_EnemyMeleeComboManager* GetEnemyMeleeComboManagerComponent() const { return EnemyMeleeComboManagerComponent; }
 
-protected:
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class UAC_EnemyMovementManager* GetEnemyMovementManagerComponent() const { return EnemyMovementManagerComponent; }
 
+protected:
 	//* Components *//
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
 	class UAC_EnemyRespawn* EnemyRespawnComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
 	class UAC_EnemyMeleeComboManager* EnemyMeleeComboManagerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
+	class UAC_EnemyMovementManager* EnemyMovementManagerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
     USceneComponent* FinisherPointComponent;

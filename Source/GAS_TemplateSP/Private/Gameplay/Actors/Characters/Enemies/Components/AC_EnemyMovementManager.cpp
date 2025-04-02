@@ -132,11 +132,6 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedData& AbilityEndedData)
 {
-	if (AbilityEndedData.AbilityThatEnded)
-	{
-		AbilityEndedData.AbilityThatEnded->OnGameplayAbilityEndedWithData.RemoveAll(this);
-	}
-
 	if (AbilityEndedData.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by ability. Resetting."));

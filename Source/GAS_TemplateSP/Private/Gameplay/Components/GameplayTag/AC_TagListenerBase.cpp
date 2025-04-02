@@ -3,6 +3,8 @@
 
 #include "Gameplay/Components/GameplayTag/AC_TagListenerBase.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
 UAC_TagListenerBase::UAC_TagListenerBase()
@@ -45,16 +47,14 @@ void UAC_TagListenerBase::BeginPlay()
 	}
 }
 
-
-// ** TODO: REMOVE we are handle with ability right now.
 void UAC_TagListenerBase::OnStrafingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	//OwnerCharacterMoveComp->bOrientRotationToMovement = false;
+	OwnerCharacterMoveComp->bOrientRotationToMovement = false;
 }
 
 void UAC_TagListenerBase::OnStrafingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	//OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
 }
 
 void UAC_TagListenerBase::OnWalkingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

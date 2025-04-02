@@ -23,9 +23,6 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	EnemyMovementComp->bOrientRotationToMovement = false;
-	EnemyCharacter->bUseControllerRotationYaw = false;
-
 	StartEQSForStrafingLocation();
 }
 
@@ -61,9 +58,6 @@ void UGA_EnemyStrafingBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	bool bReplicateEndAbility, 
 	bool bWasCancelled)
 {
-	EnemyMovementComp->bOrientRotationToMovement = true;
-	EnemyCharacter->bUseControllerRotationYaw = true;
-
 	// Super::EndAbility must be called last because it broadcasts the end event immediately.
     // Calling it early may trigger delegates or cleanup logic before this ability finishes its own cleanup.
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

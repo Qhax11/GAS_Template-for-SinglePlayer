@@ -93,11 +93,16 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 
 	FGameplayEventData MovementAbilityEventData;
 	MovementAbilityEventData.EventTag = MovementChainData.TriggerTag;
+	MovementAbilityEventData.InstigatorTags.AddTag(MovementChainData.DirectionTag);
 	UGAS_GameplayAbilityBase* MovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementChainData.MovementAbilityClass, MovementAbilityEventData);
 	if (MovementAbility) 
 	{
-		MovementAbility->OnGameplayAbilityEndedWithData.AddDynamic(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
-		UE_LOG(LogTemp, Log, TEXT("%s is triggered!"), *(MovementChainData.MovementAbilityClass->GetName()));
+		UGAS_GameplayAbilityBase* CDO = MovementChainData.MovementAbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+
+		if (!CDO->OnGameplayAbilityEndedWithData.IsAlreadyBound(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded))
+		{
+			CDO->OnGameplayAbilityEndedWithData.AddDynamic(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
+		}
 	}
 	else
 	{
@@ -109,6 +114,12 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedData& AbilityEndedData)
 {
+	if (AbilityEndedData.bWasCancelled)
+	{
+		// Oyundan çýkarken veya ability iptal edilince zinciri devam ettirme
+		return;
+	}
+
 	CurrentMovementChainIndex++;
 	TryExecuteNextMovementAbilityInChain();
 }

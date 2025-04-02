@@ -31,7 +31,7 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
-	EnemyController = Cast<AAIControllerBase>(GetAvatarActorFromActorInfo()->GetInstigatorController());
+	EnemyController = Cast<AAIControllerBase>(EnemyCharacter->GetController());
 	if (!EnemyController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BossController is null in: %s"), *GetName());

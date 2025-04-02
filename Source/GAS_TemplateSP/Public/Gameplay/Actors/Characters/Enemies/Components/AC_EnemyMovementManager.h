@@ -17,6 +17,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag TriggerTag;
+
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag DirectionTag;
 };
 
 UCLASS(BlueprintType)

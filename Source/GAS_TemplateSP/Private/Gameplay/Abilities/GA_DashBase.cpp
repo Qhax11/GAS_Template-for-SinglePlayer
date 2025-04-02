@@ -6,6 +6,7 @@
 
 UGA_DashBase::UGA_DashBase()
 {
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Dash);
 }

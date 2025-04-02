@@ -11,7 +11,7 @@ UGA_BossDash::UGA_BossDash()
 
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Dash;
+	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_AI_Movement_Dash;
 
 	AbilityTriggers.Add(TriggerData);
 }

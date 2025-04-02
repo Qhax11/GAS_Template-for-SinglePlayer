@@ -14,7 +14,6 @@ class GAS_TEMPLATESP_API UAnimInstanceEnemy : public UAnimInstanceBase
 	GENERATED_BODY()
 
 public:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bIsStrafing;
 	

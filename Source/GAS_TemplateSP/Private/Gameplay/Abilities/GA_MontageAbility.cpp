@@ -6,6 +6,11 @@
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 
 
+UGA_MontageAbility::UGA_MontageAbility()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
+
 void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 

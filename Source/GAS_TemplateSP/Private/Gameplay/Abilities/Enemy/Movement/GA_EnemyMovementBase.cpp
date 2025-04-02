@@ -59,10 +59,24 @@ void UGA_EnemyMovementBase::RequestMoveToLocation(const FVector& MoveLocation)
 	MoveReq.SetAllowPartialPath(true);
 
 	FNavPathSharedPtr NavPath;
-	EnemyController->MoveTo(MoveReq, &NavPath);
+	EPathFollowingRequestResult::Type MoveResult = EnemyController->MoveTo(MoveReq, &NavPath);
 
-	MoveCompleteHandle = EnemyController->GetPathFollowingComponent()->OnRequestFinished.AddUObject(
-		this, &ThisClass::OnMoveCompleted);
+	if (MoveResult == EPathFollowingRequestResult::Failed)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MoveTo failed immediately in: %s"), *GetName());
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+		return;
+	}
+
+	UPathFollowingComponent* PathComp = EnemyController->GetPathFollowingComponent();
+	if (!PathComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PathFollowingComponent is null in: %s"), *GetName());
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+		return;
+	}
+
+	PathComp->OnRequestFinished.AddUObject(this, &ThisClass::OnMoveCompleted);
 }
 
 void UGA_EnemyMovementBase::RequestMoveToTarget(AActor* TargetActor)
@@ -83,7 +97,7 @@ void UGA_EnemyMovementBase::RequestMoveToTarget(AActor* TargetActor)
 	FNavPathSharedPtr NavPath;
 	EnemyController->MoveTo(MoveReq, &NavPath);
 
-	MoveCompleteHandle = EnemyController->GetPathFollowingComponent()->OnRequestFinished.AddUObject(
+	EnemyController->GetPathFollowingComponent()->OnRequestFinished.AddUObject(
 		this, &UGA_EnemyMovementBase::OnMoveCompleted);
 }
 
@@ -96,11 +110,6 @@ void UGA_EnemyMovementBase::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 		return;
 	}
 
-	if (EnemyController && EnemyController->GetPathFollowingComponent())
-	{
-		EnemyController->GetPathFollowingComponent()->OnRequestFinished.Remove(MoveCompleteHandle);
-	}
-
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
@@ -109,6 +118,11 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (EnemyController && EnemyController->GetPathFollowingComponent())
+	{
+		EnemyController->GetPathFollowingComponent()->OnRequestFinished.RemoveAll(this);
+	}
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

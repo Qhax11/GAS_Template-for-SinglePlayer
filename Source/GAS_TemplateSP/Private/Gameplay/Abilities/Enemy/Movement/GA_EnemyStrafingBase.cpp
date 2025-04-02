@@ -46,13 +46,12 @@ void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQuery
 {
 	if (!Result.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EQS Query did not return any results in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("EQS result invalid in: %s"), *GetName());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}
 
 	FVector BestLocation = Result->GetItemAsLocation(0);
-
 	RequestMoveToLocation(BestLocation);
 }
 

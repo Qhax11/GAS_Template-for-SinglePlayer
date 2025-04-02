@@ -58,6 +58,46 @@ public:
 	TArray<FAbilityMovementChain> ChainMappings;
 };
 
+USTRUCT()
+struct FMovementChainTracker
+{
+	GENERATED_BODY()
+
+public:
+	TArray<FMovementChainData> ActiveChain;
+	int32 CurrentIndex = 0;
+	bool bIsActive = false;
+
+	void Start(const TArray<FMovementChainData>& InChain)
+	{
+		ActiveChain = InChain;
+		CurrentIndex = 0;
+		bIsActive = true;
+	}
+
+	void Reset()
+	{
+		ActiveChain.Empty();
+		CurrentIndex = 0;
+		bIsActive = false;
+	}
+
+	bool IsFinished() const
+	{
+		return !bIsActive || !ActiveChain.IsValidIndex(CurrentIndex);
+	}
+
+	const FMovementChainData* GetCurrent() const
+	{
+		return ActiveChain.IsValidIndex(CurrentIndex) ? &ActiveChain[CurrentIndex] : nullptr;
+	}
+
+	void Advance()
+	{
+		++CurrentIndex;
+	}
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_EnemyMovementManager : public UActorComponent
 {
@@ -92,8 +132,7 @@ protected:
 	FOnMovementChainEnded OnMovementChainEnded;
 		
 private:
-	TArray<FMovementChainData> ActiveMovementChain;
-	int32 CurrentMovementChainIndex = 0;
+	FMovementChainTracker MovementChainTracker;
 
 	class AAIControllerBase* OwnerController;
 	class AGAS_EnemyBase* OwnerEnemyBase;

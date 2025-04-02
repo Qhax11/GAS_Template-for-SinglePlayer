@@ -42,17 +42,18 @@ void UAC_EnemyMovementManager::BeginPlay()
 void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)
 {
 	if (!AbilityMovementChainSet || !AbilityClass || !OwnerEnemyASC)
+		return;
+
+	if (MovementChainTracker.bIsActive)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AbilityMovementChainSet, AbilityClass or OwnerEnemyASC is null in: %s !"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Chain already active, skipping start."));
 		return;
 	}
 
-	const TArray<FMovementChainData>* MovementChain = GetMovementChainForAbility(AbilityClass);
-	if (MovementChain && MovementChain->Num() > 0)
+	const TArray<FMovementChainData>* MovementData = GetMovementChainForAbility(AbilityClass);
+	if (MovementData && MovementData->Num() > 0)
 	{
-		ActiveMovementChain = *MovementChain;
-		CurrentMovementChainIndex = 0;
-
+		MovementChainTracker.Start(*MovementData);
 		TryExecuteNextMovementAbilityInChain();
 	}
 }
@@ -89,15 +90,18 @@ const TArray<FMovementChainData>* UAC_EnemyMovementManager::GetMovementChainForA
 
 void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 {
-	if (!ActiveMovementChain.IsValidIndex(CurrentMovementChainIndex))
+	if (MovementChainTracker.IsFinished())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Movement chain finished on %s"), *GetName());
+		UE_LOG(LogTemp, Log, TEXT("Chain finished."));
+		MovementChainTracker.Reset();
 		OnMovementChainEnded.Broadcast();
 		return;
 	}
 
-	const FMovementChainData& MovementData = ActiveMovementChain[CurrentMovementChainIndex];
-	TryActivateMovementAbilityWithEventData(MovementData);
+	if (const FMovementChainData* Data = MovementChainTracker.GetCurrent())
+	{
+		TryActivateMovementAbilityWithEventData(*Data);
+	}
 }
 
 void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovementChainData MovementChainData)
@@ -121,20 +125,27 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 	else
 	{
 		// Ability aktive edilemediyse bile zinciri sürdür
-		CurrentMovementChainIndex++;
+		MovementChainTracker.Advance();
 		TryExecuteNextMovementAbilityInChain();
 	}
 }
 
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedData& AbilityEndedData)
 {
+	if (AbilityEndedData.AbilityThatEnded)
+	{
+		AbilityEndedData.AbilityThatEnded->OnGameplayAbilityEndedWithData.RemoveAll(this);
+	}
+
 	if (AbilityEndedData.bWasCancelled)
 	{
-		// Oyundan çýkarken veya ability iptal edilince zinciri devam ettirme
+		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by ability. Resetting."));
+		MovementChainTracker.Reset();
+		OnMovementChainEnded.Broadcast();
 		return;
 	}
 
-	CurrentMovementChainIndex++;
+	MovementChainTracker.Advance();
 	TryExecuteNextMovementAbilityInChain();
 }
 

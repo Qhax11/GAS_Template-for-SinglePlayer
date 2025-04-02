@@ -17,13 +17,13 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 		return nullptr;
 	}
 
-	const UGameplayAbility* const InAbilityCDO = AbilityClass.GetDefaultObject();
+	UGAS_GameplayAbilityBase* const InAbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
 	{
 		if (Spec.Ability == InAbilityCDO)
 		{
 			HandleGameplayEvent(EventData.EventTag, &EventData);
-			return CastChecked<UGAS_GameplayAbilityBase>(Spec.Ability);
+			return CastChecked<UGAS_GameplayAbilityBase>(Spec.GetPrimaryInstance());
 		}
 	}
 
@@ -39,42 +39,26 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 		return nullptr;
 	}
 
-	const UGameplayAbility* const InAbilityCDO = AbilityClass.GetDefaultObject();
+	UGAS_GameplayAbilityBase* const InAbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
 	{
 		if (Spec.Ability == InAbilityCDO)
 		{
 			if (TryActivateAbility(Spec.Handle))
 			{
-				return CastChecked<UGAS_GameplayAbilityBase>(Spec.Ability);
+				if (UGAS_GameplayAbilityBase* PrimaryInstance = Cast<UGAS_GameplayAbilityBase>(Spec.GetPrimaryInstance()))
+				{
+					return PrimaryInstance;
+				}
+				else
+				{
+					return InAbilityCDO;
+				}
 			}
 		}
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: No ability found for class %s!"), *AbilityClass->GetName());
-	return nullptr;
-}
-
-UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByTagAndReturnInstance(FGameplayTag AbilityTag)
-{
-	if (!AbilityTag.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByTagAndReturnInstance: AbilityTag is invalid!"));
-		return nullptr;
-	}
-
-	for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
-	{
-		if (Spec.Ability->AbilityTags.HasTagExact(AbilityTag))
-		{
-			if (TryActivateAbility(Spec.Handle))
-			{
-				return CastChecked<UGAS_GameplayAbilityBase>(Spec.Ability);
-			}
-		}
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByTagAndReturnInstance: No ability found for Tag %s!"), *AbilityTag.GetTagName().ToString());
 	return nullptr;
 }
 

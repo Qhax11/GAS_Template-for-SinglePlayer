@@ -25,7 +25,6 @@ protected:
 	virtual void RequestMoveToTarget(AActor* TargetActor);
 
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
-	FDelegateHandle MoveCompleteHandle;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 

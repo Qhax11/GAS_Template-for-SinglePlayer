@@ -24,7 +24,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStrafingBase|EQS")
 	TEnumAsByte<EEnvQueryRunMode::Type> QueryRunMode = EEnvQueryRunMode::RandomBest25Pct;
 
-	virtual void StartEQSForStrafingLocation();
+	virtual void StartEQSForStrafingLocation(FGameplayTag StrafeDirectionTag);
+
+	float ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag);
 
 	virtual void OnStrafingLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
 

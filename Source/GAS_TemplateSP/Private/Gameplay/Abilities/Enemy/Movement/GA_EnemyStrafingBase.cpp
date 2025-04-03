@@ -23,10 +23,27 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	StartEQSForStrafingLocation();
+	if (!TriggerEventData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+
+	if (TriggerEventData->InstigatorTags.IsValidIndex(0))
+	{
+		FGameplayTag DirectionTag = TriggerEventData->InstigatorTags.GetByIndex(0);
+		StartEQSForStrafingLocation(DirectionTag);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("There is no direction tag in: %s, ability cannot initialize"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
 }
 
-void UGA_EnemyStrafingBase::StartEQSForStrafingLocation()
+void UGA_EnemyStrafingBase::StartEQSForStrafingLocation(FGameplayTag StrafeDirectionTag)
 {
 	if (!EQSQueryTemplate)
 	{
@@ -36,7 +53,27 @@ void UGA_EnemyStrafingBase::StartEQSForStrafingLocation()
 
 	FEnvQueryRequest QueryRequest(EQSQueryTemplate, EnemyController);
 
+	float DirectionFloat = ConvertStrafeDirectionTagToFloat(StrafeDirectionTag);
+
+	QueryRequest.SetFloatParam(FName("StrafeDirectionParam"), DirectionFloat);
+
 	QueryRequest.Execute(QueryRunMode, this, &UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished);
+}
+
+float UGA_EnemyStrafingBase::ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag)
+{
+	float TagValue = 2.0f; // Default: Both
+
+	if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_Gameplay_Utilities_Direction_Left))
+	{
+		TagValue = 0.0f;
+	}
+	else if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_Gameplay_Utilities_Direction_Right))
+	{
+		TagValue = 1.0f;
+	}
+
+	return TagValue;
 }
 
 void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)

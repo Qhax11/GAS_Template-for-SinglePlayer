@@ -23,7 +23,4 @@ public:
 	UEQT_BossStrafing();
 
 	virtual void RunTest(FEnvQueryInstance& QueryInstance) const;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Strafing")
-	EStrafeDirection StrafeDirection = EStrafeDirection::Both;
 };

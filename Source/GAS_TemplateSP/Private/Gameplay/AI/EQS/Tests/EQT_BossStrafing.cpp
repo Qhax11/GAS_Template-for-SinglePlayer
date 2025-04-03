@@ -27,6 +27,22 @@ void UEQT_BossStrafing::RunTest(FEnvQueryInstance& QueryInstance) const
         return;
     }
 
+    float DirectionValue = 2.0f; // Default to "Both"
+    if (const float* FoundValue = QueryInstance.NamedParams.Find(FName("StrafeDirectionParam")))
+    {
+        DirectionValue = *FoundValue;
+    }
+
+    EStrafeDirection StrafeDirection = EStrafeDirection::Both;
+    if (DirectionValue == 0.0f)
+    {
+        StrafeDirection = EStrafeDirection::Left;
+    }
+    else if (DirectionValue == 1.0f)
+    {
+        StrafeDirection = EStrafeDirection::Right;
+    }
+
     FVector BossLocation = Boss->GetActorLocation();
     FVector BossForward = Boss->GetActorForwardVector();
 

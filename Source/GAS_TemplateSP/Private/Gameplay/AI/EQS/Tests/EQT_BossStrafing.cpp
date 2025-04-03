@@ -27,21 +27,7 @@ void UEQT_BossStrafing::RunTest(FEnvQueryInstance& QueryInstance) const
         return;
     }
 
-    float DirectionValue = 2.0f; // Default to "Both"
-    if (const float* FoundValue = QueryInstance.NamedParams.Find(FName("StrafeDirectionParam")))
-    {
-        DirectionValue = *FoundValue;
-    }
-
-    EStrafeDirection StrafeDirection = EStrafeDirection::Both;
-    if (DirectionValue == 0.0f)
-    {
-        StrafeDirection = EStrafeDirection::Left;
-    }
-    else if (DirectionValue == 1.0f)
-    {
-        StrafeDirection = EStrafeDirection::Right;
-    }
+    EStrafeDirection StrafeDirection = GetDirectionFromParam(QueryInstance);
 
     FVector BossLocation = Boss->GetActorLocation();
     FVector BossForward = Boss->GetActorForwardVector();
@@ -84,4 +70,25 @@ void UEQT_BossStrafing::RunTest(FEnvQueryInstance& QueryInstance) const
 
         It.SetScore(EEnvTestPurpose::Score, EEnvTestFilterType::Range, StrafingScore, 0.0f, 1.0f);
     }
+}
+
+EStrafeDirection UEQT_BossStrafing::GetDirectionFromParam(const FEnvQueryInstance& QueryInstance) const
+{
+    float DirectionValue = 2.0f;
+    if (const float* FoundValue = QueryInstance.NamedParams.Find(FName("StrafeDirectionParam")))
+    {
+        DirectionValue = *FoundValue;
+    }
+
+    EStrafeDirection StrafeDirection = EStrafeDirection::Both;
+    if (DirectionValue == 0.0f)
+    {
+        StrafeDirection = EStrafeDirection::Left;
+    }
+    else if (DirectionValue == 1.0f)
+    {
+        StrafeDirection = EStrafeDirection::Right;
+    }
+
+    return StrafeDirection;
 }

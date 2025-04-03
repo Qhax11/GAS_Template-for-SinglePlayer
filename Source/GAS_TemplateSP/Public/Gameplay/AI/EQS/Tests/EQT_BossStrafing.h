@@ -23,4 +23,6 @@ public:
 	UEQT_BossStrafing();
 
 	virtual void RunTest(FEnvQueryInstance& QueryInstance) const;
+
+	EStrafeDirection GetDirectionFromParam(const FEnvQueryInstance& QueryInstance) const;
 };

@@ -46,10 +46,12 @@ void UAC_EnemyMovementManager::BeginPlay()
 	}
 }
 
-void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)
+void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
-	if (!AbilityMovementChainSet || !AbilityClass || !OwnerEnemyASC)
+	if (!BehaviorDecisionComp || !SelectedAbilityClass || !OwnerEnemyASC) 
+	{
 		return;
+	}
 
 	if (MovementChainTracker.bIsActive)
 	{
@@ -57,11 +59,11 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 		return;
 	}
 
-	BehaviorDecisionComp->GetBestMovementChain()
-	const TArray<FMovementAbilityData>* MovementData = GetMovementChainForAbility(AbilityClass);
-	if (MovementData && MovementData->Num() > 0)
+	const TArray<FMovementAbilityData> MovementData = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
+	//const TArray<FMovementAbilityData>* MovementData = GetMovementChainForAbility(AbilityClass);
+	if (MovementData.Num() > 0)
 	{
-		MovementChainTracker.StartChain(*MovementData);
+		MovementChainTracker.StartChain(MovementData);
 		TryExecuteNextMovementAbilityInChain();
 	}
 }
@@ -78,22 +80,6 @@ void UAC_EnemyMovementManager::CancelMovementAbilities()
 	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement);
 
 	OwnerEnemyASC->CancelAbilities(&CancelTags);
-}
-
-const TArray<FMovementAbilityData>* UAC_EnemyMovementManager::GetMovementChainForAbility(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass) const
-{
-	for (const FAttackAbilityMovementChain& Mapping : AbilityMovementChainSet->ChainMappings)
-	{
-		if (Mapping.AttackAbilityClass == AbilityClass)
-		{
-			if (Mapping.MovementChains.Num() > 0 && Mapping.MovementChains[0])
-			{
-				return &Mapping.MovementChains[0]->MovementChain; // Þimdilik sadece ilk MovementChain'i alýyoruz
-			}
-		}
-	}
-
-	return nullptr;
 }
 
 void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()

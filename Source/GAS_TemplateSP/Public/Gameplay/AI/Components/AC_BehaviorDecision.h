@@ -5,7 +5,6 @@
 #include "Components/ActorComponent.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
-#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "AC_BehaviorDecision.generated.h"
 
 UENUM(BlueprintType)
@@ -136,7 +135,7 @@ class UAttackAbilityMovementChainMapAsset : public UPrimaryDataAsset
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<FAttackAbilityMovementChain> ChainMappings;
+    TArray<FAttackAbilityMovementChains> ChainMappings;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -172,23 +171,23 @@ public:
     FAttackData GetBestAttack(float DistanceToTarget);
 
     UFUNCTION(BlueprintCallable)
-    TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> AttackAbility);
+    TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
     FAttackData LastSelectedAttackAbilityData;
 
 protected:
-    TArray<UMovementChainAsset*> GetMovementChainsForAbility(TSubclassOf<UGAS_GameplayAbilityBase> Ability) const;
+    TArray<UMovementChainAsset*> GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const;
 
     UPROPERTY(EditDefaultsOnly)
     EBehaviorState BehaviorState = EBehaviorState::None;
 
     float CalculateAttackAbilityScoreBasedOnTargetDistance(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
 
-    float CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainDataAsset* MovementChain);
+    float CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset);
 
-    float CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainDataAsset* MovementChain);
+    float CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset);
 
-    float CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainDataAsset* MovementChain);
+    float CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset);
 
     class AAIControllerBase* OwnerController;
     class AGAS_EnemyBase* OwnerEnemyBase;

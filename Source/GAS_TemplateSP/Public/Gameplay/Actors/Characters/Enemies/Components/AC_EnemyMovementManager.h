@@ -61,22 +61,18 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void StartMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass);
+	void StartMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
 	UFUNCTION(BlueprintCallable)
 	void CancelMovementAbilities();
 
 protected:
-	const TArray<FMovementAbilityData>* GetMovementChainForAbility(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass) const;
-
 	void TryExecuteNextMovementAbilityInChain();
 
 	void TryActivateMovementAbilityWithEventData(FMovementAbilityData MovementChainData);
 
 	UFUNCTION()
 	void OnMovementAbilityEnded(const FAbilityEndedData& AbilityEndedData);
-
-
 
 	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;

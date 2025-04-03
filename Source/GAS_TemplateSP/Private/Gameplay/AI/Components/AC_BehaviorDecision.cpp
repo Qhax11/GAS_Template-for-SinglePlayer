@@ -58,7 +58,7 @@ void UAC_BehaviorDecision::OnTargetDetected(AActor* Target)
 
 FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 {
-    if (!AttackAbilityDataAsset || !OwnerEnemyASC)
+    if (!AttackAbilityAsset || !OwnerEnemyASC)
     {
         return FAttackData();
     }
@@ -66,7 +66,7 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
     float BestScore = -FLT_MAX;
     FAttackData BestAttack;
 
-    for (const FAttackData& Attack : AttackAbilityDataAsset->AttackAbilities)
+    for (const FAttackData& Attack : AttackAbilityAsset->AttackAbilities)
     {
         if (!Attack.AbilityClass) 
         {
@@ -98,32 +98,33 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
     return BestAttack;
 }
 
-TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> AttackAbility)
+TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
-    if (!AttackAbility || !AttackAbilityMovementChainMapAsset)
+    if (!SelectedAbilityClass || !AttackAbilityMovementChainMapAsset)
     {
         return TArray<FMovementAbilityData>();
     }
 
-    UMovementChainDataAsset* BestMovementChainDataAsset;
+    UMovementChainAsset* BestMovementChainDataAsset = nullptr;
 
     float BestScore = -FLT_MAX;
     float BestMovementChainDistanceScore = 0.f;
     float BestMovementChainTargetMovementScore = 0.f;
 
-    for (FAttackAbilityMovementChain& AttackAbilityMovementChain : AttackAbilityMovementChainMapAsset->ChainMappings)
+    TArray<UMovementChainAsset*> AbilityMovementChainAssets = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
+    for (UMovementChainAsset* MovementChainAsset : AbilityMovementChainAssets)
     {
-        float DistanceScore = CalculateMovementChainScoreBasedOnTargetDistance(MovementChainDataAsset);
-        float TargetMovementScore = CalculateMovementChainScoreBasedOnTargetMovement(MovementChainDataAsset);
+        float DistanceScore = CalculateMovementChainScoreBasedOnTargetDistance(MovementChainAsset);
+        float TargetMovementScore = CalculateMovementChainScoreBasedOnTargetMovement(MovementChainAsset);
 
-        float TotalScore = MovementChain->ScoreBias + DistanceScore + TargetMovementScore;
+        float TotalScore = MovementChainAsset->ScoreBias + DistanceScore + TargetMovementScore;
 
         if (TotalScore > BestScore)
         {
             BestScore = TotalScore;
             BestMovementChainDistanceScore = DistanceScore;
             BestMovementChainTargetMovementScore = TargetMovementScore;
-            BestMovementChainDataAsset = MovementChain;
+            BestMovementChainDataAsset = MovementChainAsset;
         }
     }
 
@@ -137,17 +138,22 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     return BestMovementChainDataAsset->MovementChain;
 }
 
-TArray<UMovementChainAsset*> UAC_BehaviorDecision::GetMovementChainsForAbility(TSubclassOf<UGAS_GameplayAbilityBase> Ability) const
+TArray<UMovementChainAsset*> UAC_BehaviorDecision::GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const
 {
-    if (!AttackAbilityMovementChainMapAsset || !Ability) 
+    TArray<UMovementChainAsset*> Result;
+
+    if (!AttackAbilityMovementChainMapAsset || !SelectedAbilityClass)
     {
-        return TArray<UMovementChainAsset*>();
+        return Result;
     }
 
-    TArray<UMovementChainAsset*> Result;
-    for (const FAttackAbilityMovementChain& Mapping : AttackAbilityMovementChainMapAsset->ChainMappings)
+    for (const FAttackAbilityMovementChains& Mapping : AttackAbilityMovementChainMapAsset->ChainMappings)
     {
-       Mapping.
+        if (Mapping.AttackAbilityClass == SelectedAbilityClass)
+        {
+            Result.Append(Mapping.MovementChainAssets);
+            break;
+        }
     }
 
     return Result;
@@ -175,7 +181,7 @@ float UAC_BehaviorDecision::CalculateAttackAbilityScoreBasedOnTargetDistance(flo
     return FMath::Clamp(Score, 0.f, 1.f);
 }
 
-float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainDataAsset* MovementChain)
+float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset)
 {
     float Score = 0.0f;
 
@@ -196,7 +202,7 @@ float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetDistance(UMo
     return Score;
 }
 
-float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainDataAsset* MovementChain)
+float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset)
 {
     float Score = 0.0f;
     /*
@@ -222,7 +228,7 @@ float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetMovement(UMo
     return Score;
 }
 
-float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainDataAsset* MovementChain)
+float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset)
 {
     return 0.0f;
 }

@@ -93,6 +93,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Backward, "Gameplay.Utilities.Direction.Backward");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Left, "Gameplay.Utilities.Direction.Left");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Right, "Gameplay.Utilities.Direction.Right");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Random, "Gameplay.Utilities.Direction.Random");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_LastPlayerDirection, "Gameplay.Utilities.Direction.LastPlayerDirection");
 
 	/**********************************************
 	*----------------<Filter Tags>----------------*

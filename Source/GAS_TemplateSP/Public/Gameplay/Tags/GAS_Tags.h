@@ -97,6 +97,9 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Utilities_Direction_Backward);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Utilities_Direction_Left);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Utilities_Direction_Right);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Utilities_Direction_Random); // It could be Forward, Backward, Left or Right
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Utilities_Direction_LastPlayerDirection);
+	
 
 	/**********************************************
 	*----------------<Filter Tags>----------------*

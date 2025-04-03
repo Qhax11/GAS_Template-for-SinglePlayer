@@ -31,6 +31,13 @@ void UAC_EnemyMovementManager::BeginPlay()
 		return;
 	}
 
+	BehaviorDecisionComp = OwnerController->GetBehaviorDecisionComponent();
+	if (!BehaviorDecisionComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComp is null in: %s !"), *GetName());
+		return;
+	}
+
 	OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
 	if (!OwnerEnemyASC)
 	{
@@ -50,10 +57,11 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 		return;
 	}
 
-	const TArray<FMovementChainData>* MovementData = GetMovementChainForAbility(AbilityClass);
+	BehaviorDecisionComp->GetBestMovementChain()
+	const TArray<FMovementAbilityData>* MovementData = GetMovementChainForAbility(AbilityClass);
 	if (MovementData && MovementData->Num() > 0)
 	{
-		MovementChainTracker.Start(*MovementData);
+		MovementChainTracker.StartChain(*MovementData);
 		TryExecuteNextMovementAbilityInChain();
 	}
 }
@@ -72,15 +80,15 @@ void UAC_EnemyMovementManager::CancelMovementAbilities()
 	OwnerEnemyASC->CancelAbilities(&CancelTags);
 }
 
-const TArray<FMovementChainData>* UAC_EnemyMovementManager::GetMovementChainForAbility(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass) const
+const TArray<FMovementAbilityData>* UAC_EnemyMovementManager::GetMovementChainForAbility(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass) const
 {
-	for (const FAbilityMovementChain& Mapping : AbilityMovementChainSet->ChainMappings)
+	for (const FAttackAbilityMovementChain& Mapping : AbilityMovementChainSet->ChainMappings)
 	{
-		if (Mapping.Ability == AbilityClass)
+		if (Mapping.AttackAbilityClass == AbilityClass)
 		{
 			if (Mapping.MovementChains.Num() > 0 && Mapping.MovementChains[0])
 			{
-				return &Mapping.MovementChains[0]->Movements; // Þimdilik sadece ilk MovementChain'i alýyoruz
+				return &Mapping.MovementChains[0]->MovementChain; // Þimdilik sadece ilk MovementChain'i alýyoruz
 			}
 		}
 	}
@@ -90,29 +98,29 @@ const TArray<FMovementChainData>* UAC_EnemyMovementManager::GetMovementChainForA
 
 void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 {
-	if (MovementChainTracker.IsFinished())
+	if (MovementChainTracker.IsChainFinished())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Chain finished."));
-		MovementChainTracker.Reset();
+		MovementChainTracker.ResetChain();
 		OnMovementChainEnded.Broadcast();
 		return;
 	}
 
-	if (const FMovementChainData* Data = MovementChainTracker.GetCurrent())
+	if (const FMovementAbilityData* Data = MovementChainTracker.GetCurrentMovementAbilityInChain())
 	{
 		TryActivateMovementAbilityWithEventData(*Data);
 	}
 }
 
-void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovementChainData MovementChainData)
+void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovementAbilityData MovementChainData)
 {
-	if (!MovementChainData.MovementAbilityClass || !MovementChainData.TriggerTag.IsValid()) 
+	if (!MovementChainData.MovementAbilityClass || !MovementChainData.AbilityTriggerTag.IsValid())
 	{
 		UE_LOG(LogTemp, Log, TEXT("MovementAbilityClass or TriggerTag is null in: %s!"), *GetName());
 	}
 
 	FGameplayEventData MovementAbilityEventData;
-	MovementAbilityEventData.EventTag = MovementChainData.TriggerTag;
+	MovementAbilityEventData.EventTag = MovementChainData.AbilityTriggerTag;
 	MovementAbilityEventData.InstigatorTags.AddTag(MovementChainData.DirectionTag);
 	UGAS_GameplayAbilityBase* MovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementChainData.MovementAbilityClass, MovementAbilityEventData);
 	if (MovementAbility) 
@@ -135,7 +143,7 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedData& A
 	if (AbilityEndedData.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by ability. Resetting."));
-		MovementChainTracker.Reset();
+		MovementChainTracker.ResetChain();
 		OnMovementChainEnded.Broadcast();
 		return;
 	}

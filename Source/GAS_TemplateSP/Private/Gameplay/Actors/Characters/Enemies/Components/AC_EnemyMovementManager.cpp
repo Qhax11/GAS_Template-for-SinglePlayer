@@ -50,6 +50,7 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 {
 	if (!BehaviorDecisionComp || !SelectedAbilityClass || !OwnerEnemyASC) 
 	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComp, SelectedAbilityClass or OwnerEnemyASC is null in: %s!"), *GetName());
 		return;
 	}
 

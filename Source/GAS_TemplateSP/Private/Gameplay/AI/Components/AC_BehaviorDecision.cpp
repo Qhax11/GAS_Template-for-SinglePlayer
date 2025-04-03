@@ -60,6 +60,7 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 {
     if (!AttackAbilityAsset || !OwnerEnemyASC)
     {
+        UE_LOG(LogTemp, Warning, TEXT("AttackAbilityAsset or OwnerEnemyASC is null in: %s !"), *GetName());
         return FAttackData();
     }
 

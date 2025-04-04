@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Gameplay/Tags/GAS_Tags.h"
 #include "AC_HeroMovementListener.generated.h"
 
 // Recommendation: make function that calculate how far have you traveled for ai.
@@ -54,7 +55,10 @@ public:
 	float GetDisplacementInLastSeconds(float Seconds) const;
 
 	UFUNCTION(BlueprintCallable)
-	EHeroRelativeDirection GetHeroLastMovementDirectionByInput() const;
+	EHeroRelativeDirection GetHeroLastMovementDirectionByLastInput() const;
+
+	UFUNCTION(BlueprintCallable)
+	FGameplayTag GetHeroLastMovementDirectionTagByLastInput() const;
 
 private:
 	float LastMovementTime = 0.0f;

@@ -115,6 +115,11 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     TArray<UMovementChainAsset*> AbilityMovementChainAssets = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
     for (UMovementChainAsset* MovementChainAsset : AbilityMovementChainAssets)
     {
+        if (GetTargetDistance() < MovementChainAsset->MinRange)
+        {
+            continue;
+        }
+
         float DistanceScore = CalculateMovementChainScoreBasedOnTargetDistance(MovementChainAsset);
         float TargetMovementScore = CalculateMovementChainScoreBasedOnTargetMovement(MovementChainAsset);
 
@@ -128,6 +133,8 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
             BestMovementChainDataAsset = MovementChainAsset;
         }
     }
+
+    ApplyDirectionPoliciesToSelectedMovementChain(BestMovementChainDataAsset);
 
     if (GEngine && EnableSelectedDebug)
     {
@@ -186,47 +193,18 @@ float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetDistance(UMo
 {
     float Score = 0.0f;
 
-    /*
-    // If the distance is shorter than the attack's minimum range, moving backward helps to increase distance and reach effective range.
-    if ((DistanceToTarget < SelectedAttackAbilityData.MinRange) && (MovementData.Direction == EMovementDirection::Backward))
+    if (MovementChainAsset->DistanceScoreCurve)
     {
-        Score += 1.0f;
-    }
-    */
-    /*
-    if (MovementData.DistanceScoreCurve)
-    {
-        float CurveScore = MovementData.DistanceScoreCurve->GetFloatValue(DistanceToTarget);
+        float CurveScore = MovementChainAsset->DistanceScoreCurve->GetFloatValue(GetTargetDistance());
         Score += CurveScore;
     }
-    */
+    
     return Score;
 }
 
 float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset)
 {
-    float Score = 0.0f;
-    /*
-    EHeroRelativeDirection HeroDirection = HeroMovementListenerComp->GetHeroLastMovementDirectionByInput();
-    float Displacement = HeroMovementListenerComp->GetDisplacementInLastSeconds(SecondsCheckMovement);
-
-    if (MovementData.HeroRelativeDirectionScoreModifiers.Contains(HeroDirection))
-    {
-        Score += MovementData.HeroRelativeDirectionScoreModifiers[HeroDirection];
-    }
-
-    // 2. Oyuncu gerçekten anlamlı bir şekilde hareket etti mi?
-    if (Displacement > 50.f) // örnek eşik değeri, ayarlanabilir
-    {
-        // Daha hareketli bir oyuncuya göre bazı hareket türleri (örneğin Dash) tercih edilebilir
-        Score += MovementData.ScoreModifierWhenTargetIsMoving;
-    }
-    else
-    {
-        Score += MovementData.ScoreModifierWhenTargetIsIdle;
-    }
-    */
-    return Score;
+    return 0.0f;
 }
 
 float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset)
@@ -234,29 +212,66 @@ float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnBehaviorState(UMov
     return 0.0f;
 }
 
-/*
-float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnLastSelectedMovement(FMovementData MovementData, FMovementData LastMovementData)
+bool UAC_BehaviorDecision::ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset)
 {
-        return 0.0f;
-        /*
-
-    if (LastMovementData.MovementName == NAME_None)
+    if (!SelectedMovementChainAsset) 
     {
-        return 0.0f;
+        UE_LOG(LogTemp, Warning, TEXT("SelectedMovementChainAsset is null in: %s"), *GetName());
+        return false;
+    }
+    bool bChanged = false;
+
+    FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListenerComp->GetHeroLastMovementDirectionTagByLastInput();
+
+    for (FMovementAbilityData& MovementAbilityInChain : SelectedMovementChainAsset->MovementChain)
+    {
+        if (!MovementAbilityInChain.DirectionPolicyTag.IsValid()) 
+        {
+            continue;
+        }
+
+        if (MovementAbilityInChain.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
+        {
+            if (HeroLastDirectionGameplayTag.IsValid()) 
+            {
+                MovementAbilityInChain.ResolvedDirectionTag = HeroLastDirectionGameplayTag;
+                bChanged = true;
+            }
+        }
+        else if (MovementAbilityInChain.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random) 
+        {
+            MovementAbilityInChain.ResolvedDirectionTag = GetRandomDirectionTag();
+            bChanged = true;
+        }
     }
 
-    float ChainScore = 0.0f;
-    if (MovementData.MovementChainDataBasedOnLastMovementData.LastMovementDirectionScoreModifiers.Contains(LastMovementData.Direction))
-    {
-        ChainScore += MovementData.MovementChainDataBasedOnLastMovementData.LastMovementDirectionScoreModifiers[LastMovementData.Direction];
-    }
-
-    if (MovementData.MovementChainDataBasedOnLastMovementData.LastMovementTypeScoreModifiers.Contains(LastMovementData.MovementType))
-    {
-        ChainScore += MovementData.MovementChainDataBasedOnLastMovementData.LastMovementTypeScoreModifiers[LastMovementData.MovementType];
-    }
-
-    // Weight multiplier
-    ChainScore *= MovementData.MovementChainDataBasedOnLastMovementData.ChainScoreWeight;
+    return bChanged;
 }
-*/
+
+FGameplayTag UAC_BehaviorDecision::GetRandomDirectionTag()
+{
+    static const TArray<FGameplayTag> PossibleDirections =
+    {
+        GAS_Tags::TAG_AI_Direction_Resolved_Forward,
+        GAS_Tags::TAG_AI_Direction_Resolved_Backward,
+        GAS_Tags::TAG_AI_Direction_Resolved_Left,
+        GAS_Tags::TAG_AI_Direction_Resolved_Right     
+    };
+
+    int32 RandomIndex = FMath::RandRange(0, PossibleDirections.Num() - 1);
+    return PossibleDirections[RandomIndex];
+}
+
+float UAC_BehaviorDecision::GetTargetDistance()
+{
+    if (!OwnerEnemyBase || !OwnerController || !OwnerController->GetTarget())
+    {
+        return -1.f;
+    }
+
+    FVector MyLocation = OwnerEnemyBase->GetActorLocation();
+    FVector TargetLocation = OwnerController->GetTarget()->GetActorLocation();
+
+    return FVector::Dist(MyLocation, TargetLocation);
+}
+

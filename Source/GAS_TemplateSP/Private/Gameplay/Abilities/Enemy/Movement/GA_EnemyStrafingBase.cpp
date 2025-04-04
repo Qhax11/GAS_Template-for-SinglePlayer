@@ -8,10 +8,9 @@ UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
 
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
-
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_AI_Movement_Strafing;
+	TriggerData.TriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Strafing;
 
 	AbilityTriggers.Add(TriggerData);
 }
@@ -64,11 +63,11 @@ float UGA_EnemyStrafingBase::ConvertStrafeDirectionTagToFloat(FGameplayTag Straf
 {
 	float TagValue = 2.0f; // Default: Both
 
-	if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_Gameplay_Utilities_Direction_Left))
+	if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_AI_Direction_Resolved_Left))
 	{
 		TagValue = 0.0f;
 	}
-	else if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_Gameplay_Utilities_Direction_Right))
+	else if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_AI_Direction_Resolved_Right))
 	{
 		TagValue = 1.0f;
 	}

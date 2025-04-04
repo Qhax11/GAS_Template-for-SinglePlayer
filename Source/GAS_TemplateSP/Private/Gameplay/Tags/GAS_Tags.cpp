@@ -30,11 +30,6 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Death, "Gameplay.AbilityTriggerEvent.Death");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ComboMelee, "Gameplay.AbilityTriggerEvent.ComboMelee");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ParryKnockback, "Gameplay.AbilityTriggerEvent.ParryKnockback");
-
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_AI_Movement, "Gameplay.AbilityTriggerEvent.AI.Movement");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_AI_Movement_Strafing, "Gameplay.AbilityTriggerEvent.AI.Movement.Strafing");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_AI_Movement_ChaseTarget, "Gameplay.AbilityTriggerEvent.AI.Movement.ChaseTarget");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_AI_Movement_Dash, "Gameplay.AbilityTriggerEvent.AI.Movement.Dash");
 	
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff, "Gameplay.State.Debuff");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Stun, "Gameplay.State.Debuff.Stun");
@@ -87,14 +82,6 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Strafing, "Gameplay.Ability.Movement.Strafing");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash, "Gameplay.Ability.Movement.Dash");
 
-	// ****** UTILITIES ****** //
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction, "Gameplay.Utilities.Direction");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Forward, "Gameplay.Utilities.Direction.Forward");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Backward, "Gameplay.Utilities.Direction.Backward");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Left, "Gameplay.Utilities.Direction.Left");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Right, "Gameplay.Utilities.Direction.Right");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_Random, "Gameplay.Utilities.Direction.Random");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Utilities_Direction_LastPlayerDirection, "Gameplay.Utilities.Direction.LastPlayerDirection");
 
 	/**********************************************
 	*----------------<Filter Tags>----------------*
@@ -170,6 +157,23 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash, "AI.Ability.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash_Cooldown, "AI.Ability.Dash.Cooldown");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement, "AI.AbilityTriggerEvent.Movement");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Strafing, "AI.AbilityTriggerEvent.Movement.Strafing");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_ChaseTarget, "AI.AbilityTriggerEvent.Movement.ChaseTarget");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Dash, "AI.AbilityTriggerEvent.Movement.Dash");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction, "AI.Direction");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved, "AI.Direction.Resolved");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Forward, "AI.Direction.Resolved.Forward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Backward, "AI.Direction.Resolved.Bakward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Left, "AI.Direction.Resolved.Left");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Right, "AI.Direction.Resolved.Right");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy, "AI.Direction.Policy");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_Random, "AI.Direction.Policy.Random");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_PlayerLastDirection, "AI.Direction.Policy.LastPlayerDirection");
+
 
 	/************************************************
 	*-------------------<UI Tags>-------------------*

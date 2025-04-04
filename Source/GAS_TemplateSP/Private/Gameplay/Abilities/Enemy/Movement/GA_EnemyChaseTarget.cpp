@@ -6,10 +6,9 @@
 UGA_EnemyChaseTarget::UGA_EnemyChaseTarget()
 {
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
-
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_AI_Movement_ChaseTarget;
+	TriggerData.TriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_ChaseTarget;
 
 	AbilityTriggers.Add(TriggerData);
 }

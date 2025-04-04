@@ -88,7 +88,7 @@ float UAC_HeroMovementListener::GetDisplacementInLastSeconds(float Seconds) cons
     }
 }
 
-EHeroRelativeDirection UAC_HeroMovementListener::GetHeroLastMovementDirectionByInput() const
+EHeroRelativeDirection UAC_HeroMovementListener::GetHeroLastMovementDirectionByLastInput() const
 {
     if (!OwnerHero) return EHeroRelativeDirection::None;
 
@@ -105,6 +105,24 @@ EHeroRelativeDirection UAC_HeroMovementListener::GetHeroLastMovementDirectionByI
     else
     {
         return Input.X > 0 ? EHeroRelativeDirection::Right : EHeroRelativeDirection::Left;
+    }
+}
+
+FGameplayTag UAC_HeroMovementListener::GetHeroLastMovementDirectionTagByLastInput() const
+{
+    EHeroRelativeDirection Direction = GetHeroLastMovementDirectionByLastInput();
+    switch (Direction)
+    {
+    case EHeroRelativeDirection::Forward:
+        return GAS_Tags::TAG_AI_Direction_Resolved_Forward;
+    case EHeroRelativeDirection::Backward:
+        return GAS_Tags::TAG_AI_Direction_Resolved_Backward;
+    case EHeroRelativeDirection::Left:
+        return GAS_Tags::TAG_AI_Direction_Resolved_Left;
+    case EHeroRelativeDirection::Right:
+        return GAS_Tags::TAG_AI_Direction_Resolved_Right;
+    default:
+        return FGameplayTag();
     }
 }
 

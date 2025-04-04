@@ -11,7 +11,7 @@ UGA_BossDash::UGA_BossDash()
 
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_AI_Movement_Dash;
+	TriggerData.TriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dash;
 
 	AbilityTriggers.Add(TriggerData);
 }
@@ -56,19 +56,19 @@ FVector UGA_BossDash::CalculateDestination()
 
 	FVector DirectionVector = FVector::ZeroVector;
 
-	if (DirectionTag == GAS_Tags::TAG_Gameplay_Utilities_Direction_Forward)
+	if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Forward)
 	{
 		DirectionVector = AvatarActor->GetActorForwardVector();
 	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Utilities_Direction_Backward)
+	else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Backward)
 	{
 		DirectionVector = -AvatarActor->GetActorForwardVector();
 	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Utilities_Direction_Left)
+	else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Left)
 	{
 		DirectionVector = -AvatarActor->GetActorRightVector();
 	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Utilities_Direction_Right)
+	else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Right)
 	{
 		DirectionVector = AvatarActor->GetActorRightVector();
 	}

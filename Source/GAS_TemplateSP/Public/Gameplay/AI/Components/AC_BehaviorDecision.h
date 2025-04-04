@@ -74,11 +74,14 @@ public:
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<UGAS_GameplayAbilityBase> MovementAbilityClass;
 
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.AbilityTriggerEvent.Movement"))
     FGameplayTag AbilityTriggerTag;
 
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "Gameplay.Utilities.Direction"))
-    FGameplayTag DirectionTag;
+    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Resolved", ToolTip = "Resolved direction tag used by this ability at runtime. Typically set based on the direction policy."))
+    FGameplayTag ResolvedDirectionTag;
+
+    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Policy", ToolTip = "Defines how the direction should be resolved at runtime (e.g., LastPlayerDirection, Random)."))
+    FGameplayTag DirectionPolicyTag;
 };
 
 UCLASS(BlueprintType)
@@ -87,31 +90,31 @@ class UMovementChainAsset : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this movement chain. Used for debugging or referencing in logic."))
     FName MovementChainName;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Sequence of movement abilities that make up this chain. Executed in order."))
     TArray<FMovementAbilityData> MovementChain;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers based on current behavior state (e.g., aggressive, defensive)."))
     TMap<EBehaviorState, float> BehaviorStateModifiers;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score curve based on distance to target. High values make this chain more likely when far/close depending on the curve."))
     UCurveFloat* DistanceScoreCurve = nullptr;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "If true, the movement chain adapts its direction based on the player’s last move direction."))
     bool bUseDynamicDirectionFromPlayer = false;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score bonus applied if the target is currently moving."))
     float ScoreModifierWhenTargetIsMoving = 0.0f;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    float ScoreModifierWhenTargetIsIdle = 0.0f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score bonus applied if the target is not moving)."))
+    float ScoreModifierWhenTargetIsNotMoving = 0.0f;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Minimum target distance required for this chain to be considered."))
     float MinRange;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Flat score bias added to this chain's total score. Useful to prioritize certain chains."))
     float ScoreBias = 0.f;
 };
 
@@ -188,6 +191,12 @@ protected:
     float CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset);
 
     float CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset);
+
+    bool ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset);
+
+    FGameplayTag GetRandomDirectionTag();
+
+    float GetTargetDistance();
 
     class AAIControllerBase* OwnerController;
     class AGAS_EnemyBase* OwnerEnemyBase;

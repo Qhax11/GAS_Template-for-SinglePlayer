@@ -17,6 +17,8 @@ public:
 
 	void OnComboMeleeAttackInput();
 
+	void InitComboChainTracker();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -26,6 +28,8 @@ protected:
 
 	AGAS_HeroBase* HeroBase;
 
+	// We can select combo on UI in future
+	int32 SelectedComboIndex = 0;
 public:
 	// The tags are blocks MeleeCombo because of same input
 	UPROPERTY(EditDefaultsOnly, Category = "HeroMeleeComboManager")

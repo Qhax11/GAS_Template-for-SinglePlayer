@@ -7,7 +7,102 @@
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "AC_MeleeComboManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboEnded);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeAbilityEnded, const bool, bWasCancelled);
+
+
+USTRUCT(BlueprintType)
+struct FComboAbilityData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxRange = 300.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName MontageSection;
+};
+
+USTRUCT(BlueprintType)
+struct FComboChainData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName ComboChainName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FComboAbilityData> ComboAbilities;
+};
+
+UCLASS(BlueprintType)
+class UComboChainAsset : public UDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FComboChainData> ComboChains;
+};
+
+USTRUCT()
+struct FActiveComboChainTracker
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FComboChainData ComboChain = FComboChainData();
+
+	UPROPERTY()
+	int32 CurrentIndex = 0;
+
+	UPROPERTY()
+	TSubclassOf<UGA_ComboMeleeAttack> CurrentAbility = nullptr;
+
+	UPROPERTY()
+	bool bNextAttackAllowed = true;
+
+	bool IsCurrentComboValid() const
+	{
+		return ComboChain.ComboAbilities.IsValidIndex(CurrentIndex);
+	}
+
+	bool IsChainFinished() const
+	{
+		return CurrentIndex >= ComboChain.ComboAbilities.Num();
+	}
+
+	const FComboAbilityData* GetCurrentCombo() const
+	{
+		return IsCurrentComboValid() ? &ComboChain.ComboAbilities[CurrentIndex] : nullptr;
+	}
+
+	void Advance()
+	{
+		++CurrentIndex;
+	}
+
+	void Reset()
+	{
+		CurrentIndex = 0;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FComboChainSearchResult
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	FComboChainData ComboChain;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 FindedComboIndex = INDEX_NONE;
+};
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -27,18 +122,19 @@ protected:
 	AGAS_CharacterBase* CharacterBase;
 	UAbilitySystemComponent* CharacterBaseASC;
 
-	TSubclassOf<UGA_ComboMeleeAttack> GetNextComboMeleeAttackAbility();
-
 	UFUNCTION()
 	virtual void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
+
+	FComboChainSearchResult GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
 
 	UFUNCTION()
 	void OnCanActivateNextAttack();
 
+	UPROPERTY(BlueprintAssignable)
+	FOnComboEnded OnComboEnded;
+
 	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<UGA_ComboMeleeAttack>> ComboMeleeAttackAbilities;
+	UComboChainAsset* ComboChainAsset;
 
-	int32 AbilityIndex = 0;
-
-	bool bCanActivateAbility = true;
+	FActiveComboChainTracker ActiveComboChainTracker;
 };

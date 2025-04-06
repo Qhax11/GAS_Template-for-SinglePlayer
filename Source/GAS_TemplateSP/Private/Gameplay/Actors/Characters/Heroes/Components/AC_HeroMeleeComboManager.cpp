@@ -19,6 +19,8 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
 		return;
 	}
+
+	InitComboChainTracker();
 }
 
 bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
@@ -57,13 +59,21 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 		return;
 	}
 
-	Super::OnComboMeleeAttackAbilityEnd(EndedData);
-
-	// If ComboMelee ability is normal ended
-	if (!EndedData.bWasCancelled)
+	if (EndedData.bWasCancelled)
 	{
-		AbilityIndex = 0;
+		if (ActiveComboChainTracker.IsChainFinished())
+		{
+			ActiveComboChainTracker.Reset();
+			OnComboEnded.Broadcast();
+		}
 	}
+	// If ComboMelee ability is normal ended
+	else 
+	{
+		ActiveComboChainTracker.Reset();
+		OnComboEnded.Broadcast();
+	}
+
 }
 
 void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
@@ -79,4 +89,21 @@ void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSec
 void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
 {
 	ActivateComboMeleeAttackAbility();
+}
+
+void UAC_HeroMeleeComboManager::InitComboChainTracker()
+{
+	if (!ComboChainAsset || !ComboChainAsset->ComboChains.IsValidIndex(SelectedComboIndex))
+	{
+		return;
+	}
+
+	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[SelectedComboIndex];
+	ActiveComboChainTracker.CurrentIndex = 0;
+
+	const FComboAbilityData* FirstCombo = ActiveComboChainTracker.GetCurrentCombo();
+	if (FirstCombo)
+	{
+		ActiveComboChainTracker.CurrentAbility = FirstCombo->ComboAbilityClass;
+	}
 }

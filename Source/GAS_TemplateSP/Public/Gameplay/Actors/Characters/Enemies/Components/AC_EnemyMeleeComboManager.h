@@ -5,8 +5,6 @@
 #include "Gameplay/Components/AC_MeleeComboManager.h"
 #include "AC_EnemyMeleeComboManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboEnded);
-
 UCLASS()
 class GAS_TEMPLATESP_API UAC_EnemyMeleeComboManager : public UAC_MeleeComboManager
 {
@@ -23,14 +21,7 @@ public:
 
 protected:
 	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData) override;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnComboEnded OnComboEnded;
-
-	// Ranges of combo attack abilities.
-	UPROPERTY(EditDefaultsOnly)
-	TArray<float> ComboRanges;
-
+	
 private:
 	class AAIControllerBase* AIController;
 

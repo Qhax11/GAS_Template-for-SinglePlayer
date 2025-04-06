@@ -36,59 +36,91 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection
 		return;
 	}
 
-	if (!bCanActivateAbility) 
+	if (!ActiveComboChainTracker.bNextAttackAllowed)
 	{
 		return;
 	}
 
-	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = GetNextComboMeleeAttackAbility())
+	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = ActiveComboChainTracker.GetCurrentCombo()->ComboAbilityClass)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ComboAbilityClass"));
+
 		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityClass))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("SpecHandle"));
+
 			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
 			{
+				UE_LOG(LogTemp, Warning, TEXT("ActivatedComboMeleeAttack: %s"), *ActivatedComboMeleeAttack->GetName());
+
 				ActivatedComboMeleeAttack->SectionName = MontageSection;
 				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityClass))
 				{
+					UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClass"));
+
 					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
 					{
 						ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_MeleeComboManager::OnCanActivateNextAttack);
 					}
-					bCanActivateAbility = false;
+					ActiveComboChainTracker.bNextAttackAllowed = false;
 				}
 			}
 		}
 	}
 }
 
-TSubclassOf<UGA_ComboMeleeAttack> UAC_MeleeComboManager::GetNextComboMeleeAttackAbility()
-{
-	if (ComboMeleeAttackAbilities.IsValidIndex(AbilityIndex))
-	{
-		return ComboMeleeAttackAbilities[AbilityIndex++];
-	}
-
-	else if (AbilityIndex > ComboMeleeAttackAbilities.Num() - 1)
-	{
-		if (ComboMeleeAttackAbilities.IsValidIndex(0))
-		{
-			AbilityIndex = 0;
-			return ComboMeleeAttackAbilities[AbilityIndex++];
-		}
-	}
-	
-	return nullptr;
-}
-
 void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
+	// If it is another ability. 
+	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
+	{
+		return;
+	}
+
+	if (!EndedData.bWasCancelled) 
+	{
+		if (ActiveComboChainTracker.IsChainFinished())
+		{
+			ActiveComboChainTracker.Reset();
+			OnComboEnded.Broadcast();
+		}
+	}
+
 	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
-	bCanActivateAbility = true;
+	ActiveComboChainTracker.bNextAttackAllowed = true;
+}
+
+FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)
+{
+	FComboChainSearchResult Result;
+
+	if (!ComboChainAsset)
+	{
+		return Result;
+	}
+
+	for (int32 i = 0; i < ComboChainAsset->ComboChains.Num(); ++i)
+	{
+		const FComboChainData& ComboChainData = ComboChainAsset->ComboChains[i];
+
+		for (const FComboAbilityData& ComboAbilityData : ComboChainData.ComboAbilities)
+		{
+			if (ComboAbilityData.ComboAbilityClass == ComboMeleeAttackAbilityClass)
+			{
+				Result.ComboChain = ComboChainData;
+				Result.FindedComboIndex = i;
+				return Result;
+			}
+		}
+	}
+
+	return Result;
 }
 
 void UAC_MeleeComboManager::OnCanActivateNextAttack()
 {
-	bCanActivateAbility = true;
+	ActiveComboChainTracker.bNextAttackAllowed = true;
+	ActiveComboChainTracker.Advance();
 }
 
 

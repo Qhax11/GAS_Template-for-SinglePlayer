@@ -18,13 +18,36 @@ void UAC_EnemyMeleeComboManager::BeginPlay()
 
 void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass, FName MontageSection)
 {
-	AbilityIndex = ComboMeleeAttackAbilities.Find(ComboMeleeAttackAbilityClass);
-	ActivateComboMeleeAttackAbility(MontageSection);
-}
+	if (!ComboChainAsset)
+	{
+		return;
+	}
 
+	FComboChainSearchResult SearchResult = GetComboChainOfSelectedComboAbility(ComboMeleeAttackAbilityClass);
+	if (SearchResult.FindedComboIndex == INDEX_NONE)
+	{
+		// Geçerli bir combo zinciri bulundu.
+	}
+
+	// Yeni tracker baþlat
+	ActiveComboChainTracker.ComboChain = SearchResult.ComboChain;
+	ActiveComboChainTracker.CurrentIndex = SearchResult.FindedComboIndex;
+
+	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
+	if (!ComboAbilityData)
+	{
+		OnComboEnded.Broadcast();
+		return;
+	}
+
+	// Ability referansýný kaydet ve baþlat
+	//ActiveComboChainTracker.CurrentAbility = ComboAbilityData->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>();
+	ActivateComboMeleeAttackAbility();
+}
+ 
 void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
 {
-	if (GetTargetDistance() < ComboRanges[AbilityIndex])
+	if (GetTargetDistance() < ActiveComboChainTracker.GetCurrentCombo()->MaxRange)
 	{
 		Super::ActivateComboMeleeAttackAbility(MontageSection);
 	}
@@ -32,7 +55,11 @@ void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSe
 	else
 	{
 		OnComboEnded.Broadcast();
+		ActiveComboChainTracker = FActiveComboChainTracker(); // Reset
+		return;
 	}
+
+	Super::ActivateComboMeleeAttackAbility(MontageSection);
 }
 
 void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
@@ -44,8 +71,7 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 		return;
 	}
 
-	// This means we've reached the end of the combo
-	if (AbilityIndex == ComboMeleeAttackAbilities.Num())
+	if (ActiveComboChainTracker.IsChainFinished())
 	{
 		OnComboEnded.Broadcast();
 	}

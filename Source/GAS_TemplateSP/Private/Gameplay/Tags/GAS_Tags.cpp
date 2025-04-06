@@ -166,7 +166,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction, "AI.Direction");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved, "AI.Direction.Resolved");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Forward, "AI.Direction.Resolved.Forward");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Backward, "AI.Direction.Resolved.Bakward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Backward, "AI.Direction.Resolved.Backward");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Left, "AI.Direction.Resolved.Left");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Right, "AI.Direction.Resolved.Right");
 

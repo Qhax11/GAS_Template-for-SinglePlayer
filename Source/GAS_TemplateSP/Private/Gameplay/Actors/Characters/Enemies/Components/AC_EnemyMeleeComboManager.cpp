@@ -58,18 +58,17 @@ void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSe
 		ActiveComboChainTracker = FActiveComboChainTracker(); // Reset
 		return;
 	}
-
-	Super::ActivateComboMeleeAttackAbility(MontageSection);
 }
 
 void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	Super::OnComboMeleeAttackAbilityEnd(EndedData);
-
+	// If it is another ability. 
 	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
 	{
 		return;
 	}
+
+	Super::OnComboMeleeAttackAbilityEnd(EndedData);
 
 	if (ActiveComboChainTracker.IsChainFinished())
 	{

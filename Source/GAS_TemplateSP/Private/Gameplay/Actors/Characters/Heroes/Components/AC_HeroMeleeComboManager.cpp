@@ -51,6 +51,23 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 	}
 }
 
+void UAC_HeroMeleeComboManager::InitComboChainTracker()
+{
+	if (!ComboChainAsset || !ComboChainAsset->ComboChains.IsValidIndex(SelectedComboIndex))
+	{
+		return;
+	}
+
+	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[SelectedComboIndex];
+	ActiveComboChainTracker.CurrentIndex = 0;
+
+	const FComboAbilityData* FirstCombo = ActiveComboChainTracker.GetCurrentCombo();
+	if (FirstCombo)
+	{
+		ActiveComboChainTracker.CurrentAbility = FirstCombo->ComboAbilityClass;
+	}
+}
+
 void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
 	// If it is another ability or if it is UGA_HeroHologram we need a reset. 
@@ -68,12 +85,13 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 		}
 	}
 	// If ComboMelee ability is normal ended
-	else 
+	else if(!EndedData.bWasCancelled)
 	{
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}
 
+	ActiveComboChainTracker.bNextAttackAllowed = true;
 }
 
 void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
@@ -91,19 +109,4 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
 	ActivateComboMeleeAttackAbility();
 }
 
-void UAC_HeroMeleeComboManager::InitComboChainTracker()
-{
-	if (!ComboChainAsset || !ComboChainAsset->ComboChains.IsValidIndex(SelectedComboIndex))
-	{
-		return;
-	}
 
-	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[SelectedComboIndex];
-	ActiveComboChainTracker.CurrentIndex = 0;
-
-	const FComboAbilityData* FirstCombo = ActiveComboChainTracker.GetCurrentCombo();
-	if (FirstCombo)
-	{
-		ActiveComboChainTracker.CurrentAbility = FirstCombo->ComboAbilityClass;
-	}
-}

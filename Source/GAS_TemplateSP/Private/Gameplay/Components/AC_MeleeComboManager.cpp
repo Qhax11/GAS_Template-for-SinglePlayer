@@ -43,21 +43,15 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection
 
 	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = ActiveComboChainTracker.GetCurrentCombo()->ComboAbilityClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ComboAbilityClass"));
-
 		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityClass))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SpecHandle"));
-
 			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("ActivatedComboMeleeAttack: %s"), *ActivatedComboMeleeAttack->GetName());
-
+				UE_LOG(LogTemp, Warning, TEXT("SelectedComboMeleeAttack: %s"), *ActivatedComboMeleeAttack->GetName());
 				ActivatedComboMeleeAttack->SectionName = MontageSection;
 				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityClass))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClass"));
-
+					UE_LOG(LogTemp, Warning, TEXT("Activeted!"));
 					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
 					{
 						ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_MeleeComboManager::OnCanActivateNextAttack);
@@ -77,17 +71,9 @@ void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData
 		return;
 	}
 
-	if (!EndedData.bWasCancelled) 
-	{
-		if (ActiveComboChainTracker.IsChainFinished())
-		{
-			ActiveComboChainTracker.Reset();
-			OnComboEnded.Broadcast();
-		}
-	}
-
 	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
 	ActiveComboChainTracker.bNextAttackAllowed = true;
+	ActiveComboChainTracker.Advance();
 }
 
 FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)
@@ -121,6 +107,7 @@ void UAC_MeleeComboManager::OnCanActivateNextAttack()
 {
 	ActiveComboChainTracker.bNextAttackAllowed = true;
 	ActiveComboChainTracker.Advance();
+	UE_LOG(LogTemp, Warning, TEXT("Combo Index Advanced To: %d"), ActiveComboChainTracker.CurrentIndex);
 }
 
 

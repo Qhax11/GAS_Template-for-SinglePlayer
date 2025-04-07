@@ -64,7 +64,7 @@ void UAC_HeroMeleeComboManager::InitComboChainTracker()
 	const FComboAbilityData* FirstCombo = ActiveComboChainTracker.GetCurrentCombo();
 	if (FirstCombo)
 	{
-		ActiveComboChainTracker.CurrentAbility = FirstCombo->ComboAbilityClass;
+		ActiveComboChainTracker.CurrentAbilityClass = FirstCombo->ComboAbilityClass;
 	}
 }
 
@@ -80,6 +80,7 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 	{
 		if (ActiveComboChainTracker.IsChainFinished())
 		{
+			UE_LOG(LogTemp, Warning, TEXT("IsChainFinished with canceled"));
 			ActiveComboChainTracker.Reset();
 			OnComboEnded.Broadcast();
 		}
@@ -87,6 +88,7 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 	// If ComboMelee ability is normal ended
 	else if(!EndedData.bWasCancelled)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("IsChainFinished without canceled"));
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}

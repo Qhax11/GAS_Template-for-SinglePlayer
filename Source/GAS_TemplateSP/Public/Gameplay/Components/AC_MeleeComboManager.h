@@ -61,7 +61,7 @@ struct FActiveComboChainTracker
 	int32 CurrentIndex = 0;
 
 	UPROPERTY()
-	TSubclassOf<UGA_ComboMeleeAttack> CurrentAbility = nullptr;
+	TSubclassOf<UGA_ComboMeleeAttack> CurrentAbilityClass = nullptr;
 
 	UPROPERTY()
 	bool bNextAttackAllowed = true;

@@ -68,7 +68,9 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 		return;
 	}
 
-	Super::OnComboMeleeAttackAbilityEnd(EndedData);
+	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
+	ActiveComboChainTracker.bNextAttackAllowed = true;
+	ActiveComboChainTracker.Advance();
 
 	if (ActiveComboChainTracker.IsChainFinished())
 	{

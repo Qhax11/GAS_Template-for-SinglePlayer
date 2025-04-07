@@ -41,17 +41,16 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection
 		return;
 	}
 
-	if (TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass = ActiveComboChainTracker.GetCurrentCombo()->ComboAbilityClass)
+	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
+	if (ComboAbilityData && ComboAbilityData->ComboAbilityClass)
 	{
-		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityClass))
+		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityData->ComboAbilityClass))
 		{
 			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("SelectedComboMeleeAttack: %s"), *ActivatedComboMeleeAttack->GetName());
 				ActivatedComboMeleeAttack->SectionName = MontageSection;
-				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityClass))
+				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityData->ComboAbilityClass))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Activeted!"));
 					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
 					{
 						ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_MeleeComboManager::OnCanActivateNextAttack);
@@ -65,15 +64,7 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection
 
 void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	// If it is another ability. 
-	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
-	{
-		return;
-	}
-
-	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
-	ActiveComboChainTracker.bNextAttackAllowed = true;
-	ActiveComboChainTracker.Advance();
+	// Implementation will be in subclasses.
 }
 
 FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)
@@ -107,7 +98,12 @@ void UAC_MeleeComboManager::OnCanActivateNextAttack()
 {
 	ActiveComboChainTracker.bNextAttackAllowed = true;
 	ActiveComboChainTracker.Advance();
-	UE_LOG(LogTemp, Warning, TEXT("Combo Index Advanced To: %d"), ActiveComboChainTracker.CurrentIndex);
+
+	if (ActiveComboChainTracker.IsChainFinished())
+	{
+		ActiveComboChainTracker.Reset();
+		OnComboEnded.Broadcast();
+	}
 }
 
 

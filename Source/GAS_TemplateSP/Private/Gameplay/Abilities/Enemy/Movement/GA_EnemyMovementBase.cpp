@@ -118,6 +118,11 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (EnemyController)
+	{
+		EnemyController->StopMovement(); 
+	}
+
 	if (EnemyController && EnemyController->GetPathFollowingComponent())
 	{
 		EnemyController->GetPathFollowingComponent()->OnRequestFinished.RemoveAll(this);

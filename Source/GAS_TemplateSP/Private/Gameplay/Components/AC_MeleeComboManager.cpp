@@ -64,6 +64,27 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection
 	}
 }
 
+void UAC_MeleeComboManager::StopCombo()
+{
+	CancelComboAbilities();
+	ActiveComboChainTracker.Reset();
+	OnComboEnded.Broadcast();
+}
+
+void UAC_MeleeComboManager::CancelComboAbilities()
+{
+	if (!CharacterBaseASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CancelMovementAbilities: ASC is null"));
+		return;
+	}
+
+	FGameplayTagContainer CancelTags;
+	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
+
+	CharacterBaseASC->CancelAbilities(&CancelTags);
+}
+
 void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
 	// Implementation will be in subclasses.

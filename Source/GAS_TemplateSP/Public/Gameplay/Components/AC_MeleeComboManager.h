@@ -122,8 +122,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
 
+	UFUNCTION(BlueprintCallable)
+	void StopCombo();
+
 protected:
 	virtual void BeginPlay() override;
+
+	void CancelComboAbilities();
 
 	AGAS_CharacterBase* CharacterBase;
 	UAbilitySystemComponent* CharacterBaseASC;

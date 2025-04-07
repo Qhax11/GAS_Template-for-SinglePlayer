@@ -46,6 +46,8 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection
 	{
 		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityData->ComboAbilityClass))
 		{
+			ActiveComboChainTracker.CurrentAbilitySpecHandle = SpecHandle->Handle;
+			ActiveComboChainTracker.CurrentAbilityInstance = SpecHandle->GetPrimaryInstance(); 
 			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
 			{
 				ActivatedComboMeleeAttack->SectionName = MontageSection;

@@ -76,6 +76,11 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 		return;
 	}
 
+	if (EndedData.AbilitySpecHandle != ActiveComboChainTracker.CurrentAbilitySpecHandle)
+	{
+		return;
+	}
+
 	if (EndedData.bWasCancelled)
 	{
 		if (ActiveComboChainTracker.IsChainFinished())

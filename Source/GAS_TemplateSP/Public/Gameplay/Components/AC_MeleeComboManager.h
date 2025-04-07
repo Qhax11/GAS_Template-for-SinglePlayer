@@ -64,6 +64,12 @@ struct FActiveComboChainTracker
 	TSubclassOf<UGA_ComboMeleeAttack> CurrentAbilityClass = nullptr;
 
 	UPROPERTY()
+	UGameplayAbility* CurrentAbilityInstance = nullptr;
+
+	UPROPERTY()
+	FGameplayAbilitySpecHandle CurrentAbilitySpecHandle;
+
+	UPROPERTY()
 	bool bNextAttackAllowed = true;
 
 	bool IsCurrentComboValid() const

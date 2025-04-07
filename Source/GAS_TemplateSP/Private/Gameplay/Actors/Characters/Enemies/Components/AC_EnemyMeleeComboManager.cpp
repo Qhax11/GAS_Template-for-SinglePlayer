@@ -62,8 +62,7 @@ void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSe
 
 void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	// If it is another ability. 
-	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
+	if (EndedData.AbilitySpecHandle != ActiveComboChainTracker.CurrentAbilitySpecHandle)
 	{
 		return;
 	}

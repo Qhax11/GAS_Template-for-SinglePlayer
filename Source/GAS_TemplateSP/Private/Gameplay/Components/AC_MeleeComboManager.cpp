@@ -75,7 +75,7 @@ void UAC_MeleeComboManager::CancelComboAbilities()
 {
 	if (!CharacterBaseASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CancelMovementAbilities: ASC is null"));
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBaseASC is null in: %s"), *GetName());
 		return;
 	}
 

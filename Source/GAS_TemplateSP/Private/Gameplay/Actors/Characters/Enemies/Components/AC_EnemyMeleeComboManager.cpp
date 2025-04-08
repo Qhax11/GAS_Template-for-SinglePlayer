@@ -54,8 +54,7 @@ void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSe
 	// If target out of combo attack's range end combo
 	else
 	{
-		OnComboEnded.Broadcast();
-		ActiveComboChainTracker = FActiveComboChainTracker(); // Reset
+		StopCombo();
 		return;
 	}
 }

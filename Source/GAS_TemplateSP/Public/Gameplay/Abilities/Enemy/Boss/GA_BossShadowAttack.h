@@ -20,6 +20,8 @@ public:
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
+	virtual void OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData) override;
+
 	UPROPERTY(EditDefaultsOnly)
 	float ExecuteTime = 0.5f;
 

@@ -86,6 +86,11 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 	Super::OnTargetActorConfirm(TargetActorData);
 }
 
+void UGA_BossShadowAttack::OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData)
+{
+	Super::OnTargetActorCancelled(TargetActorData);
+}
+
 float UGA_BossShadowAttack::GetTargetDistance(AActor* ShadowTargetActor)
 {
 	if (!BossController || !BossController->GetTarget() || !ShadowTargetActor)

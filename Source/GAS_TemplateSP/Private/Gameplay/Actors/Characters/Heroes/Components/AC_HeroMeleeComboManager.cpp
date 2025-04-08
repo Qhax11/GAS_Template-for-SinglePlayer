@@ -85,15 +85,13 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 	{
 		if (ActiveComboChainTracker.IsChainFinished())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("IsChainFinished with canceled"));
 			ActiveComboChainTracker.Reset();
 			OnComboEnded.Broadcast();
 		}
 	}
-	// If ComboMelee ability is normal ended
+	// If ComboMelee ability ended as normal
 	else if(!EndedData.bWasCancelled)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IsChainFinished without canceled"));
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}

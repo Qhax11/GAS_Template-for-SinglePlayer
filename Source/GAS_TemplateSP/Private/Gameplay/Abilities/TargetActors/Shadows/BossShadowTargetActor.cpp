@@ -57,4 +57,5 @@ void ABossShadowTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* Ove
 	}
 
 	bIsTargetInRange = false;
+	Cancel();
 }

@@ -20,7 +20,6 @@ void UGA_ComboMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	
 }
 
 void UGA_ComboMeleeAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)

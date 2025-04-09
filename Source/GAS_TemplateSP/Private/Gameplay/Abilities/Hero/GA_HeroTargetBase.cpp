@@ -64,7 +64,7 @@ void UGA_HeroTargetBase::ConfirmTargetingFromInput()
 
 	ApplyGameplayEffectToSelf(AbilityConfirmEffects);
 
-	if (TargetActor)
+	if (TargetActor->IsValidLowLevel())
 	{
 		TargetActor->Confirm();
 	}
@@ -72,7 +72,7 @@ void UGA_HeroTargetBase::ConfirmTargetingFromInput()
 
 void UGA_HeroTargetBase::CancelAbilityFromInput()
 {
-	if (TargetActor)
+	if (TargetActor->IsValidLowLevel())
 	{
 		TargetActor->Cancel();
 	}

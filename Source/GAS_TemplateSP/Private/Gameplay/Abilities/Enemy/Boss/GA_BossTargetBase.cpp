@@ -3,6 +3,11 @@
 
 #include "Gameplay/Abilities/Enemy/Boss/GA_BossTargetBase.h"
 
+UGA_BossTargetBase::UGA_BossTargetBase()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
+
 void UGA_BossTargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, 

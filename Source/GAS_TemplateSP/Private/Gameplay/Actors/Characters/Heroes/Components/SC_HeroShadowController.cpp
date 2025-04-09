@@ -54,6 +54,11 @@ void USC_HeroShadowController::TickComponent(float DeltaTime, ELevelTick TickTyp
 	CalculateCumulativeMouseInputs();
 	UpdateTraceForwardDistance();
 
+	FVector PlayerViewLocation;
+	FRotator PlayerViewRotation;
+	PC->GetPlayerViewPoint(PlayerViewLocation, PlayerViewRotation);
+	SetWorldRotation(FRotator(0, PlayerViewRotation.Yaw, 0));
+
 	bool IsHologramActive = HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
 	if (!IsHologramActive || !HeroShadow)
 	{
@@ -67,10 +72,7 @@ void USC_HeroShadowController::TickComponent(float DeltaTime, ELevelTick TickTyp
 	}
 	else 
 	{
-		FVector PlayerViewLocation;
-		FRotator PlayerViewRotation;
-		PC->GetPlayerViewPoint(PlayerViewLocation, PlayerViewRotation);
-		SetWorldRotation(FRotator(0, PlayerViewRotation.Yaw, 0));
+	
 	}
 
 	SetHeroShadowLocation();

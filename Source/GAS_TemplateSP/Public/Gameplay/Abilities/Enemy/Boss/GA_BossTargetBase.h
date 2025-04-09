@@ -14,6 +14,8 @@ class GAS_TEMPLATESP_API UGA_BossTargetBase : public UGA_TargetBase
 	GENERATED_BODY()
 
 public:
+	UGA_BossTargetBase();
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	AAIControllerBase* BossController;

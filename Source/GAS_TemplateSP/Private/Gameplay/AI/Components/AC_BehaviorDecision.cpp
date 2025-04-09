@@ -80,8 +80,6 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
             continue;
         }
 
-        bool bWasBlockedRecently = false; // dış sistemden okunmalı
-
         float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(DistanceToTarget, Attack.MinRange, Attack.MaxRange);
 
         float TotalScore = Attack.ScoreBias + DistanceScore;

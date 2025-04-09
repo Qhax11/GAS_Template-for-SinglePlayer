@@ -8,7 +8,6 @@
 
 UGA_TargetBase::UGA_TargetBase()
 {
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting);
 }
 

@@ -31,12 +31,6 @@ void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
         return;
     }
 
-    if (!TargetActorData.AbilityClass || !HeroShadowTargetActor->GetCurrentTarget())
-    {
-        Super::OnTargetActorConfirm(TargetActorData);
-        return;
-    }
-
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroShadowTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroShadowTargetActor->GetActorRotation());
 
@@ -45,6 +39,12 @@ void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow))
     {
         GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
+    }
+
+    if (!TargetActorData.AbilityClass || !HeroShadowTargetActor->GetCurrentTarget())
+    {
+        Super::OnTargetActorConfirm(TargetActorData);
+        return;
     }
 
     // Triggers the actual attack abilities.
@@ -71,12 +71,13 @@ void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
         FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(ShadowSpawnLocation, CurrentTargetLocation);
         Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), ShadowSpawnLocation);
 
-        SetShadowToShadowController();
+        SetShadowToShadowController(); 
         HeroBase->GetHeroShadowControllerComponent()->SetShadowLocationWithCumulativeMouseValuesTargetLocked();
     }
     else
     {
         ShadowSpawnLocation = HeroBase->GetHeroShadowControllerComponent()->GetHeroShadowLocationFromLineTrace();
+        ShadowSpawnLocation.Z += 90;
 
         TArray<AActor*> OutResultActors;
         TraceData->Trace->CreateTraceWithTeamFilterWithLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, ShadowSpawnLocation, OutResultActors);

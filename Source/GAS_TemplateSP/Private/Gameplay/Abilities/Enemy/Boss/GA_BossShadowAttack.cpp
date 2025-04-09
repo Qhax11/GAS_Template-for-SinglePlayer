@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/Enemy/Boss/GA_BossShadowAttack.h"
 #include "Gameplay/Abilities/TargetActors/Shadows/BossShadowTargetActor.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -24,6 +25,8 @@ void UGA_BossShadowAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 			false                              
 		);
 	}
+
+	ExecuteMovementChain();
 }
 
 void UGA_BossShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
@@ -40,6 +43,14 @@ void UGA_BossShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
 	else
 	{
 		Super::SpawnAndSetupTargetActor(Rotation, ShadowSpawnLocation);
+	}
+}
+
+void UGA_BossShadowAttack::ExecuteMovementChain()
+{
+	if (UAC_EnemyMovementManager* EnemyMovementManagerComp = BossCharacter->GetEnemyMovementManagerComponent()) 
+	{
+		EnemyMovementManagerComp->StartMovementChain(GetClass());
 	}
 }
 

@@ -16,6 +16,8 @@ public:
 
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector) override;
 
+	void ExecuteMovementChain();
+
 	void OnTimerConfirm();
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;

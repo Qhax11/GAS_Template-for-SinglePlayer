@@ -55,9 +55,15 @@ public:
 
 	virtual void Cancel();
 
+	virtual void DestroyTargetActor();
+
 	UPROPERTY(BlueprintAssignable)
 	FOnTargetActorConfirm OnConfirm;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnTargetActorCancel OnCancel;
+
+protected:
+	bool bBeingDestroyed = false;
+
 };

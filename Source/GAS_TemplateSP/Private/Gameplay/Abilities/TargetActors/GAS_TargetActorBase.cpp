@@ -14,3 +14,10 @@ void AGAS_TargetActorBase::Cancel()
 {
 	// Logic will be implmeneted in subclasses.
 }
+
+void AGAS_TargetActorBase::DestroyTargetActor()
+{
+	bBeingDestroyed = true;
+	Destroy();
+}
+

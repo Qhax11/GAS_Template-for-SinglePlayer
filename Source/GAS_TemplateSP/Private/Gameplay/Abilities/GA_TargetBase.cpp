@@ -75,14 +75,14 @@ void UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locatio
 
 void UGA_TargetBase::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
-	TargetActor->Destroy();
+	TargetActor->DestroyTargetActor();
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_TargetBase::OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData)
 {
 	BP_OnTargetActorCancelled(TargetActorData);
-	TargetActor->Destroy();
+	TargetActor->DestroyTargetActor();
 	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
 }
 

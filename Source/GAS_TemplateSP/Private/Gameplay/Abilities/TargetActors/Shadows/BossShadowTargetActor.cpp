@@ -9,6 +9,11 @@ void ABossShadowTargetActor::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* O
 	int32 OtherBodyIndex, bool bFromSweep, 
 	const FHitResult& SweepResult)
 {
+	if (bBeingDestroyed)
+	{
+		return;
+	}
+
 	Super::OnEnemyDetectionBeginOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
 	UAbilitySystemComponent* OtherActorASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OtherActor);
@@ -38,6 +43,11 @@ void ABossShadowTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* Ove
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
+	if (bBeingDestroyed) 
+	{
+		return;
+	}
+
 	Super::OnEnemyDetectionEndOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex);
 
 	UAbilitySystemComponent* OtherActorASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OtherActor);
@@ -57,5 +67,6 @@ void ABossShadowTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* Ove
 	}
 
 	bIsTargetInRange = false;
+
 	Cancel();
 }

@@ -47,7 +47,7 @@ void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
         return;
     }
 
-    // Triggers the actual attack abilities.
+    // Triggers the actual attack abilities from BP side.
     BP_OnTargetActorConfirm(TargetActorData);
 
     Super::OnTargetActorConfirm(TargetActorData);

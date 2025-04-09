@@ -69,6 +69,12 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 	}
 }
 
+void UAC_EnemyMovementManager::StopMovementAbilities()
+{
+	CancelMovementAbilities();
+	MovementChainTracker.ResetChain();
+}
+
 void UAC_EnemyMovementManager::CancelMovementAbilities()
 {
 	if (!OwnerEnemyASC)

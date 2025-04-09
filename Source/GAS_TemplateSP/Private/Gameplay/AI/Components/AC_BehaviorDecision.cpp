@@ -66,6 +66,7 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 
     float BestScore = -FLT_MAX;
     FAttackData BestAttack;
+    float BestAttackDistanceScore = 0.f;
 
     for (const FAttackData& Attack : AttackAbilityAsset->AttackAbilities)
     {
@@ -91,6 +92,13 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
             BestScore = TotalScore;
             BestAttack = Attack;
         }
+    }
+
+    if (GEngine && EnableSelectedDebug)
+    {
+        GEngine->AddOnScreenDebugMessage(9, 3.5f, FColor::Red,
+            FString::Printf(TEXT(">> Selected Attack: %s | DistanceScore: %.1f"),
+                *BestAttack.AbilityClass->GetName(), BestAttackDistanceScore));
     }
 
     LastSelectedAttackAbilityData = BestAttack;

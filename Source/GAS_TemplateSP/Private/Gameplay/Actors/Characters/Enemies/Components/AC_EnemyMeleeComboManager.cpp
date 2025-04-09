@@ -42,7 +42,7 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 
 	// Ability referansýný kaydet ve baþlat
 	//ActiveComboChainTracker.CurrentAbility = ComboAbilityData->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>();
-	ActivateComboMeleeAttackAbility();
+	ActivateComboMeleeAttackAbility(MontageSection);
 }
  
 void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)

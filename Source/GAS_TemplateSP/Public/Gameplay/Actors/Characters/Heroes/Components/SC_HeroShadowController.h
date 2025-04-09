@@ -44,6 +44,8 @@ protected:
 private:
 	FVector2D CalculateCumulativeMouseInputs();
 
+	void OrientToPlayerView();
+
 	void LookAtTarget();
 
 	void SetHeroShadowLocation();

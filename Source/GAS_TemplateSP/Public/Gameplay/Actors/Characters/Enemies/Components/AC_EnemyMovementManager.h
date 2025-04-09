@@ -64,6 +64,8 @@ public:
 	void StartMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
 	UFUNCTION(BlueprintCallable)
+	void StopMovementAbilities();
+
 	void CancelMovementAbilities();
 
 protected:

@@ -220,7 +220,6 @@ void AShadowTargetActorBase::OnEnemyDetectionEndOverlap(UPrimitiveComponent* Ove
     {
         return;
     }
-
 }
 
 void AShadowTargetActorBase::PlayMontageWithCallback(UAnimMontage* MontageToPlay)

@@ -64,6 +64,7 @@ public:
 	FOnTargetActorCancel OnCancel;
 
 protected:
+	// Prevents overlap logic from running during actor destruction
 	bool bBeingDestroyed = false;
 
 };

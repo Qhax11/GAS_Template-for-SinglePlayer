@@ -131,6 +131,8 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
 
         float TotalScore = MovementChainAsset->ScoreBias + DistanceScore + TargetMovementScore;
 
+        UE_LOG(LogTemp, Log, TEXT("[AI] MovementChain %s → Score: %.2f"), *MovementChainAsset->MovementChainName.ToString(), TotalScore);
+
         if (TotalScore > BestScore)
         {
             BestScore = TotalScore;

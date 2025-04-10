@@ -35,15 +35,18 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		return;
 	}
 
-	if (UWorld* World = GetWorld())
+	if (TriggerEventData->EventMagnitude > 0) 
 	{
-		World->GetTimerManager().SetTimer(
-			MovementTimerHandle,
-			this,
-			&UGA_EnemyChaseTarget::OnChaseTimeEnd,
-			TriggerEventData->EventMagnitude,
-			false
-		);
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().SetTimer(
+				MovementTimerHandle,
+				this,
+				&UGA_EnemyChaseTarget::OnChaseTimeEnd,
+				TriggerEventData->EventMagnitude,
+				false
+			);
+		}
 	}
 
 	RequestMoveToTarget(TargetActor);

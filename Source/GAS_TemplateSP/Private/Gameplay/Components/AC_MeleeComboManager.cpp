@@ -103,12 +103,12 @@ FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbili
 	{
 		const FComboChainData& ComboChainData = ComboChainAsset->ComboChains[i];
 
-		for (const FComboAbilityData& ComboAbilityData : ComboChainData.ComboAbilities)
+		for (int32 j = 0; j < ComboChainData.ComboAbilities.Num(); j++)
 		{
-			if (ComboAbilityData.ComboAbilityClass == ComboMeleeAttackAbilityClass)
+			if (ComboChainData.ComboAbilities[j].ComboAbilityClass == ComboMeleeAttackAbilityClass)
 			{
 				Result.ComboChain = ComboChainData;
-				Result.FindedComboIndex = i;
+				Result.FindedComboIndex = j;
 				return Result;
 			}
 		}

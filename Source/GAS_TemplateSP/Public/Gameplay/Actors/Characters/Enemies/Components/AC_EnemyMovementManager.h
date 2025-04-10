@@ -16,6 +16,7 @@ struct FMovementChainTracker
 
 public:
 	TArray<FMovementAbilityData> ActiveChain;
+	UGAS_GameplayAbilityBase* CurrentMovementAbility = nullptr;
 	int32 CurrentIndex = 0;
 	bool bIsActive = false;
 

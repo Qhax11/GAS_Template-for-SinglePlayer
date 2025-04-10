@@ -26,10 +26,9 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 	FComboChainSearchResult SearchResult = GetComboChainOfSelectedComboAbility(ComboMeleeAttackAbilityClass);
 	if (SearchResult.FindedComboIndex == INDEX_NONE)
 	{
-		// Geçerli bir combo zinciri bulundu.
+		return;
 	}
 
-	// Yeni tracker baþlat
 	ActiveComboChainTracker.ComboChain = SearchResult.ComboChain;
 	ActiveComboChainTracker.CurrentIndex = SearchResult.FindedComboIndex;
 
@@ -40,8 +39,6 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 		return;
 	}
 
-	// Ability referansýný kaydet ve baþlat
-	//ActiveComboChainTracker.CurrentAbility = ComboAbilityData->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>();
 	ActivateComboMeleeAttackAbility(MontageSection);
 }
  

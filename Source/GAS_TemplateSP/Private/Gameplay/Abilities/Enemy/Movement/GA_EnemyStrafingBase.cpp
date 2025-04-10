@@ -41,16 +41,20 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
-	if (UWorld* World = GetWorld())
+	if (TriggerEventData->EventMagnitude > 0)
 	{
-		World->GetTimerManager().SetTimer(
-			MovementTimerHandle,
-			this,
-			&UGA_EnemyStrafingBase::OnStrafingTimeEnd,
-			TriggerEventData->EventMagnitude,
-			false
-		);
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().SetTimer(
+				MovementTimerHandle,
+				this,
+				&UGA_EnemyStrafingBase::OnStrafingTimeEnd,
+				TriggerEventData->EventMagnitude,
+				false
+			);
+		}
 	}
+	
 }
 
 void UGA_EnemyStrafingBase::StartEQSForStrafingLocation(FGameplayTag StrafeDirectionTag)

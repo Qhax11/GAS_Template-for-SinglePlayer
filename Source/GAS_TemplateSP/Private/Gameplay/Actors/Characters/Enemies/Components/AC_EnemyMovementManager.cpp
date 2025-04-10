@@ -61,7 +61,6 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 	}
 
 	const TArray<FMovementAbilityData> MovementData = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
-	//const TArray<FMovementAbilityData>* MovementData = GetMovementChainForAbility(AbilityClass);
 	if (MovementData.Num() > 0)
 	{
 		MovementChainTracker.StartChain(MovementData);
@@ -94,7 +93,7 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	if (MovementChainTracker.IsChainFinished())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Chain finished."));
-		MovementChainTracker.ResetChain();
+		StopMovementAbilities();
 		OnMovementChainEnded.Broadcast();
 		return;
 	}
@@ -116,9 +115,11 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 	MovementAbilityEventData.EventTag = MovementChainData.AbilityTriggerTag;
 	MovementAbilityEventData.InstigatorTags.AddTag(MovementChainData.ResolvedDirectionTag);
 	MovementAbilityEventData.EventMagnitude = MovementChainData.TimeLimit;
+
 	UGAS_GameplayAbilityBase* MovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementChainData.MovementAbilityClass, MovementAbilityEventData);
 	if (MovementAbility) 
 	{
+		MovementChainTracker.CurrentMovementAbility = MovementAbility;
 		if (!MovementAbility->OnGameplayAbilityEndedWithData.IsAlreadyBound(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded))
 		{
 			MovementAbility->OnGameplayAbilityEndedWithData.AddDynamic(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
@@ -126,7 +127,6 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 	}
 	else
 	{
-		// Ability aktive edilemediyse bile zinciri sürdür
 		MovementChainTracker.Advance();
 		TryExecuteNextMovementAbilityInChain();
 	}
@@ -134,10 +134,15 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedData& AbilityEndedData)
 {
+	if (AbilityEndedData.AbilityThatEnded != MovementChainTracker.CurrentMovementAbility) 
+	{
+		return;
+	}
+
 	if (AbilityEndedData.bWasCancelled)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by ability. Resetting."));
-		MovementChainTracker.ResetChain();
+		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
+		StopMovementAbilities();
 		OnMovementChainEnded.Broadcast();
 		return;
 	}

@@ -23,25 +23,25 @@ struct FAttackData
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass;
 
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FGameplayTag AbilityCooldownTag;
 
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
 
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float MinRange;
 
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float MaxRange;
 
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float CounterPenalty;
 
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float ScoreBias;
 };
 

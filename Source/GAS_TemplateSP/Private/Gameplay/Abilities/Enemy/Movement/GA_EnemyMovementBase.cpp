@@ -128,6 +128,13 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 		EnemyController->GetPathFollowingComponent()->OnRequestFinished.RemoveAll(this);
 	}
 
+	if (GetWorld()->GetTimerManager().IsTimerActive(MovementTimerHandle))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(MovementTimerHandle);
+	}
+
+	// Super::EndAbility must be called last because it broadcasts the end event immediately.
+	// Calling it early may trigger delegates or cleanup logic before this ability finishes its own cleanup.
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

@@ -50,4 +50,5 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float LocomationDirection;
 
+	float LastSpeed = 0.f;
 };

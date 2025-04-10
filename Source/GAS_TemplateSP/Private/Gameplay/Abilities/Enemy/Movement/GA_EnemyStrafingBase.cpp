@@ -40,6 +40,17 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
+
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(
+			MovementTimerHandle,
+			this,
+			&UGA_EnemyStrafingBase::OnStrafingTimeEnd,
+			TriggerEventData->EventMagnitude,
+			false
+		);
+	}
 }
 
 void UGA_EnemyStrafingBase::StartEQSForStrafingLocation(FGameplayTag StrafeDirectionTag)
@@ -88,13 +99,8 @@ void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQuery
 	RequestMoveToLocation(BestLocation);
 }
 
-void UGA_EnemyStrafingBase::EndAbility(const FGameplayAbilitySpecHandle Handle, 
-	const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo,
-	bool bReplicateEndAbility, 
-	bool bWasCancelled)
+void UGA_EnemyStrafingBase::OnStrafingTimeEnd()
 {
-	// Super::EndAbility must be called last because it broadcasts the end event immediately.
-    // Calling it early may trigger delegates or cleanup logic before this ability finishes its own cleanup.
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
+

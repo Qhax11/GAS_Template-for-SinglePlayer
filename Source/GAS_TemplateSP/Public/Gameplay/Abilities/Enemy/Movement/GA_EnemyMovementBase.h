@@ -37,4 +37,6 @@ protected:
 	AGAS_EnemyBase* EnemyCharacter;
 	AAIControllerBase* EnemyController;
 	UCharacterMovementComponent* EnemyMovementComp;
+
+	FTimerHandle MovementTimerHandle;
 };

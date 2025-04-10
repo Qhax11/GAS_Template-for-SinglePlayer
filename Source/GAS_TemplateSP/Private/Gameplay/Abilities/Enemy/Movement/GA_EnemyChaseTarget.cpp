@@ -20,6 +20,13 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	if (!TriggerEventData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+
 	AActor* TargetActor = EnemyController->GetTarget();
 	if (!TargetActor)
 	{
@@ -28,5 +35,21 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		return;
 	}
 
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(
+			MovementTimerHandle,
+			this,
+			&UGA_EnemyChaseTarget::OnChaseTimeEnd,
+			TriggerEventData->EventMagnitude,
+			false
+		);
+	}
+
 	RequestMoveToTarget(TargetActor);
+}
+
+void UGA_EnemyChaseTarget::OnChaseTimeEnd()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }

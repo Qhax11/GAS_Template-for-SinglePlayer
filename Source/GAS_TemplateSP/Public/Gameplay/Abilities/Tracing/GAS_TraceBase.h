@@ -23,7 +23,7 @@ enum ETraceDirectionType : uint8
 };
 
 #define ECC_DEAD ECC_GameTraceChannel1
-#define ECC_ENEMY ECC_GameTraceChannel2
+#define ECC_DAMAGE ECC_GameTraceChannel2
 
 UCLASS(Abstract, Blueprintable, DefaultToInstanced, EditInLineNew)
 class GAS_TEMPLATESP_API UGAS_TraceBase : public UObject
@@ -55,7 +55,7 @@ public:
 	bool bIgnoreSelf = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
-	TEnumAsByte<ECollisionChannel> TraceChannel = ECollisionChannel::ECC_ENEMY;
+	TEnumAsByte<ECollisionChannel> TraceChannel = ECollisionChannel::ECC_DAMAGE;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	float TraceDistance = .0f;

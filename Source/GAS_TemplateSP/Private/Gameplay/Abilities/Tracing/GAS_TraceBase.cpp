@@ -215,8 +215,8 @@ void UGAS_TraceBase::TraceLogic(const UWorld* World, const FVector& Location, co
 	World->SweepMultiByChannel(
 		OutHitResults,
 		Location,
-		Location + TraceDirection.Vector() * TraceDistance,
-		FQuat::Identity,
+		Location + TraceDirection.Vector().GetSafeNormal() * TraceDistance,
+		Direction.Quaternion(),
 		TraceChannel,
 		GetCollisionShape(),
 		QueryParams

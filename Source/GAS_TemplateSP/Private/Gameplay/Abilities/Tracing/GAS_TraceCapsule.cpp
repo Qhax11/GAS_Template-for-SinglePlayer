@@ -13,7 +13,7 @@ void UGAS_TraceCapsule::DrawDebugShape(const UWorld* World, const FVector& Locat
 {
 	DrawDebugCapsule(
 		World,
-		Location + TraceDirection.Vector() * TraceDistance,
+		Location + TraceDirection.Vector().GetSafeNormal() * TraceDistance,
 		HalfHeight,
 		Radius,
 		TraceDirection.Quaternion(),

@@ -119,6 +119,11 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     float BestMovementChainTargetMovementScore = 0.f;
 
     TArray<UMovementChainAsset*> AbilityMovementChainAssets = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
+    if (AbilityMovementChainAssets.IsEmpty()) 
+    {
+        return TArray<FMovementAbilityData>();
+    }
+
     for (UMovementChainAsset* MovementChainAsset : AbilityMovementChainAssets)
     {
         if (GetTargetDistance() < MovementChainAsset->MinRange)

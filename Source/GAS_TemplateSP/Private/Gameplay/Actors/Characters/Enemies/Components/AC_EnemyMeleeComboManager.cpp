@@ -44,7 +44,8 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
  
 void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
 {
-	if (GetTargetDistance() < ActiveComboChainTracker.GetCurrentCombo()->MaxRange)
+	float ComboAbilityMaxRange = ActiveComboChainTracker.GetCurrentCombo()->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>()->MaxRange;
+	if (GetTargetDistance() < ComboAbilityMaxRange)
 	{
 		Super::ActivateComboMeleeAttackAbility(MontageSection);
 	}

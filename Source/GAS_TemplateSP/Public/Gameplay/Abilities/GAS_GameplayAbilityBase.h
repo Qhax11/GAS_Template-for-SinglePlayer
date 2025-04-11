@@ -52,6 +52,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase")
 	TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GameplayAbilityBase")
+	float MinRange;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GameplayAbilityBase")
+	float MaxRange;
+
 	UPROPERTY(BlueprintAssignable, Category = "GameplayAbilityBase|Delegates")
 	FGameplayAbilityEnded OnGameplayAbilityEndedWithData;
 

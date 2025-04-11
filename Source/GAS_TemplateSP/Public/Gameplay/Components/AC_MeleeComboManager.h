@@ -19,12 +19,6 @@ struct FComboAbilityData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UGA_ComboMeleeAttack> ComboAbilityClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float MaxRange = 300.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FName MontageSection;
 };
 
 USTRUCT(BlueprintType)

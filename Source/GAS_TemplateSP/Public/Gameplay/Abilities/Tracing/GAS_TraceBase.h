@@ -88,7 +88,6 @@ public:
 	FColor DrawColor = FColor::White;
 
 protected:
-
 	void GetTraceStartLocationAndDirection(AActor* Owner, FVector& OutStartLocation, FRotator& OutDirection);
 
 	void MakeTeamFilter(TArray<AActor*>& OutActors, const AActor& Owner, ETeamAttitude::Type TeamAttidue);
@@ -104,7 +103,6 @@ protected:
 	virtual void TraceLogic(const UWorld* World, const FVector& Location, const FRotator& Direction, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults);
 
 	virtual FCollisionShape GetCollisionShape() const;
-
 
 #if WITH_EDITOR
 protected:

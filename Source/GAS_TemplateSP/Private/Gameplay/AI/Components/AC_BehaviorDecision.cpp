@@ -75,8 +75,8 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
             continue;
         }
 
-        bool bIsOnCooldown = OwnerEnemyASC->HasMatchingGameplayTag(Attack.AbilityCooldownTag);
-        if (bIsOnCooldown) 
+        bool IsInCooldown = Attack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->IsOnCooldown(OwnerEnemyASC);
+        if (IsInCooldown)
         {
             continue;
         }

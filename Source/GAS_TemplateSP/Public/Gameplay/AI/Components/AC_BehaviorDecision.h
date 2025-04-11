@@ -26,9 +26,6 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Ability class that defines the actual gameplay logic and range values"))
     TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    FGameplayTag AbilityCooldownTag;
-
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
 

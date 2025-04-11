@@ -51,6 +51,17 @@ float UGAS_GameplayAbilityBase::GetCoolDown(int32 AbilityLevel) const
 	return CooldownDuration;
 }
 
+bool UGAS_GameplayAbilityBase::IsOnCooldown(UAbilitySystemComponent* ASC)
+{
+	if (!ASC) 
+	{
+		return false;
+	}
+
+	const FGameplayTagContainer* CooldownTags = GetCooldownTags();
+	return CooldownTags && ASC->HasAnyMatchingGameplayTags(*CooldownTags);
+}
+
 void UGAS_GameplayAbilityBase::IncreaseLevel(UAbilitySystemComponent* AbilitySystemComp)
 {
 	if (!AbilitySystemComp) 

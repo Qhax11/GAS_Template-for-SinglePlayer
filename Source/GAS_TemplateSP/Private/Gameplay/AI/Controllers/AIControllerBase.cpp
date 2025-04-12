@@ -62,6 +62,7 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 			Target = Actor;  
 			OnTargetDetected.Broadcast(Target);
 			StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DetectedPlayer);
+			UE_LOG(LogTemp, Warning, TEXT("IsReadyToRun: %s"), StateTreeAIComponent->IsRunning() ? TEXT("YES") : TEXT("NO"));
 		}
 
 		bHasTargetBeenDetected = true;

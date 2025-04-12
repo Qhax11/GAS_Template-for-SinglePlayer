@@ -125,9 +125,6 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score curve based on distance to target. High values make this chain more likely when far/close depending on the curve."))
     UCurveFloat* DistanceScoreCurve = nullptr;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "If true, the movement chain adapts its direction based on the player’s last move direction."))
-    bool bUseDynamicDirectionFromPlayer = false;
-
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score bonus applied if the target is currently moving."))
     float ScoreModifierWhenTargetIsMoving = 0.0f;
 

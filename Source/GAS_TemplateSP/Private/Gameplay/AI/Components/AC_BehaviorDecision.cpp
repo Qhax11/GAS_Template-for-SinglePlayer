@@ -133,8 +133,9 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
 
         float DistanceScore = CalculateMovementChainScoreBasedOnTargetDistance(MovementChainAsset);
         float TargetMovementScore = CalculateMovementChainScoreBasedOnTargetMovement(MovementChainAsset);
+        float BehaviorStateScore = CalculateMovementChainScoreBasedOnBehaviorState(MovementChainAsset);
 
-        float TotalScore = MovementChainAsset->ScoreBias + DistanceScore + TargetMovementScore;
+        float TotalScore = MovementChainAsset->ScoreBias + DistanceScore + TargetMovementScore + BehaviorStateScore;
 
         UE_LOG(LogTemp, Log, TEXT("[AI] MovementChain %s → Score: %.2f"), *MovementChainAsset->MovementChainName.ToString(), TotalScore);
 
@@ -206,10 +207,15 @@ float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetDistance(UMo
 {
     float Score = 0.0f;
 
-    if (MovementChainAsset->DistanceScoreCurve)
+    const float HeroDisplacement = HeroMovementListenerComp->GetDisplacementInLastSeconds(SecondsCheckMovement);
+
+    if (HeroDisplacement > 50.0f) 
     {
-        float CurveScore = MovementChainAsset->DistanceScoreCurve->GetFloatValue(GetTargetDistance());
-        Score += CurveScore;
+        Score += MovementChainAsset->ScoreModifierWhenTargetIsMoving;
+    }
+    else
+    {
+        Score += MovementChainAsset->ScoreModifierWhenTargetIsNotMoving;
     }
     
     return Score;
@@ -217,12 +223,32 @@ float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetDistance(UMo
 
 float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset)
 {
-    return 0.0f;
+    float Score = 0.0f;
+
+    if (MovementChainAsset->DistanceScoreCurve)
+    {
+        float CurveScore = MovementChainAsset->DistanceScoreCurve->GetFloatValue(GetTargetDistance());
+        Score += CurveScore;
+    }
+
+    return Score;
 }
 
 float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset)
 {
-    return 0.0f;
+    float Score = 0.0f;
+
+    if (!MovementChainAsset)
+    {
+        return Score;
+    }
+
+    if (const float* FoundScore = MovementChainAsset->BehaviorStateModifiers.Find(BehaviorState))
+    {
+        Score += *FoundScore;
+    }
+
+    return Score;
 }
 
 bool UAC_BehaviorDecision::ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset)
@@ -265,7 +291,7 @@ FGameplayTag UAC_BehaviorDecision::GetRandomDirectionTag()
 {
     static const TArray<FGameplayTag> PossibleDirections =
     {
-        GAS_Tags::TAG_AI_Direction_Resolved_Forward,
+        //GAS_Tags::TAG_AI_Direction_Resolved_Forward,
         GAS_Tags::TAG_AI_Direction_Resolved_Backward,
         GAS_Tags::TAG_AI_Direction_Resolved_Left,
         GAS_Tags::TAG_AI_Direction_Resolved_Right     

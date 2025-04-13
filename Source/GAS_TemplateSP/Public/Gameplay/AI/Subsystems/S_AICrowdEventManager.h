@@ -36,6 +36,9 @@ class GAS_TEMPLATESP_API US_AICrowdEventManager : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+	UFUNCTION(BlueprintCallable)
+	bool RequestToChaseTarget(UAbilitySystemComponent* AbilitySystemComponent);
+
 	UFUNCTION()
 	void OnHeroSpawn(AGAS_CharacterBase* CharacterBase);
 	AGAS_CharacterBase* Hero;

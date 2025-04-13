@@ -139,17 +139,10 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_DetectedPlayer, "AI.StateTreeEvent.DetectedPlayer");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_PlayerStartedAttack, "AI.StateTreeEvent.PlayerStartedAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_DeadWithFinisher, "AI.StateTreeEvent.State_DeadWithFinisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Vulnerable, "AI.StateTreeEvent.State.Vulnerable");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Strafing, "AI.StateTreeEvent.State.Strafing");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Engage, "AI.StateTreeEvent.State.Engage");
-
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ExecuteSelectedAttack, "AI.StateTreeEvent.ExecuteSelectedAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ExecuteShadowAttack, "AI.StateTreeEvent.ExecuteShadowAttack");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_MovingToAttack, "AI.State.MovingToAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_SoCloseToHero, "AI.State.SoCloseToHero");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_CanMovingToAttack, "AI.State.CanMovingToAttack");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash, "AI.Ability.PhantomDash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash_Cooldown, "AI.Ability.PhantomDash.Cooldown");

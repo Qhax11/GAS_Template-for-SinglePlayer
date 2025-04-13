@@ -33,6 +33,18 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
     bDebug = AICrowdEventManagerSettings->bDebug;
 }
 
+bool US_AICrowdEventManager::RequestToChaseTarget(UAbilitySystemComponent* AbilitySystemComponent)
+{
+    EnemyAttackingCount++;
+    if (EnemyAttackingCount > MaxEnemyAttackingCount) 
+    {
+        return false;
+    }
+
+    AbilitySystemComponent->AddLooseGameplayTag(GAS_Tags::TAG_AI_State_CanMovingToAttack);
+    return true;
+}
+
 void US_AICrowdEventManager::OnHeroSpawn(AGAS_CharacterBase* CharacterBase)
 {
     Hero = CharacterBase;
@@ -74,12 +86,8 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
         return;
     }
 
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnAttackTagAdded);
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_Attack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnAttackTagRemoved);
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_MovingToAttack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagAdded);
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_MovingToAttack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagRemoved);
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_SoCloseToHero, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnSoCloseToHeroTagAdded);
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_SoCloseToHero, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnSoCloseToHeroTagAdded);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_CanMovingToAttack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagAdded);
+    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_CanMovingToAttack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagRemoved);
 }
 
 void US_AICrowdEventManager::OnAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -133,7 +141,7 @@ void US_AICrowdEventManager::SetValueToBlackboards(bool Value)
         UAbilitySystemComponent* EnemyASC = Data.EnemyASC;
         AAIController* EnemyController = Data.EnemyController;
 
-        if (!EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_AI_State_Attack))
+        if (!EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_AI_State_CanMovingToAttack))
         {
             EnemyController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("CanAttack")), Value);
         }

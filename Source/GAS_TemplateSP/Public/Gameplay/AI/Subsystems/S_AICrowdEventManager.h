@@ -36,8 +36,22 @@ class GAS_TEMPLATESP_API US_AICrowdEventManager : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+	// Returns true if the attack request was successful.
 	UFUNCTION(BlueprintCallable)
-	bool RequestToChaseTarget(UAbilitySystemComponent* AbilitySystemComponent);
+	bool RequestToBeAttackIntender(UAbilitySystemComponent* ASC);
+
+	UFUNCTION(BlueprintCallable)
+	void OnNewAttackIntenderAdded(UAbilitySystemComponent* NewIntender);
+
+	UFUNCTION(BlueprintCallable)
+	void ReleaseAttackIntender(UAbilitySystemComponent* ASC);
+
+protected:
+	void AddAttackIntender(UAbilitySystemComponent* ASC);
+
+	void RemoveAttackIntender(UAbilitySystemComponent* ASC);
+
+	UAbilitySystemComponent* GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) const;
 
 	UFUNCTION()
 	void OnHeroSpawn(AGAS_CharacterBase* CharacterBase);
@@ -67,15 +81,14 @@ public:
 	void OnSoCloseToHeroTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 protected:
-	TArray<FEnemyData> AllEnemies;
+	TArray<UAbilitySystemComponent*> AllEnemies;
 
-	TArray<FEnemyData> MoveToAttackEnemies;
+	TArray<UAbilitySystemComponent*> AttackIntenders;
 
 	void SetValueToBlackboards(bool Value);
 
 private:
 	int32 MaxEnemyAttackingCount = 0;
-	int32 EnemyAttackingCount = 0;
 	bool bDebug;
 
 };

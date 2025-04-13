@@ -33,16 +33,121 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
     bDebug = AICrowdEventManagerSettings->bDebug;
 }
 
-bool US_AICrowdEventManager::RequestToChaseTarget(UAbilitySystemComponent* AbilitySystemComponent)
+bool US_AICrowdEventManager::RequestToBeAttackIntender(UAbilitySystemComponent* ASC)
 {
-    EnemyAttackingCount++;
-    if (EnemyAttackingCount > MaxEnemyAttackingCount) 
+    if (!ASC)
     {
         return false;
     }
 
-    AbilitySystemComponent->AddLooseGameplayTag(GAS_Tags::TAG_AI_State_CanMovingToAttack);
+    if (ASC->HasMatchingGameplayTag(GAS_Tags::TAG_AI_State_IsAttackIntender))
+    {
+        return true; 
+    }
+
+    if (AttackIntenders.Contains(ASC))
+    {
+        return false;
+    } 
+    
+    if (AttackIntenders.Num() >= MaxEnemyAttackingCount)
+    {
+        return false;
+    }
+
+    AddAttackIntender(ASC);
+
     return true;
+}
+
+void US_AICrowdEventManager::OnNewAttackIntenderAdded(UAbilitySystemComponent* NewIntender)
+{
+    if (!NewIntender)
+    {
+        return;
+    }
+
+    // It is already AttackIntender
+    if (NewIntender->HasMatchingGameplayTag(GAS_Tags::TAG_AI_State_IsAttackIntender))
+    {
+        return;
+    }
+
+    AddAttackIntender(NewIntender);
+
+    if (AttackIntenders.Num() >= MaxEnemyAttackingCount) 
+    {
+        UAbilitySystemComponent* FurthestIntenderASC = GetFurthestAttackIntender(NewIntender);
+        if (FurthestIntenderASC)
+        {
+            RemoveAttackIntender(FurthestIntenderASC);
+            if (bDebug)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("[Crowd] %s removed from AttackIntenders due to proximity override."),
+                    *FurthestIntenderASC->GetAvatarActor()->GetName());
+            }
+        }
+    }
+}
+
+void US_AICrowdEventManager::ReleaseAttackIntender(UAbilitySystemComponent* ASC)
+{
+    if (!ASC)
+    {
+        return;
+    }
+
+    RemoveAttackIntender(ASC);
+}
+
+void US_AICrowdEventManager::AddAttackIntender(UAbilitySystemComponent* ASC)
+{
+    if (!ASC || AttackIntenders.Contains(ASC))
+    {
+        return;
+    }
+
+    AttackIntenders.Add(ASC);
+    ASC->AddLooseGameplayTag(GAS_Tags::TAG_AI_State_IsAttackIntender);
+}
+
+void US_AICrowdEventManager::RemoveAttackIntender(UAbilitySystemComponent* ASC)
+{
+    if (!ASC || !AttackIntenders.Contains(ASC))
+    {
+        return;
+    }
+
+    AttackIntenders.Remove(ASC);
+    ASC->RemoveLooseGameplayTag(GAS_Tags::TAG_AI_State_IsAttackIntender);
+}
+
+UAbilitySystemComponent* US_AICrowdEventManager::GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) const
+{
+    if (!Hero) 
+    {
+        return nullptr;
+    }
+
+    UAbilitySystemComponent* FurthestASC = nullptr;
+    float FurthestDistance = 0.f;
+
+    for (UAbilitySystemComponent* ASC : AttackIntenders)
+    {
+        if (!ASC || ASC == IgnoreASC)
+        {
+            continue;
+        }
+
+        float Distance = FVector::Dist(ASC->GetAvatarActor()->GetActorLocation(), Hero->GetActorLocation());
+        if (Distance > FurthestDistance)
+        {
+            FurthestDistance = Distance;
+            FurthestASC = ASC;
+        }
+    }
+
+    return FurthestASC;
 }
 
 void US_AICrowdEventManager::OnHeroSpawn(AGAS_CharacterBase* CharacterBase)
@@ -77,7 +182,7 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
         return;
     }
 
-    AllEnemies.Add(FEnemyData(EnemyASC, EnemyController));
+    AllEnemies.Add(EnemyASC);
 
     UAC_TagDelegates* TagDelegatesComponent = CharacterBase->GetTagDelegatesComponent();
     if (!TagDelegatesComponent)
@@ -86,12 +191,13 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
         return;
     }
 
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_CanMovingToAttack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagAdded);
-    TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_CanMovingToAttack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagRemoved);
+    //TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_CanMovingToAttack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagAdded);
+    //TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_CanMovingToAttack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagRemoved);
 }
 
 void US_AICrowdEventManager::OnAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+    /*
     EnemyAttackingCount++;
     if (EnemyAttackingCount >= MaxEnemyAttackingCount)
     {
@@ -101,10 +207,12 @@ void US_AICrowdEventManager::OnAttackTagAdded(const UAbilitySystemComponent* Abi
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Values set to false!"));
         }
     }
+    */
 }
 
 void US_AICrowdEventManager::OnAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+    /*
     EnemyAttackingCount--;
     if (EnemyAttackingCount < MaxEnemyAttackingCount)
     {
@@ -114,6 +222,7 @@ void US_AICrowdEventManager::OnAttackTagRemoved(const UAbilitySystemComponent* A
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Values set to true!"));
         }
     }
+    */
 }
 
 void US_AICrowdEventManager::OnMoveToAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -136,6 +245,7 @@ void US_AICrowdEventManager::OnSoCloseToHeroTagRemoved(const UAbilitySystemCompo
 
 void US_AICrowdEventManager::SetValueToBlackboards(bool Value)
 {
+    /*
     for (FEnemyData& Data : AllEnemies)
     {
         UAbilitySystemComponent* EnemyASC = Data.EnemyASC;
@@ -146,6 +256,7 @@ void US_AICrowdEventManager::SetValueToBlackboards(bool Value)
             EnemyController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("CanAttack")), Value);
         }
     }
+    */
 }
 
 

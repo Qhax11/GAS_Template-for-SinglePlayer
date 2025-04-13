@@ -142,7 +142,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Vulnerable, "AI.StateTreeEvent.State.Vulnerable");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ExecuteShadowAttack, "AI.StateTreeEvent.ExecuteShadowAttack");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_CanMovingToAttack, "AI.State.CanMovingToAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_IsAttackIntender, "AI.State.IsAttackIntender");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash, "AI.Ability.PhantomDash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash_Cooldown, "AI.Ability.PhantomDash.Cooldown");

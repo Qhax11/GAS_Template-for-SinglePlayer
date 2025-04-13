@@ -51,21 +51,25 @@ bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 	}
 }
 
-void UAC_HeroMeleeComboManager::InitComboChainTracker()
+void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
 {
-	if (!ComboChainAsset || !ComboChainAsset->ComboChains.IsValidIndex(SelectedComboIndex))
+	ActivateComboMeleeAttackAbility();
+}
+
+UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+{
+	if (CharacterBaseASC->HasAnyMatchingGameplayTags(BlockedTags))
 	{
-		return;
+		return nullptr;
 	}
 
-	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[SelectedComboIndex];
-	ActiveComboChainTracker.CurrentIndex = 0;
-
-	const FComboAbilityData* FirstCombo = ActiveComboChainTracker.GetCurrentCombo();
-	if (FirstCombo)
+	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMeleeAttackAbility(MontageSection);
+	if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
 	{
-		ActiveComboChainTracker.CurrentAbilityClass = FirstCombo->ComboAbilityClass;
+		ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_HeroMeleeComboManager::OnCanActivateNextAttack);
 	}
+
+	return ActivatedComboMeleeAttack;
 }
 
 void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
@@ -99,19 +103,19 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 	ActiveComboChainTracker.bNextAttackAllowed = true;
 }
 
-void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+void UAC_HeroMeleeComboManager::OnCanActivateNextAttack()
 {
-	if (CharacterBaseASC->HasAnyMatchingGameplayTags(BlockedTags)) 
+	ActiveComboChainTracker.bNextAttackAllowed = true;
+	ActiveComboChainTracker.Advance();
+
+	if (ActiveComboChainTracker.IsChainFinished())
 	{
-		return;
+		ActiveComboChainTracker.Reset();
+		OnComboEnded.Broadcast();
 	}
-
-	Super::ActivateComboMeleeAttackAbility(MontageSection);
 }
 
-void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
-{
-	ActivateComboMeleeAttackAbility();
-}
+
+
 
 

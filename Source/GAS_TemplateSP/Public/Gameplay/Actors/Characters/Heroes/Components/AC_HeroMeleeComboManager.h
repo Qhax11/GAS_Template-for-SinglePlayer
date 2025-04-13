@@ -12,25 +12,20 @@ class GAS_TEMPLATESP_API UAC_HeroMeleeComboManager : public UAC_MeleeComboManage
 {
 	GENERATED_BODY()
 
-public:
-	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None) override;
-
-	void OnComboMeleeAttackInput();
-
-	void InitComboChainTracker();
-
 protected:
 	virtual void BeginPlay() override;
 
 	bool BindHeroMeleeComboInput();
 
+	void OnComboMeleeAttackInput();
+
+	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None) override;
+
 	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData) override;
 
-	AGAS_HeroBase* HeroBase;
+	UFUNCTION()
+	void OnCanActivateNextAttack();
 
-	// We can select combo on UI in future
-	int32 SelectedComboIndex = 0;
-public:
 	// The tags are blocks MeleeCombo because of same input
 	UPROPERTY(EditDefaultsOnly, Category = "HeroMeleeComboManager")
 	FGameplayTagContainer BlockedTags;
@@ -38,4 +33,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HeroMeleeComboManager")
 	const UInputAction* IA_ActivateMeleeCombo;
 
+	AGAS_HeroBase* HeroBase;
 };

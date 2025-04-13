@@ -42,18 +42,18 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 	ActivateComboMeleeAttackAbility(MontageSection);
 }
  
-void UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
 {
 	float ComboAbilityMaxRange = ActiveComboChainTracker.GetCurrentCombo()->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>()->MaxRange;
 	if (GetTargetDistance() < ComboAbilityMaxRange)
 	{
-		Super::ActivateComboMeleeAttackAbility(MontageSection);
+		return Super::ActivateComboMeleeAttackAbility(MontageSection);
 	}
 	// If target out of combo attack's range end combo
 	else
 	{
 		StopCombo();
-		return;
+		return nullptr;
 	}
 }
 
@@ -78,7 +78,18 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 	}
 }
 
-float UAC_EnemyMeleeComboManager::GetTargetDistance()
+float UAC_EnemyMeleeComboManager::GetMaxRangeOfCurrentAttack()
+{
+	const FComboAbilityData* CurrentComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
+	if (CurrentComboAbilityData->ComboAbilityClass)
+	{
+		return CurrentComboAbilityData->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>()->MaxRange;
+	}
+
+	return -1.0f;
+}
+
+float UAC_EnemyMeleeComboManager::GetTargetDistance() const
 {
 	if (!CharacterBase || !AIController || !AIController->GetTarget())
 	{

@@ -27,18 +27,37 @@ void UAC_MeleeComboManager::BeginPlay()
 	}
 
 	CharacterBaseASC->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd);
+
+	InitComboChainTracker();
 }
 
-void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+void UAC_MeleeComboManager::InitComboChainTracker()
 {
-	if (!CharacterBaseASC) 
+	if (!ComboChainAsset || !ComboChainAsset->ComboChains.IsValidIndex(SelectedComboIndex))
 	{
 		return;
 	}
 
+	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[SelectedComboIndex];
+	ActiveComboChainTracker.CurrentIndex = 0;
+
+	const FComboAbilityData* FirstCombo = ActiveComboChainTracker.GetCurrentCombo();
+	if (FirstCombo)
+	{
+		ActiveComboChainTracker.CurrentAbilityClass = FirstCombo->ComboAbilityClass;
+	}
+}
+
+UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+{
+	if (!CharacterBaseASC) 
+	{
+		return nullptr;
+	}
+
 	if (!ActiveComboChainTracker.bNextAttackAllowed)
 	{
-		return;
+		return nullptr;
 	}
 
 	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
@@ -53,36 +72,14 @@ void UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection
 				ActivatedComboMeleeAttack->SectionName = MontageSection;
 				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityData->ComboAbilityClass))
 				{
-					if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
-					{
-						ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_MeleeComboManager::OnCanActivateNextAttack);
-					}
 					ActiveComboChainTracker.bNextAttackAllowed = false;
+					return ActivatedComboMeleeAttack;
 				}
 			}
 		}
 	}
-}
 
-void UAC_MeleeComboManager::StopCombo()
-{
-	CancelComboAbilities();
-	ActiveComboChainTracker.Reset();
-	OnComboEnded.Broadcast();
-}
-
-void UAC_MeleeComboManager::CancelComboAbilities()
-{
-	if (!CharacterBaseASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterBaseASC is null in: %s"), *GetName());
-		return;
-	}
-
-	FGameplayTagContainer CancelTags;
-	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
-
-	CharacterBaseASC->CancelAbilities(&CancelTags);
+	return nullptr;
 }
 
 void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
@@ -117,16 +114,23 @@ FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbili
 	return Result;
 }
 
-void UAC_MeleeComboManager::OnCanActivateNextAttack()
+void UAC_MeleeComboManager::StopCombo()
 {
-	ActiveComboChainTracker.bNextAttackAllowed = true;
-	ActiveComboChainTracker.Advance();
-
-	if (ActiveComboChainTracker.IsChainFinished())
-	{
-		ActiveComboChainTracker.Reset();
-		OnComboEnded.Broadcast();
-	}
+	CancelComboAbilities();
+	ActiveComboChainTracker.Reset();
+	OnComboEnded.Broadcast();
 }
 
+void UAC_MeleeComboManager::CancelComboAbilities()
+{
+	if (!CharacterBaseASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBaseASC is null in: %s"), *GetName());
+		return;
+	}
 
+	FGameplayTagContainer CancelTags;
+	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
+
+	CharacterBaseASC->CancelAbilities(&CancelTags);
+}

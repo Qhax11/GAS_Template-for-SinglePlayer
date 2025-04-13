@@ -81,7 +81,7 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
             continue;
         }
 
-        float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(DistanceToTarget, Attack.MinRange, Attack.MaxRange);
+        float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(Attack, DistanceToTarget);
 
         float TotalScore = Attack.ScoreBias + DistanceScore;
 
@@ -181,8 +181,10 @@ TArray<UMovementChainAsset*> UAC_BehaviorDecision::GetMovementChainsForSelectedA
     return Result;
 }
 
-float UAC_BehaviorDecision::CalculateAttackAbilityScoreBasedOnTargetDistance(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange)
+float UAC_BehaviorDecision::CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget)
 {
+    float AbilityMinRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MinRange;
+    float AbilityMaxRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
     if (AbilityMaxRange <= 0.f)
     {
         return 0.0f;

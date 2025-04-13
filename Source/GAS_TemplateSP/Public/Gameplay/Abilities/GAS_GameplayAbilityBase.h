@@ -15,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownChanged, UGamepla
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameplayAbilityEnded, const FAbilityEndedData&, AbilityEndedData);
 
-UCLASS()
+UCLASS(BlueprintType)
 class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
 {
 	GENERATED_BODY()
@@ -52,10 +52,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase")
 	TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GameplayAbilityBase")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
 	float MinRange;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GameplayAbilityBase")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
 	float MaxRange;
 
 	UPROPERTY(BlueprintAssignable, Category = "GameplayAbilityBase|Delegates")

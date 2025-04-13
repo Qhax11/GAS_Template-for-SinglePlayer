@@ -11,7 +11,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboEnded);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeAbilityEnded, const bool, bWasCancelled);
 
-
 USTRUCT(BlueprintType)
 struct FComboAbilityData
 {
@@ -89,6 +88,10 @@ struct FActiveComboChainTracker
 	void Reset()
 	{
 		CurrentIndex = 0;
+		CurrentAbilityClass = nullptr;
+		CurrentAbilityInstance = nullptr;
+		CurrentAbilitySpecHandle = FGameplayAbilitySpecHandle();
+		bNextAttackAllowed = true;
 	}
 };
 
@@ -104,7 +107,6 @@ struct FComboChainSearchResult
 	int32 FindedComboIndex = INDEX_NONE;
 };
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_MeleeComboManager : public UActorComponent
 {
@@ -114,7 +116,7 @@ public:
 	UAC_MeleeComboManager();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
+	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
 
 	UFUNCTION(BlueprintCallable)
 	void StopCombo();
@@ -122,24 +124,24 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	void CancelComboAbilities();
-
-	AGAS_CharacterBase* CharacterBase;
-	UAbilitySystemComponent* CharacterBaseASC;
+	virtual void InitComboChainTracker();
 
 	UFUNCTION()
 	virtual void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
 
 	FComboChainSearchResult GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
 
-	UFUNCTION()
-	void OnCanActivateNextAttack();
-
-	UPROPERTY(BlueprintAssignable)
-	FOnComboEnded OnComboEnded;
+	void CancelComboAbilities();
 
 	UPROPERTY(EditDefaultsOnly)
 	UComboChainAsset* ComboChainAsset;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnComboEnded OnComboEnded;
+
+	// Can be set from UI in the future to allow different combo styles.
+	int32 SelectedComboIndex = 0;
+	AGAS_CharacterBase* CharacterBase;
+	UAbilitySystemComponent* CharacterBaseASC;
 	FActiveComboChainTracker ActiveComboChainTracker;
 };

@@ -29,15 +29,6 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Minimum effective range. This value is automatically filled from the selected ability's CDO if left as 0."))
-    float MinRange = 0.f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Maximum effective range. This value is automatically filled from the selected ability's CDO if left as 0."))
-    float MaxRange = 0.f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Penalty applied when the ability has been recently countered"))
-    float CounterPenalty = 0.f;
-
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Base score bias applied to AI decision-making"))
     float ScoreBias = 0.f;
 };
@@ -51,23 +42,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<FAttackData> AttackAbilities;
 
-protected:
-    virtual void PostLoad() override
-    {
-        Super::PostLoad();
-
-        // Automatically sync range values from the associated ability CDOs.
-        // This is necessary because systems like StateTree require static data from the asset and cannot fetch values directly from ability CDOs at runtime.
-        for (FAttackData& AttackData : AttackAbilities)
-        {
-            if (AttackData.AbilityClass)
-            {
-                const UGAS_GameplayAbilityBase* CDO = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-                AttackData.MaxRange = CDO->MaxRange;
-                AttackData.MinRange = CDO->MinRange;
-            }
-        }
-    }
 };
 
 UENUM(BlueprintType)
@@ -204,7 +178,7 @@ protected:
     UPROPERTY(EditDefaultsOnly)
     EBehaviorState BehaviorState = EBehaviorState::None;
 
-    float CalculateAttackAbilityScoreBasedOnTargetDistance(float DistanceToTarget, float AbilityMinRange, float AbilityMaxRange);
+    float CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);
 
     float CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset);
 

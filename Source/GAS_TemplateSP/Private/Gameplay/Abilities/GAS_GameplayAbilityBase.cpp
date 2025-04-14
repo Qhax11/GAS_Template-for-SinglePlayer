@@ -101,11 +101,11 @@ void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handl
 	{
 		// We broadcast the event through the CDO, ensuring that even binders without access to the instance are triggered
 		UGAS_GameplayAbilityBase* CDO_AbilityBase = Cast<UGAS_GameplayAbilityBase>(GetClass()->GetDefaultObject());
-		CDO_AbilityBase->OnGameplayAbilityEndedWithData.Broadcast(FAbilityEndedData(this, Handle, bReplicateEndAbility, bWasCancelled));
+		CDO_AbilityBase->OnGameplayAbilityEndedWithDataBP.Broadcast(FAbilityEndedDataBP(this, bWasCancelled));
 	}
 	else
 	{
-		OnGameplayAbilityEndedWithData.Broadcast(FAbilityEndedData(this, Handle, bReplicateEndAbility, bWasCancelled));
+		OnGameplayAbilityEndedWithDataBP.Broadcast(FAbilityEndedDataBP(this, bWasCancelled));
 	}
 }
 

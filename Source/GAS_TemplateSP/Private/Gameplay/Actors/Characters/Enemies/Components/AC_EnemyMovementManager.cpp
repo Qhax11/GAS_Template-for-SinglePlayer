@@ -120,9 +120,9 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 	if (MovementAbility) 
 	{
 		MovementChainTracker.CurrentMovementAbility = MovementAbility;
-		if (!MovementAbility->OnGameplayAbilityEndedWithData.IsAlreadyBound(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded))
+		if (!MovementAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded))
 		{
-			MovementAbility->OnGameplayAbilityEndedWithData.AddDynamic(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
+			MovementAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
 		}
 	}
 	else
@@ -132,7 +132,7 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 	}
 }
 
-void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedData& AbilityEndedData)
+void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedDataBP& AbilityEndedData)
 {
 	if (AbilityEndedData.AbilityThatEnded != MovementChainTracker.CurrentMovementAbility) 
 	{

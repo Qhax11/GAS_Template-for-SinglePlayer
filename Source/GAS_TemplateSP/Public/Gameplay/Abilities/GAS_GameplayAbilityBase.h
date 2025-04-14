@@ -13,7 +13,35 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityLevelChanged, UGameplayAb
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCostChanged, UGameplayAbility*, Ability, float, NewCost);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownChanged, UGameplayAbility*, Ability, float, NewCooldown);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameplayAbilityEnded, const FAbilityEndedData&, AbilityEndedData);
+
+/** Ability Ended Data BP version*/
+USTRUCT(BlueprintType)
+struct FAbilityEndedDataBP
+{
+	GENERATED_BODY()
+
+	FAbilityEndedDataBP()
+		: AbilityThatEnded(nullptr)
+		, bWasCancelled(false)
+	{
+	}
+
+	FAbilityEndedDataBP(UGAS_GameplayAbilityBase* InAbility, bool bInWasCancelled)
+		: AbilityThatEnded(InAbility)
+		, bWasCancelled(bInWasCancelled)
+	{
+	}
+
+	/** Ability that ended, normally instance but could be CDO */
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UGAS_GameplayAbilityBase> AbilityThatEnded;
+
+	/** True if this was cancelled deliberately, false if it ended normally */
+	UPROPERTY(BlueprintReadOnly)
+	bool bWasCancelled;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameplayAbilityEndedBP, const FAbilityEndedDataBP&, AbilityEndedDataBP);
 
 UCLASS(BlueprintType)
 class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
@@ -59,7 +87,7 @@ public:
 	float MaxRange;
 
 	UPROPERTY(BlueprintAssignable, Category = "GameplayAbilityBase|Delegates")
-	FGameplayAbilityEnded OnGameplayAbilityEndedWithData;
+	FGameplayAbilityEndedBP OnGameplayAbilityEndedWithDataBP;
 
 	// Returns true if any of the ability's cooldown tags are currently active on the given ASC.
     // NOTE: This function is intended to be used with the CDO of the ability, so a valid ASC must be provided.

@@ -75,7 +75,7 @@ protected:
 	void TryActivateMovementAbilityWithEventData(FMovementAbilityData MovementChainData);
 
 	UFUNCTION()
-	void OnMovementAbilityEnded(const FAbilityEndedData& AbilityEndedData);
+	void OnMovementAbilityEnded(const FAbilityEndedDataBP& AbilityEndedData);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;

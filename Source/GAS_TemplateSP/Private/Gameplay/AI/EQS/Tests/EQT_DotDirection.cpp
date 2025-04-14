@@ -10,18 +10,13 @@ UEQT_DotDirection::UEQT_DotDirection()
 
 void UEQT_DotDirection::RunTest(FEnvQueryInstance& QueryInstance) const
 {
-    TArray<AActor*> ContextActors;
-    QueryInstance.PrepareContext(TargetActorContext, ContextActors);
+    Super::RunTest(QueryInstance);
 
-    if (ContextActors.Num() == 0 || !ContextActors[0])
+    if (!QuerierActor)
     {
         return;
     }
 
-    const AActor* ReferenceActor = ContextActors[0];
-
-    float Multiplier = GetBoundFloatValue(QueryInstance, ScoringMultiplier);
-    float MaxScore = GetBoundFloatValue(QueryInstance, MaxExpectedScore);
     /*
     AAIControllerBase* AIController = Cast<AAIControllerBase>(QueryInstance.Owner.Get());
     if (!AIController)
@@ -37,8 +32,8 @@ void UEQT_DotDirection::RunTest(FEnvQueryInstance& QueryInstance) const
     */
     EStrafeDirection StrafeDirection = GetDirectionFromParam(QueryInstance);
 
-    FVector QuererPawnLocation = ReferenceActor->GetActorLocation();
-    FVector QuererPawnForward = ReferenceActor->GetActorForwardVector();
+    FVector QuererPawnLocation = QuerierActor->GetActorLocation();
+    FVector QuererPawnForward = QuerierActor->GetActorForwardVector();
 
     for (FEnvQueryInstance::ItemIterator It(this, QueryInstance); It; ++It)
     {
@@ -77,8 +72,9 @@ void UEQT_DotDirection::RunTest(FEnvQueryInstance& QueryInstance) const
         float StrafingScore = 1.0f;
         StrafingScore = ApplyFrontPenalty(StrafingScore, AngleScore);
 
-        StrafingScore *= Multiplier;
-        It.SetScore(EEnvTestPurpose::Score, EEnvTestFilterType::Range, StrafingScore, 0.0f, MaxScore);
+        StrafingScore *= ScoringMultiplier;
+
+        SetScoreToItem(It, StrafingScore);
     }
 }
 
@@ -107,11 +103,11 @@ float UEQT_DotDirection::ApplyFrontPenalty(float StrafingScore, float AngleDot) 
 {
     if (AngleDot > 0.0f)
     {
-        const float PenaltyStrength01 = FMath::Clamp(FrontPenaltyStrength / 100.0f, 0.0f, 1.0f);
+        const float PenaltyStrength01 = FMath::Clamp(FrontPenaltyStrength / 100.0f, 0.0f, MaxExpectedScore);
         const float Penalty = AngleDot * PenaltyStrength01;
 
         StrafingScore -= Penalty;
-        StrafingScore = FMath::Clamp(StrafingScore, 0.0f, 1.0f);
+        StrafingScore = FMath::Clamp(StrafingScore, 0.0f, MaxExpectedScore);
     }
 
     return StrafingScore;

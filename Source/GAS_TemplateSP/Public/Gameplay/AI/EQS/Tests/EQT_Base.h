@@ -18,14 +18,19 @@ public:
 
 	virtual void RunTest(FEnvQueryInstance& QueryInstance) const;
 
-	float GetBoundFloatValue(const FEnvQueryInstance& QueryInstance, const FAIDataProviderFloatValue& Value) const;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "EQTBase")
-	TSubclassOf<UEnvQueryContext> TargetActorContext;
+	virtual void SetScoreToItem(FEnvQueryInstance::ItemIterator& Item, float Score) const;
 
 	UPROPERTY(EditDefaultsOnly, Category = "EQTBase")
-	FAIDataProviderFloatValue ScoringMultiplier;
+	TSubclassOf<UEnvQueryContext> QuerierActorContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "EQTBase")
-	FAIDataProviderFloatValue MaxExpectedScore;
+	float ScoringMultiplier = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "EQTBase")
+	float MaxExpectedScore = 3.0f;
+
+protected:
+	UPROPERTY()
+	mutable AActor* QuerierActor = nullptr;
+
 };

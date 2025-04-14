@@ -11,18 +11,25 @@ UEQT_Base::UEQT_Base()
     ValidItemType = UEnvQueryItemType_VectorBase::StaticClass();
     SetWorkOnFloatValues(true);
 
-    TargetActorContext = UEnvQueryContext_Querier::StaticClass();
-
-    ScoringMultiplier.DefaultValue = 1.0f;
-    MaxExpectedScore.DefaultValue = 3.0f;
+    QuerierActorContext = UEnvQueryContext_Querier::StaticClass();
 }
 
 void UEQT_Base::RunTest(FEnvQueryInstance& QueryInstance) const
 {
+    TArray<AActor*> ContextActors;
+    QueryInstance.PrepareContext(QuerierActorContext, ContextActors);
+
+    if (ContextActors.Num() == 0 || !ContextActors.IsValidIndex(0))
+    {
+        return;
+    }
+
+    QuerierActor = ContextActors[0];
 }
 
-float UEQT_Base::GetBoundFloatValue(const FEnvQueryInstance& QueryInstance, const FAIDataProviderFloatValue& Value) const
+void UEQT_Base::SetScoreToItem(FEnvQueryInstance::ItemIterator& Item, float Score) const
 {
-    const_cast<FAIDataProviderFloatValue&>(Value).BindData(QueryInstance.Owner.Get(), QueryInstance.QueryID);
-    return Value.GetValue();
+    Item.SetScore(EEnvTestPurpose::Score, EEnvTestFilterType::Range, Score, 0.0f, MaxExpectedScore);
 }
+
+

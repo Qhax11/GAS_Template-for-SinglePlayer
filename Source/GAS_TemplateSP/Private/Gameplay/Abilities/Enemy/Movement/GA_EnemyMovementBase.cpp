@@ -52,6 +52,8 @@ void UGA_EnemyMovementBase::RequestMoveToLocation(const FVector& MoveLocation)
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("Move Location: %s"), *MoveLocation.ToString());
+
 	FAIMoveRequest MoveReq;
 	MoveReq.SetGoalLocation(MoveLocation);
 	MoveReq.SetAcceptanceRadius(AcceptanceRadius);

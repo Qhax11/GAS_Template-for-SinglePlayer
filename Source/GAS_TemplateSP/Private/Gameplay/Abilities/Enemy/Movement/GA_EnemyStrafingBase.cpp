@@ -74,6 +74,7 @@ void UGA_EnemyStrafingBase::StartEQSForStrafingLocation(FGameplayTag StrafeDirec
 	QueryRequest.Execute(QueryRunMode, this, &UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished);
 }
 
+
 float UGA_EnemyStrafingBase::ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag)
 {
 	float TagValue = 2.0f; // Default: Both

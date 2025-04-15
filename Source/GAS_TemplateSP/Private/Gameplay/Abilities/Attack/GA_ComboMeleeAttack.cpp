@@ -11,7 +11,7 @@ UGA_ComboMeleeAttack::UGA_ComboMeleeAttack()
 	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
 	SetAssetTags(AssetTags);
 
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Finisher);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
 }
 
 void UGA_ComboMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 

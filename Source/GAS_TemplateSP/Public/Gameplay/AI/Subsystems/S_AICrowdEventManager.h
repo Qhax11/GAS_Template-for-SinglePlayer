@@ -44,14 +44,18 @@ public:
 	void OnNewAttackIntenderAdded(UAbilitySystemComponent* NewIntender);
 
 	UFUNCTION(BlueprintCallable)
-	void ReleaseAttackIntender(UAbilitySystemComponent* ASC);
+	bool ReleaseAttackIntender(UAbilitySystemComponent* ASC);
 
 protected:
 	void AddAttackIntender(UAbilitySystemComponent* ASC);
 
-	void RemoveAttackIntender(UAbilitySystemComponent* ASC);
+	bool RemoveAttackIntender(UAbilitySystemComponent* ASC);
 
 	UAbilitySystemComponent* GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) const;
+
+	// Loops through all enemies that are not currently attack intenders.
+    // Compares distance to the hero, and returns the closest valid one.
+	UAbilitySystemComponent* GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) const;
 
 	UFUNCTION()
 	void OnHeroSpawn(AGAS_CharacterBase* CharacterBase);
@@ -60,32 +64,17 @@ protected:
 	UFUNCTION()
 	void OnEnemySpawn(AGAS_CharacterBase* CharacterBase);
 
-public:
-	// AI listening states
 	UFUNCTION()
-	void OnAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnEnemyDeSpawn(AGAS_CharacterBase* CharacterBase);
 
-	UFUNCTION()
-	void OnAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnMoveToAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnMoveToAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnSoCloseToHeroTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnSoCloseToHeroTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+#if WITH_EDITOR
+	void DebugPrintState();
+#endif // WITH_EDITOR
 
 protected:
 	TArray<UAbilitySystemComponent*> AllEnemies;
-
 	TArray<UAbilitySystemComponent*> AttackIntenders;
-
-	void SetValueToBlackboards(bool Value);
+	TArray<UAbilitySystemComponent*> NonAttackIntenders;
 
 private:
 	int32 MaxEnemyAttackingCount = 0;

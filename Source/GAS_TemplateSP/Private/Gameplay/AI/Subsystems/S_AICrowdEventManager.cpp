@@ -20,6 +20,7 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
     {
         SpawnDelegatesSubsystem->OnHeroSpawn.AddDynamic(this, &US_AICrowdEventManager::OnHeroSpawn);
         SpawnDelegatesSubsystem->OnEnemySpawn.AddDynamic(this, &US_AICrowdEventManager::OnEnemySpawn);
+        SpawnDelegatesSubsystem->OnEnemyDeSpawn.AddDynamic(this, &US_AICrowdEventManager::OnEnemyDeSpawn);
     }
  
     const UDS_AICrowdEventManager* AICrowdEventManagerSettings = GetDefault<UDS_AICrowdEventManager>();
@@ -27,6 +28,18 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
     {
         UE_LOG(LogTemp, Warning, TEXT("AICrowdEventManager Settings is null in %s"), *this->GetName());
         return;
+    }
+
+    FTimerHandle DebugTimerHandle;
+    if (UWorld* World = GetWorld())
+    {
+        World->GetTimerManager().SetTimer(
+            DebugTimerHandle,
+            this,
+            &US_AICrowdEventManager::DebugPrintState,
+            0.01f,
+            true
+        );
     }
 
     MaxEnemyAttackingCount = AICrowdEventManagerSettings->MaxEnemyAttackingCount;
@@ -90,14 +103,14 @@ void US_AICrowdEventManager::OnNewAttackIntenderAdded(UAbilitySystemComponent* N
     }
 }
 
-void US_AICrowdEventManager::ReleaseAttackIntender(UAbilitySystemComponent* ASC)
+bool US_AICrowdEventManager::ReleaseAttackIntender(UAbilitySystemComponent* ASC)
 {
     if (!ASC)
     {
-        return;
+        return false;
     }
 
-    RemoveAttackIntender(ASC);
+    return RemoveAttackIntender(ASC);
 }
 
 void US_AICrowdEventManager::AddAttackIntender(UAbilitySystemComponent* ASC)
@@ -107,19 +120,28 @@ void US_AICrowdEventManager::AddAttackIntender(UAbilitySystemComponent* ASC)
         return;
     }
 
+    NonAttackIntenders.Remove(ASC);
     AttackIntenders.Add(ASC);
     ASC->AddLooseGameplayTag(GAS_Tags::TAG_AI_State_IsAttackIntender);
 }
 
-void US_AICrowdEventManager::RemoveAttackIntender(UAbilitySystemComponent* ASC)
+bool US_AICrowdEventManager::RemoveAttackIntender(UAbilitySystemComponent* ASC)
 {
-    if (!ASC || !AttackIntenders.Contains(ASC))
+    if (!IsValid(ASC))
     {
-        return;
+        UE_LOG(LogTemp, Warning, TEXT("ASC is invalid or being destroyed"));
+        return false;
+    }
+
+    if (!AttackIntenders.Contains(ASC))
+    {
+        return false;
     }
 
     AttackIntenders.Remove(ASC);
+    NonAttackIntenders.Add(ASC);
     ASC->RemoveLooseGameplayTag(GAS_Tags::TAG_AI_State_IsAttackIntender);
+    return true;
 }
 
 UAbilitySystemComponent* US_AICrowdEventManager::GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) const
@@ -150,8 +172,45 @@ UAbilitySystemComponent* US_AICrowdEventManager::GetFurthestAttackIntender(UAbil
     return FurthestASC;
 }
 
+UAbilitySystemComponent* US_AICrowdEventManager::GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) const
+{
+    if (!Hero || AllEnemies.Num() == 0)
+    {
+        return nullptr;
+    }
+
+    UAbilitySystemComponent* ClosestEnemyASC = nullptr;
+    float ClosestDistanceSqr = TNumericLimits<float>::Max();
+
+    const FVector HeroLocation = Hero->GetActorLocation();
+
+    for (UAbilitySystemComponent* EnemyASC : NonAttackIntenders)
+    {
+        if (!EnemyASC || EnemyASC == IgnoreASC)
+        {
+            continue;
+        }
+
+        const float DistanceSqr = FVector::DistSquared(HeroLocation, EnemyASC->GetAvatarActor()->GetActorLocation());
+
+        if (DistanceSqr < ClosestDistanceSqr)
+        {
+            ClosestDistanceSqr = DistanceSqr;
+            ClosestEnemyASC = EnemyASC;
+        }
+    }
+
+    return ClosestEnemyASC;
+}
+
 void US_AICrowdEventManager::OnHeroSpawn(AGAS_CharacterBase* CharacterBase)
 {
+    if (!CharacterBase)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+        return;
+    }
+
     Hero = CharacterBase;
 }
 
@@ -160,13 +219,6 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
     if (!CharacterBase) 
     {
         UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
-        return;
-    }
-
-    AAIController* EnemyController = Cast<AAIController>(CharacterBase->GetController());
-    if (!EnemyController)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
         return;
     }
 
@@ -183,80 +235,68 @@ void US_AICrowdEventManager::OnEnemySpawn(AGAS_CharacterBase* CharacterBase)
     }
 
     AllEnemies.Add(EnemyASC);
+}
 
-    UAC_TagDelegates* TagDelegatesComponent = CharacterBase->GetTagDelegatesComponent();
-    if (!TagDelegatesComponent)
+void US_AICrowdEventManager::OnEnemyDeSpawn(AGAS_CharacterBase* CharacterBase)
+{
+    if (!CharacterBase)
     {
-        UE_LOG(LogTemp, Warning, TEXT("TagDelegatesComponent is null in %s, cannot listen tags."), *this->GetName());
+        UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
         return;
     }
 
-    //TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_CanMovingToAttack, EListenMode::OnAdded).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagAdded);
-    //TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_AI_State_CanMovingToAttack, EListenMode::OnRemoved).BindDynamic(this, &US_AICrowdEventManager::OnMoveToAttackTagRemoved);
-}
+    AllEnemies.Remove(CharacterBase->GetAbilitySystemComponent());
 
-void US_AICrowdEventManager::OnAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-    /*
-    EnemyAttackingCount++;
-    if (EnemyAttackingCount >= MaxEnemyAttackingCount)
+    if (ReleaseAttackIntender(CharacterBase->GetAbilitySystemComponent())) 
     {
-        SetValueToBlackboards(false);
-        if (bDebug)
+        UAbilitySystemComponent* ClosestNonAttackIntender = GetClosestNonAttackIntender(CharacterBase->GetAbilitySystemComponent());
+        if (!ClosestNonAttackIntender)
         {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Values set to false!"));
+            return;
         }
+        OnNewAttackIntenderAdded(ClosestNonAttackIntender);
     }
-    */
 }
 
-void US_AICrowdEventManager::OnAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void US_AICrowdEventManager::DebugPrintState()
 {
-    /*
-    EnemyAttackingCount--;
-    if (EnemyAttackingCount < MaxEnemyAttackingCount)
+#if WITH_EDITOR
+    if (!bDebug) 
     {
-        SetValueToBlackboards(true);
-        if (bDebug)
-        {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Values set to true!"));
-        }
+        return;
     }
-    */
-}
 
-void US_AICrowdEventManager::OnMoveToAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-    UAbilitySystemComponent* NonConstASC = const_cast<UAbilitySystemComponent*>(AbilitySystemComponent);
-}
-
-void US_AICrowdEventManager::OnMoveToAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-
-}
-
-void US_AICrowdEventManager::OnSoCloseToHeroTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-}
-
-void US_AICrowdEventManager::OnSoCloseToHeroTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-}
-
-void US_AICrowdEventManager::SetValueToBlackboards(bool Value)
-{
-    /*
-    for (FEnemyData& Data : AllEnemies)
+    for (UAbilitySystemComponent* ASC : AllEnemies)
     {
-        UAbilitySystemComponent* EnemyASC = Data.EnemyASC;
-        AAIController* EnemyController = Data.EnemyController;
-
-        if (!EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_AI_State_CanMovingToAttack))
+        FString StatusText;
+        if (AttackIntenders.Contains(ASC))
         {
-            EnemyController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("CanAttack")), Value);
+            StatusText = TEXT("ATTACKING");
         }
+        else if (NonAttackIntenders.Contains(ASC))
+        {
+            StatusText = TEXT("STRAFING");
+        }
+        else
+        {
+            StatusText = TEXT("UNKNOWN");
+        }
+
+        FVector TextLocation = ASC->GetAvatarActor()->GetActorLocation() + FVector(0.f, 0.f, 150.f);
+
+        DrawDebugString(
+            GetWorld(),
+            TextLocation,
+            StatusText,
+            nullptr,
+            StatusText == TEXT("ATTACKING") ? FColor::Red : FColor::Green,
+            0.01f, 
+            true
+        );
     }
-    */
+#endif // WITH_EDITOR
+
 }
+
 
 

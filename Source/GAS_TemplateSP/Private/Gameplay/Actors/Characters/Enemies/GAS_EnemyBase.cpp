@@ -24,6 +24,6 @@ void AGAS_EnemyBase::BeginPlay()
 	
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
-		SpawnDelegatesSubsystem->OnEnemySpawn.Broadcast(this);
+		SpawnDelegatesSubsystem->OnEnemySpawn.Broadcast(FCharacterSpawnData(this, GetAbilitySystemComponent()));
 	}
 }

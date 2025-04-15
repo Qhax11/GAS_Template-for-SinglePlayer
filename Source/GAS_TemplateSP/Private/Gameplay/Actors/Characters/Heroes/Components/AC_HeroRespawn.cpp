@@ -14,15 +14,15 @@ void UAC_HeroRespawn::BindCharacterDeSpawn()
     }
 }
 
-void UAC_HeroRespawn::OnCharacterRespawn(AGAS_CharacterBase* CharacterBase)
+void UAC_HeroRespawn::OnCharacterRespawn(const FCharacterSpawnData& CharacterSpawnData)
 {
-    Super::OnCharacterRespawn(CharacterBase);
+    Super::OnCharacterRespawn(CharacterSpawnData);
 
-    SetHeroLocation(CharacterBase);
+    SetHeroLocation(CharacterSpawnData.CharacterBase);
 
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
-        SpawnDelegatesSubsystem->OnHeroReSpawn.Broadcast(CharacterBase);
+        SpawnDelegatesSubsystem->OnHeroReSpawn.Broadcast(CharacterSpawnData);
     }
 }
 

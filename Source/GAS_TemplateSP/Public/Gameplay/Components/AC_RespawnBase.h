@@ -19,7 +19,7 @@ public:
 	UAC_RespawnBase();
 
 	UFUNCTION()
-	void StartCharacterReSpawnCountdown(AGAS_CharacterBase* CharacterBase);
+	void StartCharacterReSpawnCountdown(const FCharacterSpawnData& CharacterSpawnData);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnCharacterReSpawn OnCharacterReSpawn;
@@ -29,7 +29,7 @@ protected:
 
 	virtual void BindCharacterDeSpawn();
 
-	virtual void OnCharacterRespawn(AGAS_CharacterBase* CharacterBase);
+	virtual void OnCharacterRespawn(const FCharacterSpawnData& CharacterSpawnData);
 
 	void ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterBase);
 

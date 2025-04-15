@@ -10,6 +10,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartTargetLock);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetChanged, AActor*, NewTarget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndTargetLock);
 
+struct FCharacterSpawnData;
+
 UENUM(BlueprintType)
 enum ETargetChangeDirection : uint8
 {
@@ -39,7 +41,7 @@ protected:
 	void EndTargetLock();
 
 	UFUNCTION()
-	void OnEnemyDeSpawn(AGAS_CharacterBase* Enemy);
+	void OnEnemyDeSpawn(const FCharacterSpawnData& EnemySpawnData);
 
 	void TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection> TargetChangeDirection);
 

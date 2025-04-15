@@ -23,29 +23,29 @@ void UAC_RespawnBase::BindCharacterDeSpawn()
 	// The logic will be implemented in the subclasses.
 }
 
-void UAC_RespawnBase::StartCharacterReSpawnCountdown(AGAS_CharacterBase* CharacterBase)
+void UAC_RespawnBase::StartCharacterReSpawnCountdown(const FCharacterSpawnData& CharacterSpawnData)
 {
-	if (CharacterBase != GetOwner()) 
+	if (CharacterSpawnData.CharacterBase != GetOwner())
 	{
 		return;
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(CharacterDeSpawnCountDownTimerHandle, [this, CharacterBase]()
+	GetWorld()->GetTimerManager().SetTimer(CharacterDeSpawnCountDownTimerHandle, [this, CharacterSpawnData]()
 		{
-			OnCharacterRespawn(CharacterBase);
+			OnCharacterRespawn(CharacterSpawnData);
 		}, 
 		ReSpawnDelay, false);
 }
 
-void UAC_RespawnBase::OnCharacterRespawn(AGAS_CharacterBase* CharacterBase)
+void UAC_RespawnBase::OnCharacterRespawn(const FCharacterSpawnData& CharacterSpawnData)
 {
-	ApplyCharacterReSpawnEffect(CharacterBase);
+	ApplyCharacterReSpawnEffect(CharacterSpawnData.CharacterBase);
 
-	CharacterBase->EnableMovement();
-	CharacterBase->EnableCollision();
-	CharacterBase->EnableMesh();
+	CharacterSpawnData.CharacterBase->EnableMovement();
+	CharacterSpawnData.CharacterBase->EnableCollision();
+	CharacterSpawnData.CharacterBase->EnableMesh();
 
-	OnCharacterReSpawn.Broadcast(CharacterBase);
+	OnCharacterReSpawn.Broadcast(CharacterSpawnData.CharacterBase);
 }
 
 void UAC_RespawnBase::ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterBase)

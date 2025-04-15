@@ -12,11 +12,10 @@ UCLASS()
 class GAS_TEMPLATESP_API UAC_EnemyRespawn : public UAC_RespawnBase
 {
 	GENERATED_BODY()
-public:
 
+public:
 	virtual void BindCharacterDeSpawn() override;
 
-	virtual void OnCharacterRespawn(AGAS_CharacterBase* CharacterBase) override;
-
+	virtual void OnCharacterRespawn(const FCharacterSpawnData& EnemySpawnData) override;
 
 };

@@ -2,13 +2,13 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
-#include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
+#include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "GameFramework/Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemGlobals.h"
-#include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
@@ -138,9 +138,9 @@ void UAC_TargetLockSystem::EndTargetLock()
 	SetComponentTickEnabled(false);
 }
 
-void UAC_TargetLockSystem::OnEnemyDeSpawn(AGAS_CharacterBase* Enemy)
+void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterSpawnData& EnemySpawnData)
 {
-	if (Enemy == CurrentTarget) 
+	if (EnemySpawnData.CharacterBase == CurrentTarget)
 	{
 		EndTargetLock();
 	}

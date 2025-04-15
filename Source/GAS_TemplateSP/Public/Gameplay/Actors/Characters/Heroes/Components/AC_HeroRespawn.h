@@ -14,8 +14,7 @@ class GAS_TEMPLATESP_API UAC_HeroRespawn : public UAC_RespawnBase
 protected:
 	virtual void BindCharacterDeSpawn() override;
 
-	virtual void OnCharacterRespawn(AGAS_CharacterBase* CharacterBase) override;
+	virtual void OnCharacterRespawn(const FCharacterSpawnData& CharacterSpawnData) override;
 
 	void SetHeroLocation(AGAS_CharacterBase* Hero);
-
 };

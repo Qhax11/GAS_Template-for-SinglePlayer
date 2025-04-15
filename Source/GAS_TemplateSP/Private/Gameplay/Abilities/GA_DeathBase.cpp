@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/GA_DeathBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
+#include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 
 UGA_DeathBase::UGA_DeathBase()
 {
@@ -30,7 +31,7 @@ void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void UGA_DeathBase::BroadcastDeSpawn()
 {
-	// The logic will be implemented in the subclasses.
+	// Logic will be implemented in subclasses.
 }
 
 void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle, 

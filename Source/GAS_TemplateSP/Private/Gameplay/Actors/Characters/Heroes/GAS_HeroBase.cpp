@@ -58,7 +58,7 @@ void AGAS_HeroBase::BeginPlay()
 
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
-        SpawnDelegatesSubsystem->OnHeroSpawn.Broadcast(this);
+        SpawnDelegatesSubsystem->OnHeroSpawn.Broadcast(FCharacterSpawnData(this, GetAbilitySystemComponent()));
     }
 }
 

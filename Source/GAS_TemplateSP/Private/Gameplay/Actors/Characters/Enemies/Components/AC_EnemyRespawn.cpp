@@ -13,16 +13,16 @@ void UAC_EnemyRespawn::BindCharacterDeSpawn()
     }
 }
 
-void UAC_EnemyRespawn::OnCharacterRespawn(AGAS_CharacterBase* CharacterBase)
+void UAC_EnemyRespawn::OnCharacterRespawn(const FCharacterSpawnData& EnemySpawnData)
 {
-    Super::OnCharacterRespawn(CharacterBase);
+    Super::OnCharacterRespawn(EnemySpawnData);
 
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
-        SpawnDelegatesSubsystem->OnEnemyReSpawn.Broadcast(CharacterBase);
+        SpawnDelegatesSubsystem->OnEnemyReSpawn.Broadcast(EnemySpawnData);
     }
 
-    AAIController* EnemyController = Cast<AAIController>(CharacterBase->GetController());
+    AAIController* EnemyController = Cast<AAIController>(EnemySpawnData.CharacterBase->GetController());
     if (!EnemyController)
     {
         UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());

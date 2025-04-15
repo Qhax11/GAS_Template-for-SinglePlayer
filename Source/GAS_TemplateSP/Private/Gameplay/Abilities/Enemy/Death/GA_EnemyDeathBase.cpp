@@ -2,10 +2,8 @@
 
 
 #include "Gameplay/Abilities/Enemy/Death/GA_EnemyDeathBase.h"
-#include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "AIController.h"
 #include "BrainComponent.h"
-
 
 void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
@@ -42,6 +40,10 @@ void UGA_EnemyDeathBase::BroadcastDeSpawn()
 {
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
-		SpawnDelegatesSubsystem->OnEnemyDeSpawn.Broadcast(Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()));
+		FCharacterSpawnData CharacterSpawnData = FCharacterSpawnData(
+			Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()), GetAbilitySystemComponentFromActorInfo());
+		SpawnDelegatesSubsystem->OnEnemyDeSpawn.Broadcast(CharacterSpawnData);
 	}
 }
+
+

@@ -117,19 +117,22 @@ bool AAIControllerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
 		return false;
 	}
 
-	if (UAC_TagDelegates* ControlledCharacterTagDelegatesComp = ControlledCharacter->GetTagDelegatesComponent())
+	UAC_TagDelegates* ControlledCharacterTagDelegatesComp = ControlledCharacter->GetTagDelegatesComponent();
+	if (!ControlledCharacterTagDelegatesComp) 
 	{
-		ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnVulnerableTagAdded);
-		return true;
+		return false;
 	}
 
-	if (UAC_TagDelegates* TargetCharacterTagDelegatesComp = TargetCharacter->GetTagDelegatesComponent())
+	UAC_TagDelegates* TargetCharacterTagDelegatesComp = TargetCharacter->GetTagDelegatesComponent();
+	if (!TargetCharacterTagDelegatesComp)
 	{
-		TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo1, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
-		TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo2, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
-		TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo3, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
+		return false;
 	}
 
+	ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnVulnerableTagAdded);
+	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo1, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
+	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo2, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
+	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo3, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
 	return false;
 }
 

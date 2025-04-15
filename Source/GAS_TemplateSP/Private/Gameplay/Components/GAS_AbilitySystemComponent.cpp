@@ -23,7 +23,15 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 		if (Spec.Ability == InAbilityCDO)
 		{
 			HandleGameplayEvent(EventData.EventTag, &EventData);
-			return CastChecked<UGAS_GameplayAbilityBase>(Spec.GetPrimaryInstance());
+			UGameplayAbility* Instance = Spec.GetPrimaryInstance();
+			if (Instance) 
+			{
+				return CastChecked<UGAS_GameplayAbilityBase>(Instance);
+			}
+			else
+			{
+				return CastChecked<UGAS_GameplayAbilityBase>(Spec.GetAbilityInstances()[0]);
+			}
 		}
 	}
 

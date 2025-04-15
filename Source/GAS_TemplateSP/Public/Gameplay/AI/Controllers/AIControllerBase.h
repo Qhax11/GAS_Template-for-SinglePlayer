@@ -6,6 +6,8 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "AIControllerBase.generated.h"
 
 class UAISenseConfig_Sight;
@@ -46,6 +48,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StateTree|Params")
 	AActor* Target;
 
+	UPROPERTY()
+	AGAS_CharacterBase* ControlledCharacter;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	AActor* GetTarget();
@@ -53,6 +58,16 @@ public:
 	FOnTargetDetected OnTargetDetected;
 
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+
+protected:
+	// Listening own tags and target tag's
+	virtual bool RegisterTags(AGAS_CharacterBase* TargetCharacter);
+
+	UFUNCTION()
+	void OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Detaour Crowd Avoidance Config")

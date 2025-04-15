@@ -33,6 +33,13 @@ void AAIControllerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ControlledCharacter = Cast<AGAS_CharacterBase>(GetPawn());
+	if (!ControlledCharacter) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ControlledCharacter is null in: %s, Controller can not initialize"), *GetName());
+		return;
+	}
+
 	if (UCrowdFollowingComponent* CrowdComponent = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent()))
 	{
 		CrowdComponent->SetCrowdSimulationState(bEnableDetourCrowdAvoidance ? ECrowdSimulationState::Enabled : ECrowdSimulationState::Disabled);
@@ -57,13 +64,23 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 {
 	if (Stimulus.WasSuccessfullySensed() && Actor && !bHasTargetBeenDetected)
 	{
-		if (StateTreeAIComponent) 
+		AGAS_CharacterBase* TargetCharacter = Cast<AGAS_CharacterBase>(Actor);
+		if (!TargetCharacter)
 		{
-			Target = Actor;  
-			OnTargetDetected.Broadcast(Target);
-			StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DetectedPlayer);
+			UE_LOG(LogTemp, Warning, TEXT("Detected target is not AGAS_CharacterBase in: %s"), *GetName());
+			return;
 		}
 
+		if (!StateTreeAIComponent) 
+		{
+			UE_LOG(LogTemp, Warning, TEXT("StateTreeAIComponent is null in: %s"), *GetName());
+			return;
+		}
+
+		Target = Actor;
+		OnTargetDetected.Broadcast(Target);
+		StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DetectedPlayer);
+		RegisterTags(TargetCharacter);
 		bHasTargetBeenDetected = true;
 	}
 }
@@ -91,4 +108,37 @@ ETeamAttitude::Type AAIControllerBase::GetTeamAttitudeTowards(const AActor& Othe
 	}
 
 	return ETeamAttitude::Neutral;
+}
+
+bool AAIControllerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
+{
+	if (!ControlledCharacter || !TargetCharacter)
+	{
+		return false;
+	}
+
+	if (UAC_TagDelegates* ControlledCharacterTagDelegatesComp = ControlledCharacter->GetTagDelegatesComponent())
+	{
+		ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnVulnerableTagAdded);
+		return true;
+	}
+
+	if (UAC_TagDelegates* TargetCharacterTagDelegatesComp = TargetCharacter->GetTagDelegatesComponent())
+	{
+		TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo1, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
+		TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo2, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
+		TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo3, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
+	}
+
+	return false;
+}
+
+void AAIControllerBase::OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack);
+}
+
+void AAIControllerBase::OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_State_Vulnerable);
 }

@@ -28,13 +28,12 @@ protected:
 
 	virtual void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus) override;
 
+	virtual bool RegisterTags(AGAS_CharacterBase* TargetCharacter) override;
+
 	// Tag Listen Functions
-	UFUNCTION()
-	void OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	UFUNCTION()
 	void OnDeadWithFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
-	UFUNCTION()
-	void OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
 };

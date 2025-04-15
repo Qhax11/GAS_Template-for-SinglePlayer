@@ -7,12 +7,20 @@ void UEQT_DistanceToPoints::RunTest(FEnvQueryInstance& QueryInstance) const
 {
     Super::RunTest(QueryInstance);
 
-    if (!QuerierActor)
+  
+
+    TArray<FVector> ContextLocations;
+    QueryInstance.PrepareContext(QuerierActorContext, ContextLocations);
+
+    if (ContextLocations.Num() == 0 || !ContextLocations.IsValidIndex(0))
     {
         return;
     }
 
-    const FVector QuerierLocation = QuerierActor->GetActorLocation();
+    const FVector QuerierLocation = ContextLocations[0];
+
+
+    //const FVector QuerierLocation = QuerierActor->GetActorLocation();
 
     for (FEnvQueryInstance::ItemIterator It(this, QueryInstance); It; ++It)
     {
@@ -23,8 +31,9 @@ void UEQT_DistanceToPoints::RunTest(FEnvQueryInstance& QueryInstance) const
         // ❌ Filter: mesafe aralık dışında → elenir (ama sadece bu sorguda)
         if (DistanceQuerierToPoint < MinDistance || DistanceQuerierToPoint > MaxDistance)
         {
-            //It.ForceItemState(EEnvItemStatus::Failed);
-            SetScoreToItem(It, 0.0f);
+            It.ForceItemState(EEnvItemStatus::Failed);
+            //SetScoreToItem(It, 0.0f);
+            continue;
         }
 
         // ✅ Score hesaplama

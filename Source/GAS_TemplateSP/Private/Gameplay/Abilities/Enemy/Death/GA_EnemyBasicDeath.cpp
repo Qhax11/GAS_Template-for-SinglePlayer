@@ -5,7 +5,7 @@
 
 UGA_EnemyBasicDeath::UGA_EnemyBasicDeath()
 {
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_DeadWithFinisher);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_FinisherDead);
 }
 
 void UGA_EnemyBasicDeath::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 

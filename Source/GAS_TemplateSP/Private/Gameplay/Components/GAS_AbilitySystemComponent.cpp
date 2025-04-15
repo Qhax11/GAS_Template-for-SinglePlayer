@@ -9,6 +9,16 @@ void UGAS_AbilitySystemComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
+void UGAS_AbilitySystemComponent::TryActivateAbilityByTagWithEventData(const FGameplayEventData& EventData)
+{
+	if (!EventData.EventTag.IsValid()) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByTagWithEventData: EventTag is invalid!"));
+		return;
+	}
+	HandleGameplayEvent(EventData.EventTag, &EventData);
+}
+
 UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClassWithEventData(TSubclassOf<UGameplayAbility> AbilityClass, const FGameplayEventData& EventData)
 {
 	if (!AbilityClass)
@@ -22,7 +32,7 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 	{
 		if (Spec.Ability == InAbilityCDO)
 		{
-			HandleGameplayEvent(EventData.EventTag, &EventData);
+			TryActivateAbilityByTagWithEventData(EventData);
 			UGameplayAbility* Instance = Spec.GetPrimaryInstance();
 			if (Instance) 
 			{

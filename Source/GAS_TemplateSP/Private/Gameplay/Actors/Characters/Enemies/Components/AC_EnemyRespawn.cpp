@@ -22,7 +22,7 @@ void UAC_EnemyRespawn::OnCharacterRespawn(const FCharacterSpawnData& EnemySpawnD
         SpawnDelegatesSubsystem->OnEnemyReSpawn.Broadcast(EnemySpawnData);
     }
 
-    AAIController* EnemyController = Cast<AAIController>(EnemySpawnData.CharacterBase->GetController());
+    AAIController* EnemyController = Cast<AAIController>(EnemySpawnData.Character->GetController());
     if (!EnemyController)
     {
         UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());

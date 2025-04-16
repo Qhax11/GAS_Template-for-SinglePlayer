@@ -5,9 +5,7 @@
 #include "Gameplay/Components/AC_RespawnBase.h"
 #include "AC_EnemyRespawn.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API UAC_EnemyRespawn : public UAC_RespawnBase
 {

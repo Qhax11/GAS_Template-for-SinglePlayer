@@ -18,7 +18,7 @@ void UAC_HeroRespawn::OnCharacterRespawn(const FCharacterSpawnData& CharacterSpa
 {
     Super::OnCharacterRespawn(CharacterSpawnData);
 
-    SetHeroLocation(CharacterSpawnData.CharacterBase);
+    SetHeroLocation(CharacterSpawnData.Character);
 
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {

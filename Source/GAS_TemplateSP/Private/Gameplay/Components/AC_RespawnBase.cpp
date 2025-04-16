@@ -23,15 +23,16 @@ void UAC_RespawnBase::BindCharacterDeSpawn()
 	// The logic will be implemented in the subclasses.
 }
 
-void UAC_RespawnBase::StartCharacterReSpawnCountdown(const FCharacterSpawnData& CharacterSpawnData)
+void UAC_RespawnBase::StartCharacterReSpawnCountdown(const FCharacterDeSpawnData& CharacterDeSpawnData)
 {
-	if (CharacterSpawnData.CharacterBase != GetOwner())
+	if (CharacterDeSpawnData.Character != GetOwner())
 	{
 		return;
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(CharacterDeSpawnCountDownTimerHandle, [this, CharacterSpawnData]()
+	GetWorld()->GetTimerManager().SetTimer(CharacterDeSpawnCountDownTimerHandle, [this, CharacterDeSpawnData]()
 		{
+			FCharacterSpawnData CharacterSpawnData = FCharacterSpawnData(CharacterDeSpawnData.Character, CharacterDeSpawnData.ASC);
 			OnCharacterRespawn(CharacterSpawnData);
 		}, 
 		ReSpawnDelay, false);
@@ -39,16 +40,16 @@ void UAC_RespawnBase::StartCharacterReSpawnCountdown(const FCharacterSpawnData& 
 
 void UAC_RespawnBase::OnCharacterRespawn(const FCharacterSpawnData& CharacterSpawnData)
 {
-	ApplyCharacterReSpawnEffect(CharacterSpawnData.CharacterBase);
+	ApplyCharacterReSpawnEffect(CharacterSpawnData.Character);
 
-	CharacterSpawnData.CharacterBase->EnableMovement();
-	CharacterSpawnData.CharacterBase->EnableCollision();
-	CharacterSpawnData.CharacterBase->EnableMesh();
+	CharacterSpawnData.Character->EnableMovement();
+	CharacterSpawnData.Character->EnableCollision();
+	CharacterSpawnData.Character->EnableMesh();
 
-	OnCharacterReSpawn.Broadcast(CharacterSpawnData.CharacterBase);
+	OnCharacterReSpawn.Broadcast(CharacterSpawnData.Character);
 }
 
-void UAC_RespawnBase::ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterBase)
+void UAC_RespawnBase::ApplyCharacterReSpawnEffect(AGAS_CharacterBase* Character)
 {
 	if (!ReSpawnEffectClass)
 	{
@@ -57,7 +58,7 @@ void UAC_RespawnBase::ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterB
 	}
 
 	UGameplayEffect* ReSpawnEffect = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(ReSpawnEffectClass);
-	CharacterBase->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(ReSpawnEffect, 1, FGameplayEffectContextHandle());
+	Character->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(ReSpawnEffect, 1, FGameplayEffectContextHandle());
 }
 
 

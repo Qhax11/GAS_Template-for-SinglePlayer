@@ -138,9 +138,9 @@ void UAC_TargetLockSystem::EndTargetLock()
 	SetComponentTickEnabled(false);
 }
 
-void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterSpawnData& EnemySpawnData)
+void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnData)
 {
-	if (EnemySpawnData.CharacterBase == CurrentTarget)
+	if (EnemyDeSpawnData.Character == CurrentTarget)
 	{
 		EndTargetLock();
 	}

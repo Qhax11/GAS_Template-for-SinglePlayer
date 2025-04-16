@@ -3,10 +3,8 @@
 
 #include "Gameplay/AI/Subsystems/S_AICrowdEventManager.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
-#include "BehaviorTree/BlackboardComponent.h"
-#include "AIController.h"
-#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/AI/DS_AICrowdEventManager.h"
+#include "AIController.h"
 
 
 void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -47,20 +45,20 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
 
 void US_AICrowdEventManager::OnHeroSpawn(const FCharacterSpawnData& CharacterSpawnData)
 {
-    if (!CharacterSpawnData.CharacterBase)
+    if (!CharacterSpawnData.Character)
     {
-        UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Character is null in: %s"), *GetName());
         return;
     }
 
-    Hero = CharacterSpawnData.CharacterBase;
+    Hero = CharacterSpawnData.Character;
 }
 
 void US_AICrowdEventManager::OnEnemySpawn(const FCharacterSpawnData& CharacterSpawnData)
 {
-    if (!CharacterSpawnData.CharacterBase || !CharacterSpawnData.ASC)
+    if (!CharacterSpawnData.Character || !CharacterSpawnData.ASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("CharacterBase or ASC null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Character or ASC null in: %s"), *GetName());
         return;
     }
 
@@ -72,11 +70,12 @@ void US_AICrowdEventManager::OnEnemySpawn(const FCharacterSpawnData& CharacterSp
     Enemies.Add(FEnemyData(CharacterSpawnData.ASC));
 }
 
-void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterSpawnData& CharacterSpawnData)
+void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterDeSpawnData& CharacterSpawnData)
 {
-    if (!CharacterSpawnData.CharacterBase || !CharacterSpawnData.ASC)
+    //CharacterSpawnData.BrodcasterClass->IsChildOf<>
+    if (!CharacterSpawnData.Character || !CharacterSpawnData.ASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("CharacterBase or ASC null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Character or ASC null in: %s"), *GetName());
         return;
     }
 

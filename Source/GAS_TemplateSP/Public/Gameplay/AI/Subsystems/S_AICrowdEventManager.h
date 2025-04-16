@@ -77,7 +77,7 @@ public:
 	void OnEnemySpawn(const FCharacterSpawnData& CharacterSpawnData);
 
 	UFUNCTION()
-	void OnEnemyDeSpawn(const FCharacterSpawnData& CharacterSpawnData);
+	void OnEnemyDeSpawn(const FCharacterDeSpawnData& CharacterSpawnData);
 
 	// ===============================================================
     //                           Public Control Interface
@@ -142,8 +142,6 @@ protected:
 
 	UAbilitySystemComponent* GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) const;
 
-	// Loops through all enemies that are not currently attack intenders.
-    // Compares distance to the hero, and returns the closest valid one.
 	UAbilitySystemComponent* GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) const;
 
 	// ===============================================================

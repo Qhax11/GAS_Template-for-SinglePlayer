@@ -36,13 +36,11 @@ void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	EnemyController->GetBrainComponent()->StopLogic(TEXT("Enemey is dead"));
 }
 
-void UGA_EnemyDeathBase::BroadcastDeSpawn()
+void UGA_EnemyDeathBase::BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData)
 {
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
-		FCharacterSpawnData CharacterSpawnData = FCharacterSpawnData(
-			Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()), GetAbilitySystemComponentFromActorInfo());
-		SpawnDelegatesSubsystem->OnEnemyDeSpawn.Broadcast(CharacterSpawnData);
+		SpawnDelegatesSubsystem->OnEnemyDeSpawn.Broadcast(DespawnData);
 	}
 }
 

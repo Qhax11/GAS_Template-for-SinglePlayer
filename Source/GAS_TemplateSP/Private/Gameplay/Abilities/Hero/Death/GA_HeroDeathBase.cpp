@@ -3,12 +3,10 @@
 
 #include "Gameplay/Abilities/Hero/Death/GA_HeroDeathBase.h"
 
-void UGA_HeroDeathBase::BroadcastDeSpawn()
+void UGA_HeroDeathBase::BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData)
 {
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
-		FCharacterSpawnData CharacterSpawnData = FCharacterSpawnData(
-			Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()), GetAbilitySystemComponentFromActorInfo());
-		SpawnDelegatesSubsystem->OnHeroDeSpawn.Broadcast(CharacterSpawnData);
+		SpawnDelegatesSubsystem->OnHeroDeSpawn.Broadcast(DespawnData);
 	}
 }

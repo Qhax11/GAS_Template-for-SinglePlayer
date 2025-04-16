@@ -19,7 +19,7 @@ public:
 	UAC_RespawnBase();
 
 	UFUNCTION()
-	void StartCharacterReSpawnCountdown(const FCharacterSpawnData& CharacterSpawnData);
+	void StartCharacterReSpawnCountdown(const FCharacterDeSpawnData& CharacterDeSpawnData);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnCharacterReSpawn OnCharacterReSpawn;

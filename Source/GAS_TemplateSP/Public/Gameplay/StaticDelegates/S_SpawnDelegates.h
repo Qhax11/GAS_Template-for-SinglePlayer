@@ -13,10 +13,44 @@ struct FCharacterSpawnData
 
 public:
 	UPROPERTY(BlueprintReadOnly)
-	AGAS_CharacterBase* CharacterBase = nullptr;
+	AGAS_CharacterBase* Character = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)
 	UAbilitySystemComponent* ASC = nullptr;
+
+	FCharacterSpawnData() {}
+
+	FCharacterSpawnData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC)
+		: Character(InCharacter), ASC(InASC)
+	{}
+};
+
+USTRUCT(BlueprintType)
+struct FCharacterDeSpawnData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	AGAS_CharacterBase* Character = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	UAbilitySystemComponent* ASC = nullptr;
+
+	// The character responsible for this character's death.
+    // Typically the attacker who dealt the final blow.
+	UPROPERTY(BlueprintReadOnly)
+	AGAS_CharacterBase* InstigatorCharacter = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	UAbilitySystemComponent* InstigatorASC = nullptr;
+
+	FCharacterDeSpawnData() {}
+
+	FCharacterDeSpawnData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC,
+		AGAS_CharacterBase* InInstigatorCharacter, UAbilitySystemComponent* InInstigatorASC)
+		: Character(InCharacter), ASC(InASC), InstigatorCharacter(InInstigatorCharacter), InstigatorASC(InInstigatorASC)
+	{}
 };
 
 // Spawn refers to the first initialization, 
@@ -24,11 +58,11 @@ public:
 // DeSpawn means the character's death.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroSpawn, const FCharacterSpawnData&, HeroSpawnData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroReSpawn, const FCharacterSpawnData&, HeroSpawnData);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroDeSpawn, const FCharacterSpawnData&, HeroSpawnData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroDeSpawn, const FCharacterDeSpawnData&, HeroDeSpawnData);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawn, const FCharacterSpawnData&, EnemySpawnData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyReSpawn, const FCharacterSpawnData&, EnemySpawnData);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeSpawn, const FCharacterSpawnData&, EnemySpawnData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeSpawn, const FCharacterDeSpawnData&, EnemyDeSpawnData);
 
 
 UCLASS()

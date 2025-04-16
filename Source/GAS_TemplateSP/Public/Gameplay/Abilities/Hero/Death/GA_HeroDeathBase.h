@@ -12,6 +12,6 @@ class GAS_TEMPLATESP_API UGA_HeroDeathBase : public UGA_DeathBase
 	GENERATED_BODY()
 	
 protected:
-	virtual void BroadcastDeSpawn() override;
+	virtual void BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData) override;
 
 };

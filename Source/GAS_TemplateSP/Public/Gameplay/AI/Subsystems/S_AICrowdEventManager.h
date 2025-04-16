@@ -153,6 +153,8 @@ protected:
 
 	UAbilitySystemComponent* GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) const;
 
+	void SendEventToStateTrees();
+
 	// ===============================================================
     //                                Debug
     // ===============================================================

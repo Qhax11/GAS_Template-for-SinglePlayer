@@ -61,13 +61,6 @@ void US_AICrowdEventManager::OnEnemySpawn(const FEnemySpawnData& EnemySpawnData)
         return;
     }
 
-    //CharacterSpawnData.Character->GetController()->
-
-    if (EnemySpawnData.ASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Boss))
-    {
-        return;
-    }
-
     FEnemyData EnemeyData = FEnemyData(EnemySpawnData.ASC, EnemySpawnData.StateTree);
     Enemies.Add(EnemeyData);
 }
@@ -310,6 +303,11 @@ UAbilitySystemComponent* US_AICrowdEventManager::GetClosestNonAttackIntender(UAb
     }
 
     return ClosestEnemyASC;
+}
+
+void US_AICrowdEventManager::SendEventToStateTrees()
+{
+
 }
 
 void US_AICrowdEventManager::DebugPrintState()

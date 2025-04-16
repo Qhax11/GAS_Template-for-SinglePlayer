@@ -10,19 +10,32 @@ void UAC_HeroRespawn::BindCharacterDeSpawn()
 {
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
-        SpawnDelegatesSubsystem->OnHeroDeSpawn.AddDynamic(this, &UAC_RespawnBase::StartCharacterReSpawnCountdown);
+        SpawnDelegatesSubsystem->OnHeroDeSpawn.AddDynamic(this, &UAC_HeroRespawn::OnHeroDeSpawn);
     }
 }
 
-void UAC_HeroRespawn::OnCharacterRespawn(const FCharacterSpawnData& CharacterSpawnData)
+void UAC_HeroRespawn::OnHeroDeSpawn(const FCharacterDeSpawnData& HeroDeSpawnData)
 {
-    Super::OnCharacterRespawn(CharacterSpawnData);
+    if (HeroDeSpawnData.Character != OwnerCharacter)
+    {
+        return;
+    }
 
-    SetHeroLocation(CharacterSpawnData.Character);
+    GetWorld()->GetTimerManager().SetTimer(CharacterDeSpawnCountDownTimerHandle, [this, HeroDeSpawnData]()
+        {
+            FHeroSpawnData HeroSpawnData = FHeroSpawnData(HeroDeSpawnData.Character, HeroDeSpawnData.ASC);
+            OnHeroReSpawn(HeroSpawnData);
+        },
+        ReSpawnDelay, false);
+}
+
+void UAC_HeroRespawn::OnHeroReSpawn(const FHeroSpawnData& HeroReSpawnData)
+{
+    SetHeroLocation(HeroReSpawnData.Character);
 
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
-        SpawnDelegatesSubsystem->OnHeroReSpawn.Broadcast(CharacterSpawnData);
+        SpawnDelegatesSubsystem->OnHeroReSpawn.Broadcast(HeroReSpawnData);
     }
 }
 

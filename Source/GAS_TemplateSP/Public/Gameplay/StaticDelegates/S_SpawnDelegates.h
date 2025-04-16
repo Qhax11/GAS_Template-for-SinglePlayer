@@ -3,11 +3,14 @@
 #pragma once
 
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "S_SpawnDelegates.generated.h"
 
+class UAbilitySystemComponent;
+class AGAS_CharacterBase;
+class UST_Base;
+
 USTRUCT(BlueprintType)
-struct FCharacterSpawnData
+struct FHeroSpawnData
 {
 	GENERATED_BODY()
 
@@ -18,10 +21,32 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	UAbilitySystemComponent* ASC = nullptr;
 
-	FCharacterSpawnData() {}
+	FHeroSpawnData() {}
 
-	FCharacterSpawnData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC)
+	FHeroSpawnData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC)
 		: Character(InCharacter), ASC(InASC)
+	{}
+};
+
+USTRUCT(BlueprintType)
+struct FEnemySpawnData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	AGAS_CharacterBase* Character = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	UAbilitySystemComponent* ASC = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	UST_Base* StateTree = nullptr;
+
+	FEnemySpawnData() {}
+
+	FEnemySpawnData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC, UST_Base* InStateTree)
+		: Character(InCharacter), ASC(InASC), StateTree(InStateTree)
 	{}
 };
 
@@ -56,12 +81,12 @@ public:
 // Spawn refers to the first initialization, 
 // ReSpawn refers to subsequent initializations after death
 // DeSpawn means the character's death.
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroSpawn, const FCharacterSpawnData&, HeroSpawnData);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroReSpawn, const FCharacterSpawnData&, HeroSpawnData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroSpawn, const FHeroSpawnData&, HeroSpawnData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroReSpawn, const FHeroSpawnData&, HeroReSpawnData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroDeSpawn, const FCharacterDeSpawnData&, HeroDeSpawnData);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawn, const FCharacterSpawnData&, EnemySpawnData);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyReSpawn, const FCharacterSpawnData&, EnemySpawnData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawn, const FEnemySpawnData&, EnemySpawnData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyReSpawn, const FEnemySpawnData&, EnemyReSpawnData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeSpawn, const FCharacterDeSpawnData&, EnemyDeSpawnData);
 
 

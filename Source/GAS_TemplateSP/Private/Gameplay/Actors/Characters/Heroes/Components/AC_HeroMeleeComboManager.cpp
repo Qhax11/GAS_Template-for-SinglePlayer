@@ -64,6 +64,11 @@ UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility
 	}
 
 	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMeleeAttackAbility(MontageSection);
+	if (!ActivatedComboMeleeAttack) 
+	{
+		return nullptr;
+	}
+
 	if (!ActivatedComboMeleeAttack->OnCanExecuteNextAttack.IsBound())
 	{
 		ActivatedComboMeleeAttack->OnCanExecuteNextAttack.AddDynamic(this, &UAC_HeroMeleeComboManager::OnCanActivateNextAttack);

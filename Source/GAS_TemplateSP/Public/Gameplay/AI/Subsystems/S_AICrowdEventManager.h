@@ -7,8 +7,8 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "S_AICrowdEventManager.generated.h"
 
-class AGAS_CharacterBase;
 class AAIController;
+class UST_Base;
 struct FCharacterSpawnData;
 struct FGameplayTag;
 
@@ -20,6 +20,15 @@ struct FEnemyData
 public:
 	UPROPERTY()
 	UAbilitySystemComponent* ASC = nullptr;
+
+	UPROPERTY()
+	UST_Base* StateTree = nullptr;
+
+	FEnemyData() {}
+
+	FEnemyData(UAbilitySystemComponent* InASC, UST_Base* InStateTree)
+		: ASC(InASC), StateTree(InStateTree)
+	{}
 
 	// Equals operator for array operations
 	bool operator==(const FEnemyData& Other) const
@@ -71,10 +80,10 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	UFUNCTION()
-	void OnHeroSpawn(const FCharacterSpawnData& CharacterSpawnData);
+	void OnHeroSpawn(const FHeroSpawnData& HeroSpawnData);
 
 	UFUNCTION()
-	void OnEnemySpawn(const FCharacterSpawnData& CharacterSpawnData);
+	void OnEnemySpawn(const FEnemySpawnData& EnemySpawnData);
 
 	UFUNCTION()
 	void OnEnemyDeSpawn(const FCharacterDeSpawnData& CharacterSpawnData);
@@ -156,7 +165,7 @@ private:
 	TArray<FEnemyData> Enemies;
 
 	/** The current player-controlled hero the AI references for targeting/distance logic. */
-	AGAS_CharacterBase* Hero;
+	AActor* HeroActor;
 
 	int32 MaxEnemyAttackingCount = 0;
 	bool bDebug;

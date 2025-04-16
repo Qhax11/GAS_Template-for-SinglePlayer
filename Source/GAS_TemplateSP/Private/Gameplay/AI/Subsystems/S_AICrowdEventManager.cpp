@@ -6,7 +6,6 @@
 #include "Gameplay/AI/DS_AICrowdEventManager.h"
 #include "AIController.h"
 
-
 void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -43,31 +42,34 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
     bDebug = AICrowdEventManagerSettings->bDebug;
 }
 
-void US_AICrowdEventManager::OnHeroSpawn(const FCharacterSpawnData& CharacterSpawnData)
+void US_AICrowdEventManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
 {
-    if (!CharacterSpawnData.Character)
+    if (!HeroSpawnData.Character)
     {
         UE_LOG(LogTemp, Warning, TEXT("Character is null in: %s"), *GetName());
         return;
     }
 
-    Hero = CharacterSpawnData.Character;
+    HeroActor = HeroSpawnData.Character;
 }
 
-void US_AICrowdEventManager::OnEnemySpawn(const FCharacterSpawnData& CharacterSpawnData)
+void US_AICrowdEventManager::OnEnemySpawn(const FEnemySpawnData& EnemySpawnData)
 {
-    if (!CharacterSpawnData.Character || !CharacterSpawnData.ASC)
+    if (!EnemySpawnData.Character || !EnemySpawnData.ASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("Character or ASC null in: %s"), *GetName());
         return;
     }
 
-    if (CharacterSpawnData.ASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Boss))
+    //CharacterSpawnData.Character->GetController()->
+
+    if (EnemySpawnData.ASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Boss))
     {
         return;
     }
 
-    Enemies.Add(FEnemyData(CharacterSpawnData.ASC));
+    FEnemyData EnemeyData = FEnemyData(EnemySpawnData.ASC, EnemySpawnData.StateTree);
+    Enemies.Add(EnemeyData);
 }
 
 void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterDeSpawnData& CharacterSpawnData)
@@ -253,7 +255,7 @@ TArray<UAbilitySystemComponent*> US_AICrowdEventManager::GetNonAttackIntenders()
 
 UAbilitySystemComponent* US_AICrowdEventManager::GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) const
 {
-    if (!Hero) 
+    if (!HeroActor)
     {
         return nullptr;
     }
@@ -268,7 +270,7 @@ UAbilitySystemComponent* US_AICrowdEventManager::GetFurthestAttackIntender(UAbil
             continue;
         }
 
-        float Distance = FVector::Dist(ASC->GetAvatarActor()->GetActorLocation(), Hero->GetActorLocation());
+        float Distance = FVector::Dist(ASC->GetAvatarActor()->GetActorLocation(), HeroActor->GetActorLocation());
         if (Distance > FurthestDistance)
         {
             FurthestDistance = Distance;
@@ -281,7 +283,7 @@ UAbilitySystemComponent* US_AICrowdEventManager::GetFurthestAttackIntender(UAbil
 
 UAbilitySystemComponent* US_AICrowdEventManager::GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) const
 {
-    if (!Hero || GetNonAttackIntenders().Num() == 0)
+    if (!HeroActor || GetNonAttackIntenders().Num() == 0)
     {
         return nullptr;
     }
@@ -289,7 +291,7 @@ UAbilitySystemComponent* US_AICrowdEventManager::GetClosestNonAttackIntender(UAb
     UAbilitySystemComponent* ClosestEnemyASC = nullptr;
     float ClosestDistanceSqr = TNumericLimits<float>::Max();
 
-    const FVector HeroLocation = Hero->GetActorLocation();
+    const FVector HeroLocation = HeroActor->GetActorLocation();
 
     for (UAbilitySystemComponent* EnemyASC : GetNonAttackIntenders())
     {

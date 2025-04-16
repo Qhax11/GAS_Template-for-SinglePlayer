@@ -21,8 +21,6 @@ public:
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	FORCEINLINE class UAC_RespawnBase* GeRespawnBaseComponent() const { return RespawnBaseComponent; }
-
 	FORCEINLINE class UAC_TagDispatcher* GetTagDispatcherComponent() const { return TagDispatcherComponent; }
 
 	FORCEINLINE class UAC_TagDelegates* GetTagDelegatesComponent() const { return TagDelegatesComponent; }
@@ -36,9 +34,6 @@ protected:
 	UGAS_AbilitySystemComponent* CharacterASC;
 
 	/* Components */
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
-	class UAC_RespawnBase* RespawnBaseComponent;
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_AbilitySet* AbilitySetComponent;
 
@@ -70,7 +65,7 @@ public:
 	FName WeaponSocketName;
 
 public:
-	// Death state functions
+	// Commonly used in death state logic
 	void DisableMovement();
 
 	void EnableMovement();

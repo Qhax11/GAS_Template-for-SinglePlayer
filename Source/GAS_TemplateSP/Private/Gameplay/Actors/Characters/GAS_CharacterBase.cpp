@@ -2,7 +2,6 @@
 
 
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
-#include "Gameplay/Components/AC_RespawnBase.h"
 #include "Gameplay/Components/AC_AttributesListenerBase.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/Components/AC_Team.h"
@@ -17,8 +16,6 @@
 AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectInitializer)
 {
 	CharacterASC = CreateDefaultSubobject<UGAS_AbilitySystemComponent>(TEXT("CharacterASC"));
-
-	RespawnBaseComponent = CreateDefaultSubobject<UAC_RespawnBase>(TEXT("RespawnBaseComponent"));
 
 	AbilitySetComponent = CreateDefaultSubobject<UAC_AbilitySet>(TEXT("AbilitySetComponent"));
 

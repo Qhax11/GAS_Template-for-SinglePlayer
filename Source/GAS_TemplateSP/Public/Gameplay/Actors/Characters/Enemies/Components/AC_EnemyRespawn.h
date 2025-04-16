@@ -5,6 +5,8 @@
 #include "Gameplay/Components/AC_RespawnBase.h"
 #include "AC_EnemyRespawn.generated.h"
 
+class AAIControllerBase;
+class UST_Base;
 
 UCLASS()
 class GAS_TEMPLATESP_API UAC_EnemyRespawn : public UAC_RespawnBase
@@ -12,8 +14,17 @@ class GAS_TEMPLATESP_API UAC_EnemyRespawn : public UAC_RespawnBase
 	GENERATED_BODY()
 
 public:
+	virtual void BeginPlay() override;
+
 	virtual void BindCharacterDeSpawn() override;
 
-	virtual void OnCharacterRespawn(const FCharacterSpawnData& EnemySpawnData) override;
+	UFUNCTION()
+	virtual void OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemySpawnData);
+
+	virtual void OnEnemyReSpawn(const FEnemySpawnData& EnemySpawnData);
+
+protected:
+	AAIControllerBase* EnemyController;
+	UST_Base* StateTree;
 
 };

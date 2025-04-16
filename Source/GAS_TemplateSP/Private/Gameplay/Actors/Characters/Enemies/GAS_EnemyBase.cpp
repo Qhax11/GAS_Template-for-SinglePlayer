@@ -5,6 +5,7 @@
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyRespawn.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
 
 
 AGAS_EnemyBase::AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer):
@@ -21,9 +22,22 @@ AGAS_EnemyBase::AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer
 void AGAS_EnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+
+void AGAS_EnemyBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	EnemyController = Cast<AAIControllerBase>(NewController);
+	if (!EnemyController) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
+		return;
+	}
+
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
-		SpawnDelegatesSubsystem->OnEnemySpawn.Broadcast(FCharacterSpawnData(this, GetAbilitySystemComponent()));
+		FEnemySpawnData EnemySpawnData = FEnemySpawnData(this, GetAbilitySystemComponent(), EnemyController->GetStateTreeComponent());
+		SpawnDelegatesSubsystem->OnEnemySpawn.Broadcast(EnemySpawnData);
 	}
 }

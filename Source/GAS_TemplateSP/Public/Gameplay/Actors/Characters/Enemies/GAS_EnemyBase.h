@@ -16,6 +16,8 @@ public:
 	
 	virtual void BeginPlay() override;
 
+	virtual void PossessedBy(AController* NewController) override;
+
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE USceneComponent* GetFinisherPointComponent() const { return FinisherPointComponent; }
 
@@ -38,4 +40,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
     USceneComponent* FinisherPointComponent;
+
+	class AAIControllerBase* EnemyController;
 };

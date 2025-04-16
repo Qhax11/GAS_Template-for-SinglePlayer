@@ -4,11 +4,11 @@
 
 #include "Components/ActorComponent.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "AC_RespawnBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterReSpawn, AGAS_CharacterBase*, Character);
 
-class AGAS_CharacterBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_RespawnBase : public UActorComponent
@@ -18,9 +18,6 @@ class GAS_TEMPLATESP_API UAC_RespawnBase : public UActorComponent
 public:
 	UAC_RespawnBase();
 
-	UFUNCTION()
-	void StartCharacterReSpawnCountdown(const FCharacterDeSpawnData& CharacterDeSpawnData);
-
 	UPROPERTY(BlueprintAssignable)
 	FOnCharacterReSpawn OnCharacterReSpawn;
 
@@ -28,8 +25,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void BindCharacterDeSpawn();
-
-	virtual void OnCharacterRespawn(const FCharacterSpawnData& CharacterSpawnData);
 
 	void ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterBase);
 
@@ -40,4 +35,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")
 	TSubclassOf<class UGameplayEffect> ReSpawnEffectClass;
+
+	AGAS_CharacterBase* OwnerCharacter;
 };

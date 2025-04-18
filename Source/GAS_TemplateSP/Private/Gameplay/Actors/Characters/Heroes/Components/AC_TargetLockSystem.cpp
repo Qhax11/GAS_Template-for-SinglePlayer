@@ -111,12 +111,20 @@ void UAC_TargetLockSystem::StartTargetLock()
 		return;
 	}
 
-	ChangeTarget(OutResultActors[0]);
+	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OutResultActors[0]);
+	if (!TargetASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetASC is null in %s, cannot initialize TargetLockSystem."), *GetName());
+		return;
+	}
+
+	TargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
+	CurrentTargetASC = TargetASC;
+	CurrentTarget = OutResultActors[0];
 
 	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	bLocked = true;
 	SetComponentTickEnabled(true);
-
 	OnStartTargetLock.Broadcast();
 }
 

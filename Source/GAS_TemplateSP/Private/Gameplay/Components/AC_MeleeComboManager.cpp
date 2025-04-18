@@ -27,7 +27,6 @@ void UAC_MeleeComboManager::BeginPlay()
 	}
 
 	CharacterBaseASC->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd);
-
 	InitComboChainTracker();
 }
 

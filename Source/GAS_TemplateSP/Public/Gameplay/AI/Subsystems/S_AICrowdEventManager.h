@@ -3,12 +3,13 @@
 #pragma once
 
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/AI/StateTree/ST_Base.h"
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "S_AICrowdEventManager.generated.h"
 
 class AAIController;
-class UST_Base;
 struct FCharacterSpawnData;
 struct FGameplayTag;
 
@@ -19,6 +20,9 @@ struct FEnemyData
 
 public:
 	UPROPERTY()
+	AGAS_CharacterBase* Character = nullptr;
+
+	UPROPERTY()
 	UAbilitySystemComponent* ASC = nullptr;
 
 	UPROPERTY()
@@ -26,8 +30,8 @@ public:
 
 	FEnemyData() {}
 
-	FEnemyData(UAbilitySystemComponent* InASC, UST_Base* InStateTree)
-		: ASC(InASC), StateTree(InStateTree)
+	FEnemyData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC, UST_Base* InStateTree)
+		: Character(InCharacter), ASC(InASC), StateTree(InStateTree)
 	{}
 
 	// Equals operator for array operations
@@ -86,7 +90,7 @@ public:
 	void OnEnemySpawn(const FEnemySpawnData& EnemySpawnData);
 
 	UFUNCTION()
-	void OnEnemyDeSpawn(const FCharacterDeSpawnData& CharacterSpawnData);
+	void OnEnemyDeSpawn(const FCharacterDeSpawnData& CharacterDeSpawnData);
 
 	// ===============================================================
     //                           Public Control Interface
@@ -145,15 +149,15 @@ protected:
 protected:
 	FEnemyData* FindEnemyDataByASC(UAbilitySystemComponent* ASC);
 
-	TArray<UAbilitySystemComponent*> GetAttackIntenders() const;
+	TArray<FEnemyData*> GetAttackIntenders();
 
-	TArray<UAbilitySystemComponent*> GetNonAttackIntenders() const;
+	TArray<FEnemyData*> GetNonAttackIntenders();
 
-	UAbilitySystemComponent* GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) const;
+	FEnemyData* GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC);
 
-	UAbilitySystemComponent* GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) const;
+	FEnemyData* GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC);
 
-	void SendEventToStateTrees();
+	void SendStateTreeEventToAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload = FConstStructView());
 
 	// ===============================================================
     //                                Debug

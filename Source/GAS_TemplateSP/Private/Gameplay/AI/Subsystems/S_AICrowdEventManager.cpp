@@ -61,27 +61,29 @@ void US_AICrowdEventManager::OnEnemySpawn(const FEnemySpawnData& EnemySpawnData)
         return;
     }
 
-    FEnemyData EnemeyData = FEnemyData(EnemySpawnData.ASC, EnemySpawnData.StateTree);
+    FEnemyData EnemeyData = FEnemyData(EnemySpawnData.Character, EnemySpawnData.ASC, EnemySpawnData.StateTree);
     Enemies.Add(EnemeyData);
 }
 
-void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterDeSpawnData& CharacterSpawnData)
+void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterDeSpawnData& CharacterDeSpawnData)
 {
-    //CharacterSpawnData.BrodcasterClass->IsChildOf<>
-    if (!CharacterSpawnData.Character || !CharacterSpawnData.ASC)
+    if (!CharacterDeSpawnData.Character || !CharacterDeSpawnData.ASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("Character or ASC null in: %s"), *GetName());
         return;
     }
 
-    SafeRemoveEnemyByASC(CharacterSpawnData.ASC);
+    SafeRemoveEnemyByASC(CharacterDeSpawnData.ASC);
 
-    UAbilitySystemComponent* ClosestNonAttackIntender = GetClosestNonAttackIntender(CharacterSpawnData.ASC);
-    if (!ClosestNonAttackIntender)
+    FEnemyData* ClosestNonAttackIntenderData = GetClosestNonAttackIntender(CharacterDeSpawnData.ASC);
+    if (!ClosestNonAttackIntenderData)
     {
         return;
     }
-    OnNewAttackIntenderAdded(ClosestNonAttackIntender);
+    OnNewAttackIntenderAdded(ClosestNonAttackIntenderData->ASC);
+
+   // CharacterDeSpawnData.InstigatorASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
+    SendStateTreeEventToAttackIntenders(GAS_Tags::TAG_AI_StateTreeEvent_Crowd_HeroFinisher);
 }
 
 bool US_AICrowdEventManager::RequestToBeAttackIntender(UAbilitySystemComponent* ASC)
@@ -91,8 +93,14 @@ bool US_AICrowdEventManager::RequestToBeAttackIntender(UAbilitySystemComponent* 
         return false;
     }
 
+    FEnemyData* FindedEnemyData = FindEnemyDataByASC(ASC);
+    if (!FindedEnemyData)
+    {
+        return false;
+    }
+
     // It is already AttackIntender
-    if (GetAttackIntenders().Contains(ASC))
+    if (FindedEnemyData->IsAttackIntender())
     {
         return true;
     }
@@ -112,25 +120,33 @@ void US_AICrowdEventManager::OnNewAttackIntenderAdded(UAbilitySystemComponent* N
         return;
     }
 
+    FEnemyData* FindedEnemyData = FindEnemyDataByASC(NewIntender);
+    if (!FindedEnemyData)
+    {
+        return;
+    }
+
     // It is already AttackIntender
-    if (GetAttackIntenders().Contains(NewIntender))
+    if (FindedEnemyData->IsAttackIntender())
+    {
+        return;
+    }
+
+    if (GetAttackIntenders().Num() >= MaxEnemyAttackingCount) 
     {
         return;
     }
 
     AddAttackIntender(NewIntender);
 
-    if (GetAttackIntenders().Num() >= MaxEnemyAttackingCount)
+    FEnemyData* FurthestIntenderData = GetFurthestAttackIntender(NewIntender);
+    if (FurthestIntenderData)
     {
-        UAbilitySystemComponent* FurthestIntenderASC = GetFurthestAttackIntender(NewIntender);
-        if (FurthestIntenderASC)
+        RemoveAttackIntender(FurthestIntenderData->ASC);
+        if (bDebug && FurthestIntenderData->Character)
         {
-            RemoveAttackIntender(FurthestIntenderASC);
-            if (bDebug)
-            {
-                UE_LOG(LogTemp, Warning, TEXT("[Crowd] %s removed from AttackIntenders due to proximity override."),
-                    *FurthestIntenderASC->GetAvatarActor()->GetName());
-            }
+            UE_LOG(LogTemp, Warning, TEXT("[Crowd] %s removed from AttackIntenders due to proximity override."),
+                *FurthestIntenderData->ASC->GetName());
         }
     }
 }
@@ -220,94 +236,100 @@ FEnemyData* US_AICrowdEventManager::FindEnemyDataByASC(UAbilitySystemComponent* 
     return nullptr;
 }
 
-TArray<UAbilitySystemComponent*> US_AICrowdEventManager::GetAttackIntenders() const
+TArray<FEnemyData*> US_AICrowdEventManager::GetAttackIntenders() 
 {
-    TArray<UAbilitySystemComponent*> Result;
-    for (const FEnemyData& Data : Enemies)
+    TArray<FEnemyData*> Result;
+    for (FEnemyData& Data : Enemies)
     {
         if (Data.IsAttackIntender())
         {
-            Result.Add(Data.ASC);
+            Result.Add(&Data);
         }
     }
     return Result;
 }
 
-TArray<UAbilitySystemComponent*> US_AICrowdEventManager::GetNonAttackIntenders() const
+TArray<FEnemyData*> US_AICrowdEventManager::GetNonAttackIntenders() 
 {
-    TArray<UAbilitySystemComponent*> Result;
-    for (const FEnemyData& Data : Enemies)
+    TArray<FEnemyData*> Result;
+    for (FEnemyData& Data : Enemies)
     {
         if (!Data.IsAttackIntender())
         {
-            Result.Add(Data.ASC);
+            Result.Add(&Data);
         }
     }
     return Result;
 }
 
-UAbilitySystemComponent* US_AICrowdEventManager::GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) const
+FEnemyData* US_AICrowdEventManager::GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC) 
 {
     if (!HeroActor)
     {
         return nullptr;
     }
 
-    UAbilitySystemComponent* FurthestASC = nullptr;
+    FEnemyData* FurthestEnemyData = nullptr;
     float FurthestDistance = 0.f;
 
-    for (UAbilitySystemComponent* ASC : GetAttackIntenders())
+    for (FEnemyData* Data : GetAttackIntenders())
     {
-        if (!ASC || ASC == IgnoreASC)
+        if (!Data || !Data->Character || Data->ASC == IgnoreASC)
         {
             continue;
         }
 
-        float Distance = FVector::Dist(ASC->GetAvatarActor()->GetActorLocation(), HeroActor->GetActorLocation());
+        float Distance = FVector::Dist(Data->Character->GetActorLocation(), HeroActor->GetActorLocation());
         if (Distance > FurthestDistance)
         {
             FurthestDistance = Distance;
-            FurthestASC = ASC;
+            FurthestEnemyData = Data;
         }
     }
 
-    return FurthestASC;
+    return FurthestEnemyData;
 }
 
-UAbilitySystemComponent* US_AICrowdEventManager::GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) const
+FEnemyData* US_AICrowdEventManager::GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) 
 {
     if (!HeroActor || GetNonAttackIntenders().Num() == 0)
     {
         return nullptr;
     }
 
-    UAbilitySystemComponent* ClosestEnemyASC = nullptr;
+    FEnemyData* ClosestEnemyData = nullptr;
     float ClosestDistanceSqr = TNumericLimits<float>::Max();
 
     const FVector HeroLocation = HeroActor->GetActorLocation();
 
-    for (UAbilitySystemComponent* EnemyASC : GetNonAttackIntenders())
+    for (FEnemyData* Data : GetNonAttackIntenders())
     {
-        if (!EnemyASC || EnemyASC == IgnoreASC)
+        if (!Data || !Data->Character || Data->ASC == IgnoreASC)
         {
             continue;
         }
 
-        const float DistanceSqr = FVector::DistSquared(HeroLocation, EnemyASC->GetAvatarActor()->GetActorLocation());
+        const float DistanceSqr = FVector::DistSquared(HeroLocation, Data->Character->GetActorLocation());
 
         if (DistanceSqr < ClosestDistanceSqr)
         {
             ClosestDistanceSqr = DistanceSqr;
-            ClosestEnemyASC = EnemyASC;
+            ClosestEnemyData = Data;
         }
     }
 
-    return ClosestEnemyASC;
+    return ClosestEnemyData;
 }
 
-void US_AICrowdEventManager::SendEventToStateTrees()
+void US_AICrowdEventManager::SendStateTreeEventToAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload)
 {
-
+    for (FEnemyData* AttackIntenderData : GetAttackIntenders())
+    {
+        if (AttackIntenderData->StateTree) 
+        {
+            AttackIntenderData->StateTree->SendStateTreeEvent(Tag, Payload);
+        }
+    }
 }
 
 void US_AICrowdEventManager::DebugPrintState()
@@ -320,6 +342,11 @@ void US_AICrowdEventManager::DebugPrintState()
 
     for (FEnemyData EnemyData : Enemies)
     {
+        if (!EnemyData.Character) 
+        {
+            continue;
+        }
+
         FString StatusText;
         if (EnemyData.IsAttackIntender())
         {
@@ -330,7 +357,7 @@ void US_AICrowdEventManager::DebugPrintState()
             StatusText = TEXT("STRAFING");
         }
        
-        FVector TextLocation = EnemyData.ASC->GetAvatarActor()->GetActorLocation() + FVector(0.f, 0.f, 150.f);
+        FVector TextLocation = EnemyData.Character->GetActorLocation() + FVector(0.f, 0.f, 150.f);
 
         DrawDebugString(
             GetWorld(),

@@ -29,6 +29,9 @@ struct FTutorialStepData
 	// Kullanýlacak widget class (UI tipi override edilebilir)
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSoftClassPtr<class UW_TutorialBase> TutorialWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSoftClassPtr<class UUserWidget> QuestWidgetClass;
 };
 
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))

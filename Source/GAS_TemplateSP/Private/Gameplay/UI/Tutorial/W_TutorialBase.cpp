@@ -30,4 +30,6 @@ void UW_TutorialBase::InitWithTutorialData(const FTutorialStepData& Data)
 			}
 		}
 	}
+
+	TutorialStepData = Data;
 }

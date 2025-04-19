@@ -36,6 +36,12 @@ public:
 
 	const UDS_Tutorial* TutorialSettings;
 
+	UPROPERTY()
+	UUserWidget* CurrentQuestWidget = nullptr;
+
 	UFUNCTION()
 	void OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION(BlueprintCallable)
+	void OnTutorialAbilityInfoClosed(const FTutorialStepData& StepData);
 };

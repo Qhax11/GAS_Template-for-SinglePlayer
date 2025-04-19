@@ -64,14 +64,9 @@ void US_TutorialManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
         HeroTargetLockSystemComp->OnTargetChanged.AddDynamic(this, &US_TutorialManager::OnTargetChanged);
     }
 
-    UAC_TagDelegates* HeroTagDelegatesComp = HeroSpawnData.Character->GetTagDelegatesComponent();
-    if (!HeroTagDelegatesComp)
-    { 
-        return;
-    }
+  
 
-    HeroTagDelegatesComp->RegisterDelegateForTag(
-        GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded).BindDynamic(this, &US_TutorialManager::OnParryKnockbackTagAdded);
+   
     
     BindAllTutorailTriggers();
 
@@ -80,7 +75,7 @@ void US_TutorialManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
 
 void US_TutorialManager::OnParryKnockbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-    UE_LOG(LogTemp, Warning, TEXT("HERO MADE KNOCKBACK!"));
+    CurrentQuestWidget->RemoveFromParent();
 }
 
 void US_TutorialManager::OnTargetChanged(AActor* NewTarget)
@@ -123,5 +118,27 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
             TutorailWidget->AddToViewport();
         }
     }
+}
+
+void US_TutorialManager::OnTutorialAbilityInfoClosed(const FTutorialStepData& StepData)
+{
+    TSubclassOf<UUserWidget> QuestWidgetClass = StepData.QuestWidgetClass.LoadSynchronous();
+    if (QuestWidgetClass)
+    {
+        UUserWidget* QuestWidget = CreateWidget<UUserWidget>(GetWorld(), QuestWidgetClass);
+        if (QuestWidget)
+        {
+            QuestWidget->AddToViewport();
+            CurrentQuestWidget = QuestWidget;
+        }
+    }
+
+    UAC_TagDelegates* HeroTagDelegatesComp = Hero->GetTagDelegatesComponent();
+    if (!HeroTagDelegatesComp)
+    {
+        return;
+    }
+    HeroTagDelegatesComp->RegisterDelegateForTag(
+        GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded).BindDynamic(this, &US_TutorialManager::OnParryKnockbackTagAdded);
 }
 

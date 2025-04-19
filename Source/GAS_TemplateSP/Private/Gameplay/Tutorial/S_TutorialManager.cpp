@@ -5,6 +5,8 @@
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Components/ShapeComponent.h"
+#include <Kismet/GameplayStatics.h>
+#include "Gameplay/UI/Tutorial/W_TutorialBase.h"
 
 
 void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -14,13 +16,12 @@ void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
 	Collection.InitializeDependency(US_SpawnDelegates::StaticClass());
 
     TutorialSettings = GetDefault<UDS_Tutorial>();
-    if (!TutorialSettings || TutorialSettings->TutorialWidgetsByTrigger.IsEmpty())
+    if (!TutorialSettings || TutorialSettings->TutorialSteps.IsEmpty())
     {
         UE_LOG(LogTemp, Warning, TEXT("TutorialSettings Settings is null in %s"), *this->GetName());
         return;
     }
 
-    BindAllTutorailTriggers();
 
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
@@ -30,17 +31,18 @@ void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
 
 void US_TutorialManager::BindAllTutorailTriggers()
 {
-    for (const TPair<TSoftObjectPtr<ATriggerBox>, TSoftClassPtr<UUserWidget>>& Pair : TutorialSettings->TutorialWidgetsByTrigger)
-    {
-        ATriggerBox* Trigger = Cast<ATriggerBox>(Pair.Key.Get());
+    TArray<AActor*> FoundTriggers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AA_TutorialTrigger::StaticClass(), FoundTriggers);
 
-        if (!Trigger)
+    for (AActor* Actor : FoundTriggers)
+    {
+        AA_TutorialTrigger* TutorialTrigger = Cast<AA_TutorialTrigger>(Actor);
+        if (!TutorialTrigger)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Trigger is null or not yet loaded."));
             continue;
         }
 
-        Trigger->GetCollisionComponent()->OnComponentBeginOverlap.AddDynamic(this, &US_TutorialManager::OnComponentOverlap);
+        TutorialTrigger->OnActorBeginOverlap.AddDynamic(this, &US_TutorialManager::OnTutorailTriggerBeginOverlap);
     }
 }
 
@@ -71,6 +73,7 @@ void US_TutorialManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
     HeroTagDelegatesComp->RegisterDelegateForTag(
         GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded).BindDynamic(this, &US_TutorialManager::OnParryKnockbackTagAdded);
     
+    BindAllTutorailTriggers();
 
 
 }
@@ -87,64 +90,38 @@ void US_TutorialManager::OnTargetChanged(AActor* NewTarget)
 
 void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
-    if (!OtherActor || !OtherActor->IsA<AGAS_HeroBase>() || !TutorialSettings) 
-    {
-        return;
-    }
-
-    ATriggerBox* Trigger = Cast<ATriggerBox>(OverlappedActor);
-    if (!Trigger) 
-    {
-        return;
-    }
-
-    // 🔥 Key cast ile direkt Find!
-    TSoftObjectPtr<AActor> TriggerKey = Trigger;
-
-    const TSoftClassPtr<UUserWidget>* WidgetClassPtr = TutorialSettings->TutorialWidgetsByTrigger.Find(TriggerKey);
-    if (WidgetClassPtr && !WidgetClassPtr->IsNull())
-    {
-        TSubclassOf<UUserWidget> WidgetClass = WidgetClassPtr->LoadSynchronous();
-        if (WidgetClass)
-        {
-            UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
-            if (Widget)
-            {
-                Widget->AddToViewport();
-            }
-        }
-    }
-}
-
-void US_TutorialManager::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
     if (!OtherActor || !OtherActor->IsA<AGAS_HeroBase>() || !TutorialSettings)
     {
         return;
     }
 
-    ATriggerBox* Trigger = Cast<ATriggerBox>(OverlappedComp->GetOwner());
-    if (!Trigger)
+    AA_TutorialTrigger* TutorialTrigger = Cast<AA_TutorialTrigger>(OverlappedActor);
+    if (!TutorialTrigger)
     {
         return;
     }
 
-    // 🔥 Key cast ile direkt Find!
-    TSoftObjectPtr<AActor> TriggerKey = Trigger;
-
-    const TSoftClassPtr<UUserWidget>* WidgetClassPtr = TutorialSettings->TutorialWidgetsByTrigger.Find(TriggerKey);
-    if (WidgetClassPtr && !WidgetClassPtr->IsNull())
-    {
-        TSubclassOf<UUserWidget> WidgetClass = WidgetClassPtr->LoadSynchronous();
-        if (WidgetClass)
+    const FTutorialStepData* StepData = TutorialSettings->TutorialSteps.FindByPredicate(
+        [TutorialTrigger](const FTutorialStepData& Step)
         {
-            UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
-            if (Widget)
-            {
-                Widget->AddToViewport();
-            }
+            return Step.TutorialTag == TutorialTrigger->TutorialTag;
+        });
+
+    if (!StepData || StepData->TutorialWidgetClass.IsNull())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No tutorial step data found for tag: %s"), *TutorialTrigger->TutorialTag.ToString());
+        return;
+    }
+
+    TSubclassOf<UW_TutorialBase> TutorailWidgetClass = StepData->TutorialWidgetClass.LoadSynchronous();
+    if (TutorailWidgetClass)
+    {
+        UW_TutorialBase* TutorailWidget = CreateWidget<UW_TutorialBase>(GetWorld(), TutorailWidgetClass);
+        if (TutorailWidget)
+        {
+            TutorailWidget->InitWithTutorialData(*StepData);
+            TutorailWidget->AddToViewport();
         }
     }
 }
-
 

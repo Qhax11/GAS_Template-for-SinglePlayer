@@ -85,6 +85,9 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash, "Gameplay.Ability.Movement.Dash");
 
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_Parry, "Gameplay.Tutorial.Parry");
+
+
 	/**********************************************
 	*----------------<Filter Tags>----------------*
 	* Add all of the Filter related tags to here. *

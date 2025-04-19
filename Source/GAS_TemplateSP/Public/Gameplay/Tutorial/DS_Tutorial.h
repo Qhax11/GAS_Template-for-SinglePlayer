@@ -4,9 +4,32 @@
 
 #include "Engine/DeveloperSettings.h"
 #include "Blueprint/UserWidget.h"
-#include "Engine/TriggerBox.h"
+#include "Gameplay/Tutorial/A_TutorialTrigger.h"
 #include "DS_Tutorial.generated.h"
 
+
+USTRUCT(BlueprintType)
+struct FTutorialStepData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, meta = (Categories = "Gameplay.Tutorial"))
+	struct FGameplayTag TutorialTag;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	FText AbilityName;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	FText AbilityDescription;
+
+	// Video için materyal (MediaTexture kullanan dynamic material olabilir)
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSoftObjectPtr<UMaterialInterface> AbilityVideoMaterial;
+
+	// Kullanýlacak widget class (UI tipi override edilebilir)
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSoftClassPtr<class UW_TutorialBase> TutorialWidgetClass;
+};
 
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))
 class GAS_TEMPLATESP_API UDS_Tutorial : public UDeveloperSettings
@@ -15,6 +38,6 @@ class GAS_TEMPLATESP_API UDS_Tutorial : public UDeveloperSettings
 	
 public:
 	UPROPERTY(Config, EditDefaultsOnly, Category = "Tutorial")
-	TMap<TSoftObjectPtr<ATriggerBox>, TSoftClassPtr<UUserWidget>> TutorialWidgetsByTrigger;
+	TArray<FTutorialStepData> TutorialSteps;
 
 };

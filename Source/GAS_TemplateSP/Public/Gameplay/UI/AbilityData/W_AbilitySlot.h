@@ -6,9 +6,7 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "W_AbilitySlot.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API UW_AbilitySlot : public UUserWidget
 {

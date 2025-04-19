@@ -8,6 +8,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Tags/GAS_Tags.h"
+#include "Gameplay/Tutorial/DS_Tutorial.h"
 #include "S_TutorialManager.generated.h"
 
 struct FCharacterSpawnData;
@@ -20,6 +21,8 @@ class GAS_TEMPLATESP_API US_TutorialManager : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+	void BindAllTutorailTriggers();
+
 	UFUNCTION()
 	void OnHeroSpawn(const FHeroSpawnData& HeroSpawnData);
 
@@ -30,4 +33,14 @@ public:
 	void OnTargetChanged(AActor* NewTarget);
 
 	AGAS_HeroBase* Hero;
+
+	const UDS_Tutorial* TutorialSettings;
+
+	UFUNCTION()
+	void OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION()
+	void OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
 };

@@ -5,9 +5,7 @@
 #include "Engine/DeveloperSettings.h"
 #include "DS_AICrowdEventManager.generated.h"
 
-/**
- * 
- */
+
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "AICrowdEventManager"))
 class GAS_TEMPLATESP_API UDS_AICrowdEventManager : public UDeveloperSettings
 {

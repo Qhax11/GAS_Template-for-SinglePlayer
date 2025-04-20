@@ -6,7 +6,8 @@
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Components/ShapeComponent.h"
 #include <Kismet/GameplayStatics.h>
-#include "Gameplay/UI/Tutorial/W_TutorialBase.h"
+#include "Gameplay/UI/Tutorial/W_TutorialAbilityInfo.h"
+#include "Gameplay/UI/Tutorial/W_TutorialQuest.h"
 
 
 void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -29,6 +30,34 @@ void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
     }
 }
 
+void US_TutorialManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
+{
+    if (!HeroSpawnData.Character) 
+    {
+        return;
+    }
+
+    Hero = Cast<AGAS_HeroBase>(HeroSpawnData.Character);
+    if (!Hero) 
+    {
+        return;
+    }
+
+    HeroTagDelegatesComp = Hero->GetTagDelegatesComponent();
+    if (!HeroTagDelegatesComp)
+    {
+        return;
+    }
+
+    HeroTargetLockSystemComp = Hero->GetTargetLockSystemComponent();
+    if (!HeroTargetLockSystemComp)
+    {
+        return;
+    }
+    
+    BindAllTutorailTriggers();
+}
+
 void US_TutorialManager::BindAllTutorailTriggers()
 {
     TArray<AActor*> FoundTriggers;
@@ -46,41 +75,21 @@ void US_TutorialManager::BindAllTutorailTriggers()
     }
 }
 
-void US_TutorialManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
-{
-    if (!HeroSpawnData.Character) 
-    {
-        return;
-    }
-
-    Hero = Cast<AGAS_HeroBase>(HeroSpawnData.Character);
-    if (!Hero) 
-    {
-        return;
-    }
-
-    if (UAC_TargetLockSystem* HeroTargetLockSystemComp = Hero->GetTargetLockSystemComponent()) 
-    {
-        HeroTargetLockSystemComp->OnTargetChanged.AddDynamic(this, &US_TutorialManager::OnTargetChanged);
-    }
-
-  
-
-   
-    
-    BindAllTutorailTriggers();
-
-
-}
-
 void US_TutorialManager::OnParryKnockbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-    CurrentQuestWidget->RemoveFromParent();
+    if (CurrentListenTutorialTag == GAS_Tags::TAG_Gameplay_Tutorial_Parry || CurrentQuestWidget)
+    {
+        CurrentQuestWidget->BP_QuestFinished();
+    }
 }
 
 void US_TutorialManager::OnTargetChanged(AActor* NewTarget)
 {
-    UE_LOG(LogTemp, Warning, TEXT("HERO TARGET LOCKED!"));
+    if (CurrentListenTutorialTag == GAS_Tags::TAG_Gameplay_Tutorial_TargetLockSystem || CurrentQuestWidget)
+    {
+        CurrentQuestWidget->BP_QuestFinished();
+        HeroTargetLockSystemComp->OnTargetChanged.RemoveDynamic(this, &US_TutorialManager::OnTargetChanged);
+    }
 }
 
 void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
@@ -102,43 +111,52 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
             return Step.TutorialTag == TutorialTrigger->TutorialTag;
         });
 
-    if (!StepData || StepData->TutorialWidgetClass.IsNull())
+    if (!StepData || StepData->TutorialData.TutorialAbilityInfoWidgetClass.IsNull())
     {
         UE_LOG(LogTemp, Warning, TEXT("No tutorial step data found for tag: %s"), *TutorialTrigger->TutorialTag.ToString());
         return;
     }
 
-    TSubclassOf<UW_TutorialBase> TutorailWidgetClass = StepData->TutorialWidgetClass.LoadSynchronous();
-    if (TutorailWidgetClass)
+    TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialData.TutorialAbilityInfoWidgetClass.LoadSynchronous();
+    if (TutorailAbilityInfoWidgetClass)
     {
-        UW_TutorialBase* TutorailWidget = CreateWidget<UW_TutorialBase>(GetWorld(), TutorailWidgetClass);
-        if (TutorailWidget)
+        UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(GetWorld(), TutorailAbilityInfoWidgetClass, FName("tut"));
+        if (TutorailAbilityInfoWidget)
         {
-            TutorailWidget->InitWithTutorialData(*StepData);
-            TutorailWidget->AddToViewport();
+            TutorailAbilityInfoWidget->InitWithTutorialData(*StepData);
+            TutorailAbilityInfoWidget->AddToViewport();
         }
     }
 }
 
 void US_TutorialManager::OnTutorialAbilityInfoClosed(const FTutorialStepData& StepData)
 {
-    TSubclassOf<UUserWidget> QuestWidgetClass = StepData.QuestWidgetClass.LoadSynchronous();
+    TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData.QuestData.QuestWidgetClass.LoadSynchronous();
     if (QuestWidgetClass)
     {
-        UUserWidget* QuestWidget = CreateWidget<UUserWidget>(GetWorld(), QuestWidgetClass);
+        UW_TutorialQuest* QuestWidget = CreateWidget<UW_TutorialQuest>(GetWorld(), QuestWidgetClass);
         if (QuestWidget)
         {
             QuestWidget->AddToViewport();
+            QuestWidget->InitWithTutorialData(StepData);
             CurrentQuestWidget = QuestWidget;
         }
     }
 
-    UAC_TagDelegates* HeroTagDelegatesComp = Hero->GetTagDelegatesComponent();
-    if (!HeroTagDelegatesComp)
+    CurrentListenTutorialTag = StepData.TutorialTag;
+
+    // Hardcoded logic based on TutorialTag
+    if (StepData.TutorialTag == GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback)
     {
-        return;
+        HeroTagDelegatesComp->RegisterDelegateForTag(
+            GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded)
+            .BindDynamic(this, &US_TutorialManager::OnParryKnockbackTagAdded);
     }
-    HeroTagDelegatesComp->RegisterDelegateForTag(
-        GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded).BindDynamic(this, &US_TutorialManager::OnParryKnockbackTagAdded);
+    else if (StepData.TutorialTag == GAS_Tags::TAG_Gameplay_Tutorial_TargetLockSystem) // örnek başka bir tag
+    {
+        HeroTargetLockSystemComp->OnTargetChanged.AddDynamic(this, &US_TutorialManager::OnTargetChanged);
+    }
+ 
+   
 }
 

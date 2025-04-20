@@ -12,19 +12,4 @@ class GAS_TEMPLATESP_API UW_TutorialBase : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
-	void InitWithTutorialData(const FTutorialStepData& Data);
-
-	UPROPERTY(BlueprintReadOnly)
-	FTutorialStepData TutorialStepData;
-
-protected:
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* T_AbilityName;
-
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* T_AbilityDescription;
-
-	UPROPERTY(meta = (BindWidget))
-	class UImage* AbilityVisual;
 };

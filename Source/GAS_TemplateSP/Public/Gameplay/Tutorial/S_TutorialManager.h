@@ -21,10 +21,10 @@ class GAS_TEMPLATESP_API US_TutorialManager : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
-	void BindAllTutorailTriggers();
-
 	UFUNCTION()
 	void OnHeroSpawn(const FHeroSpawnData& HeroSpawnData);
+
+	void BindAllTutorailTriggers();
 
 	UFUNCTION()
 	void OnParryKnockbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
@@ -33,11 +33,13 @@ public:
 	void OnTargetChanged(AActor* NewTarget);
 
 	AGAS_HeroBase* Hero;
-
+	UAC_TagDelegates* HeroTagDelegatesComp;
+	UAC_TargetLockSystem* HeroTargetLockSystemComp;
 	const UDS_Tutorial* TutorialSettings;
+	FGameplayTag CurrentListenTutorialTag;
 
 	UPROPERTY()
-	UUserWidget* CurrentQuestWidget = nullptr;
+	class UW_TutorialQuest* CurrentQuestWidget = nullptr;
 
 	UFUNCTION()
 	void OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);

@@ -3,18 +3,14 @@
 #pragma once
 
 #include "Engine/DeveloperSettings.h"
-#include "Blueprint/UserWidget.h"
 #include "Gameplay/Tutorial/A_TutorialTrigger.h"
 #include "DS_Tutorial.generated.h"
 
 
 USTRUCT(BlueprintType)
-struct FTutorialStepData
+struct FTutorialAbilityData
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, meta = (Categories = "Gameplay.Tutorial"))
-	struct FGameplayTag TutorialTag;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
 	FText AbilityName;
@@ -22,16 +18,41 @@ struct FTutorialStepData
 	UPROPERTY(EditAnywhere, Category = "UI")
 	FText AbilityDescription;
 
-	// Video için materyal (MediaTexture kullanan dynamic material olabilir)
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSoftObjectPtr<UMaterialInterface> AbilityVideoMaterial;
 
-	// Kullanýlacak widget class (UI tipi override edilebilir)
 	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftClassPtr<class UW_TutorialBase> TutorialWidgetClass;
+	TSoftClassPtr<class UW_TutorialAbilityInfo> TutorialAbilityInfoWidgetClass;
+};
+
+USTRUCT(BlueprintType)
+struct FTutorialQuestData
+{
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftClassPtr<class UUserWidget> QuestWidgetClass;
+	FText QuestTitle;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	FText QuestInstruction;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
+};
+
+USTRUCT(BlueprintType)
+struct FTutorialStepData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, meta = (Categories = "Gameplay.Tutorial"))
+	FGameplayTag TutorialTag;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	FTutorialAbilityData TutorialData;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	FTutorialQuestData QuestData;
 };
 
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))

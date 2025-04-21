@@ -111,13 +111,13 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
             return Step.TutorialTag == TutorialTrigger->TutorialTag;
         });
 
-    if (!StepData || StepData->TutorialData.TutorialAbilityInfoWidgetClass.IsNull())
+    if (!StepData || StepData->TutorialAbilityInfoWidgetClass.IsNull())
     {
         UE_LOG(LogTemp, Warning, TEXT("No tutorial step data found for tag: %s"), *TutorialTrigger->TutorialTag.ToString());
         return;
     }
 
-    TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialData.TutorialAbilityInfoWidgetClass.LoadSynchronous();
+    TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialAbilityInfoWidgetClass.LoadSynchronous();
     if (TutorailAbilityInfoWidgetClass)
     {
         UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(GetWorld(), TutorailAbilityInfoWidgetClass, FName("tut"));
@@ -131,7 +131,7 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
 
 void US_TutorialManager::OnTutorialAbilityInfoClosed(const FTutorialStepData& StepData)
 {
-    TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData.QuestData.QuestWidgetClass.LoadSynchronous();
+    TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData.QuestWidgetClass.LoadSynchronous();
     if (QuestWidgetClass)
     {
         UW_TutorialQuest* QuestWidget = CreateWidget<UW_TutorialQuest>(GetWorld(), QuestWidgetClass);

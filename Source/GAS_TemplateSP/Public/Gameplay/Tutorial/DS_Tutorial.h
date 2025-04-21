@@ -8,39 +8,6 @@
 
 
 USTRUCT(BlueprintType)
-struct FTutorialAbilityData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-	FText AbilityName;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-	FText AbilityDescription;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftObjectPtr<UMaterialInterface> AbilityVideoMaterial;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftClassPtr<class UW_TutorialAbilityInfo> TutorialAbilityInfoWidgetClass;
-};
-
-USTRUCT(BlueprintType)
-struct FTutorialQuestData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-	FText QuestTitle;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-	FText QuestInstruction;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
-};
-
-USTRUCT(BlueprintType)
 struct FTutorialStepData
 {
 	GENERATED_BODY()
@@ -49,10 +16,10 @@ struct FTutorialStepData
 	FGameplayTag TutorialTag;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
-	FTutorialAbilityData TutorialData;
+	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
-	FTutorialQuestData QuestData;
+	TSoftClassPtr<class UW_TutorialAbilityInfo> TutorialAbilityInfoWidgetClass;
 };
 
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))

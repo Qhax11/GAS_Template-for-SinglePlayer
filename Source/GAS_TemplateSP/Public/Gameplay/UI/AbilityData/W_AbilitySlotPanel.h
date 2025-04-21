@@ -18,7 +18,6 @@ class GAS_TEMPLATESP_API UW_AbilitySlotPanel : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-
 	virtual void NativeConstruct();
 
 protected:

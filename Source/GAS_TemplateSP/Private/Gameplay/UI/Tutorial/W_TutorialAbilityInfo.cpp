@@ -7,31 +7,24 @@
 #include "Engine/Texture2D.h"
 #include "Materials/MaterialInterface.h"
 
-void UW_TutorialAbilityInfo::InitWithTutorialData(const FTutorialStepData& StepData)
-{
-	FTutorialAbilityData AbilityData = StepData.TutorialData;
 
+void UW_TutorialAbilityInfo::NativeConstruct()
+{
 	if (T_AbilityName)
 	{
-		T_AbilityName->SetText(AbilityData.AbilityName);
+		T_AbilityName->SetText(TutorialAbilityData.AbilityName);
 	}
 
 	if (T_AbilityDescription)
 	{
-		T_AbilityDescription->SetText(AbilityData.AbilityDescription);
+		T_AbilityDescription->SetText(TutorialAbilityData.AbilityDescription);
 	}
+}
 
-	if (AbilityVisual)
-	{
-		if (!AbilityData.AbilityVideoMaterial.IsNull())
-		{
-			UMaterialInterface* LoadedMat = AbilityData.AbilityVideoMaterial.LoadSynchronous();
-			if (LoadedMat)
-			{
-				AbilityVisual->SetBrushFromMaterial(LoadedMat);
-			}
-		}
-	}
-
+void UW_TutorialAbilityInfo::InitWithTutorialData(const FTutorialStepData& StepData)
+{
+	/*
+	FTutorialAbilityData AbilityData = StepData.TutorialData;
 	TutorialStepData = StepData;
+	*/
 }

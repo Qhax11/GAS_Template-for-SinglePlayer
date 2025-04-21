@@ -200,6 +200,15 @@ FVector USC_HeroShadowController::GetHeroShadowLocationFromLineTraceTargetLocked
 	return HitResult.ImpactPoint;
 }
 
+void USC_HeroShadowController::SetHeroShadowActor(AHeroShadowTargetActor* HeroShadowTargetActor)
+{
+	if (HeroShadowTargetActor) 
+	{
+		HeroShadow = HeroShadowTargetActor;
+		OnShadowAbilityActivated.Broadcast();
+	}
+}
+
 void USC_HeroShadowController::SetShadowLocationWithCumulativeMouseValuesTargetLocked()
 {
 	if (!HeroShadow || !TargetLockSystem->CurrentTarget)

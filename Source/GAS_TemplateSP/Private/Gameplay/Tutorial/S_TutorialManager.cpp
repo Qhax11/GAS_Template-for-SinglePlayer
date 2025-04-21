@@ -110,6 +110,8 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
             TutorailAbilityInfoWidget->AddToViewport();
         }
     }
+
+    TutorialTrigger->Destroy();
 }
 
 void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInfo* ClosedTutorialWidget)

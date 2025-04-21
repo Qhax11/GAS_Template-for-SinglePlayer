@@ -47,6 +47,12 @@ void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
         return;
     }
 
+    if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
+    {
+        USC_HeroShadowController* HeroShadowController = HeroBase->GetHeroShadowControllerComponent();
+        HeroShadowController->OnShadowAttackConfirmed.Broadcast();
+    }
+
     // Triggers the actual attack abilities from BP side.
     BP_OnTargetActorConfirm(TargetActorData);
 
@@ -99,8 +105,10 @@ void UGA_HeroShadowAttack::SetShadowToShadowController()
 {
     if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
     {
-        USC_HeroShadowController* HeroShadowController = HeroBase->GetHeroShadowControllerComponent();
-        HeroShadowController->HeroShadow = Cast<AHeroShadowTargetActor>(TargetActor);
+        if (USC_HeroShadowController* HeroShadowController = HeroBase->GetHeroShadowControllerComponent())
+        {
+            HeroShadowController->SetHeroShadowActor(Cast<AHeroShadowTargetActor>(TargetActor));
+        }
     }
 }
 

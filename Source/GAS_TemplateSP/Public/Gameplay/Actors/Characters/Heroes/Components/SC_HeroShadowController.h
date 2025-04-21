@@ -23,6 +23,8 @@
  * and world environment, ensuring accurate alignment and placement.
  */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShadowAbilityActivated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShadowAttackConfirmed);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class GAS_TEMPLATESP_API USC_HeroShadowController : public USceneComponent
@@ -31,6 +33,15 @@ class GAS_TEMPLATESP_API USC_HeroShadowController : public USceneComponent
 
 public:
 	USC_HeroShadowController();
+	UPROPERTY(BlueprintAssignable)
+	FOnShadowAbilityActivated OnShadowAbilityActivated;
+/**
+ * Broadcasts when a shadow attack has been confirmed by the HeroShadowAttack ability.
+ * Currently used by the tutorial system to detect the moment the shadow attack is executed.
+ * Listeners can bind to this to respond to confirmed shadow attacks (e.g. quest progression, UI updates).
+ **/
+	UPROPERTY(BlueprintAssignable)
+	FOnShadowAttackConfirmed OnShadowAttackConfirmed;
 
 protected:
 	virtual void BeginPlay() override;
@@ -80,6 +91,8 @@ public:
 	bool bDrawDebug;
 
 public:
+	void SetHeroShadowActor(class AHeroShadowTargetActor* HeroShadowTargetActor);
+
 	TObjectPtr<class AHeroShadowTargetActor> HeroShadow = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "HologramAbilityHelper|Trace")

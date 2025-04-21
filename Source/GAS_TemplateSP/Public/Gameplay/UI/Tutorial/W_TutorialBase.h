@@ -11,5 +11,8 @@ UCLASS(Blueprintable)
 class GAS_TEMPLATESP_API UW_TutorialBase : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+protected:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void Cleanup();
 };

@@ -26,12 +26,6 @@ public:
 
 	void BindAllTutorailTriggers();
 
-	UFUNCTION()
-	void OnParryKnockbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnTargetChanged(AActor* NewTarget);
-
 	AGAS_HeroBase* Hero;
 	UAC_TagDelegates* HeroTagDelegatesComp;
 	UAC_TargetLockSystem* HeroTargetLockSystemComp;
@@ -46,4 +40,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnTutorialAbilityInfoClosed(const class UW_TutorialAbilityInfo* ClosedTutorialWidget);
+
+	UFUNCTION(BlueprintCallable)
+	void OnQuestIsFinished(const class UW_TutorialQuest* FinishedQuestWidget);
 };

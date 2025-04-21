@@ -10,6 +10,8 @@ void UW_TutorialQuest::NativeConstruct()
 	{
 		T_QuestInstruction->SetText(TutorialQuestData.QuestInstruction);
 	}
+
+	Super::NativeConstruct();
 }
 
 void UW_TutorialQuest::InitWithTutorialData(const FTutorialStepData& StepData)

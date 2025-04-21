@@ -75,23 +75,6 @@ void US_TutorialManager::BindAllTutorailTriggers()
     }
 }
 
-void US_TutorialManager::OnParryKnockbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-    if (CurrentListenTutorialTag == GAS_Tags::TAG_Gameplay_Tutorial_Parry || CurrentQuestWidget)
-    {
-        CurrentQuestWidget->BP_QuestFinished();
-    }
-}
-
-void US_TutorialManager::OnTargetChanged(AActor* NewTarget)
-{
-    if (CurrentListenTutorialTag == GAS_Tags::TAG_Gameplay_Tutorial_TargetLockSystem || CurrentQuestWidget)
-    {
-        CurrentQuestWidget->BP_QuestFinished();
-        HeroTargetLockSystemComp->OnTargetChanged.RemoveDynamic(this, &US_TutorialManager::OnTargetChanged);
-    }
-}
-
 void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
     if (!OtherActor || !OtherActor->IsA<AGAS_HeroBase>() || !TutorialSettings)
@@ -164,17 +147,14 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
     }
 
     CurrentListenTutorialTag = StepData->TutorialTag;
+}
 
-    // Tutorial tag'e göre dinleme başlat
-    if (StepData->TutorialTag == GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback)
+void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuestWidget)
+{
+    if (CurrentQuestWidget && FinishedQuestWidget == CurrentQuestWidget)
     {
-        HeroTagDelegatesComp->RegisterDelegateForTag(
-            GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded)
-            .BindDynamic(this, &US_TutorialManager::OnParryKnockbackTagAdded);
-    }
-    else if (StepData->TutorialTag == GAS_Tags::TAG_Gameplay_Tutorial_TargetLockSystem)
-    {
-        HeroTargetLockSystemComp->OnTargetChanged.AddDynamic(this, &US_TutorialManager::OnTargetChanged);
+        CurrentQuestWidget->RemoveFromParent();
+        CurrentQuestWidget = nullptr;
     }
 }
 

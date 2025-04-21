@@ -36,6 +36,9 @@ public:
 
 	FORCEINLINE class UAC_HeroMovementListener* GetMovementListenerComponent() const { return HeroMovementListenerComponent; }
 
+	FORCEINLINE class APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }
+
+
 protected:
 	//* Components *//
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components|Camera")

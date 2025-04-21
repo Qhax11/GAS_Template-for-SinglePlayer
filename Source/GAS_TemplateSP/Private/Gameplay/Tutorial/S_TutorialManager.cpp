@@ -43,6 +43,12 @@ void US_TutorialManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
         return;
     }
 
+    HeroPC = Hero->GetPlayerController();
+    if (!HeroPC)
+    {
+        return;
+    }
+
     HeroTagDelegatesComp = Hero->GetTagDelegatesComponent();
     if (!HeroTagDelegatesComp)
     {
@@ -103,10 +109,9 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
     TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialAbilityInfoWidgetClass.LoadSynchronous();
     if (TutorailAbilityInfoWidgetClass)
     {
-        UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(GetWorld(), TutorailAbilityInfoWidgetClass);
+        UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(HeroPC, TutorailAbilityInfoWidgetClass);
         if (TutorailAbilityInfoWidget)
         {
-            TutorailAbilityInfoWidget->InitWithTutorialData(*StepData);
             TutorailAbilityInfoWidget->AddToViewport();
         }
     }
@@ -143,7 +148,6 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
         if (QuestWidget)
         {
             QuestWidget->AddToViewport();
-            QuestWidget->InitWithTutorialData(*StepData);
             CurrentQuestWidget = QuestWidget;
         }
     }

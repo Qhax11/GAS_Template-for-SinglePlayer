@@ -6,23 +6,8 @@
 
 void UW_TutorialQuest::NativeConstruct()
 {
-	if (T_QuestInstruction)
-	{
-		T_QuestInstruction->SetText(TutorialQuestData.QuestInstruction);
-	}
-
 	Super::NativeConstruct();
 }
 
-void UW_TutorialQuest::InitWithTutorialData(const FTutorialStepData& StepData)
-{
-	/*
-	FTutorialQuestData QuestData = StepData.QuestData;
 
-	if (T_QuestInstruction)
-	{
-		T_QuestInstruction->SetText(QuestData.QuestInstruction);
-	}
-	*/
-}
 

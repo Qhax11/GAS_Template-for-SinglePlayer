@@ -27,6 +27,7 @@ public:
 	void BindAllTutorailTriggers();
 
 	AGAS_HeroBase* Hero;
+	APlayerController* HeroPC;
 	UAC_TagDelegates* HeroTagDelegatesComp;
 	UAC_TargetLockSystem* HeroTargetLockSystemComp;
 	const UDS_Tutorial* TutorialSettings;

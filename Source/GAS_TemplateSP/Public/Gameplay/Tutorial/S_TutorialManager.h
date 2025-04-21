@@ -31,7 +31,6 @@ public:
 	UAC_TagDelegates* HeroTagDelegatesComp;
 	UAC_TargetLockSystem* HeroTargetLockSystemComp;
 	const UDS_Tutorial* TutorialSettings;
-	FGameplayTag CurrentListenTutorialTag;
 
 	UPROPERTY()
 	class UW_TutorialQuest* CurrentQuestWidget = nullptr;

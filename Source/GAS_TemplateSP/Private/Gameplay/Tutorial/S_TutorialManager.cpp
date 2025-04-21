@@ -151,8 +151,6 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
             CurrentQuestWidget = QuestWidget;
         }
     }
-
-    CurrentListenTutorialTag = StepData->TutorialTag;
 }
 
 void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuestWidget)
@@ -161,6 +159,31 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
     {
         CurrentQuestWidget->RemoveFromParent();
         CurrentQuestWidget = nullptr;
+    }
+
+    // Next quest
+    if (TutorialSettings)
+    {
+        const FTutorialStepData* StepData = TutorialSettings->TutorialSteps.FindByPredicate(
+            [FinishedQuestWidget](const FTutorialStepData& Step)
+            {
+                return Step.QuestWidgetClass
+                    && Step.QuestWidgetClass.Get() == FinishedQuestWidget->GetClass();
+            });
+
+        if (StepData && StepData->NextQuestWidgetClass.IsValid())
+        {
+            const TSubclassOf<UW_TutorialQuest> NextClass = StepData->NextQuestWidgetClass.LoadSynchronous();
+            if (NextClass)
+            {
+                UW_TutorialQuest* NextQuest = CreateWidget<UW_TutorialQuest>(HeroPC, NextClass);
+                if (NextQuest)
+                {
+                    NextQuest->AddToViewport();
+                    CurrentQuestWidget = NextQuest;
+                }
+            }
+        }
     }
 }
 

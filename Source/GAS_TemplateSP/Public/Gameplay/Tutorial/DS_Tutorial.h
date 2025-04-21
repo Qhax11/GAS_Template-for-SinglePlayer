@@ -25,6 +25,11 @@ struct FTutorialStepData
     //The quest widget class associated with this tutorial step.
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
+
+	// Optional: The next quest widget class to spawn after this step is completed.
+    // Leave empty if there's no chained quest.
+	UPROPERTY(EditAnywhere, Category = "UI", meta = (ToolTip = "Optional: Quest widget to show after this one is completed."))
+	TSoftClassPtr<class UW_TutorialQuest> NextQuestWidgetClass;
 };
 
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))

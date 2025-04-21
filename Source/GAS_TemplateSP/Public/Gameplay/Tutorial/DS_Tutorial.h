@@ -12,14 +12,19 @@ struct FTutorialStepData
 {
 	GENERATED_BODY()
 
+	/**
+    * Tag used to identify and track this tutorial step.
+    * Commonly used for trigger detection via Gameplay Tags on actors or components.
+    */
 	UPROPERTY(EditAnywhere, meta = (Categories = "Gameplay.Tutorial"))
 	FGameplayTag TutorialTag;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
-
-	UPROPERTY(EditAnywhere, Category = "UI")
 	TSoftClassPtr<class UW_TutorialAbilityInfo> TutorialAbilityInfoWidgetClass;
+
+    //The quest widget class associated with this tutorial step.
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
 };
 
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))

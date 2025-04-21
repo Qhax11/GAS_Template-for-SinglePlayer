@@ -84,9 +84,11 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Strafing, "Gameplay.Ability.Movement.Strafing");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash, "Gameplay.Ability.Movement.Dash");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_Parry, "Gameplay.Tutorial.Parry");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_TargetLockSystem, "Gameplay.Tutorial.TargetLockSystem");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_MeleeCombo, "Gameplay.Tutorial.MeleeCombo");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_TargetLock, "Gameplay.Tutorial.TargetLock");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_ShadowAttack, "Gameplay.Tutorial.ShadowAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_ShadowFinisher, "Gameplay.Tutorial.ShadowFinisher");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_Parry, "Gameplay.Tutorial.Parry");
 
 
 	/**********************************************

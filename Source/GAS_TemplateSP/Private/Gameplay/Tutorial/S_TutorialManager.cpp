@@ -120,7 +120,7 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
     TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialAbilityInfoWidgetClass.LoadSynchronous();
     if (TutorailAbilityInfoWidgetClass)
     {
-        UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(GetWorld(), TutorailAbilityInfoWidgetClass, FName("tut"));
+        UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(GetWorld(), TutorailAbilityInfoWidgetClass);
         if (TutorailAbilityInfoWidget)
         {
             TutorailAbilityInfoWidget->InitWithTutorialData(*StepData);
@@ -129,34 +129,52 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
     }
 }
 
-void US_TutorialManager::OnTutorialAbilityInfoClosed(const FTutorialStepData& StepData)
+void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInfo* ClosedTutorialWidget)
 {
-    TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData.QuestWidgetClass.LoadSynchronous();
+    if (!ClosedTutorialWidget || !TutorialSettings)
+    {
+        return;
+    }
+
+    // Widget class'ını eşleştirerek ilgili StepData'yı bul
+    const FTutorialStepData* StepData = TutorialSettings->TutorialSteps.FindByPredicate(
+        [ClosedTutorialWidget](const FTutorialStepData& Step)
+        {
+            return Step.TutorialAbilityInfoWidgetClass
+                && Step.TutorialAbilityInfoWidgetClass.Get() == ClosedTutorialWidget->GetClass();
+        });
+
+    if (!StepData)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Could not find StepData for ClosedTutorialWidget class: %s"), *ClosedTutorialWidget->GetClass()->GetName());
+        return;
+    }
+
+    // Quest Widget'ı oluştur
+    const TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData->QuestWidgetClass.LoadSynchronous();
     if (QuestWidgetClass)
     {
         UW_TutorialQuest* QuestWidget = CreateWidget<UW_TutorialQuest>(GetWorld(), QuestWidgetClass);
         if (QuestWidget)
         {
             QuestWidget->AddToViewport();
-            QuestWidget->InitWithTutorialData(StepData);
+            QuestWidget->InitWithTutorialData(*StepData);
             CurrentQuestWidget = QuestWidget;
         }
     }
 
-    CurrentListenTutorialTag = StepData.TutorialTag;
+    CurrentListenTutorialTag = StepData->TutorialTag;
 
-    // Hardcoded logic based on TutorialTag
-    if (StepData.TutorialTag == GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback)
+    // Tutorial tag'e göre dinleme başlat
+    if (StepData->TutorialTag == GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback)
     {
         HeroTagDelegatesComp->RegisterDelegateForTag(
             GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded)
             .BindDynamic(this, &US_TutorialManager::OnParryKnockbackTagAdded);
     }
-    else if (StepData.TutorialTag == GAS_Tags::TAG_Gameplay_Tutorial_TargetLockSystem) // örnek başka bir tag
+    else if (StepData->TutorialTag == GAS_Tags::TAG_Gameplay_Tutorial_TargetLockSystem)
     {
         HeroTargetLockSystemComp->OnTargetChanged.AddDynamic(this, &US_TutorialManager::OnTargetChanged);
     }
- 
-   
 }
 

@@ -19,6 +19,8 @@ void UW_TutorialAbilityInfo::NativeConstruct()
 	{
 		T_AbilityDescription->SetText(TutorialAbilityData.AbilityDescription);
 	}
+
+	Super::NativeConstruct();
 }
 
 void UW_TutorialAbilityInfo::InitWithTutorialData(const FTutorialStepData& StepData)

@@ -45,5 +45,5 @@ public:
 	void OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 	UFUNCTION(BlueprintCallable)
-	void OnTutorialAbilityInfoClosed(const FTutorialStepData& StepData);
+	void OnTutorialAbilityInfoClosed(const class UW_TutorialAbilityInfo* ClosedTutorialWidget);
 };

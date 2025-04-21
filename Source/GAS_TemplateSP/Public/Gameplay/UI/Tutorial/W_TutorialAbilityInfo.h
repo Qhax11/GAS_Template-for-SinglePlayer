@@ -15,11 +15,6 @@ struct FTutorialAbilityData
 
 	UPROPERTY(EditAnywhere, Category = "UI")
 	FText AbilityDescription;
-
-	/*
-	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftObjectPtr<class UMediaSource> AbilityVideoSource;
-	*/
 };
 
 UCLASS(Blueprintable)
@@ -39,10 +34,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	FTutorialAbilityData TutorialAbilityData;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* T_AbilityName;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* T_AbilityDescription;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

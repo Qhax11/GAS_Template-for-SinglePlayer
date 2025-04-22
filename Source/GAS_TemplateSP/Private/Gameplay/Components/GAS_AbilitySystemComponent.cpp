@@ -105,16 +105,16 @@ void UGAS_AbilitySystemComponent::GiveAbilities(const UGAS_GameplayAbilitySet* A
 
 	for (const FAbilityData& AbilityData : AbilitySet->Abilities)
 	{
-		GiveAbilityWithInputAction(AbilityData.AbilityInput, AbilityData.Ability);
+		GiveAbilityWithAbilityData(AbilityData);
 	}
 }
 
-void UGAS_AbilitySystemComponent::GiveAbilityWithInputAction(UInputAction* AbilityInput, const TSubclassOf<UGameplayAbility> Ability)
+void UGAS_AbilitySystemComponent::GiveAbilityWithAbilityData(const FAbilityData& AbilityData)
 {
-	if(Ability && !IsAbilityGivenAlready(Ability))
+	if(AbilityData.Ability && !IsAbilityGivenAlready(AbilityData.Ability))
 	{
-		FGameplayAbilitySpecHandle GivenAbilitySpecHandle = GiveAbility(FGameplayAbilitySpec(Ability.Get()));
-		TryAbilityInputBind(AbilityInput, GivenAbilitySpecHandle);
+		FGameplayAbilitySpecHandle GivenAbilitySpecHandle = GiveAbility(FGameplayAbilitySpec(AbilityData.Ability.Get()));
+		TryAbilityInputBind(AbilityData.AbilityInput, GivenAbilitySpecHandle);
 	}
 }
 

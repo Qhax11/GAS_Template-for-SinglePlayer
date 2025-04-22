@@ -8,6 +8,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "Gameplay/UI/Tutorial/W_TutorialAbilityInfo.h"
 #include "Gameplay/UI/Tutorial/W_TutorialQuest.h"
+#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 
 
 void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -42,6 +43,8 @@ void US_TutorialManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
     {
         return;
     }
+
+    HeroASC = Cast<UGAS_AbilitySystemComponent>(HeroSpawnData.ASC);
 
     HeroPC = Hero->GetPlayerController();
     if (!HeroPC)
@@ -100,20 +103,32 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
             return Step.TutorialTag == TutorialTrigger->TutorialTag;
         });
 
-    if (!StepData || StepData->TutorialAbilityInfoWidgetClass.IsNull())
+    if (!StepData)
     {
         UE_LOG(LogTemp, Warning, TEXT("No tutorial step data found for tag: %s"), *TutorialTrigger->TutorialTag.ToString());
         return;
     }
 
-    TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialAbilityInfoWidgetClass.LoadSynchronous();
-    if (TutorailAbilityInfoWidgetClass)
+    if (!StepData->TutorialAbilityInfoWidgetClass.IsNull()) 
     {
-        UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(HeroPC, TutorailAbilityInfoWidgetClass);
-        if (TutorailAbilityInfoWidget)
+        TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialAbilityInfoWidgetClass.LoadSynchronous();
+        if (TutorailAbilityInfoWidgetClass)
         {
-            TutorailAbilityInfoWidget->AddToViewport();
+            UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(HeroPC, TutorailAbilityInfoWidgetClass);
+            if (TutorailAbilityInfoWidget)
+            {
+                TutorailAbilityInfoWidget->AddToViewport();
+            }
         }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("TutorialAbilityInfoWidgetClass is null in: %s"), *GetName());
+    }
+
+    if (StepData->GrantedAbility.Ability) 
+    {
+        HeroASC->GiveAbilityWithAbilityData(StepData->GrantedAbility);
     }
 
     TutorialTrigger->Destroy();

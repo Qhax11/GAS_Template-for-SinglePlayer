@@ -15,22 +15,21 @@ USTRUCT(BlueprintType)
 struct FAbilityData
 {
 	GENERATED_USTRUCT_BODY()
-public:
 
+public:
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityData")
 	TSubclassOf<UGameplayAbility> Ability;
 
 	UPROPERTY(EditAnywhere, Category = "AbilityData")
 	class UInputAction* AbilityInput;
-
 };
 
 USTRUCT(BlueprintType)
 struct FAttributeSetData
 {
 	GENERATED_BODY()
-public:
 
+public:
 	/** Attribute Set to grant */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Attributes)
 	TSoftClassPtr<UAttributeSet> AttributeSet;
@@ -44,8 +43,8 @@ UCLASS()
 class GAS_TEMPLATESP_API UGAS_GameplayAbilitySet : public UDataAsset
 {
 	GENERATED_BODY()
-public:
 
+public:
 	UPROPERTY(EditDefaultsOnly, Category = "AbilitySet")
 	TArray<FAbilityData> Abilities;
 
@@ -85,7 +84,7 @@ public:
 	void GiveAbilities(const UGAS_GameplayAbilitySet* AbilitySet);
 
 	UFUNCTION(BlueprintCallable, Category = "GAS_AbilitySystemComponent")
-	void GiveAbilityWithInputAction(UInputAction* AbilityInput, const TSubclassOf<UGameplayAbility> Ability);
+	void GiveAbilityWithAbilityData(const FAbilityData& AbilityData);
 
 	bool IsAbilityGivenAlready(const TSubclassOf<UGameplayAbility> Ability);
 

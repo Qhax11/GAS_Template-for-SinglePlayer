@@ -120,7 +120,7 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
     if (!StepData->TutorialAbilityInfoWidgetClass.IsNull()) 
     {
         TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialAbilityInfoWidgetClass.LoadSynchronous();
-        UIManager->CreateAndShowWidget(TutorailAbilityInfoWidgetClass);
+        UIManager->CreateAndShowWidget(TutorailAbilityInfoWidgetClass, EUIWidgetContext::Gameplay);
     }
     else
     {
@@ -160,7 +160,7 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
     const TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData->QuestWidgetClass.LoadSynchronous();
     if (QuestWidgetClass)
     {
-        UUserWidget* CreatedQuestWidget = UIManager->CreateAndShowWidget(QuestWidgetClass);
+        UUserWidget* CreatedQuestWidget = UIManager->CreateAndShowWidget(QuestWidgetClass, EUIWidgetContext::Gameplay);
         if (CreatedQuestWidget) 
         {
             CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedQuestWidget);
@@ -191,7 +191,7 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
             const TSubclassOf<UW_TutorialQuest> NextClass = StepData->NextQuestWidgetClass.LoadSynchronous();
             if (NextClass)
             {
-                UUserWidget* CreatedNextQuestWidget = UIManager->CreateAndShowWidget(NextClass);
+                UUserWidget* CreatedNextQuestWidget = UIManager->CreateAndShowWidget(NextClass, EUIWidgetContext::Gameplay);
                 if (CreatedNextQuestWidget)
                 {
                     CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedNextQuestWidget);

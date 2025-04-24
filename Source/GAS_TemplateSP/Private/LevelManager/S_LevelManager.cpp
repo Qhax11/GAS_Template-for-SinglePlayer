@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "UI/S_UIManager.h"
 
+struct FLevelWidgetData;
+
 void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -62,9 +64,13 @@ void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)
 		UE_LOG(LogTemp, Error, TEXT("NO widget found for: %s"), *CleanLevelName);
 	}
 
-	if (const TSubclassOf<UUserWidget>* FoundWidget = LevelManagerSettings->LevelToWidgetMap.Find(*CleanLevelName))
+	if (const FLevelWidgetData* WidgetData = LevelManagerSettings->LevelToWidgetMap.Find(*CleanLevelName))
 	{
-		UIManager->CreateAndShowWidget(*FoundWidget, PC);
+		UIManager->CreateAndShowWidget(WidgetData->WidgetClass, WidgetData->Context, PC);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No widget data found for level: %s"), *CleanLevelName);
 	}
 
 	CurrentLevelName = FName(*CleanLevelName);

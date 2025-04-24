@@ -6,6 +6,7 @@
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -26,7 +27,7 @@ void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 	}
 }
 
-void US_LevelManager::OnPlayerControllerSpawn(const APlayerController* PC)
+void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)
 {
 	if (!GetWorld())
 	{
@@ -62,9 +63,9 @@ void US_LevelManager::OnPlayerControllerSpawn(const APlayerController* PC)
 	CurrentLevelName = FName(*CleanLevelName);
 }
 
-void US_LevelManager::CreateLevelWidget(const APlayerController* PC, const TSubclassOf<UUserWidget>* Widget)
+void US_LevelManager::CreateLevelWidget(APlayerController* PC, const TSubclassOf<UUserWidget>* WidgetClass)
 {
-	if (!Widget)
+	if (!WidgetClass)
 	{
 		return;
 	}
@@ -73,32 +74,22 @@ void US_LevelManager::CreateLevelWidget(const APlayerController* PC, const TSubc
 
 	if (PC)
 	{
-		CreatedWidget = CreateWidget<UUserWidget>(PC, *Widget);
-		UE_LOG(LogTemp, Log, TEXT("Widget created with owning player."));
-	}
-	else
-	{
-		CreatedWidget = CreateWidget<UUserWidget>(GetWorld(), *Widget);
-		UE_LOG(LogTemp, Log, TEXT("Widget created WITHOUT owning player (e.g. menu level)."));
-	}
-
-	if (CreatedWidget)
-	{
-		CreatedWidget->AddToViewport();
+		CreatedWidget = UWidgetBlueprintLibrary::Create(GetWorld(), *WidgetClass, PC);
+		if (CreatedWidget) 
+		{
+			CreatedWidget->AddToViewport();
+		}
 	}
 }
-
 
 void US_LevelManager::OpenLevelByName(FName LevelName)
 {
 	if (!LevelName.IsNone())
 	{
+		UGameplayStatics::OpenLevel(GetWorld(), LevelName);
 		UE_LOG(LogTemp, Log, TEXT("[LevelManagerSubsystem] Opening level: %s"), *LevelName.ToString());
 
-		// Optional: store current level name
 		CurrentLevelName = LevelName;
-
-		UGameplayStatics::OpenLevel(GetWorld(), LevelName);
 	}
 	else
 	{

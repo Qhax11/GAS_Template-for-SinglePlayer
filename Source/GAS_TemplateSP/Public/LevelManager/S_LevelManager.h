@@ -15,9 +15,9 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	UFUNCTION()
-	void OnPlayerControllerSpawn(const APlayerController* PC);
+	void OnPlayerControllerSpawn(APlayerController* PC);
 
-	void CreateLevelWidget(const APlayerController* PC, const TSubclassOf<UUserWidget>* Widget);
+	void CreateLevelWidget(APlayerController* PC, const TSubclassOf<UUserWidget>* WidgetClass);
 
 	UFUNCTION(BlueprintCallable)
 	void OpenLevelByName(FName LevelName);

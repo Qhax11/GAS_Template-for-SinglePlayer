@@ -9,6 +9,12 @@ void UWC_PropertyBar::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (!GetOwner())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Owner is null in %s, cannot initialize PropertyBar."), *this->GetName());
+		return;
+	}
+
 	// BeginPlay is running before AbilitySet Initialize, so we need wait
 	if (UAC_AbilitySet* AbiltySetComp = GetOwner()->GetComponentByClass<UAC_AbilitySet>()) 
 	{

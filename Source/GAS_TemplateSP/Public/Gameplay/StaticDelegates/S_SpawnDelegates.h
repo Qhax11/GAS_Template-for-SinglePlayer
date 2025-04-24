@@ -89,6 +89,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemySpawn, const FEnemySpawnData
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyReSpawn, const FEnemySpawnData&, EnemyReSpawnData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeSpawn, const FCharacterDeSpawnData&, EnemyDeSpawnData);
 
+// PlayerController Spawn
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerControllerSpawn, const APlayerController*, PlayerController);
 
 UCLASS()
 class GAS_TEMPLATESP_API US_SpawnDelegates : public UGameInstanceSubsystem
@@ -115,4 +117,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEnemyDeSpawn OnEnemyDeSpawn;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerControllerSpawn OnPlayerControllerSpawn;
 };

@@ -5,12 +5,13 @@
 #include "GameFramework/PlayerController.h"
 #include "GAS_PlayerController.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API AGAS_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual void BeginPlay() override;
+
 };

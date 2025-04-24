@@ -16,6 +16,12 @@ void UW_AbilitySlotPanel::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	if (!GetOwningPlayerPawn()) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayerPawn is null in %s, cannot initialize ability slots."), *this->GetName());
+		return;
+	}
+
 	// We need to wait init abilities for init of Abilitiy Slots
 	if (UAC_AbilitySet* PlayerAbiltySetComp = GetOwningPlayerPawn()->GetComponentByClass<UAC_AbilitySet>())
 	{

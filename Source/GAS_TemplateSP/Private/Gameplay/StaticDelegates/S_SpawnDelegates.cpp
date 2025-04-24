@@ -6,5 +6,4 @@
 void US_SpawnDelegates::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
 }

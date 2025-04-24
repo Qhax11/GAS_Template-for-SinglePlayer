@@ -9,6 +9,19 @@
 
 
 USTRUCT(BlueprintType)
+struct FTutorialQuestGateData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
+
+	/** Optional: The tutorial gate actor to open when this step is completed. */
+	UPROPERTY(EditAnywhere)
+	TSoftObjectPtr<class AA_TutorialGateBase> GateToOpen;
+};
+
+USTRUCT(BlueprintType)
 struct FTutorialStepData
 {
 	GENERATED_BODY()
@@ -35,12 +48,11 @@ struct FTutorialStepData
 
     //The quest widget class associated with this tutorial step.
 	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
+	FTutorialQuestGateData Quest;
 
-	// Optional: The next quest widget class to spawn after this step is completed.
     // Leave empty if there's no chained quest.
 	UPROPERTY(EditAnywhere, Category = "UI", meta = (ToolTip = "Optional: Quest widget to show after this one is completed."))
-	TSoftClassPtr<class UW_TutorialQuest> NextQuestWidgetClass;
+	FTutorialQuestGateData NextQuest;
 };
 
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))

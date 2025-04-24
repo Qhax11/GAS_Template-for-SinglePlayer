@@ -10,6 +10,7 @@
 #include "Gameplay/UI/Tutorial/W_TutorialQuest.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "UI/S_UIManager.h"
+#include "Gameplay/Tutorial/A_TutorialGateBase.h"
 
 
 void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -157,7 +158,7 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
     }
 
     // Quest Widget'ı oluştur
-    const TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData->QuestWidgetClass.LoadSynchronous();
+    const TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData->Quest.QuestWidgetClass.LoadSynchronous();
     if (QuestWidgetClass)
     {
         UUserWidget* CreatedQuestWidget = UIManager->CreateAndShowWidget(QuestWidgetClass, EUIWidgetContext::Gameplay);
@@ -176,19 +177,24 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
         CurrentQuestWidget = nullptr;
     }
 
-    // Next quest
     if (TutorialSettings)
     {
         const FTutorialStepData* StepData = TutorialSettings->TutorialSteps.FindByPredicate(
             [FinishedQuestWidget](const FTutorialStepData& Step)
             {
-                return Step.QuestWidgetClass
-                    && Step.QuestWidgetClass.Get() == FinishedQuestWidget->GetClass();
+                return Step.Quest.QuestWidgetClass
+                    && Step.Quest.QuestWidgetClass.Get() == FinishedQuestWidget->GetClass();
             });
 
-        if (StepData && StepData->NextQuestWidgetClass.IsValid())
+        if (StepData->Quest.GateToOpen) 
         {
-            const TSubclassOf<UW_TutorialQuest> NextClass = StepData->NextQuestWidgetClass.LoadSynchronous();
+            StepData->Quest.GateToOpen->OpenGate();
+        }
+
+        // Create next quest
+        if (StepData && StepData->NextQuest.QuestWidgetClass.IsValid())
+        {
+            const TSubclassOf<UW_TutorialQuest> NextClass = StepData->NextQuest.QuestWidgetClass.LoadSynchronous();
             if (NextClass)
             {
                 UUserWidget* CreatedNextQuestWidget = UIManager->CreateAndShowWidget(NextClass, EUIWidgetContext::Gameplay);

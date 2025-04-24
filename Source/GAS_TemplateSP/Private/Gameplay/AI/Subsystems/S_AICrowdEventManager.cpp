@@ -26,6 +26,10 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
         return;
     }
 
+    MaxEnemyAttackingCount = AICrowdEventManagerSettings->MaxEnemyAttackingCount;
+    bDebug = AICrowdEventManagerSettings->bDebug;
+
+#if WITH_EDITOR
     FTimerHandle DebugTimerHandle;
     if (UWorld* World = GetWorld())
     {
@@ -37,9 +41,8 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
             true
         );
     }
+#endif // WITH_EDITOR
 
-    MaxEnemyAttackingCount = AICrowdEventManagerSettings->MaxEnemyAttackingCount;
-    bDebug = AICrowdEventManagerSettings->bDebug;
 }
 
 void US_AICrowdEventManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)
@@ -332,9 +335,9 @@ void US_AICrowdEventManager::SendStateTreeEventToAttackIntenders(const FGameplay
     }
 }
 
+#if WITH_EDITOR
 void US_AICrowdEventManager::DebugPrintState()
 {
-#if WITH_EDITOR
     if (!bDebug) 
     {
         return;
@@ -369,9 +372,8 @@ void US_AICrowdEventManager::DebugPrintState()
             true
         );
     }
-#endif // WITH_EDITOR
-
 }
+#endif // WITH_EDITOR
 
 
 

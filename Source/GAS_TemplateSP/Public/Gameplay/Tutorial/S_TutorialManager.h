@@ -26,16 +26,6 @@ public:
 
 	void BindAllTutorailTriggers();
 
-	AGAS_HeroBase* Hero;
-	UGAS_AbilitySystemComponent* HeroASC;
-	APlayerController* HeroPC;
-	UAC_TagDelegates* HeroTagDelegatesComp;
-	UAC_TargetLockSystem* HeroTargetLockSystemComp;
-	const UDS_Tutorial* TutorialSettings;
-
-	UPROPERTY()
-	class UW_TutorialQuest* CurrentQuestWidget = nullptr;
-
 	UFUNCTION()
 	void OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
@@ -44,4 +34,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnQuestIsFinished(const class UW_TutorialQuest* FinishedQuestWidget);
+
+protected:
+	UPROPERTY()
+	class UW_TutorialQuest* CurrentQuestWidget = nullptr;
+
+	class US_UIManager* UIManager;
+	AGAS_HeroBase* Hero;
+	UGAS_AbilitySystemComponent* HeroASC;
+	APlayerController* HeroPC;
+	UAC_TagDelegates* HeroTagDelegatesComp;
+	UAC_TargetLockSystem* HeroTargetLockSystemComp;
+	const UDS_Tutorial* TutorialSettings;
+
 };

@@ -5,19 +5,26 @@
 #include "LevelManager/DS_LevelManager.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Kismet/GameplayStatics.h"
-#include "Blueprint/UserWidget.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "UI/S_UIManager.h"
 
 void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
 	Collection.InitializeDependency(US_SpawnDelegates::StaticClass());
+	Collection.InitializeDependency(US_UIManager::StaticClass());
 
 	LevelManagerSettings = GetDefault<UDS_LevelManager>();
 	if (!LevelManagerSettings) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LevelManagerSettings is null in: %s"), *GetName());
+		return;
+	}
+
+	UIManager = GetGameInstance()->GetSubsystem<US_UIManager>();
+	if (!UIManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UIManager is null in: %s"), *GetName());
 		return;
 	}
 
@@ -57,29 +64,10 @@ void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)
 
 	if (const TSubclassOf<UUserWidget>* FoundWidget = LevelManagerSettings->LevelToWidgetMap.Find(*CleanLevelName))
 	{
-		CreateLevelWidget(PC, FoundWidget);
+		UIManager->CreateAndShowWidget(*FoundWidget, PC);
 	}
 
 	CurrentLevelName = FName(*CleanLevelName);
-}
-
-void US_LevelManager::CreateLevelWidget(APlayerController* PC, const TSubclassOf<UUserWidget>* WidgetClass)
-{
-	if (!WidgetClass)
-	{
-		return;
-	}
-
-	UUserWidget* CreatedWidget = nullptr;
-
-	if (PC)
-	{
-		CreatedWidget = UWidgetBlueprintLibrary::Create(GetWorld(), *WidgetClass, PC);
-		if (CreatedWidget) 
-		{
-			CreatedWidget->AddToViewport();
-		}
-	}
 }
 
 void US_LevelManager::OpenLevelByName(FName LevelName)

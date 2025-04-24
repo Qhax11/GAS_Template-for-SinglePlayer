@@ -17,12 +17,11 @@ public:
 	UFUNCTION()
 	void OnPlayerControllerSpawn(APlayerController* PC);
 
-	void CreateLevelWidget(APlayerController* PC, const TSubclassOf<UUserWidget>* WidgetClass);
-
 	UFUNCTION(BlueprintCallable)
 	void OpenLevelByName(FName LevelName);
 	
 protected:
+	class US_UIManager* UIManager;
 	const class UDS_LevelManager* LevelManagerSettings;
 
 	UPROPERTY()

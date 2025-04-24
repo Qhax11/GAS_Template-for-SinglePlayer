@@ -9,6 +9,7 @@
 #include "Gameplay/UI/Tutorial/W_TutorialAbilityInfo.h"
 #include "Gameplay/UI/Tutorial/W_TutorialQuest.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
+#include "UI/S_UIManager.h"
 
 
 void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -16,6 +17,7 @@ void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	Collection.InitializeDependency(US_SpawnDelegates::StaticClass());
+    Collection.InitializeDependency(US_UIManager::StaticClass());
 
     TutorialSettings = GetDefault<UDS_Tutorial>();
     if (!TutorialSettings || TutorialSettings->TutorialSteps.IsEmpty())
@@ -24,6 +26,12 @@ void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
         return;
     }
 
+    UIManager = GetGameInstance()->GetSubsystem<US_UIManager>();
+    if (!UIManager)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UIManager is null in: %s"), *GetName());
+        return;
+    }
 
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
@@ -112,14 +120,7 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
     if (!StepData->TutorialAbilityInfoWidgetClass.IsNull()) 
     {
         TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialAbilityInfoWidgetClass.LoadSynchronous();
-        if (TutorailAbilityInfoWidgetClass)
-        {
-            UW_TutorialAbilityInfo* TutorailAbilityInfoWidget = CreateWidget<UW_TutorialAbilityInfo>(HeroPC, TutorailAbilityInfoWidgetClass);
-            if (TutorailAbilityInfoWidget)
-            {
-                TutorailAbilityInfoWidget->AddToViewport();
-            }
-        }
+        UIManager->CreateAndShowWidget(TutorailAbilityInfoWidgetClass);
     }
     else
     {
@@ -159,11 +160,10 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
     const TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData->QuestWidgetClass.LoadSynchronous();
     if (QuestWidgetClass)
     {
-        UW_TutorialQuest* QuestWidget = CreateWidget<UW_TutorialQuest>(GetWorld(), QuestWidgetClass);
-        if (QuestWidget)
+        UUserWidget* CreatedQuestWidget = UIManager->CreateAndShowWidget(QuestWidgetClass);
+        if (CreatedQuestWidget) 
         {
-            QuestWidget->AddToViewport();
-            CurrentQuestWidget = QuestWidget;
+            CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedQuestWidget);
         }
     }
 }
@@ -191,11 +191,10 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
             const TSubclassOf<UW_TutorialQuest> NextClass = StepData->NextQuestWidgetClass.LoadSynchronous();
             if (NextClass)
             {
-                UW_TutorialQuest* NextQuest = CreateWidget<UW_TutorialQuest>(HeroPC, NextClass);
-                if (NextQuest)
+                UUserWidget* CreatedNextQuestWidget = UIManager->CreateAndShowWidget(NextClass);
+                if (CreatedNextQuestWidget)
                 {
-                    NextQuest->AddToViewport();
-                    CurrentQuestWidget = NextQuest;
+                    CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedNextQuestWidget);
                 }
             }
         }

@@ -170,52 +170,78 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
 
 void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuestWidget)
 {
-    if (CurrentQuestWidget && FinishedQuestWidget == CurrentQuestWidget)
+    if (!FinishedQuestWidget || !TutorialSettings)
+    {
+        return;
+    }
+
+    if (CurrentQuestWidget == FinishedQuestWidget)
     {
         CurrentQuestWidget->RemoveFromParent();
         CurrentQuestWidget = nullptr;
     }
 
-    if (TutorialSettings)
+    const FTutorialStepData* MatchedStepData = nullptr;
+    bool bIsInitialQuest = false;
+
+    FindTutorialStepForWidget(FinishedQuestWidget, TutorialSettings->TutorialSteps, MatchedStepData, bIsInitialQuest);
+
+    if (!MatchedStepData)
     {
-        const FTutorialStepData* QuestStepData = TutorialSettings->TutorialSteps.FindByPredicate(
-            [FinishedQuestWidget](const FTutorialStepData& Step)
-            {
-                return Step.InitialQuest.QuestWidgetClass.LoadSynchronous() == FinishedQuestWidget->GetClass();
-            });
+        UE_LOG(LogTemp, Warning, TEXT("FinishedQuestWidget does not match any step!"));
+        return;
+    }
 
-        const FTutorialStepData* NextQuestStepData = TutorialSettings->TutorialSteps.FindByPredicate(
-            [FinishedQuestWidget](const FTutorialStepData& Step)
-            {
-                return Step.ChainedQuest.QuestWidgetClass.LoadSynchronous() == FinishedQuestWidget->GetClass();
-            });
+    const FTutorialQuestGateData& QuestData = bIsInitialQuest ? MatchedStepData->InitialQuest : MatchedStepData->ChainedQuest;
 
-        if (QuestStepData)
+    if (QuestData.GateToOpen)
+    {
+        QuestData.GateToOpen->OpenGate();
+    }
+
+    if (bIsInitialQuest && MatchedStepData->ChainedQuest.QuestWidgetClass.IsValid())
+    {
+        const TSubclassOf<UW_TutorialQuest> ChainedQuestClass = MatchedStepData->ChainedQuest.QuestWidgetClass.LoadSynchronous();
+        if (ChainedQuestClass)
         {
-            if (QuestStepData->InitialQuest.GateToOpen)
+            UUserWidget* CreatedWidget = UIManager->CreateAndShowWidget(ChainedQuestClass, EUIWidgetContext::Gameplay);
+            if (CreatedWidget)
             {
-                QuestStepData->InitialQuest.GateToOpen->OpenGate();
-            }
-
-            if (QuestStepData->ChainedQuest.QuestWidgetClass.IsValid())
-            {
-                const TSubclassOf<UW_TutorialQuest> NextQuestClass = QuestStepData->ChainedQuest.QuestWidgetClass.LoadSynchronous();
-                if (NextQuestClass && (!CurrentQuestWidget || CurrentQuestWidget->GetClass() != NextQuestClass))
-                {
-                    UUserWidget* CreatedNextQuestWidget = UIManager->CreateAndShowWidget(NextQuestClass, EUIWidgetContext::Gameplay);
-                    if (CreatedNextQuestWidget)
-                    {
-                        CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedNextQuestWidget);
-                    }
-                }
+                CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedWidget);
             }
         }
-        else if (NextQuestStepData)
+    }
+}
+
+void US_TutorialManager::FindTutorialStepForWidget(const UW_TutorialQuest* Widget, const TArray<FTutorialStepData>& Steps, const FTutorialStepData*& OutStep, bool& bOutIsInitialQuest)
+{
+    OutStep = nullptr;
+    bOutIsInitialQuest = false;
+
+    if (!Widget)
+    {
+        return;
+    }
+
+    // 1. Önce ChainedQuest'lere bak
+    for (const FTutorialStepData& Step : Steps)
+    {
+        if (Step.ChainedQuest.QuestWidgetClass.LoadSynchronous() == Widget->GetClass())
         {
-            if (NextQuestStepData->ChainedQuest.GateToOpen)
-            {
-                NextQuestStepData->ChainedQuest.GateToOpen->OpenGate();
-            }
+            OutStep = &Step;
+            bOutIsInitialQuest = false;
+            return;
+        }
+    }
+
+    // 2. Eğer bulunamazsa InitialQuest'lere bak
+    for (const FTutorialStepData& Step : Steps)
+    {
+        if (Step.InitialQuest.QuestWidgetClass.LoadSynchronous() == Widget->GetClass())
+        {
+            OutStep = &Step;
+            bOutIsInitialQuest = true;
+            return;
         }
     }
 }

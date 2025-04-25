@@ -33,13 +33,6 @@ struct FTutorialStepData
 	FGameplayTag TriggerTag;
 
 	/**
-    * The ability to grant when this tutorial step is triggered.
-    * Can be left empty if no ability should be granted.
-    */
-	UPROPERTY(EditAnywhere, Category = "Ability")
-	struct FAbilityData GrantedAbility;
-
-	/**
 	 * The widget shown when this tutorial step starts, usually explaining the granted ability.
 	 */
 	UPROPERTY(EditAnywhere, Category = "UI")

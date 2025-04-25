@@ -15,8 +15,7 @@
 				"DeveloperSettings",
 				"CoreUObject",
 				"AIModule",
-				"GameplayStateTreeModule",
-				"StateTreeModule"
+				"GameplayStateTreeModule"
 			]
 		}
 	],

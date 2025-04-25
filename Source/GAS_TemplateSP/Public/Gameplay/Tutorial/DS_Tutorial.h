@@ -27,11 +27,10 @@ struct FTutorialStepData
 	GENERATED_BODY()
 
 	/**
-    * Tag used to identify and track this tutorial step.
-    * Commonly used for trigger detection via Gameplay Tags on actors or components.
+    * For trigger detection Gameplay Tags on actors or components.
     */
 	UPROPERTY(EditAnywhere, meta = (Categories = "Gameplay.Tutorial"))
-	FGameplayTag TutorialTag;
+	FGameplayTag TriggerTag;
 
 	/**
     * The ability to grant when this tutorial step is triggered.
@@ -48,11 +47,11 @@ struct FTutorialStepData
 
     //The quest widget class associated with this tutorial step.
 	UPROPERTY(EditAnywhere, Category = "UI")
-	FTutorialQuestGateData Quest;
+	FTutorialQuestGateData InitialQuest;
 
     // Leave empty if there's no chained quest.
 	UPROPERTY(EditAnywhere, Category = "UI", meta = (ToolTip = "Optional: Quest widget to show after this one is completed."))
-	FTutorialQuestGateData NextQuest;
+	FTutorialQuestGateData ChainedQuest;
 };
 
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))

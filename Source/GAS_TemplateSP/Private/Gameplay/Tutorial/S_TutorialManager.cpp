@@ -109,7 +109,7 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
     const FTutorialStepData* StepData = TutorialSettings->TutorialSteps.FindByPredicate(
         [TutorialTrigger](const FTutorialStepData& Step)
         {
-            return Step.TutorialTag == TutorialTrigger->TutorialTag;
+            return Step.TriggerTag == TutorialTrigger->TutorialTag;
         });
 
     if (!StepData)
@@ -157,8 +157,7 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
         return;
     }
 
-    // Quest Widget'ı oluştur
-    const TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData->Quest.QuestWidgetClass.LoadSynchronous();
+    const TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData->InitialQuest.QuestWidgetClass.LoadSynchronous();
     if (QuestWidgetClass)
     {
         UUserWidget* CreatedQuestWidget = UIManager->CreateAndShowWidget(QuestWidgetClass, EUIWidgetContext::Gameplay);
@@ -179,29 +178,43 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
 
     if (TutorialSettings)
     {
-        const FTutorialStepData* StepData = TutorialSettings->TutorialSteps.FindByPredicate(
+        const FTutorialStepData* QuestStepData = TutorialSettings->TutorialSteps.FindByPredicate(
             [FinishedQuestWidget](const FTutorialStepData& Step)
             {
-                return Step.Quest.QuestWidgetClass
-                    && Step.Quest.QuestWidgetClass.Get() == FinishedQuestWidget->GetClass();
+                return Step.InitialQuest.QuestWidgetClass.LoadSynchronous() == FinishedQuestWidget->GetClass();
             });
 
-        if (StepData->Quest.GateToOpen) 
-        {
-            StepData->Quest.GateToOpen->OpenGate();
-        }
-
-        // Create next quest
-        if (StepData && StepData->NextQuest.QuestWidgetClass.IsValid())
-        {
-            const TSubclassOf<UW_TutorialQuest> NextClass = StepData->NextQuest.QuestWidgetClass.LoadSynchronous();
-            if (NextClass)
+        const FTutorialStepData* NextQuestStepData = TutorialSettings->TutorialSteps.FindByPredicate(
+            [FinishedQuestWidget](const FTutorialStepData& Step)
             {
-                UUserWidget* CreatedNextQuestWidget = UIManager->CreateAndShowWidget(NextClass, EUIWidgetContext::Gameplay);
-                if (CreatedNextQuestWidget)
+                return Step.ChainedQuest.QuestWidgetClass.LoadSynchronous() == FinishedQuestWidget->GetClass();
+            });
+
+        if (QuestStepData)
+        {
+            if (QuestStepData->InitialQuest.GateToOpen)
+            {
+                QuestStepData->InitialQuest.GateToOpen->OpenGate();
+            }
+
+            if (QuestStepData->ChainedQuest.QuestWidgetClass.IsValid())
+            {
+                const TSubclassOf<UW_TutorialQuest> NextQuestClass = QuestStepData->ChainedQuest.QuestWidgetClass.LoadSynchronous();
+                if (NextQuestClass && (!CurrentQuestWidget || CurrentQuestWidget->GetClass() != NextQuestClass))
                 {
-                    CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedNextQuestWidget);
+                    UUserWidget* CreatedNextQuestWidget = UIManager->CreateAndShowWidget(NextQuestClass, EUIWidgetContext::Gameplay);
+                    if (CreatedNextQuestWidget)
+                    {
+                        CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedNextQuestWidget);
+                    }
                 }
+            }
+        }
+        else if (NextQuestStepData)
+        {
+            if (NextQuestStepData->ChainedQuest.GateToOpen)
+            {
+                NextQuestStepData->ChainedQuest.GateToOpen->OpenGate();
             }
         }
     }

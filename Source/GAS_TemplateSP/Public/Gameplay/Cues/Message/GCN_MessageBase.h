@@ -25,6 +25,9 @@ struct FWidgetMessageData
 	FString MessageString = TEXT("");
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WidgetMessageData")
+	float TextSize = 24.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WidgetMessageData")
 	FSlateColor MessageColor = FSlateColor(FLinearColor::White);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WidgetMessageData")

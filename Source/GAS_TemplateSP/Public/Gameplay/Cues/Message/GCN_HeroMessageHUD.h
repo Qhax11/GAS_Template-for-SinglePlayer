@@ -14,7 +14,6 @@ class GAS_TEMPLATESP_API AGCN_HeroMessageHUD : public AGCN_MessageBase
 	GENERATED_BODY()
 
 public:
-
 	// For instant or periodic effects 
 	virtual void OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters) override;
 

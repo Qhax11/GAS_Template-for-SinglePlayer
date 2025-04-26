@@ -114,7 +114,7 @@ void UGAS_AbilitySystemComponent::GiveAbilityWithAbilityData(const FAbilityData&
 	if(AbilityData.Ability && !IsAbilityGivenAlready(AbilityData.Ability))
 	{
 		FGameplayAbilitySpecHandle GivenAbilitySpecHandle = GiveAbility(FGameplayAbilitySpec(AbilityData.Ability.Get()));
-		TryAbilityInputBind(AbilityData.AbilityInput, GivenAbilitySpecHandle);
+		TryAbilityInputBind(AbilityData.AbilityInput.Get(), GivenAbilitySpecHandle);
 	}
 }
 

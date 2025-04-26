@@ -128,6 +128,11 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
         UE_LOG(LogTemp, Warning, TEXT("TutorialAbilityInfoWidgetClass is null in: %s"), *GetName());
     }
 
+    if (TutorialTrigger->GrantedAbility.Ability)
+    {
+        HeroASC->GiveAbilityWithAbilityData(TutorialTrigger->GrantedAbility);
+    }
+
     TutorialTrigger->Destroy();
 }
 

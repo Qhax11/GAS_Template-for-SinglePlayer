@@ -14,14 +14,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityGiven, UAbilitySystemComp
 USTRUCT(BlueprintType)
 struct FAbilityData
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = "AbilityData")
+	UPROPERTY(EditAnywhere, Category = "AbilityData")
 	TSubclassOf<UGameplayAbility> Ability;
 
 	UPROPERTY(EditAnywhere, Category = "AbilityData")
-	class UInputAction* AbilityInput;
+	TSoftObjectPtr<class UInputAction> AbilityInput;
 };
 
 USTRUCT(BlueprintType)

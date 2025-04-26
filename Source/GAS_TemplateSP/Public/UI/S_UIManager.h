@@ -13,6 +13,18 @@ enum class EUIWidgetContext : uint8
 	PauseMenu,      // ESC menus that should pause game
 };
 
+USTRUCT(BlueprintType)
+struct FWidgetData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> WidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	EUIWidgetContext Context = EUIWidgetContext::Gameplay;
+};
+
 UCLASS()
 class GAS_TEMPLATESP_API US_UIManager : public UGameInstanceSubsystem
 {

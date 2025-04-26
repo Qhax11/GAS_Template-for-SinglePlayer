@@ -64,7 +64,7 @@ void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)
 		UE_LOG(LogTemp, Error, TEXT("NO widget found for: %s"), *CleanLevelName);
 	}
 
-	if (const FLevelWidgetData* WidgetData = LevelManagerSettings->LevelToWidgetMap.Find(*CleanLevelName))
+	if (const FWidgetData* WidgetData = LevelManagerSettings->LevelToWidgetMap.Find(*CleanLevelName))
 	{
 		UIManager->CreateAndShowWidget(WidgetData->WidgetClass, WidgetData->Context, PC);
 	}

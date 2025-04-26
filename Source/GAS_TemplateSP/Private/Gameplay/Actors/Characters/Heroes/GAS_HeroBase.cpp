@@ -3,6 +3,7 @@
 
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroInteraction.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAttributesListener.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroRespawn.h"
@@ -30,6 +31,8 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer)
     FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
     HeroControlComponent = CreateDefaultSubobject<UAC_HeroControl>(TEXT("HeroControlComponent"));
+
+    HeroInteractionComponent = CreateDefaultSubobject<UAC_HeroInteraction>(TEXT("HeroInteractionComponent"));
 
     AbilityInputBindingComponent = CreateDefaultSubobject<UAC_AbilityInputBinding>(TEXT("AbilityInputBindingComponent"));
 

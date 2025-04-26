@@ -85,5 +85,47 @@ void US_UIManager::SetPause(bool bPause)
 
 void US_UIManager::ToggleESCMenu(APlayerController* PC)
 {
+	/*
+	if (!PC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ToggleESCMenu: PlayerController is null."));
+		return;
+	}
+
+	// Eðer daha önce yaratýlmadýysa yarat
+	if (!ESCMenuWidget && ESCMenuWidgetClass)
+	{
+		ESCMenuWidget = CreateWidget<UUserWidget>(PC, ESCMenuWidgetClass);
+		if (ESCMenuWidget)
+		{
+			ESCMenuWidget->AddToViewport();
+			ESCMenuWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+
+	if (!ESCMenuWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ToggleESCMenu: ESCMenuWidget is null."));
+		return;
+	}
+
+	// Þu an görünür mü kontrolü
+	if (ESCMenuWidget->IsVisible())
+	{
+		// Menü açýk, kapat
+		ESCMenuWidget->SetVisibility(ESlateVisibility::Hidden);
+		SetInputModeGameOnly(PC);
+		SetCursorVisible(PC, false);
+		SetPause(false);
+	}
+	else
+	{
+		// Menü kapalý, aç
+		ESCMenuWidget->SetVisibility(ESlateVisibility::Visible);
+		SetInputModeUIOnly(PC, ESCMenuWidget);
+		SetCursorVisible(PC, true);
+		SetPause(true);
+	}
+	*/
 }
 

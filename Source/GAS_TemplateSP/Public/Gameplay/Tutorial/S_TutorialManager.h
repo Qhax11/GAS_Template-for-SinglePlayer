@@ -35,6 +35,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnQuestIsFinished(const class UW_TutorialQuest* FinishedQuestWidget);
 
+	bool IsLastQuest(const FTutorialStepData* MatchedStepData , const class UW_TutorialQuest* FinishedQuestWidget);
+
+	void OnTutorialCompleted();
+
 	static void FindTutorialStepForWidget(const UW_TutorialQuest* Widget, const TArray<FTutorialStepData>& Steps, const FTutorialStepData*& OutStep, bool& bOutIsInitialQuest);
 protected:
 	UPROPERTY()

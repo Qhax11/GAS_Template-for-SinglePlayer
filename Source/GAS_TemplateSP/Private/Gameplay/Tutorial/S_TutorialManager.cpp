@@ -3,6 +3,7 @@
 
 #include "Gameplay/Tutorial/S_TutorialManager.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
+#include "LevelManager/S_LevelManager.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Components/ShapeComponent.h"
 #include <Kismet/GameplayStatics.h>
@@ -199,6 +200,12 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
         QuestData.GateToOpen->OpenGate();
     }
 
+    if (IsLastQuest(MatchedStepData, FinishedQuestWidget))
+    {
+        OnTutorialCompleted();
+        return; 
+    }
+
     if (bIsInitialQuest && MatchedStepData->ChainedQuest.QuestWidgetClass.IsValid())
     {
         const TSubclassOf<UW_TutorialQuest> ChainedQuestClass = MatchedStepData->ChainedQuest.QuestWidgetClass.LoadSynchronous();
@@ -213,6 +220,40 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
     }
 }
 
+bool US_TutorialManager::IsLastQuest(const FTutorialStepData* MatchedStepData, const UW_TutorialQuest* FinishedQuestWidget)
+{
+    if (!TutorialSettings || !MatchedStepData || !FinishedQuestWidget)
+    {
+        return false;
+    }
+
+    const int32 StepIndex = TutorialSettings->TutorialSteps.IndexOfByPredicate(
+        [MatchedStepData](const FTutorialStepData& Step)
+        {
+            return &Step == MatchedStepData;
+        });
+
+    const bool bIsLastStep = (StepIndex == TutorialSettings->TutorialSteps.Num() - 1);
+
+    const bool bHasNoChainedQuest = !MatchedStepData->ChainedQuest.QuestWidgetClass.IsValid();
+    const bool bFinishedWidgetIsChainedQuest = MatchedStepData->ChainedQuest.QuestWidgetClass.LoadSynchronous() == FinishedQuestWidget->GetClass();
+
+    if (bIsLastStep && (bHasNoChainedQuest || bFinishedWidgetIsChainedQuest))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+void US_TutorialManager::OnTutorialCompleted()
+{
+    if (US_LevelManager* LevelManagerSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_LevelManager>())
+    {
+        LevelManagerSubsystem->OpenLevelByName(FName("MainMenu"));
+    }
+}
+
 void US_TutorialManager::FindTutorialStepForWidget(const UW_TutorialQuest* Widget, const TArray<FTutorialStepData>& Steps, const FTutorialStepData*& OutStep, bool& bOutIsInitialQuest)
 {
     OutStep = nullptr;
@@ -223,7 +264,6 @@ void US_TutorialManager::FindTutorialStepForWidget(const UW_TutorialQuest* Widge
         return;
     }
 
-    // 1. Önce ChainedQuest'lere bak
     for (const FTutorialStepData& Step : Steps)
     {
         if (Step.ChainedQuest.QuestWidgetClass.LoadSynchronous() == Widget->GetClass())
@@ -234,7 +274,6 @@ void US_TutorialManager::FindTutorialStepForWidget(const UW_TutorialQuest* Widge
         }
     }
 
-    // 2. Eğer bulunamazsa InitialQuest'lere bak
     for (const FTutorialStepData& Step : Steps)
     {
         if (Step.InitialQuest.QuestWidgetClass.LoadSynchronous() == Widget->GetClass())

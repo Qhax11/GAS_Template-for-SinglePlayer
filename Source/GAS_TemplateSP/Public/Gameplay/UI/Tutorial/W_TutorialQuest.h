@@ -14,9 +14,6 @@ class GAS_TEMPLATESP_API UW_TutorialQuest : public UW_TutorialBase
 public:
 	virtual void NativeConstruct();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void BP_QuestFinished();
-
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* T_QuestInstruction;

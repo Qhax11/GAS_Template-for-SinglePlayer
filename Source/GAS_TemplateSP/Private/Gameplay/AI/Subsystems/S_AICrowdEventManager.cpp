@@ -26,6 +26,8 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
         return;
     }
 
+    FWorldDelegates::OnWorldBeginTearDown.AddUObject(this, &US_AICrowdEventManager::OnWorldBeginTearDown);
+
     MaxEnemyAttackingCount = AICrowdEventManagerSettings->MaxEnemyAttackingCount;
     bDebug = AICrowdEventManagerSettings->bDebug;
 
@@ -42,7 +44,14 @@ void US_AICrowdEventManager::Initialize(FSubsystemCollectionBase& Collection)
         );
     }
 #endif // WITH_EDITOR
+}
 
+void US_AICrowdEventManager::OnWorldBeginTearDown(UWorld* World)
+{
+    Enemies.Empty();
+    HeroActor = nullptr;
+
+    UE_LOG(LogTemp, Warning, TEXT("[CrowdManager] OnWorldBeginTearDown: Enemies cleared, HeroActor nulled."));
 }
 
 void US_AICrowdEventManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)

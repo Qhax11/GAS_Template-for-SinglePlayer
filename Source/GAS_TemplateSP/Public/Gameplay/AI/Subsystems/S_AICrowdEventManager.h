@@ -82,6 +82,7 @@ class GAS_TEMPLATESP_API US_AICrowdEventManager : public UGameInstanceSubsystem
     // ===============================================================
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	void OnWorldBeginTearDown(UWorld* World);
 
 	UFUNCTION()
 	void OnHeroSpawn(const FHeroSpawnData& HeroSpawnData);

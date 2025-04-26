@@ -42,6 +42,16 @@ void UAC_RespawnBase::ApplyCharacterReSpawnEffect(AGAS_CharacterBase* Character)
 	Character->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(ReSpawnEffect, 1, FGameplayEffectContextHandle());
 }
 
+void UAC_RespawnBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (CharacterDeSpawnCountDownTimerHandle.IsValid() && GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CharacterDeSpawnCountDownTimerHandle);
+	}
+}
+
 
 
 

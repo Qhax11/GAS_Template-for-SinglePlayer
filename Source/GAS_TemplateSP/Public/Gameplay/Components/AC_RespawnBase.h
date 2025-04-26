@@ -28,6 +28,8 @@ protected:
 
 	void ApplyCharacterReSpawnEffect(AGAS_CharacterBase* CharacterBase);
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	FTimerHandle CharacterDeSpawnCountDownTimerHandle;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")

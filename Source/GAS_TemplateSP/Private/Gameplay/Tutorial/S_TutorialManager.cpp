@@ -35,10 +35,14 @@ void US_TutorialManager::Initialize(FSubsystemCollectionBase& Collection)
         return;
     }
 
-    if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
+    US_SpawnDelegates* SpawnDelegatesSubsystem = GetGameInstance()->GetSubsystem<US_SpawnDelegates>();
+    if (!SpawnDelegatesSubsystem)
     {
-        SpawnDelegatesSubsystem->OnHeroSpawn.AddDynamic(this, &US_TutorialManager::OnHeroSpawn);
+        UE_LOG(LogTemp, Warning, TEXT("SpawnDelegatesSubsystem is null in: %s"), *GetName());
+        return;
     }
+
+    SpawnDelegatesSubsystem->OnHeroSpawn.AddDynamic(this, &US_TutorialManager::OnHeroSpawn);
 }
 
 void US_TutorialManager::OnHeroSpawn(const FHeroSpawnData& HeroSpawnData)

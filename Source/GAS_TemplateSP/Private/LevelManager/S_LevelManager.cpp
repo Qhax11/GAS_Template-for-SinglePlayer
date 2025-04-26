@@ -30,10 +30,14 @@ void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 		return;
 	}
 
-	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
+	US_SpawnDelegates* SpawnDelegatesSubsystem = GetGameInstance()->GetSubsystem<US_SpawnDelegates>();
+	if (!SpawnDelegatesSubsystem)
 	{
-		SpawnDelegatesSubsystem->OnPlayerControllerSpawn.AddDynamic(this, &US_LevelManager::OnPlayerControllerSpawn);
+		UE_LOG(LogTemp, Warning, TEXT("SpawnDelegatesSubsystem is null in: %s"), *GetName());
+		return;
 	}
+
+	SpawnDelegatesSubsystem->OnPlayerControllerSpawn.AddDynamic(this, &US_LevelManager::OnPlayerControllerSpawn);
 }
 
 void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)

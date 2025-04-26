@@ -47,7 +47,7 @@ struct FTutorialStepData
 	FTutorialQuestGateData ChainedQuest;
 };
 
-UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Tutorial"))
+UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Project Systems | Subsystems | Tutorial"))
 class GAS_TEMPLATESP_API UDS_Tutorial : public UDeveloperSettings
 {
 	GENERATED_BODY()

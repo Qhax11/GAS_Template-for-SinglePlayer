@@ -7,7 +7,7 @@
 #include "DS_LevelManager.generated.h"
 
 
-UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "Level Manager"))
+UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "Project Systems | Subsystems | Level Manager"))
 class GAS_TEMPLATESP_API UDS_LevelManager : public UDeveloperSettings
 {
 	GENERATED_BODY()

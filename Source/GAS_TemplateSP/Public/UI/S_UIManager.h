@@ -31,6 +31,10 @@ class GAS_TEMPLATESP_API US_UIManager : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
+	UFUNCTION()
+	void OnPlayerControllerSpawn(APlayerController* PC);
 
 	UFUNCTION(BlueprintCallable)
 	UUserWidget* CreateAndShowWidget(TSubclassOf<UUserWidget> WidgetClass, EUIWidgetContext WidgetContext, APlayerController* PC = nullptr);
@@ -48,6 +52,10 @@ public:
 	void SetPause(bool bPause);
 
 	UFUNCTION(BlueprintCallable)
-	void ToggleESCMenu(APlayerController* PC); // bonus
+	void ToggleESCMenu(); // bonus
 	
+private:
+	APlayerController* PlayerController;
+	const class UDS_UIManager* UIManagerSettings;
+
 };

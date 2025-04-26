@@ -6,7 +6,7 @@
 #include "DS_AICrowdEventManager.generated.h"
 
 
-UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "AICrowdEventManager"))
+UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Project Systems | Subsystems | AICrowdEventManager"))
 class GAS_TEMPLATESP_API UDS_AICrowdEventManager : public UDeveloperSettings
 {
 	GENERATED_BODY()

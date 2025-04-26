@@ -6,7 +6,7 @@
 #include "DS_UIManager.generated.h"
 
 
-UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "UI Manager"))
+UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "Project Systems | Subsystems | UI | UI Manager"))
 class GAS_TEMPLATESP_API UDS_UIManager : public UDeveloperSettings
 {
 	GENERATED_BODY()

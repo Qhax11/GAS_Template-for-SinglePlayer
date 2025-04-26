@@ -9,13 +9,12 @@
 /**
  *  This class is used for retrieving Blueprint classes and configuring HUD settings.
  */
-UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "HUD")) 
+UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Project Systems | Subsystems | UI | HUD")) 
 class GAS_TEMPLATESP_API UDS_HUD : public UDeveloperSettings
 {
 	GENERATED_BODY()
 	
 public:
-
 	UPROPERTY(Config, EditDefaultsOnly, Category = "DynamicAbilitySlotPanel")
 	TSoftClassPtr<UW_AbilitySlot> WBP_AbilitySlot;
 

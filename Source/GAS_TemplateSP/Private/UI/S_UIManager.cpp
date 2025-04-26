@@ -2,8 +2,38 @@
 
 
 #include "UI/S_UIManager.h"
+#include "UI/DS_UIManager.h"
+#include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+
+void US_UIManager::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	Collection.InitializeDependency(US_SpawnDelegates::StaticClass());
+
+	UIManagerSettings = GetDefault<UDS_UIManager>();
+	if (!UIManagerSettings)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UIManagerSettings is null in %s"), *this->GetName());
+		return;
+	}
+
+	US_SpawnDelegates* SpawnDelegatesSubsystem = GetGameInstance()->GetSubsystem<US_SpawnDelegates>();
+	if (!SpawnDelegatesSubsystem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnDelegatesSubsystem is null in: %s"), *GetName());
+		return;
+	}
+
+	SpawnDelegatesSubsystem->OnPlayerControllerSpawn.AddDynamic(this, &US_UIManager::OnPlayerControllerSpawn);
+}
+
+void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
+{
+	PlayerController = PC;
+}
 
 UUserWidget* US_UIManager::CreateAndShowWidget(TSubclassOf<UUserWidget> WidgetClass, EUIWidgetContext WidgetContext, APlayerController* PC)
 {
@@ -83,7 +113,7 @@ void US_UIManager::SetPause(bool bPause)
 {
 }
 
-void US_UIManager::ToggleESCMenu(APlayerController* PC)
+void US_UIManager::ToggleESCMenu()
 {
 	/*
 	if (!PC)

@@ -29,5 +29,7 @@ protected:
 	UFUNCTION()
 	void OnToggleMenuPressed();
 
+private:
+	class US_UIManager* UIManager;
 
 };

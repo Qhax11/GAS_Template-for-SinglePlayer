@@ -252,17 +252,24 @@ bool US_TutorialManager::IsLastQuest(const FTutorialStepData* MatchedStepData, c
 
     const bool bIsLastStep = (StepIndex == TutorialSettings->TutorialSteps.Num() - 1);
 
-    const bool bHasNoChainedQuest = !MatchedStepData->ChainedQuest.QuestWidgetData.WidgetClass.IsValid();
-    const bool bFinishedWidgetIsChainedQuest =
-        MatchedStepData->ChainedQuest.QuestWidgetData.WidgetClass.IsValid() &&
-        MatchedStepData->ChainedQuest.QuestWidgetData.WidgetClass.Get() == FinishedQuestWidget->GetClass();
+    const TSoftClassPtr<UUserWidget>& ChainedQuestClass = MatchedStepData->ChainedQuest.QuestWidgetData.WidgetClass;
+    const bool bHasNoChainedQuest = ChainedQuestClass.IsNull();
 
-    if (bIsLastStep && (bHasNoChainedQuest || bFinishedWidgetIsChainedQuest))
+    bool bFinishedWidgetIsChainedQuest = false;
+    if (!bHasNoChainedQuest) 
     {
-        return true;
+        if (!ChainedQuestClass.IsValid())
+        {
+            ChainedQuestClass.LoadSynchronous();
+        }
+
+        if (ChainedQuestClass.IsValid())
+        {
+            bFinishedWidgetIsChainedQuest = (ChainedQuestClass.Get() == FinishedQuestWidget->GetClass());
+        }
     }
 
-    return false;
+    return bIsLastStep && (bHasNoChainedQuest || bFinishedWidgetIsChainedQuest);
 }
 
 UUserWidget* US_TutorialManager::CreateTutorialWidget(const FWidgetData WidgetData)

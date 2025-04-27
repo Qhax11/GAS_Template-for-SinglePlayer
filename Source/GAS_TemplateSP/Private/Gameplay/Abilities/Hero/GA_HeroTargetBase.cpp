@@ -36,7 +36,7 @@ bool UGA_HeroTargetBase::BindInputForConfirmAndCancel()
 
 	if (UAC_HeroControl* GetHeroControlComponent = HeroBase->GetHeroControlComponent())
 	{
-		if (UEnhancedInputComponent* EnhancedInputComponent = GetHeroControlComponent->GetEnhancedInputComponent())
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent))
 		{
 			if (GetHeroControlComponent->IA_ConfirmTarget && GetHeroControlComponent->IA_CancelTarget)
 			{

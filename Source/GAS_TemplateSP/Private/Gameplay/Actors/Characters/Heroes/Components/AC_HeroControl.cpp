@@ -32,7 +32,7 @@ void UAC_HeroControl::BeginPlay()
 
 void UAC_HeroControl::TryBindControlInputs()
 {
-	if (!GetEnhancedInputComponent())
+	if (!EnhancedInputComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnhancedInputComponent is null in: %s"), *GetName());
 		return;
@@ -47,11 +47,6 @@ void UAC_HeroControl::TryBindControlInputs()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Input actions are null in: %s"), *GetName());
 	}
-}
-
-UEnhancedInputComponent* UAC_HeroControl::GetEnhancedInputComponent() const
-{
-	return EnhancedInputComponent ? EnhancedInputComponent : Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
 }
 
 void UAC_HeroControl::Move(const FInputActionValue& Value)

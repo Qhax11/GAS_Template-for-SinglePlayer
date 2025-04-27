@@ -25,14 +25,7 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 
 bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
 {
-	UAC_HeroControl* HeroControlComponent = HeroBase->GetHeroControlComponent();
-	if (!HeroControlComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroControlComponent is null in: %s"), *GetName());
-		return false;
-	}
-
-	UEnhancedInputComponent* EnhancedInputComponent = HeroControlComponent->GetEnhancedInputComponent();
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
 	if (!EnhancedInputComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnhancedInputComponent is null in: %s"), *GetName());

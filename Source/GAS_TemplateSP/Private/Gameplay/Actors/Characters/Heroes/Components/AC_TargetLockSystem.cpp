@@ -63,7 +63,7 @@ bool UAC_TargetLockSystem::BindTargetLockSystemInputs()
 		return false;
 	}
 
-	UEnhancedInputComponent* EnhancedInputComponent = HeroControlComponent->GetEnhancedInputComponent();
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
 	if (!EnhancedInputComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnhancedInputComponent is null in: %s"), *GetName());

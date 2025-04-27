@@ -19,8 +19,6 @@ public:
 
 	void TryBindControlInputs();
 
-	FORCEINLINE UEnhancedInputComponent* GetEnhancedInputComponent() const;
-
 	void Move(const FInputActionValue& Value);
 
 	void LookMouse(const FInputActionValue& Value);

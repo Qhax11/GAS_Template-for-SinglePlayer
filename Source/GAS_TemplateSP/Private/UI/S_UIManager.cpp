@@ -6,6 +6,7 @@
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include <Kismet/GameplayStatics.h>
 
 void US_UIManager::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -163,6 +164,15 @@ void US_UIManager::SetCursorVisible(APlayerController* PC, bool bVisible)
 
 void US_UIManager::SetPause(bool bPause)
 {
+	if (bPause)
+	{
+		// Tam durdurmak istiyorsan:
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.0f);
+	}
+	else
+	{
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+	}
 }
 
 void US_UIManager::ToggleESCMenu()

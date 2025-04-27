@@ -70,7 +70,7 @@ void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)
 
 	if (const FWidgetData* WidgetData = LevelManagerSettings->LevelToWidgetMap.Find(*CleanLevelName))
 	{
-		UIManager->CreateAndShowWidget(WidgetData->WidgetClass, WidgetData->Context, PC);
+		UIManager->CreateAndShowWidget(*WidgetData, PC);
 	}
 	else
 	{

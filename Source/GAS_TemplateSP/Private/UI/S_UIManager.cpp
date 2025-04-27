@@ -35,68 +35,120 @@ void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
 	PlayerController = PC;
 }
 
-UUserWidget* US_UIManager::CreateAndShowWidget(TSubclassOf<UUserWidget> WidgetClass, EUIWidgetContext WidgetContext, APlayerController* PC)
+UUserWidget* US_UIManager::CreateAndShowWidget(const FWidgetData& WidgetData, APlayerController* PC)
 {
-	if (!WidgetClass)
+	if (!WidgetData.WidgetClass.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CreateAndShowWidget: Invalid params"));
+		WidgetData.WidgetClass.LoadSynchronous();
+	}
+
+	if (!WidgetData.WidgetClass.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CreateAndShowWidget: Invalid WidgetClass even after load."));
 		return nullptr;
 	}
 
 	UUserWidget* Widget = nullptr;
-	if (PC) 
+	if (PC)
 	{
-		Widget = CreateWidget<UUserWidget>(PC, WidgetClass);
+		Widget = CreateWidget<UUserWidget>(PC, WidgetData.WidgetClass.Get());
 	}
 	else
 	{
-		Widget = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
+		Widget = CreateWidget<UUserWidget>(GetWorld(), WidgetData.WidgetClass.Get());
 	}
 
 	if (Widget)
 	{
-		switch (WidgetContext)
-		{
-		case EUIWidgetContext::Gameplay:
-			SetInputModeGameOnly(PC);
-			SetCursorVisible(PC, false);
-			break;
-
-		case EUIWidgetContext::NonGameplay:
-			SetInputModeUIOnly(PC, Widget);
-			SetCursorVisible(PC, true);
-			break;
-
-		case EUIWidgetContext::PauseMenu:
-			SetInputModeUIOnly(PC, Widget);
-			SetCursorVisible(PC, true);
-			SetPause(true);
-			break;
-		}
-
+		ApplyWidgetContextInputSettings(PC, WidgetData.Context, Widget);
+		ApplyPauseBehavior(WidgetData.PauseBehavior);
 		Widget->AddToViewport();
 	}
 
 	return Widget;
 }
 
+void US_UIManager::ApplyWidgetContextInputSettings(APlayerController* PC, EUIWidgetContext Context, UUserWidget* FocusedWidget)
+{
+	if (!PC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyWidgetContextInputSettings: PlayerController is null."));
+		return;
+	}
+
+	switch (Context)
+	{
+	case EUIWidgetContext::GameOnly:
+		SetInputModeGameOnly(PC);
+		SetCursorVisible(PC, false);
+		break;
+
+	case EUIWidgetContext::UIOnly:
+		SetInputModeUIOnly(PC, FocusedWidget);
+		SetCursorVisible(PC, true);
+		break;
+
+	case EUIWidgetContext::GameAndUI:
+		SetInputModeGameAndUI(PC, FocusedWidget);
+		SetCursorVisible(PC, true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void US_UIManager::ApplyPauseBehavior(EGamePauseBehavior PauseBehavior)
+{
+	if (PauseBehavior == EGamePauseBehavior::PauseGame)
+	{
+		SetPause(true);
+	}
+	else
+	{
+		SetPause(false);
+	}
+}
+
 void US_UIManager::SetInputModeUIOnly(APlayerController* PC, UUserWidget* FocusedWidget)
 {
-	if (PC)
+	if (!PC)
 	{
-		FInputModeUIOnly InputMode;
-		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-		InputMode.SetWidgetToFocus(FocusedWidget->TakeWidget());
-		PC->SetInputMode(InputMode);
+		return;
 	}
+
+	FInputModeUIOnly InputMode;
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	if (FocusedWidget)
+	{
+		InputMode.SetWidgetToFocus(FocusedWidget->TakeWidget());
+	}
+	PC->SetInputMode(InputMode);
 }
 
 void US_UIManager::SetInputModeGameOnly(APlayerController* PC)
 {
-	if (PC)
+	if (!PC)
 	{
-		PC->SetInputMode(FInputModeGameOnly());
+		return;
 	}
+
+	PC->SetInputMode(FInputModeGameOnly());
+}
+
+void US_UIManager::SetInputModeGameAndUI(APlayerController* PC, UUserWidget* FocusedWidget)
+{
+	if (!PC)
+	{
+		return;
+	}
+
+	FInputModeGameAndUI InputMode;
+	if (FocusedWidget)
+	{
+		InputMode.SetWidgetToFocus(FocusedWidget->TakeWidget());
+	}
+	PC->SetInputMode(InputMode);
 }
 
 void US_UIManager::SetCursorVisible(APlayerController* PC, bool bVisible)
@@ -115,47 +167,44 @@ void US_UIManager::SetPause(bool bPause)
 
 void US_UIManager::ToggleESCMenu()
 {
-	/*
-	if (!PC)
+	if (!PlayerController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ToggleESCMenu: PlayerController is null."));
 		return;
 	}
 
-	// Eðer daha önce yaratýlmadýysa yarat
-	if (!ESCMenuWidget && ESCMenuWidgetClass)
-	{
-		ESCMenuWidget = CreateWidget<UUserWidget>(PC, ESCMenuWidgetClass);
-		if (ESCMenuWidget)
-		{
-			ESCMenuWidget->AddToViewport();
-			ESCMenuWidget->SetVisibility(ESlateVisibility::Hidden);
-		}
-	}
-
 	if (!ESCMenuWidget)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ToggleESCMenu: ESCMenuWidget is null."));
-		return;
-	}
+		if (UIManagerSettings && UIManagerSettings->ToggleMenu.WidgetClass)
+		{
+			ESCMenuWidget = CreateAndShowWidget(UIManagerSettings->ToggleMenu, PlayerController);
+		}
 
-	// Þu an görünür mü kontrolü
-	if (ESCMenuWidget->IsVisible())
-	{
-		// Menü açýk, kapat
-		ESCMenuWidget->SetVisibility(ESlateVisibility::Hidden);
-		SetInputModeGameOnly(PC);
-		SetCursorVisible(PC, false);
-		SetPause(false);
+		if (!ESCMenuWidget)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ToggleESCMenu: ESCMenuWidget is null."));
+			return;
+		}
 	}
 	else
 	{
-		// Menü kapalý, aç
-		ESCMenuWidget->SetVisibility(ESlateVisibility::Visible);
-		SetInputModeUIOnly(PC, ESCMenuWidget);
-		SetCursorVisible(PC, true);
-		SetPause(true);
+		const bool bIsMenuVisible = ESCMenuWidget->IsVisible();
+		if (bIsMenuVisible)
+		{
+			ESCMenuWidget->SetVisibility(ESlateVisibility::Hidden);
+
+			// Menü kapandýysa Gameplay'e geri dön
+			ApplyWidgetContextInputSettings(PlayerController, EUIWidgetContext::GameOnly, nullptr);
+			SetPause(false);
+		}
+		else
+		{
+			ESCMenuWidget->SetVisibility(ESlateVisibility::Visible);
+
+			// Menü açýldýysa kendi context'ine göre ayarla
+			ApplyWidgetContextInputSettings(PlayerController, UIManagerSettings->ToggleMenu.Context, ESCMenuWidget);
+			SetPause(true);
+		}
 	}
-	*/
 }
 

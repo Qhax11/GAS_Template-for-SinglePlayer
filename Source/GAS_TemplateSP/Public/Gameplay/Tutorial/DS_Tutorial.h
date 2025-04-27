@@ -5,6 +5,7 @@
 #include "Engine/DeveloperSettings.h"
 #include "Gameplay/Tutorial/A_TutorialTrigger.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
+#include "UI/DS_UIManager.h"
 #include "DS_Tutorial.generated.h"
 
 
@@ -14,7 +15,7 @@ struct FTutorialQuestGateData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	TSoftClassPtr<class UW_TutorialQuest> QuestWidgetClass;
+	FWidgetData QuestWidgetData;
 
 	/** Optional: The tutorial gate actor to open when this step is completed. */
 	UPROPERTY(EditAnywhere)
@@ -36,7 +37,7 @@ struct FTutorialStepData
 	 * The widget shown when this tutorial step starts, usually explaining the granted ability.
 	 */
 	UPROPERTY(EditAnywhere, Category = "UI")
-	TSoftClassPtr<class UW_TutorialAbilityInfo> TutorialAbilityInfoWidgetClass;
+	FWidgetData AbilityInfoWidgetData;
 
     //The quest widget class associated with this tutorial step.
 	UPROPERTY(EditAnywhere, Category = "UI")

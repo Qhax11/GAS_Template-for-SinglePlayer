@@ -3,27 +3,9 @@
 #pragma once
 
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "UI/DS_UIManager.h"
 #include "S_UIManager.generated.h"
 
-UENUM(BlueprintType)
-enum class EUIWidgetContext : uint8
-{
-	Gameplay,       // HUD, Damage Popup, Combat Indicator, etc.
-	NonGameplay,    // Main Menu, Settings, Tutorial, ESC, etc.
-	PauseMenu,      // ESC menus that should pause game
-};
-
-USTRUCT(BlueprintType)
-struct FWidgetData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> WidgetClass;
-
-	UPROPERTY(EditAnywhere)
-	EUIWidgetContext Context = EUIWidgetContext::Gameplay;
-};
 
 UCLASS()
 class GAS_TEMPLATESP_API US_UIManager : public UGameInstanceSubsystem
@@ -37,13 +19,20 @@ public:
 	void OnPlayerControllerSpawn(APlayerController* PC);
 
 	UFUNCTION(BlueprintCallable)
-	UUserWidget* CreateAndShowWidget(TSubclassOf<UUserWidget> WidgetClass, EUIWidgetContext WidgetContext, APlayerController* PC = nullptr);
+	UUserWidget* CreateAndShowWidget(const FWidgetData& WidgetData, APlayerController* PC = nullptr);
+
+	void ApplyWidgetContextInputSettings(APlayerController* PC, EUIWidgetContext Context, UUserWidget* FocusedWidget);
+
+	void ApplyPauseBehavior(EGamePauseBehavior PauseBehavior);
 
 	UFUNCTION(BlueprintCallable)
 	void SetInputModeUIOnly(APlayerController* PC, UUserWidget* FocusedWidget = nullptr);
 
 	UFUNCTION(BlueprintCallable)
 	void SetInputModeGameOnly(APlayerController* PC);
+
+	UFUNCTION(BlueprintCallable)
+	void SetInputModeGameAndUI(APlayerController* PC, UUserWidget* FocusedWidget = nullptr);
 
 	UFUNCTION(BlueprintCallable)
 	void SetCursorVisible(APlayerController* PC, bool bVisible);
@@ -54,6 +43,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleESCMenu(); // bonus
 	
+	UUserWidget* ESCMenuWidget;
 private:
 	APlayerController* PlayerController;
 	const class UDS_UIManager* UIManagerSettings;

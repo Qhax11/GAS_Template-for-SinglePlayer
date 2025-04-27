@@ -119,18 +119,21 @@ void US_TutorialManager::OnTutorailTriggerBeginOverlap(AActor* OverlappedActor, 
 
     if (!StepData)
     {
-        UE_LOG(LogTemp, Warning, TEXT("No tutorial step data found for tag: %s"), *TutorialTrigger->TutorialTag.ToString());
+        UE_LOG(LogTemp, Warning, TEXT("OnTutorailTriggerBeginOverlap: No tutorial step data found for tag: %s"), *TutorialTrigger->TutorialTag.ToString());
         return;
     }
 
-    if (!StepData->TutorialAbilityInfoWidgetClass.IsNull()) 
+    if (StepData->AbilityInfoWidgetData.WidgetClass)
     {
-        TSubclassOf<UW_TutorialAbilityInfo> TutorailAbilityInfoWidgetClass = StepData->TutorialAbilityInfoWidgetClass.LoadSynchronous();
-        UIManager->CreateAndShowWidget(TutorailAbilityInfoWidgetClass, EUIWidgetContext::Gameplay);
+        UUserWidget* CreatedTutorialWidget = UIManager->CreateAndShowWidget(StepData->AbilityInfoWidgetData);
+        if (!CreatedTutorialWidget)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("OnTutorailTriggerBeginOverlap: Failed to create AbilityInfoWidget for Step: %s"), *TutorialTrigger->TutorialTag.ToString());
+        }
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("TutorialAbilityInfoWidgetClass is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("OnTutorailTriggerBeginOverlap: AbilityInfoWidgetData.WidgetClass is null in: %s"), *GetName());
     }
 
     if (TutorialTrigger->GrantedAbility.Ability)
@@ -152,21 +155,21 @@ void US_TutorialManager::OnTutorialAbilityInfoClosed(const UW_TutorialAbilityInf
     const FTutorialStepData* StepData = TutorialSettings->TutorialSteps.FindByPredicate(
         [ClosedTutorialWidget](const FTutorialStepData& Step)
         {
-            return Step.TutorialAbilityInfoWidgetClass
-                && Step.TutorialAbilityInfoWidgetClass.Get() == ClosedTutorialWidget->GetClass();
+            return Step.AbilityInfoWidgetData.WidgetClass
+                && Step.AbilityInfoWidgetData.WidgetClass.Get() == ClosedTutorialWidget->GetClass();
         });
 
     if (!StepData)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Could not find StepData for ClosedTutorialWidget class: %s"), *ClosedTutorialWidget->GetClass()->GetName());
+        UE_LOG(LogTemp, Warning, TEXT("OnTutorialAbilityInfoClosed: Could not find StepData for ClosedTutorialWidget class: %s"), *ClosedTutorialWidget->GetClass()->GetName());
         return;
     }
 
-    const TSubclassOf<UW_TutorialQuest> QuestWidgetClass = StepData->InitialQuest.QuestWidgetClass.LoadSynchronous();
-    if (QuestWidgetClass)
+    // Eğer InitialQuest'in WidgetClass'ı varsa, doğrudan WidgetData üzerinden göster
+    if (StepData->InitialQuest.QuestWidgetData.WidgetClass)
     {
-        UUserWidget* CreatedQuestWidget = UIManager->CreateAndShowWidget(QuestWidgetClass, EUIWidgetContext::Gameplay);
-        if (CreatedQuestWidget) 
+        UUserWidget* CreatedQuestWidget = UIManager->CreateAndShowWidget(StepData->InitialQuest.QuestWidgetData);
+        if (CreatedQuestWidget)
         {
             CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedQuestWidget);
         }
@@ -180,6 +183,7 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
         return;
     }
 
+    // Eğer CurrentQuestWidget bitirildiyse temizle
     if (CurrentQuestWidget == FinishedQuestWidget)
     {
         CurrentQuestWidget->RemoveFromParent();
@@ -193,33 +197,33 @@ void US_TutorialManager::OnQuestIsFinished(const UW_TutorialQuest* FinishedQuest
 
     if (!MatchedStepData)
     {
-        UE_LOG(LogTemp, Warning, TEXT("FinishedQuestWidget does not match any step!"));
+        UE_LOG(LogTemp, Warning, TEXT("OnQuestIsFinished: FinishedQuestWidget does not match any tutorial step!"));
         return;
     }
 
+    // Doğru quest data'yı bul: Initial mi Chained mi
     const FTutorialQuestGateData& QuestData = bIsInitialQuest ? MatchedStepData->InitialQuest : MatchedStepData->ChainedQuest;
 
+    // Eğer gate varsa aç
     if (QuestData.GateToOpen)
     {
         QuestData.GateToOpen->OpenGate();
     }
 
+    // Eğer biten quest son quest ise tutorial tamamlandı
     if (IsLastQuest(MatchedStepData, FinishedQuestWidget))
     {
         OnTutorialCompleted();
-        return; 
+        return;
     }
 
-    if (bIsInitialQuest && MatchedStepData->ChainedQuest.QuestWidgetClass.IsValid())
+    // Eğer InitialQuest bitmişse ve ChainedQuest varsa, yeni quest widgetı spawn et
+    if (bIsInitialQuest && MatchedStepData->ChainedQuest.QuestWidgetData.WidgetClass)
     {
-        const TSubclassOf<UW_TutorialQuest> ChainedQuestClass = MatchedStepData->ChainedQuest.QuestWidgetClass.LoadSynchronous();
-        if (ChainedQuestClass)
+        UUserWidget* CreatedWidget = UIManager->CreateAndShowWidget(MatchedStepData->ChainedQuest.QuestWidgetData);
+        if (CreatedWidget)
         {
-            UUserWidget* CreatedWidget = UIManager->CreateAndShowWidget(ChainedQuestClass, EUIWidgetContext::Gameplay);
-            if (CreatedWidget)
-            {
-                CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedWidget);
-            }
+            CurrentQuestWidget = Cast<UW_TutorialQuest>(CreatedWidget);
         }
     }
 }
@@ -239,8 +243,10 @@ bool US_TutorialManager::IsLastQuest(const FTutorialStepData* MatchedStepData, c
 
     const bool bIsLastStep = (StepIndex == TutorialSettings->TutorialSteps.Num() - 1);
 
-    const bool bHasNoChainedQuest = !MatchedStepData->ChainedQuest.QuestWidgetClass.IsValid();
-    const bool bFinishedWidgetIsChainedQuest = MatchedStepData->ChainedQuest.QuestWidgetClass.LoadSynchronous() == FinishedQuestWidget->GetClass();
+    const bool bHasNoChainedQuest = !MatchedStepData->ChainedQuest.QuestWidgetData.WidgetClass.IsValid();
+    const bool bFinishedWidgetIsChainedQuest =
+        MatchedStepData->ChainedQuest.QuestWidgetData.WidgetClass.IsValid() &&
+        MatchedStepData->ChainedQuest.QuestWidgetData.WidgetClass.Get() == FinishedQuestWidget->GetClass();
 
     if (bIsLastStep && (bHasNoChainedQuest || bFinishedWidgetIsChainedQuest))
     {
@@ -270,7 +276,8 @@ void US_TutorialManager::FindTutorialStepForWidget(const UW_TutorialQuest* Widge
 
     for (const FTutorialStepData& Step : Steps)
     {
-        if (Step.ChainedQuest.QuestWidgetClass.LoadSynchronous() == Widget->GetClass())
+        if (Step.ChainedQuest.QuestWidgetData.WidgetClass.IsValid() &&
+            Step.ChainedQuest.QuestWidgetData.WidgetClass.Get() == Widget->GetClass())
         {
             OutStep = &Step;
             bOutIsInitialQuest = false;
@@ -280,7 +287,8 @@ void US_TutorialManager::FindTutorialStepForWidget(const UW_TutorialQuest* Widge
 
     for (const FTutorialStepData& Step : Steps)
     {
-        if (Step.InitialQuest.QuestWidgetClass.LoadSynchronous() == Widget->GetClass())
+        if (Step.InitialQuest.QuestWidgetData.WidgetClass.IsValid() &&
+            Step.InitialQuest.QuestWidgetData.WidgetClass.Get() == Widget->GetClass())
         {
             OutStep = &Step;
             bOutIsInitialQuest = true;

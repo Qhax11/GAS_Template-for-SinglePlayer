@@ -20,45 +20,48 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 	}
 
-	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
-	{
-		// The melee combo ability plays a root motion montage, which conflicts with the ApplyRootMotion task.
-		// Since two different root motion sources cannot be applied at the same time, we need to cancel the combo ability first.
-		// This ensures that the root motion montage is no longer active before applying a new root motion task.
-		GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
-		Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	}
-	else
-	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-	}
+	// The melee combo ability plays a root motion montage, which conflicts with the ApplyRootMotion task.
+	// Since two different root motion sources cannot be applied at the same time, we need to cancel the combo ability first.
+	// This ensures that the root motion montage is no longer active before applying a new root motion task.
+	GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
+
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
 FVector UGA_HeroDash::CalculateDestination()
 {
-	if (UAC_HeroControl* GetHeroControlComponent = HeroBase->GetHeroControlComponent())
+	FVector DashDirection;
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
-		FVector DashDirection = GetDashDirection(GetHeroControlComponent->LastMovementInput);
-		FVector DashTargetLocation = DashDirection * DistanceMultiplier + HeroBase->GetActorLocation();
-		return DashTargetLocation;
+		DashDirection = GetDashDirectionFromHeroLastMovement();
 	}
-	else 
+	else
+	{
+		DashDirection = HeroBase->GetActorForwardVector();
+	}
+
+	FVector DashTargetLocation = HeroBase->GetActorLocation() + DashDirection * DistanceMultiplier ;
+	return DashTargetLocation;
+}
+
+FVector UGA_HeroDash::GetDashDirectionFromHeroLastMovement()
+{
+	UAC_HeroControl* HeroControlComponent = HeroBase->GetHeroControlComponent();
+	if (!HeroControlComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("GetHeroControlComponent is null in: %s"), *GetName());
 		return FVector::ZeroVector;
 	}
-}
 
-FVector UGA_HeroDash::GetDashDirection(const FVector2D& LastMovementInput)
-{
+	const FVector2D& HeroLastMovementInput = HeroControlComponent->LastMovementInput;
 	// This is because when no input is provided, we want the dash to happen in the forward direction of the character
-	if (LastMovementInput.X == 0 && LastMovementInput.Y == 0)
+	if (HeroLastMovementInput.X == 0 && HeroLastMovementInput.Y == 0)
 	{
 		return GetAvatarActorFromActorInfo()->GetActorForwardVector();
 	}
 
 	// Else return the direction based on input
-	return GetDirectionFromLastMovementInput(LastMovementInput);
+	return GetDirectionFromLastMovementInput(HeroLastMovementInput);
 }
 
 FVector UGA_HeroDash::GetDirectionFromLastMovementInput(const FVector2D& LastMovementInput)

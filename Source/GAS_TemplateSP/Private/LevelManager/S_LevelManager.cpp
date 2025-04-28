@@ -47,17 +47,7 @@ void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)
 		return;
 	}
 
-	FString RawLevelName = GetWorld()->GetMapName(); // "UEDPIE_0_MainMenu" 
-	FString CleanLevelName;
-
-	if (RawLevelName.StartsWith(TEXT("UEDPIE_")))
-	{
-		RawLevelName.Split(TEXT("_"), nullptr, &CleanLevelName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-	}
-	else
-	{
-		CleanLevelName = RawLevelName;
-	}
+	FString CleanLevelName = GetCleanLevelName();
 
 	if (LevelManagerSettings->LevelToWidgetMap.Contains(*CleanLevelName))
 	{
@@ -93,5 +83,34 @@ void US_LevelManager::OpenLevelByName(FName LevelName)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[LevelManagerSubsystem] Tried to open level with invalid name."));
 	}
+}
+
+bool US_LevelManager::IsCurrentLevel(FName LevelName) const
+{
+	return GetCleanLevelName() == LevelName.ToString();
+}
+
+FString US_LevelManager::GetCleanLevelName() const
+{
+	if (!GetWorld())
+	{
+		return FString();
+	}
+
+	FString RawLevelName = GetWorld()->GetMapName();
+	FString CleanLevelName;
+
+	// Eðer editorda çalýþýyorsan baþýnda UEDPIE_ gibi prefix oluyor
+	if (RawLevelName.StartsWith(TEXT("UEDPIE_")))
+	{
+		// Sondan split yaparak asýl level adýný alýyoruz
+		RawLevelName.Split(TEXT("_"), nullptr, &CleanLevelName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+	}
+	else
+	{
+		CleanLevelName = RawLevelName;
+	}
+
+	return CleanLevelName;
 }
 

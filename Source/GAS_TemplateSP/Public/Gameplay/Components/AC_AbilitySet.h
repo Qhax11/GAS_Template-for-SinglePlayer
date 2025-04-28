@@ -22,6 +22,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UGAS_GameplayAbilitySet* AbilitySet;
 
+	UPROPERTY(EditDefaultsOnly)
+	UGAS_GameplayAbilitySet* AbilitySetTutorial;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnAbilitySetGiven OnAbilitySetGiven;
 };

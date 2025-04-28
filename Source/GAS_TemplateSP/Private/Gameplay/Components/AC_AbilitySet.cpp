@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Components/AC_AbilitySet.h"
+#include "LevelManager/S_LevelManager.h"
 
 UAC_AbilitySet::UAC_AbilitySet()
 {
@@ -22,9 +23,26 @@ void UAC_AbilitySet::Initialize(UGAS_AbilitySystemComponent* ASC)
 		return;
 	}
 
-	if (ASC->GiveAbilitySet(AbilitySet))
+	US_LevelManager* LevelManagerSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_LevelManager>();
+	if (!LevelManagerSubsystem)
 	{
-		OnAbilitySetGiven.Broadcast(GetOwner());
+		UE_LOG(LogTemp, Warning, TEXT("LevelManagerSubsystem is null in: %s"), *GetName());
+		return;
+	}
+
+	if (AbilitySetTutorial && LevelManagerSubsystem->IsCurrentLevel(FName("Tutorial")))
+	{
+		if (ASC->GiveAbilitySet(AbilitySetTutorial))
+		{
+			OnAbilitySetGiven.Broadcast(GetOwner());
+		}
+	}
+	else 
+	{
+		if (ASC->GiveAbilitySet(AbilitySet))
+		{
+			OnAbilitySetGiven.Broadcast(GetOwner());
+		}
 	}
 }
 

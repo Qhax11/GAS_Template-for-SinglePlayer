@@ -16,7 +16,7 @@ protected:
 
 	virtual FVector CalculateDestination() override;
 
-	FVector GetDashDirection(const FVector2D& LastMovementInput);
+	FVector GetDashDirectionFromHeroLastMovement();
 
 	FVector GetDirectionFromLastMovementInput(const FVector2D& LastMovementInput);
 

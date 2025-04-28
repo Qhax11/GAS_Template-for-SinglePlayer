@@ -19,8 +19,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OpenLevelByName(FName LevelName);
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCurrentLevel(FName LevelName) const;
 	
 protected:
+	FString GetCleanLevelName() const;
+
 	class US_UIManager* UIManager;
 	const class UDS_LevelManager* LevelManagerSettings;
 

@@ -15,11 +15,9 @@ class GAS_TEMPLATESP_API UWC_PropertyBar : public UWidgetComponent
 	GENERATED_BODY()
 
 public:
-
 	virtual void BeginPlay() override;
 
 protected:
-
 	UFUNCTION()
 	void OnAbilitySetGiven(const AActor* OwnerActor);
 

@@ -51,7 +51,17 @@ void UAC_HeroInteraction::TryBindInteractionInputs()
 
 void UAC_HeroInteraction::OnToggleMenuPressed()
 {
-	UIManager->ToggleESCMenu();
-	UE_LOG(LogTemp, Warning, TEXT("TOGGLE"));
+	if (UIManager) 
+	{
+		UIManager->ToggleESCMenu();
+	}
+	else
+	{
+		UIManager = GetWorld()->GetGameInstance()->GetSubsystem<US_UIManager>();
+		if (UIManager) 
+		{
+			UIManager->ToggleESCMenu();
+		}
+	}
 }
 

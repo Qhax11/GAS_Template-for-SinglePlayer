@@ -43,5 +43,8 @@ class GAS_TEMPLATESP_API UDS_UIManager : public UDeveloperSettings
 public:
 	UPROPERTY(Config, EditDefaultsOnly, Category = "UI")
 	FWidgetData ToggleMenu;
+
+	UPROPERTY(Config, EditDefaultsOnly, Category = "UI")
+	FWidgetData SettingsMenu;
 	
 };

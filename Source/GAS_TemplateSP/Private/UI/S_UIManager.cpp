@@ -28,7 +28,13 @@ void US_UIManager::Initialize(FSubsystemCollectionBase& Collection)
 		return;
 	}
 
+	FWorldDelegates::OnWorldCleanup.AddUObject(this, &US_UIManager::OnWorldCleanup);
 	SpawnDelegatesSubsystem->OnPlayerControllerSpawn.AddDynamic(this, &US_UIManager::OnPlayerControllerSpawn);
+}
+
+void US_UIManager::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
+{
+	ESCMenuWidget = nullptr;
 }
 
 void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
@@ -38,6 +44,12 @@ void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
 
 UUserWidget* US_UIManager::CreateAndShowWidget(const FWidgetData& WidgetData, APlayerController* PC)
 {
+	if (WidgetData.WidgetClass.IsNull())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CreateAndShowWidget: WidgetClass is null."));
+		return nullptr;
+	}
+
 	if (!WidgetData.WidgetClass.IsValid())
 	{
 		WidgetData.WidgetClass.LoadSynchronous();
@@ -179,42 +191,52 @@ void US_UIManager::ToggleESCMenu()
 {
 	if (!PlayerController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ToggleESCMenu: PlayerController is null."));
 		return;
 	}
 
 	if (!ESCMenuWidget)
 	{
-		if (UIManagerSettings && UIManagerSettings->ToggleMenu.WidgetClass)
-		{
-			ESCMenuWidget = CreateAndShowWidget(UIManagerSettings->ToggleMenu, PlayerController);
-		}
-
-		if (!ESCMenuWidget)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("ToggleESCMenu: ESCMenuWidget is null."));
-			return;
-		}
+		ESCMenuWidget = CreateAndShowWidget(UIManagerSettings->ToggleMenu, PlayerController);
 	}
 	else
 	{
-		const bool bIsMenuVisible = ESCMenuWidget->IsVisible();
-		if (bIsMenuVisible)
+		const bool bIsVisible = ESCMenuWidget->IsVisible();
+		if (bIsVisible)
 		{
-			ESCMenuWidget->SetVisibility(ESlateVisibility::Hidden);
-
-			// Menü kapandýysa Gameplay'e geri dön
-			ApplyWidgetContextInputSettings(PlayerController, EUIWidgetContext::GameOnly, nullptr);
-			SetPause(false);
+			CloseMenu(ESCMenuWidget, UIManagerSettings->ToggleMenu);
 		}
 		else
 		{
-			ESCMenuWidget->SetVisibility(ESlateVisibility::Visible);
-
-			// Menü açýldýysa kendi context'ine göre ayarla
-			ApplyWidgetContextInputSettings(PlayerController, UIManagerSettings->ToggleMenu.Context, ESCMenuWidget);
-			SetPause(true);
+			OpenMenu(ESCMenuWidget, UIManagerSettings->ToggleMenu);
 		}
 	}
 }
+
+void US_UIManager::OpenMenu(UUserWidget* WidgetToOpen, const FWidgetData& WidgetData)
+{
+	if (!IsValid(WidgetToOpen))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OpenMenu: WidgetToOpen is not valid."));
+		return;
+	}
+
+	WidgetToOpen->SetVisibility(ESlateVisibility::Visible);
+	ApplyWidgetContextInputSettings(PlayerController, WidgetData.Context, WidgetToOpen);
+	SetPause(true);
+}
+
+void US_UIManager::CloseMenu(UUserWidget* WidgetToClose, const FWidgetData& WidgetData)
+{
+	if (!IsValid(WidgetToClose))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OpenMenu: WidgetToOpen is not valid."));
+		return;
+	}
+
+	WidgetToClose->SetVisibility(ESlateVisibility::Hidden);
+	ApplyWidgetContextInputSettings(PlayerController, EUIWidgetContext::GameOnly, nullptr);
+	SetPause(false);
+}
+
+
 

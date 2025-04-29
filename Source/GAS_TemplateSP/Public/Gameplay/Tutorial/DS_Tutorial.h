@@ -5,7 +5,7 @@
 #include "Engine/DeveloperSettings.h"
 #include "Gameplay/Tutorial/A_TutorialTrigger.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
-#include "UI/DS_UIManager.h"
+#include "UIManager/DS_UIManager.h"
 #include "DS_Tutorial.generated.h"
 
 

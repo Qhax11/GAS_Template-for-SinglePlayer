@@ -41,6 +41,10 @@ class GAS_TEMPLATESP_API UDS_UIManager : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
+	// Map name to widget class
+	UPROPERTY(EditDefaultsOnly, Config, Category = "UI")
+	TMap<FName, FWidgetData> LevelToWidgetMap;
+
 	UPROPERTY(Config, EditDefaultsOnly, Category = "UI")
 	FWidgetData ToggleMenu;
 

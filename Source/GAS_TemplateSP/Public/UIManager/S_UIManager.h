@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "UI/DS_UIManager.h"
+#include "UIManager/DS_UIManager.h"
 #include "S_UIManager.generated.h"
 
 
@@ -53,6 +53,7 @@ protected:
 	UUserWidget* ESCMenuWidget;
 
 private:
+	class US_LevelManager* LevelManager;
 	APlayerController* PlayerController;
 	const class UDS_UIManager* UIManagerSettings;
 

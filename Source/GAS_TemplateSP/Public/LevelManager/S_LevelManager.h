@@ -23,10 +23,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsCurrentLevel(FName LevelName) const;
 	
-protected:
+	UFUNCTION(BlueprintCallable)
 	FString GetCleanLevelName() const;
 
-	class US_UIManager* UIManager;
+protected:
 	const class UDS_LevelManager* LevelManagerSettings;
 
 	UPROPERTY()

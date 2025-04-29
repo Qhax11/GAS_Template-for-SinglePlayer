@@ -1,8 +1,9 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "UI/S_UIManager.h"
-#include "UI/DS_UIManager.h"
+#include "UIManager/S_UIManager.h"
+#include "UIManager/DS_UIManager.h"
+#include "LevelManager/S_LevelManager.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
@@ -13,6 +14,7 @@ void US_UIManager::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	Collection.InitializeDependency(US_SpawnDelegates::StaticClass());
+	Collection.InitializeDependency(US_LevelManager::StaticClass());
 
 	UIManagerSettings = GetDefault<UDS_UIManager>();
 	if (!UIManagerSettings)
@@ -28,6 +30,13 @@ void US_UIManager::Initialize(FSubsystemCollectionBase& Collection)
 		return;
 	}
 
+	LevelManager = GetGameInstance()->GetSubsystem<US_LevelManager>();
+	if (!LevelManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LevelManager is null in: %s"), *GetName());
+		return;
+	}
+
 	FWorldDelegates::OnWorldCleanup.AddUObject(this, &US_UIManager::OnWorldCleanup);
 	SpawnDelegatesSubsystem->OnPlayerControllerSpawn.AddDynamic(this, &US_UIManager::OnPlayerControllerSpawn);
 }
@@ -40,6 +49,24 @@ void US_UIManager::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bClean
 void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
 {
 	PlayerController = PC;
+
+	if (UIManagerSettings->LevelToWidgetMap.Contains(*LevelManager->GetCleanLevelName()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Found widget class for map!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("NO widget found for: %s"), *LevelManager->GetCleanLevelName());
+	}
+
+	if (const FWidgetData* WidgetData = UIManagerSettings->LevelToWidgetMap.Find(*LevelManager->GetCleanLevelName()))
+	{
+		CreateAndShowWidget(*WidgetData, PC);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No widget data found for level: %s"), *LevelManager->GetCleanLevelName());
+	}
 }
 
 UUserWidget* US_UIManager::CreateAndShowWidget(const FWidgetData& WidgetData, APlayerController* PC)

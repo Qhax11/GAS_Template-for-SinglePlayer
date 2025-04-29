@@ -8,7 +8,7 @@
 #include "Gameplay/UI/Tutorial/W_TutorialAbilityInfo.h"
 #include "Gameplay/UI/Tutorial/W_TutorialQuest.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
-#include "UI/S_UIManager.h"
+#include "UIManager/S_UIManager.h"
 #include "Gameplay/Tutorial/A_TutorialGateBase.h"
 #include <Kismet/GameplayStatics.h>
 

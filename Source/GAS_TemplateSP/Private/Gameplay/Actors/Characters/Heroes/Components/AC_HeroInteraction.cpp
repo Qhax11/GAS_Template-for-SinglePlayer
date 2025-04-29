@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroInteraction.h"
-#include "UI/S_UIManager.h"
+#include "UIManager/S_UIManager.h"
 
 UAC_HeroInteraction::UAC_HeroInteraction()
 {

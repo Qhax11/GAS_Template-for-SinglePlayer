@@ -5,7 +5,6 @@
 #include "LevelManager/DS_LevelManager.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Kismet/GameplayStatics.h"
-#include "UI/S_UIManager.h"
 
 struct FLevelWidgetData;
 
@@ -14,19 +13,11 @@ void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	Collection.InitializeDependency(US_SpawnDelegates::StaticClass());
-	Collection.InitializeDependency(US_UIManager::StaticClass());
 
 	LevelManagerSettings = GetDefault<UDS_LevelManager>();
 	if (!LevelManagerSettings) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LevelManagerSettings is null in: %s"), *GetName());
-		return;
-	}
-
-	UIManager = GetGameInstance()->GetSubsystem<US_UIManager>();
-	if (!UIManager)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UIManager is null in: %s"), *GetName());
 		return;
 	}
 
@@ -48,24 +39,6 @@ void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)
 	}
 
 	FString CleanLevelName = GetCleanLevelName();
-
-	if (LevelManagerSettings->LevelToWidgetMap.Contains(*CleanLevelName))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Found widget class for map!"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("NO widget found for: %s"), *CleanLevelName);
-	}
-
-	if (const FWidgetData* WidgetData = LevelManagerSettings->LevelToWidgetMap.Find(*CleanLevelName))
-	{
-		UIManager->CreateAndShowWidget(*WidgetData, PC);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("No widget data found for level: %s"), *CleanLevelName);
-	}
 
 	CurrentLevelName = FName(*CleanLevelName);
 }

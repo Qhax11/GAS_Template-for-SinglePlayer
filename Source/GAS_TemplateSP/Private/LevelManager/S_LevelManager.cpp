@@ -3,16 +3,12 @@
 
 #include "LevelManager/S_LevelManager.h"
 #include "LevelManager/DS_LevelManager.h"
-#include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Kismet/GameplayStatics.h"
 
-struct FLevelWidgetData;
 
 void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-
-	Collection.InitializeDependency(US_SpawnDelegates::StaticClass());
 
 	LevelManagerSettings = GetDefault<UDS_LevelManager>();
 	if (!LevelManagerSettings) 
@@ -20,27 +16,30 @@ void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 		UE_LOG(LogTemp, Warning, TEXT("LevelManagerSettings is null in: %s"), *GetName());
 		return;
 	}
-
-	US_SpawnDelegates* SpawnDelegatesSubsystem = GetGameInstance()->GetSubsystem<US_SpawnDelegates>();
-	if (!SpawnDelegatesSubsystem)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SpawnDelegatesSubsystem is null in: %s"), *GetName());
-		return;
-	}
-
-	SpawnDelegatesSubsystem->OnPlayerControllerSpawn.AddDynamic(this, &US_LevelManager::OnPlayerControllerSpawn);
+	
+	// Bind to world load complete
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &US_LevelManager::HandlePostLoadMap);
 }
 
-void US_LevelManager::OnPlayerControllerSpawn(APlayerController* PC)
+void US_LevelManager::Deinitialize()
 {
-	if (!GetWorld())
+	Super::Deinitialize();
+
+	FCoreUObjectDelegates::PostLoadMapWithWorld.RemoveAll(this);
+}
+
+void US_LevelManager::HandlePostLoadMap(UWorld* LoadedWorld)
+{
+	if (!LoadedWorld)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Loaded world is null!"));
 		return;
 	}
 
-	FString CleanLevelName = GetCleanLevelName();
+	FName CleanLevelName = GetCleanLevelName();
+	OnLevelChanged.Broadcast(CleanLevelName);
 
-	CurrentLevelName = FName(*CleanLevelName);
+	UE_LOG(LogTemp, Warning, TEXT("Broadcasted loaded level: %s"), *CleanLevelName.ToString());
 }
 
 void US_LevelManager::OpenLevelByName(FName LevelName)
@@ -63,20 +62,20 @@ bool US_LevelManager::IsCurrentLevel(FName LevelName) const
 	return GetCleanLevelName() == LevelName.ToString();
 }
 
-FString US_LevelManager::GetCleanLevelName() const
+FName US_LevelManager::GetCleanLevelName() const
 {
 	if (!GetWorld())
 	{
-		return FString();
+		return FName();
 	}
 
 	FString RawLevelName = GetWorld()->GetMapName();
 	FString CleanLevelName;
 
-	// Eðer editorda çalýþýyorsan baþýnda UEDPIE_ gibi prefix oluyor
+	// When running in editor, level names have a "UEDPIE_" prefix
 	if (RawLevelName.StartsWith(TEXT("UEDPIE_")))
 	{
-		// Sondan split yaparak asýl level adýný alýyoruz
+		// Split from the end to retrieve the actual level name
 		RawLevelName.Split(TEXT("_"), nullptr, &CleanLevelName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 	}
 	else
@@ -84,6 +83,6 @@ FString US_LevelManager::GetCleanLevelName() const
 		CleanLevelName = RawLevelName;
 	}
 
-	return CleanLevelName;
+	return FName(CleanLevelName);
 }
 

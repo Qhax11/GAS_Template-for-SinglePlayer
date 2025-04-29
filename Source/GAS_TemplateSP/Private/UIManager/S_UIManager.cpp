@@ -50,22 +50,13 @@ void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
 {
 	PlayerController = PC;
 
-	if (UIManagerSettings->LevelToWidgetMap.Contains(*LevelManager->GetCleanLevelName()))
+	if (UIManagerSettings->LevelToWidgetMap.Contains(LevelManager->GetCleanLevelName()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Found widget class for map!"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("NO widget found for: %s"), *LevelManager->GetCleanLevelName());
-	}
-
-	if (const FWidgetData* WidgetData = UIManagerSettings->LevelToWidgetMap.Find(*LevelManager->GetCleanLevelName()))
-	{
-		CreateAndShowWidget(*WidgetData, PC);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("No widget data found for level: %s"), *LevelManager->GetCleanLevelName());
+		if (const FWidgetData* WidgetData = UIManagerSettings->LevelToWidgetMap.Find(LevelManager->GetCleanLevelName()))
+		{
+			CreateAndShowWidget(*WidgetData, PC);
+			UE_LOG(LogTemp, Warning, TEXT("Found widget class for map!"));
+		}
 	}
 }
 

@@ -129,16 +129,36 @@ bool AAIControllerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
 		return false;
 	}
 
+	TargetCharacter->GetAbilitySystemComponent()->AbilityActivatedCallbacks.AddUObject(this, &AAIControllerBase::OnTargetAbilityActivated);
 	ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnVulnerableTagAdded);
-	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo1, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
-	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo2, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
-	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo3, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnPlayerStartedAttackTagAdded);
 	return false;
 }
 
-void AAIControllerBase::OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void AAIControllerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 {
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack);
+	if (!Ability)
+	{
+		return;
+	}
+
+	FGameplayTagContainer CombinedTags;
+
+	// Add static tags
+	CombinedTags.AppendTags(Ability->GetAssetTags());
+
+	// Add dynamic tags from current spec
+	if (const FGameplayAbilitySpec* Spec = Ability->GetCurrentAbilitySpec())
+	{
+		CombinedTags.AppendTags(Spec->DynamicAbilityTags);
+	}
+
+	if (!CombinedTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Attack))
+	{
+		return;
+	}
+
+	FComingAttackPayload Payload(Ability, CombinedTags);
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack, FConstStructView::Make(Payload));
 }
 
 void AAIControllerBase::OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

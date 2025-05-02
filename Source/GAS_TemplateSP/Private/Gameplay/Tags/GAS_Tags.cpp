@@ -77,8 +77,11 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility2, "Gameplay.Hero.Ability2");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility3, "Gameplay.Hero.Ability3");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_MeleeCombo, "Gameplay.Ability.MeleeCombo");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Parry, "Gameplay.Ability.Parry");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack, "Gameplay.Ability.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_MeleeCombo, "Gameplay.Ability.Attack.MeleeCombo");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked, "Gameplay.Ability.Attack.MeleeCombo.ShadowLinked");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement, "Gameplay.Ability.Movement");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Strafing, "Gameplay.Ability.Movement.Strafing");

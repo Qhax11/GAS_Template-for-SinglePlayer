@@ -116,7 +116,7 @@ public:
 	UAC_MeleeComboManager();
 
 	UFUNCTION(BlueprintCallable)
-	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None);
+	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag());
 
 	UFUNCTION(BlueprintCallable)
 	void StopCombo();

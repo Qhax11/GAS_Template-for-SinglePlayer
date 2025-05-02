@@ -49,14 +49,14 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
 	ActivateComboMeleeAttackAbility();
 }
 
-UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
 	if (CharacterBaseASC->HasAnyMatchingGameplayTags(BlockedTags))
 	{
 		return nullptr;
 	}
 
-	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMeleeAttackAbility(MontageSection);
+	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMeleeAttackAbility(MontageSection, AdditionalTag);
 	if (!ActivatedComboMeleeAttack) 
 	{
 		return nullptr;
@@ -111,6 +111,12 @@ void UAC_HeroMeleeComboManager::OnCanActivateNextAttack()
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}
+}
+
+void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbilityWithShadowAttack(FName MontageSection, int32 ComboIndex, FGameplayTag AdditionalTag)
+{
+	ActiveComboChainTracker.CurrentIndex = ComboIndex;
+	ActivateComboMeleeAttackAbility(MontageSection, AdditionalTag);
 }
 
 

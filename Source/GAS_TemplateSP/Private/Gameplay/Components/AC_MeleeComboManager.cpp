@@ -47,7 +47,7 @@ void UAC_MeleeComboManager::InitComboChainTracker()
 	}
 }
 
-UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection)
+UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
 	if (!CharacterBaseASC) 
 	{
@@ -62,11 +62,12 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
 	if (ComboAbilityData && ComboAbilityData->ComboAbilityClass)
 	{
-		if (FGameplayAbilitySpec* SpecHandle = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityData->ComboAbilityClass))
+		if (FGameplayAbilitySpec* AbilitySpec = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityData->ComboAbilityClass))
 		{
-			ActiveComboChainTracker.CurrentAbilitySpecHandle = SpecHandle->Handle;
-			ActiveComboChainTracker.CurrentAbilityInstance = SpecHandle->GetPrimaryInstance(); 
-			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(SpecHandle->GetPrimaryInstance()))
+			AbilitySpec->DynamicAbilityTags.AddTag(AdditionalTag);
+			ActiveComboChainTracker.CurrentAbilitySpecHandle = AbilitySpec->Handle;
+			ActiveComboChainTracker.CurrentAbilityInstance = AbilitySpec->GetPrimaryInstance();
+			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(AbilitySpec->GetPrimaryInstance()))
 			{
 				ActivatedComboMeleeAttack->SectionName = MontageSection;
 				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityData->ComboAbilityClass))
@@ -129,7 +130,7 @@ void UAC_MeleeComboManager::CancelComboAbilities()
 	}
 
 	FGameplayTagContainer CancelTags;
-	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_MeleeCombo);
+	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo);
 
 	CharacterBaseASC->CancelAbilities(&CancelTags);
 }

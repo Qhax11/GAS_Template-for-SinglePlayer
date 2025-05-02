@@ -14,6 +14,27 @@ class UAISenseConfig_Sight;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, DetectedTarget);
 
+USTRUCT(BlueprintType)
+struct FComingAttackPayload
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UGameplayAbility* ComingAttack;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FGameplayTagContainer ComingAttackTags;
+
+	FComingAttackPayload()
+		: ComingAttack(nullptr)
+	{}
+
+	FComingAttackPayload(UGameplayAbility* InComingAttack, FGameplayTagContainer InComingAttackTags)
+		: ComingAttack(InComingAttack), ComingAttackTags(InComingAttackTags)
+	{}
+};
+
 UCLASS()
 class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
 {
@@ -64,10 +85,13 @@ protected:
 	virtual bool RegisterTags(AGAS_CharacterBase* TargetCharacter);
 
 	UFUNCTION()
-	void OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnTargetAbilityActivated(UGameplayAbility* Ability);
 
 	UFUNCTION()
 	void OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTagContainer TargetAbilityTagsCheck;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Detaour Crowd Avoidance Config")

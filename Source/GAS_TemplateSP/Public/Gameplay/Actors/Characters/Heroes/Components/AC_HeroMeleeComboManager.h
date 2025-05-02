@@ -19,12 +19,16 @@ protected:
 
 	void OnComboMeleeAttackInput();
 
-	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None) override;
+	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
 
 	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData) override;
 
 	UFUNCTION()
 	void OnCanActivateNextAttack();
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void ActivateComboMeleeAttackAbilityWithShadowAttack(FName MontageSection, int32 ComboIndex = 0, FGameplayTag AdditionalTag = FGameplayTag());
 
 	// The tags are blocks MeleeCombo because of same input
 	UPROPERTY(EditDefaultsOnly, Category = "HeroMeleeComboManager")

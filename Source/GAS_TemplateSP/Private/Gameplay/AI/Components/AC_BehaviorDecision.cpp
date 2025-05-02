@@ -160,6 +160,26 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     return BestMovementChainDataAsset->MovementChain;
 }
 
+EComingAttackReaction UAC_BehaviorDecision::GetComingAttackDecision(FComingAttackPayload ComingAttackPayload)
+{
+    // If ability is null, default to taking the hit
+    if (!ComingAttackPayload.ComingAttack)
+    {
+        return EComingAttackReaction::TakeDamage;
+    }
+
+    const FGameplayTagContainer& ComingAttackTags = ComingAttackPayload.ComingAttackTags;
+
+    // Shadow attacks cannot be parried
+    if (ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked))
+    {
+        return EComingAttackReaction::Dodge;
+    }
+
+    // Default fallback
+    return EComingAttackReaction::TakeDamage;
+}
+
 TArray<UMovementChainAsset*> UAC_BehaviorDecision::GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const
 {
     TArray<UMovementChainAsset*> Result;

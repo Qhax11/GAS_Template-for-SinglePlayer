@@ -13,4 +13,5 @@ class GAS_TEMPLATESP_API UGA_EnemyTakeDamage : public UGA_TakeDamageBase
 {
 	GENERATED_BODY()
 	
+
 };

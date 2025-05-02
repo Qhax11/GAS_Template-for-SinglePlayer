@@ -17,6 +17,14 @@ enum class EBehaviorState : uint8
     Confused    UMETA(DisplayName = "Confused") 
 };
 
+UENUM(BlueprintType)
+enum class EComingAttackReaction : uint8
+{
+    TakeDamage  UMETA(DisplayName = "TakeDamage"),
+    Dodge     UMETA(DisplayName = "Dodge"),
+    Parry  UMETA(DisplayName = "Parry"),
+};
+
 USTRUCT(BlueprintType)
 struct FAttackData
 {
@@ -169,6 +177,9 @@ public:
 
     UFUNCTION(BlueprintCallable)
     TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
+
+    UFUNCTION(BlueprintCallable)
+    EComingAttackReaction GetComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
 
     FAttackData LastSelectedAttackAbilityData;
 

@@ -4,6 +4,7 @@
 #include "Gameplay/Abilities/GA_TakeDamageBase.h"
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 
 UGA_TakeDamageBase::UGA_TakeDamageBase()
 {
@@ -33,6 +34,9 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	{
 		AnimMontage = GetHitMontage(MeleeAttackBase->AnimMontage);
 	}
+
+	AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
+	CharacterBase->GetMesh()->GetAnimInstance()->StopAllMontages(0.2f);
 
 	// Using Motion Warping insted of this
 	//SetRotationToInstigator(TriggerEventData->Instigator);

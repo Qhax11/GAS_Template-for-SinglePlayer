@@ -87,6 +87,10 @@ protected:
 	UFUNCTION()
 	void OnTargetAbilityActivated(UGameplayAbility* Ability);
 
+	float GetAttackNotifyTriggerTime(class UGA_MeleeAttackBase* Ability) const;
+
+	void SendEventToDefense(FComingAttackPayload EventPayload);
+
 	UFUNCTION()
 	void OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 

@@ -72,7 +72,7 @@ UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility
 
 void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	// If it is another ability or if it is UGA_HeroHologram we need a reset. 
+	// If it is another ability or if it is UGA_HeroHologram return. 
 	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>() || EndedData.AbilityThatEnded->IsA<UGA_HeroShadowAttack>())
 	{
 		return;
@@ -85,7 +85,7 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnded
 
 	if (EndedData.bWasCancelled)
 	{
-		if (ActiveComboChainTracker.IsChainFinished())
+		if (!ActiveComboChainTracker.bNextAttackAllowed)
 		{
 			ActiveComboChainTracker.Reset();
 			OnComboEnded.Broadcast();

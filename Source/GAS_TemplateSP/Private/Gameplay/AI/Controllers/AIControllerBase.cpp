@@ -7,6 +7,9 @@
 #include "Gameplay/Components/AC_Team.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
+#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Animation/AN_SendTag.h"
+
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))
@@ -141,10 +144,16 @@ void AAIControllerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 		return;
 	}
 
+	UGA_MeleeAttackBase* MeleeAttackAbility = Cast<UGA_MeleeAttackBase>(Ability);
+	if (!MeleeAttackAbility)
+	{
+		return;
+	}
+
 	FGameplayTagContainer CombinedTags;
 
 	// Add static tags
-	CombinedTags.AppendTags(Ability->GetAssetTags());
+	CombinedTags.AppendTags(Ability->GetAssetTags()); 
 
 	// Add dynamic tags from current spec
 	if (const FGameplayAbilitySpec* Spec = Ability->GetCurrentAbilitySpec())
@@ -152,13 +161,55 @@ void AAIControllerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 		CombinedTags.AppendTags(Spec->DynamicAbilityTags);
 	}
 
-	if (!CombinedTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Attack))
+	FTimerHandle SendEventTimer;
+	FTimerDelegate TimerDelegate;
+	FComingAttackPayload Payload(Ability, CombinedTags);
+	TimerDelegate.BindLambda([this, Payload]()
+		{
+			this->SendEventToDefense(Payload);
+		});
+
+	float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility);
+	if (AttackTime < 0) 
 	{
 		return;
 	}
 
-	FComingAttackPayload Payload(Ability, CombinedTags);
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack, FConstStructView::Make(Payload));
+	float ReactionDelay = AttackTime - 0.2;
+	if (ReactionDelay > 0) 
+	{
+		GetWorld()->GetTimerManager().SetTimer(SendEventTimer, TimerDelegate, ReactionDelay, false);
+	}
+	else
+	{
+		SendEventToDefense(Payload);
+	}
+}
+
+float AAIControllerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability) const
+{
+	if (!Ability || !Ability->AnimMontage)
+	{
+		return -1.0f;
+	}
+
+	for (const FAnimNotifyEvent& Notify : Ability->AnimMontage->Notifies)
+	{
+		if (const UAN_SendTag* TagNotify = Cast<UAN_SendTag>(Notify.Notify))
+		{
+			if (TagNotify->NotifyTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceStart)
+			{
+				return Notify.GetTriggerTime();
+			}
+		}
+	}
+
+	return -1.0f;
+}
+
+void AAIControllerBase::SendEventToDefense(FComingAttackPayload EventPayload)
+{
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack, FConstStructView::Make(EventPayload));
 }
 
 void AAIControllerBase::OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

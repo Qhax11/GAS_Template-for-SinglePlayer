@@ -21,8 +21,8 @@ UENUM(BlueprintType)
 enum class EComingAttackReaction : uint8
 {
     TakeDamage  UMETA(DisplayName = "TakeDamage"),
-    Dodge     UMETA(DisplayName = "Dodge"),
     Parry  UMETA(DisplayName = "Parry"),
+    Dodge     UMETA(DisplayName = "Dodge"),
 };
 
 USTRUCT(BlueprintType)

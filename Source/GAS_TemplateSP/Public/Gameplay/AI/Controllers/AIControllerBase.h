@@ -6,7 +6,7 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
-#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "AIControllerBase.generated.h"
 
@@ -70,7 +70,7 @@ protected:
 	AActor* Target;
 
 	UPROPERTY()
-	AGAS_CharacterBase* ControlledCharacter;
+	AGAS_EnemyBase* ControlledEnemy;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -93,6 +93,9 @@ protected:
 
 	UFUNCTION()
 	void OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTagContainer TargetAbilityTagsCheck;

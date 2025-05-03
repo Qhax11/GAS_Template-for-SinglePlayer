@@ -9,6 +9,7 @@
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Animation/AN_SendTag.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
@@ -36,8 +37,8 @@ void AAIControllerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ControlledCharacter = Cast<AGAS_CharacterBase>(GetPawn());
-	if (!ControlledCharacter) 
+	ControlledEnemy = Cast<AGAS_EnemyBase>(GetPawn());
+	if (!ControlledEnemy)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ControlledCharacter is null in: %s, Controller can not initialize"), *GetName());
 		return;
@@ -115,12 +116,12 @@ ETeamAttitude::Type AAIControllerBase::GetTeamAttitudeTowards(const AActor& Othe
 
 bool AAIControllerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
 {
-	if (!ControlledCharacter || !TargetCharacter)
+	if (!ControlledEnemy || !TargetCharacter)
 	{
 		return false;
 	}
 
-	UAC_TagDelegates* ControlledCharacterTagDelegatesComp = ControlledCharacter->GetTagDelegatesComponent();
+	UAC_TagDelegates* ControlledCharacterTagDelegatesComp = ControlledEnemy->GetTagDelegatesComponent();
 	if (!ControlledCharacterTagDelegatesComp) 
 	{
 		return false;
@@ -134,6 +135,7 @@ bool AAIControllerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
 
 	TargetCharacter->GetAbilitySystemComponent()->AbilityActivatedCallbacks.AddUObject(this, &AAIControllerBase::OnTargetAbilityActivated);
 	ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnVulnerableTagAdded);
+	ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnAdded).BindDynamic(this, &AAIControllerBase::OnTakeDamageTagAdded);
 	return false;
 }
 
@@ -209,10 +211,16 @@ float AAIControllerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability
 
 void AAIControllerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 {
+	ControlledEnemy->GetEnemyMovementManagerComponent()->bLockedMovementChain = true;
 	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack, FConstStructView::Make(EventPayload));
 }
 
 void AAIControllerBase::OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_State_Vulnerable);
+}
+
+void AAIControllerBase::OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_TakeDamage);
 }

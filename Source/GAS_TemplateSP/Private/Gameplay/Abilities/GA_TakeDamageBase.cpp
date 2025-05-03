@@ -5,6 +5,8 @@
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 
 UGA_TakeDamageBase::UGA_TakeDamageBase()
 {
@@ -17,6 +19,7 @@ UGA_TakeDamageBase::UGA_TakeDamageBase()
 	AbilityTriggers.Add(TriggerData);
 
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Dead);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 }
 
 void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -35,12 +38,15 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		AnimMontage = GetHitMontage(MeleeAttackBase->AnimMontage);
 	}
 
-	AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
-	CharacterBase->GetMesh()->GetAnimInstance()->StopAllMontages(0.2f);
+	if (AGAS_EnemyBase* CharacterBase = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo()))
+	{
+		CharacterBase->GetMesh()->GetAnimInstance()->StopAllMontages(0.2f);
+
+		CharacterBase->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	}
 
 	// Using Motion Warping insted of this
 	//SetRotationToInstigator(TriggerEventData->Instigator);
-
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 

@@ -13,5 +13,8 @@ class GAS_TEMPLATESP_API UGA_EnemyTakeDamage : public UGA_TakeDamageBase
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
 
 };

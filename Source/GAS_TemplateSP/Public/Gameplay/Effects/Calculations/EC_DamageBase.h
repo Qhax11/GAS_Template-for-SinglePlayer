@@ -12,7 +12,6 @@ class GAS_TEMPLATESP_API UEC_DamageBase : public UEC_Base
 	GENERATED_BODY()
 	
 public:
-
 	virtual void ExecuteWithParams(FExecCalculationParameters Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 
 	virtual float GetBaseDamage(const FExecCalculationParameters& Params) const;

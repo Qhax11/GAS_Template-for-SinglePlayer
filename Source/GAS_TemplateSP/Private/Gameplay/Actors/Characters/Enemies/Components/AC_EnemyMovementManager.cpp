@@ -60,11 +60,14 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 		return;
 	}
 
-	const TArray<FMovementAbilityData> MovementData = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
-	if (MovementData.Num() > 0)
+	if (!bLockedMovementChain) 
 	{
-		MovementChainTracker.StartChain(MovementData);
-		TryExecuteNextMovementAbilityInChain();
+		const TArray<FMovementAbilityData> MovementData = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
+		if (MovementData.Num() > 0)
+		{
+			MovementChainTracker.StartChain(MovementData);
+			TryExecuteNextMovementAbilityInChain();
+		}
 	}
 }
 
@@ -72,6 +75,7 @@ void UAC_EnemyMovementManager::StopMovementAbilities()
 {
 	CancelMovementAbilities();
 	MovementChainTracker.ResetChain();
+	OnMovementChainEnded.Broadcast();
 }
 
 void UAC_EnemyMovementManager::CancelMovementAbilities()
@@ -94,7 +98,6 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Chain finished."));
 		StopMovementAbilities();
-		OnMovementChainEnded.Broadcast();
 		return;
 	}
 
@@ -141,12 +144,12 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedDataBP&
 
 	if (AbilityEndedData.bWasCancelled)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
-		StopMovementAbilities();
-		OnMovementChainEnded.Broadcast();
+		//UE_LOG(LogTemp, Log, TEXT("Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
+		//StopMovementAbilities();
 		return;
 	}
 
+	UE_LOG(LogTemp, Log, TEXT("Movement Ability is end: %s."), *AbilityEndedData.AbilityThatEnded->GetName());
 	MovementChainTracker.Advance();
 	TryExecuteNextMovementAbilityInChain();
 }

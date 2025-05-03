@@ -69,6 +69,9 @@ public:
 
 	void CancelMovementAbilities();
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bLockedMovementChain = false;
+
 protected:
 	void TryExecuteNextMovementAbilityInChain();
 
@@ -79,7 +82,7 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;
-		
+
 private:
 	FMovementChainTracker MovementChainTracker;
 

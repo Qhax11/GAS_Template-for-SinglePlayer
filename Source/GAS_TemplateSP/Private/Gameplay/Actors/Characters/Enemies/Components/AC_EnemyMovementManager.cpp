@@ -1,4 +1,4 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
@@ -56,18 +56,22 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 
 	if (MovementChainTracker.bIsActive)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Chain already active, skipping start."));
-		return;
+		if (MovementChainTracker.IsCurrentAbilityStillValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Chain already active and current ability still valid. Skipping start."));
+			return;
+		}
+
+		// Zincir aktif ama ability durmuş → yeniden başlatılmalı
+		UE_LOG(LogTemp, Warning, TEXT("Chain is marked active but ability is invalid. Restarting chain."));
+		MovementChainTracker.ResetChain();
 	}
 
-	if (!bLockedMovementChain) 
+	const TArray<FMovementAbilityData> MovementData = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
+	if (MovementData.Num() > 0)
 	{
-		const TArray<FMovementAbilityData> MovementData = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
-		if (MovementData.Num() > 0)
-		{
-			MovementChainTracker.StartChain(MovementData);
-			TryExecuteNextMovementAbilityInChain();
-		}
+		MovementChainTracker.StartChain(MovementData);
+		TryExecuteNextMovementAbilityInChain();
 	}
 }
 
@@ -137,19 +141,21 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedDataBP& AbilityEndedData)
 {
-	if (AbilityEndedData.AbilityThatEnded != MovementChainTracker.CurrentMovementAbility) 
+	if (AbilityEndedData.AbilityThatEnded != MovementChainTracker.CurrentMovementAbility)
 	{
 		return;
 	}
+
+	MovementChainTracker.CurrentMovementAbility = nullptr;
 
 	if (AbilityEndedData.bWasCancelled)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
-		//StopMovementAbilities();
+		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
+		StopMovementAbilities(); // veya ResetChain();
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Movement Ability is end: %s."), *AbilityEndedData.AbilityThatEnded->GetName());
+	UE_LOG(LogTemp, Log, TEXT("Movement Ability ended: %s."), *AbilityEndedData.AbilityThatEnded->GetName());
 	MovementChainTracker.Advance();
 	TryExecuteNextMovementAbilityInChain();
 }

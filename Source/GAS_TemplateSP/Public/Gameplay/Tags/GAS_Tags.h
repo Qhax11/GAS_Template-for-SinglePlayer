@@ -170,6 +170,8 @@ namespace GAS_Tags
 	// Triggered when the hero performs a finisher move. All nearby crowd enemies should disengage or back off temporarily.
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateTreeEvent_Crowd_HeroFinisher);
 
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateTree_State_ComingAttack);
+
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_IsAttackIntender);
 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_PhantomDash);

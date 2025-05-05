@@ -11,5 +11,7 @@ class GAS_TEMPLATESP_API UST_Base : public UStateTreeAIComponent
 {
 	GENERATED_BODY()
 	
-
+public:
+	UPROPERTY(BlueprintReadWrite)
+	bool bInComingAttackState;
 };

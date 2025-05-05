@@ -40,7 +40,7 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 	if (AGAS_EnemyBase* CharacterBase = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo()))
 	{
-		CharacterBase->GetMesh()->GetAnimInstance()->StopAllMontages(0.2f);
+		//CharacterBase->GetMesh()->GetAnimInstance()->StopAllMontages(0.5f);
 
 		CharacterBase->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	}

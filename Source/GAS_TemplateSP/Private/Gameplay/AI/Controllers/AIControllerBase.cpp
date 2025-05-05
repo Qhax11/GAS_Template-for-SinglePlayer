@@ -211,7 +211,8 @@ float AAIControllerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability
 
 void AAIControllerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 {
-	ControlledEnemy->GetEnemyMovementManagerComponent()->bLockedMovementChain = true;
+	GetStateTreeComponent()->bInComingAttackState = true;
+	ControlledEnemy->GetAbilitySystemComponent()->AddLooseGameplayTag(GAS_Tags::TAG_AI_StateTree_State_ComingAttack);
 	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack, FConstStructView::Make(EventPayload));
 }
 

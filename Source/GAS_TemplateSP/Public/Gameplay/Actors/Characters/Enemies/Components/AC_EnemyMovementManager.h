@@ -39,6 +39,11 @@ public:
 		return !bIsActive || !ActiveChain.IsValidIndex(CurrentIndex);
 	}
 
+	bool IsCurrentAbilityStillValid() const
+	{
+		return bIsActive && CurrentMovementAbility && !CurrentMovementAbility->IsActive();
+	}
+
 	const FMovementAbilityData* GetCurrentMovementAbilityInChain() const
 	{
 		return ActiveChain.IsValidIndex(CurrentIndex) ? &ActiveChain[CurrentIndex] : nullptr;
@@ -68,9 +73,6 @@ public:
 	void StopMovementAbilities();
 
 	void CancelMovementAbilities();
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bLockedMovementChain = false;
 
 protected:
 	void TryExecuteNextMovementAbilityInChain();

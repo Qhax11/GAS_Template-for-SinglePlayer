@@ -177,7 +177,7 @@ void AAIControllerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 		return;
 	}
 
-	float ReactionDelay = AttackTime - 0.2;
+	float ReactionDelay = AttackTime - 0.5;
 	if (ReactionDelay > 0) 
 	{
 		GetWorld()->GetTimerManager().SetTimer(SendEventTimer, TimerDelegate, ReactionDelay, false);

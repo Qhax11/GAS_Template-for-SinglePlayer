@@ -21,6 +21,8 @@ public:
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	FORCEINLINE class UAC_AbilitySet* GetAbilitySetComponent() const { return AbilitySetComponent; }
+
 	FORCEINLINE class UAC_TagDispatcher* GetTagDispatcherComponent() const { return TagDispatcherComponent; }
 
 	FORCEINLINE class UAC_TagDelegates* GetTagDelegatesComponent() const { return TagDelegatesComponent; }
@@ -45,6 +47,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_GameplayData* GameplayDataComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
+	class UAC_PostureHandler* PostureHandlerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_TagListenerBase* TagListenerComponent;

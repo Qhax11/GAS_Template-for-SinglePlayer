@@ -105,6 +105,11 @@ public:
 	ATTRIBUTE_ACCESSORS(UAS_Base, PhysicalArmor)
 		FOnPropertyValueChanged OnPhysicalArmorChanged;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Base")
+	FGameplayAttributeData Posture;
+	ATTRIBUTE_ACCESSORS(UAS_Base, Posture)
+		FOnPropertyValueChanged OnPostureChanged;
+
 		UPROPERTY(BlueprintReadOnly, Category = "Base")
 	FGameplayAttributeData PhysicalDamage;
 	ATTRIBUTE_ACCESSORS(UAS_Base, PhysicalDamage)
@@ -116,7 +121,6 @@ public:
 		FOnPropertyValueChanged OnMovementSpeedChanged;
 
 protected:
-
 	virtual bool BroadcastPropertyChange(const FGameplayEffectModCallbackData& Data);
 
 };

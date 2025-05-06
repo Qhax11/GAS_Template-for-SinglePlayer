@@ -84,6 +84,7 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 	{
 		// Ensure all shadow attacks start from Section2 of the montage
 		TargetActorData.AbilityCDO->SectionName = FName("Section2");
+		TargetActorData.AbilityCDO->AnimMontage->
 
 		GetAvatarActorFromActorInfo()->SetActorLocation(BossShadowTargetActor->GetActorLocation());
 		GetAvatarActorFromActorInfo()->SetActorRotation(BossShadowTargetActor->GetActorRotation());

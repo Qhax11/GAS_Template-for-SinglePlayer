@@ -42,7 +42,6 @@ public:
 	UPROPERTY()
 	EBehaviorState BehaviorState = EBehaviorState::None;
 
-    // ✅ Parametreli constructor
     FBehaviorServiceInitParams(
         UObject* InAsset,
         AGAS_EnemyBase* InEnemy,
@@ -58,7 +57,6 @@ public:
         , BehaviorState(InBehaviorState)
     {}
 
-    // Optional: default constructor (zaten GENERATED_BODY() ile geliyor ama net olsun)
     FBehaviorServiceInitParams() = default;
 };
 

@@ -72,6 +72,7 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 				ActivatedComboMeleeAttack->SectionName = MontageSection;
 				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityData->ComboAbilityClass))
 				{
+					AbilitySpec->DynamicAbilityTags.RemoveTag(AdditionalTag); 
 					ActiveComboChainTracker.bNextAttackAllowed = false;
 					return ActivatedComboMeleeAttack;
 				}

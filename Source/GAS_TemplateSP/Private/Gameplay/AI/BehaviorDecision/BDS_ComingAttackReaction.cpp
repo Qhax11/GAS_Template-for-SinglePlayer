@@ -1,4 +1,4 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/AI/BehaviorDecision/BDS_ComingAttackReaction.h"
@@ -11,7 +11,7 @@ void UBDS_ComingAttackReaction::Initialize(const FBehaviorServiceInitParams& Beh
     UComingAttackReactionAsset* CastedAsset = Cast<UComingAttackReactionAsset>(BehaviorServiceInitParams.Asset);
     if (CastedAsset)
     {
-        ComingAttackReaction = CastedAsset;
+        ComingAttackReactionAsset = CastedAsset;
     }
     else
     {
@@ -21,31 +21,73 @@ void UBDS_ComingAttackReaction::Initialize(const FBehaviorServiceInitParams& Beh
 
 EComingAttackReaction UBDS_ComingAttackReaction::GetComingAttackDecision(FComingAttackPayload ComingAttackPayload)
 {
-    // If ability is null, default to taking the hit
-    if (!ComingAttackPayload.ComingAttack)
+    if (!ComingAttackPayload.ComingAttack || !ComingAttackReactionAsset)
     {
         return EComingAttackReaction::TakeDamage;
     }
 
-    const FGameplayTagContainer& ComingAttackTags = ComingAttackPayload.ComingAttackTags;
+    EComingAttackReaction BestReaction = EComingAttackReaction::TakeDamage;
+    float BestScore = -FLT_MAX;
 
-    // Shadow attacks cannot be parried
-    if (ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked))
+    for (const FComingAttackReactionData& ReactionData : ComingAttackReactionAsset->ComingAttackReactions)
     {
-        return EComingAttackReaction::Dodge;
+        if (!PassesChanceRoll(ReactionData))
+        {
+            continue;
+        }
+
+        float BehaviorScore = CalculateBehaviorStateScore(ReactionData);
+        float TagScore = CalculateTagScore(ReactionData, ComingAttackPayload);
+
+        float TotalScore = BehaviorScore + TagScore + ReactionData.ScoreBias;
+
+        UE_LOG(LogTemp, Log, TEXT("[AI] Reaction %s (%d) → Score: %.2f"), *ReactionData.ComingAttackReactionName.ToString(), TotalScore);
+
+        if (TotalScore > BestScore)
+        {
+            BestScore = TotalScore;
+            BestReaction = ReactionData.ReactionType;
+        }
     }
 
-    // Default fallback
-    return EComingAttackReaction::TakeDamage;
+    return BestReaction;
 }
 
-void UBDS_ComingAttackReaction::SetComingAttackReactionAsset(UComingAttackReactionAsset* ComingAttackReactionAsset)
+float UBDS_ComingAttackReaction::CalculateBehaviorStateScore(const FComingAttackReactionData& Data) const
 {
-    if (!ComingAttackReactionAsset) 
-    {
-        UE_LOG(LogTemp, Warning, TEXT("ComingAttackReactionAsset is null in: %s"), *GetName());
-        return;
-    }
+	if (const float* Mod = Data.BehaviorStateScoreModifiers.Find(BehaviorState))
+	{
+		return *Mod;
+	}
 
-    ComingAttackReaction = ComingAttackReactionAsset;
+	return 0.f;
+}
+
+float UBDS_ComingAttackReaction::CalculateTagScore(const FComingAttackReactionData& Data, const FComingAttackPayload ComingAttackPayload) const
+{
+	float Score = 0.f;
+
+	for (const auto& Pair : Data.TagScoreModifiers)
+	{
+		if (ComingAttackPayload.ComingAttackTags.HasTag(Pair.Key))
+		{
+			Score += Pair.Value;
+		}
+	}
+
+	return Score;
+}
+
+bool UBDS_ComingAttackReaction::PassesChanceRoll(const FComingAttackReactionData& ReactionData) const
+{
+    const float Roll = FMath::FRandRange(0.f, 1.f);
+    const bool bPassed = Roll <= ReactionData.BaseChance;
+
+    UE_LOG(LogTemp, Log, TEXT("[AI] Reaction %s chance roll: %.2f <= %.2f → %s"),
+        *ReactionData.ComingAttackReactionName.ToString(),
+        Roll,
+        ReactionData.BaseChance,
+        bPassed ? TEXT("PASS") : TEXT("FAIL"));
+
+    return bPassed;
 }

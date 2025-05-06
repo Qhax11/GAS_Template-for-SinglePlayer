@@ -24,6 +24,8 @@ protected:
     UFUNCTION()
     void OnTargetDetected(AActor* Target);
 
+    void InitalizeServiceses();
+
     UPROPERTY(EditDefaultsOnly, Category = "UAC_BehaviorDecision")
     UAttackAbilityAsset* AttackAbilityAsset;
 

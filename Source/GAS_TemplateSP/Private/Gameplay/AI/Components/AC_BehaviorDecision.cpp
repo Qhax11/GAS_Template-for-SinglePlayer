@@ -55,6 +55,11 @@ void UAC_BehaviorDecision::OnTargetDetected(AActor* Target)
         return;
     }
 
+    InitalizeServiceses();
+}
+
+void UAC_BehaviorDecision::InitalizeServiceses()
+{
     ComingAttackReactionService = NewObject<UBDS_ComingAttackReaction>(this);
     FBehaviorServiceInitParams ComingAttackReactionServiceInitData = FBehaviorServiceInitParams(
         ComingAttackReactionAsset, OwnerEnemyBase, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
@@ -89,7 +94,6 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
     return GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
-
     /*
     if (GEngine && EnableSelectedDebug)
     {

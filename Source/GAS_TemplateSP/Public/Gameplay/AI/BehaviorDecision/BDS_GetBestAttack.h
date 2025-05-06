@@ -42,7 +42,8 @@ public:
 
     FAttackData GetBestAttack(float DistanceToTarget);
 
+protected:
     float CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);
-	
+
     UAttackAbilityAsset* AttackAbilityAsset;
 };

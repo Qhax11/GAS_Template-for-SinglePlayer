@@ -19,6 +19,9 @@ struct FComingAttackReactionData
     GENERATED_BODY()
 
 public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Coming Attack Reaction. Used for debugging or referencing in logic."))
+    FName ComingAttackReactionName;
+
     // Defense reaction type this data represents (e.g., Parry or Dodge)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     EComingAttackReaction ReactionType;
@@ -27,9 +30,13 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float BaseChance = 0.5f;
 
-    // Optional modifiers based on behavior state
+    // +X score if AI is in this state
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
+
+    // +X score if the incoming attack has these tags
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TMap<FGameplayTag, float> TagScoreModifiers;
 
     // Flat score bias to encourage/discourage selection
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -46,7 +53,6 @@ public:
     TArray<FComingAttackReactionData> ComingAttackReactions;
 };
 
-
 UCLASS()
 class GAS_TEMPLATESP_API UBDS_ComingAttackReaction : public UBehaviorDecisionServiceBase
 {
@@ -57,7 +63,12 @@ public:
 
     EComingAttackReaction GetComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
 	
-    void SetComingAttackReactionAsset(UComingAttackReactionAsset* ComingAttackReactionAsset);
+protected:
+    float CalculateBehaviorStateScore(const FComingAttackReactionData& Data) const;
 
-    UComingAttackReactionAsset* ComingAttackReaction;
+    float CalculateTagScore(const FComingAttackReactionData& Data, const FComingAttackPayload ComingAttackPayload) const;
+
+    bool PassesChanceRoll(const FComingAttackReactionData& ReactionData) const;
+
+    UComingAttackReactionAsset* ComingAttackReactionAsset;
 };

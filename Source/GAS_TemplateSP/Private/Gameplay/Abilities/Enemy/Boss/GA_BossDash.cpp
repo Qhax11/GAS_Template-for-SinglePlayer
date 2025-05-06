@@ -38,6 +38,10 @@ void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
+
+	FGameplayTagContainer CancelAbilityTags;
+	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Attack);
+	GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
 	
 	// Set the final velocity after root motion ends to match the dash direction and magnitude.
     // This prevents a sudden stop and avoids unintended animation transitions caused by zero velocity.

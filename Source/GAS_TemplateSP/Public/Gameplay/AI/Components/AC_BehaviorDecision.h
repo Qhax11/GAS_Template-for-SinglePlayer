@@ -5,143 +5,11 @@
 #include "Components/ActorComponent.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
+#include "Gameplay/AI/BehaviorDecision/BDS_ComingAttackReaction.h"
+#include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
+#include "Gameplay/AI/BehaviorDecision/BDS_GetBestMovementChain.h"
 #include "AC_BehaviorDecision.generated.h"
 
-UENUM(BlueprintType)
-enum class EBehaviorState : uint8
-{
-    None        UMETA(DisplayName = "None"),
-    Passive     UMETA(DisplayName = "Passive"),
-    Aggressive  UMETA(DisplayName = "Aggressive"),
-    Defensive   UMETA(DisplayName = "Defensive"),
-    Confused    UMETA(DisplayName = "Confused") 
-};
-
-UENUM(BlueprintType)
-enum class EComingAttackReaction : uint8
-{
-    TakeDamage  UMETA(DisplayName = "TakeDamage"),
-    Parry  UMETA(DisplayName = "Parry"),
-    Dodge     UMETA(DisplayName = "Dodge"),
-};
-
-USTRUCT(BlueprintType)
-struct FAttackData
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Ability class that defines the actual gameplay logic and range values"))
-    TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
-    TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Base score bias applied to AI decision-making"))
-    float ScoreBias = 0.f;
-};
-
-UCLASS(BlueprintType)
-class UAttackAbilityAsset : public UPrimaryDataAsset
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<FAttackData> AttackAbilities;
-
-};
-
-UENUM(BlueprintType)
-enum class EMovementDirection : uint8
-{
-    None         UMETA(DisplayName = "None"),
-    Forward      UMETA(DisplayName = "Forward"),
-    Backward     UMETA(DisplayName = "Backward"),
-    Left         UMETA(DisplayName = "Left"),
-    Right        UMETA(DisplayName = "Right")
-};
-
-USTRUCT(BlueprintType)
-struct FMovementAbilityData
-{
-    GENERATED_BODY()
-
-public:
-    // The gameplay ability class used for movement.
-    UPROPERTY(EditDefaultsOnly)
-    TSubclassOf<UGAS_GameplayAbilityBase> MovementAbilityClass;
-
-    // The gameplay tag used to trigger this ability.
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.AbilityTriggerEvent.Movement"))
-    FGameplayTag AbilityTriggerTag;
-
-    // The resolved direction for this ability, typically determined at runtime by a direction policy.
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Resolved", ToolTip = "Resolved direction tag used by this ability at runtime. Typically set based on the direction policy."))
-    FGameplayTag ResolvedDirectionTag;
-
-    // The policy used to resolve the direction, like random or based on player position.
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Policy", ToolTip = "Defines how the direction should be resolved at runtime (e.g., LastPlayerDirection, Random)."))
-    FGameplayTag DirectionPolicyTag;
-
-    // How long the ability should stay active before ending automatically (e.g., for chase abilities).
-    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "How long (in seconds) this movement ability should stay active before ending. Useful for chase or flee behaviors. Set to 0 to ignore."))
-    float TimeLimit = 0.f;
-};
-
-UCLASS(BlueprintType)
-class UMovementChainAsset : public UPrimaryDataAsset
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this movement chain. Used for debugging or referencing in logic."))
-    FName MovementChainName;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Sequence of movement abilities that make up this chain. Executed in order."))
-    TArray<FMovementAbilityData> MovementChain;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers based on current behavior state (e.g., aggressive, defensive)."))
-    TMap<EBehaviorState, float> BehaviorStateModifiers;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score curve based on distance to target. High values make this chain more likely when far/close depending on the curve."))
-    UCurveFloat* DistanceScoreCurve = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score bonus applied if the target is currently moving."))
-    float ScoreModifierWhenTargetIsMoving = 0.0f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score bonus applied if the target is not moving)."))
-    float ScoreModifierWhenTargetIsNotMoving = 0.0f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Minimum target distance required for this chain to be considered."))
-    float MinRange;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Flat score bias added to this chain's total score. Useful to prioritize certain chains."))
-    float ScoreBias = 0.f;
-};
-
-USTRUCT(BlueprintType)
-struct FAttackAbilityMovementChains
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TSubclassOf<UGAS_GameplayAbilityBase> AttackAbilityClass;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<UMovementChainAsset*> MovementChainAssets;
-};
-
-UCLASS(BlueprintType)
-class UAttackAbilityMovementChainMapAsset : public UPrimaryDataAsset
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<FAttackAbilityMovementChains> ChainMappings;
-};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_BehaviorDecision : public UActorComponent
@@ -161,6 +29,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "UAC_BehaviorDecision")
     UAttackAbilityMovementChainMapAsset* AttackAbilityMovementChainMapAsset;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UAC_BehaviorDecision")
+    UComingAttackReactionAsset* ComingAttackReactionAsset;
 
     UPROPERTY(EditDefaultsOnly)
     float SecondsCheckMovement = 1.0f;
@@ -184,28 +55,16 @@ public:
     FAttackData LastSelectedAttackAbilityData;
 
 protected:
-    TArray<UMovementChainAsset*> GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const;
-
     UPROPERTY(EditDefaultsOnly)
     EBehaviorState BehaviorState = EBehaviorState::None;
-
-    float CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);
-
-    float CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset);
-
-    float CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset);
-
-    float CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset);
-
-    bool ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset);
-
-    FGameplayTag GetRandomDirectionTag();
-
-    float GetTargetDistance();
 
     class AAIControllerBase* OwnerController;
     class AGAS_EnemyBase* OwnerEnemyBase;
     class UAbilitySystemComponent* OwnerEnemyASC;
     class AGAS_HeroBase* HeroBase;
     UAC_HeroMovementListener* HeroMovementListenerComp;
+
+    UBDS_ComingAttackReaction* ComingAttackReactionService;
+    UBDS_GetBestAttack* GetBestAttackService;
+    UBDS_GetBestMovementChain* GetBestMovementChainService;
 };

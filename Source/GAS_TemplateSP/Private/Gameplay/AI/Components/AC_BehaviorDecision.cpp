@@ -54,51 +54,32 @@ void UAC_BehaviorDecision::OnTargetDetected(AActor* Target)
         UE_LOG(LogTemp, Warning, TEXT("HeroMovementListenerComp is null in: %s !"), *GetName());
         return;
     }
+
+    ComingAttackReactionService = NewObject<UBDS_ComingAttackReaction>(this);
+    FBehaviorServiceInitParams ComingAttackReactionServiceInitData = FBehaviorServiceInitParams(
+        ComingAttackReactionAsset, OwnerEnemyBase, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
+    ComingAttackReactionService->Initialize(ComingAttackReactionServiceInitData);
+
+    GetBestAttackService = NewObject<UBDS_GetBestAttack>(this);
+    FBehaviorServiceInitParams GetBestAttackServiceInitData = FBehaviorServiceInitParams
+    (AttackAbilityAsset, OwnerEnemyBase, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
+    GetBestAttackService->Initialize(GetBestAttackServiceInitData);
+
+    GetBestMovementChainService = NewObject<UBDS_GetBestMovementChain>(this);
+    FBehaviorServiceInitParams GetBestMovementChainServiceInitData = FBehaviorServiceInitParams(
+        AttackAbilityMovementChainMapAsset, OwnerEnemyBase, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
+    GetBestMovementChainService->Initialize(GetBestMovementChainServiceInitData);
 }
 
 FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 {
-    if (!AttackAbilityAsset || !OwnerEnemyASC)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("AttackAbilityAsset or OwnerEnemyASC is null in: %s !"), *GetName());
-        return FAttackData();
-    }
+    FAttackData BestAttack = GetBestAttackService->GetBestAttack(DistanceToTarget);
 
-    float BestScore = -FLT_MAX;
-    FAttackData BestAttack;
-    float BestAttackDistanceScore = 0.f;
-
-    for (const FAttackData& Attack : AttackAbilityAsset->AttackAbilities)
-    {
-        if (!Attack.AbilityClass) 
-        {
-            continue;
-        }
-
-        bool IsInCooldown = Attack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->IsOnCooldown(OwnerEnemyASC);
-        if (IsInCooldown)
-        {
-            continue;
-        }
-
-        float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(Attack, DistanceToTarget);
-
-        float TotalScore = Attack.ScoreBias + DistanceScore;
-
-        UE_LOG(LogTemp, Log, TEXT("[AI] Attack %s → Score: %.2f"), *Attack.AbilityClass->GetName(), TotalScore);
-
-        if (TotalScore > BestScore)
-        {
-            BestScore = TotalScore;
-            BestAttack = Attack;
-        }
-    }
-
-    if (GEngine && EnableSelectedDebug)
+    if (GEngine && EnableSelectedDebug && BestAttack.AbilityClass)
     {
         GEngine->AddOnScreenDebugMessage(9, 3.5f, FColor::Red,
-            FString::Printf(TEXT(">> Selected Attack: %s | DistanceScore: %.1f"),
-                *BestAttack.AbilityClass->GetName(), BestAttackDistanceScore));
+            FString::Printf(TEXT(">> Selected Attack: %s"),
+                *BestAttack.AbilityClass->GetName()));
     }
 
     LastSelectedAttackAbilityData = BestAttack;
@@ -107,49 +88,9 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 
 TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
-    if (!SelectedAbilityClass || !AttackAbilityMovementChainMapAsset)
-    {
-        return TArray<FMovementAbilityData>();
-    }
+    return GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
 
-    UMovementChainAsset* BestMovementChainDataAsset = nullptr;
-
-    float BestScore = -FLT_MAX;
-    float BestMovementChainDistanceScore = 0.f;
-    float BestMovementChainTargetMovementScore = 0.f;
-
-    TArray<UMovementChainAsset*> AbilityMovementChainAssets = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
-    if (AbilityMovementChainAssets.IsEmpty()) 
-    {
-        return TArray<FMovementAbilityData>();
-    }
-
-    for (UMovementChainAsset* MovementChainAsset : AbilityMovementChainAssets)
-    {
-        if (GetTargetDistance() < MovementChainAsset->MinRange)
-        {
-            continue;
-        }
-
-        float DistanceScore = CalculateMovementChainScoreBasedOnTargetDistance(MovementChainAsset);
-        float TargetMovementScore = CalculateMovementChainScoreBasedOnTargetMovement(MovementChainAsset);
-        float BehaviorStateScore = CalculateMovementChainScoreBasedOnBehaviorState(MovementChainAsset);
-
-        float TotalScore = MovementChainAsset->ScoreBias + DistanceScore + TargetMovementScore + BehaviorStateScore;
-
-        UE_LOG(LogTemp, Log, TEXT("[AI] MovementChain %s → Score: %.2f"), *MovementChainAsset->MovementChainName.ToString(), TotalScore);
-
-        if (TotalScore > BestScore)
-        {
-            BestScore = TotalScore;
-            BestMovementChainDistanceScore = DistanceScore;
-            BestMovementChainTargetMovementScore = TargetMovementScore;
-            BestMovementChainDataAsset = MovementChainAsset;
-        }
-    }
-
-    ApplyDirectionPoliciesToSelectedMovementChain(BestMovementChainDataAsset);
-
+    /*
     if (GEngine && EnableSelectedDebug)
     {
         GEngine->AddOnScreenDebugMessage(10, 3.5f, FColor::Cyan,
@@ -158,181 +99,11 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     }
 
     return BestMovementChainDataAsset->MovementChain;
+    */
 }
 
 EComingAttackReaction UAC_BehaviorDecision::GetComingAttackDecision(FComingAttackPayload ComingAttackPayload)
 {
-    // If ability is null, default to taking the hit
-    if (!ComingAttackPayload.ComingAttack)
-    {
-        return EComingAttackReaction::TakeDamage;
-    }
-
-    const FGameplayTagContainer& ComingAttackTags = ComingAttackPayload.ComingAttackTags;
-
-    // Shadow attacks cannot be parried
-    if (ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked))
-    {
-        return EComingAttackReaction::Dodge;
-    }
-
-    // Default fallback
-    return EComingAttackReaction::TakeDamage;
-}
-
-TArray<UMovementChainAsset*> UAC_BehaviorDecision::GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const
-{
-    TArray<UMovementChainAsset*> Result;
-
-    if (!AttackAbilityMovementChainMapAsset || !SelectedAbilityClass)
-    {
-        return Result;
-    }
-
-    for (const FAttackAbilityMovementChains& Mapping : AttackAbilityMovementChainMapAsset->ChainMappings)
-    {
-        if (Mapping.AttackAbilityClass == SelectedAbilityClass)
-        {
-            Result.Append(Mapping.MovementChainAssets);
-            break;
-        }
-    }
-
-    return Result;
-}
-
-float UAC_BehaviorDecision::CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget)
-{
-    float AbilityMinRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MinRange;
-    float AbilityMaxRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
-    if (AbilityMaxRange <= 0.f)
-    {
-        return 0.0f;
-    }
-
-    // Saldırının ideal noktası: MaxRange
-    float DistanceFromIdeal = FMath::Abs(DistanceToTarget - AbilityMaxRange);
-
-    // Skoru mesafeye göre ters orantılı olarak hesapla
-    float Score = 1.f - (DistanceFromIdeal / AbilityMaxRange);
-
-    // Minimum Range'in ALTINDA mesafedeyse ekstra ceza uygula (isteğe bağlı)
-    if (DistanceToTarget < AbilityMinRange)
-    {
-        Score *= 0.5f; // Çok yakınsa etkisizleştir
-    }
-
-    return FMath::Clamp(Score, 0.f, 1.f);
-}
-
-float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset)
-{
-    float Score = 0.0f;
-
-    const float HeroDisplacement = HeroMovementListenerComp->GetDisplacementInLastSeconds(SecondsCheckMovement);
-
-    if (HeroDisplacement > 50.0f) 
-    {
-        Score += MovementChainAsset->ScoreModifierWhenTargetIsMoving;
-    }
-    else
-    {
-        Score += MovementChainAsset->ScoreModifierWhenTargetIsNotMoving;
-    }
-    
-    return Score;
-}
-
-float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset)
-{
-    float Score = 0.0f;
-
-    if (MovementChainAsset->DistanceScoreCurve)
-    {
-        float CurveScore = MovementChainAsset->DistanceScoreCurve->GetFloatValue(GetTargetDistance());
-        Score += CurveScore;
-    }
-
-    return Score;
-}
-
-float UAC_BehaviorDecision::CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset)
-{
-    float Score = 0.0f;
-
-    if (!MovementChainAsset)
-    {
-        return Score;
-    }
-
-    if (const float* FoundScore = MovementChainAsset->BehaviorStateModifiers.Find(BehaviorState))
-    {
-        Score += *FoundScore;
-    }
-
-    return Score;
-}
-
-bool UAC_BehaviorDecision::ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset)
-{
-    if (!SelectedMovementChainAsset) 
-    {
-        UE_LOG(LogTemp, Warning, TEXT("SelectedMovementChainAsset is null in: %s"), *GetName());
-        return false;
-    }
-    bool bChanged = false;
-
-    FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListenerComp->GetHeroLastMovementDirectionTagByLastInput();
-
-    for (FMovementAbilityData& MovementAbilityInChain : SelectedMovementChainAsset->MovementChain)
-    {
-        if (!MovementAbilityInChain.DirectionPolicyTag.IsValid()) 
-        {
-            continue;
-        }
-
-        if (MovementAbilityInChain.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
-        {
-            if (HeroLastDirectionGameplayTag.IsValid()) 
-            {
-                MovementAbilityInChain.ResolvedDirectionTag = HeroLastDirectionGameplayTag;
-                bChanged = true;
-            }
-        }
-        else if (MovementAbilityInChain.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random) 
-        {
-            MovementAbilityInChain.ResolvedDirectionTag = GetRandomDirectionTag();
-            bChanged = true;
-        }
-    }
-
-    return bChanged;
-}
-
-FGameplayTag UAC_BehaviorDecision::GetRandomDirectionTag()
-{
-    static const TArray<FGameplayTag> PossibleDirections =
-    {
-        //GAS_Tags::TAG_AI_Direction_Resolved_Forward,
-        GAS_Tags::TAG_AI_Direction_Resolved_Backward,
-        GAS_Tags::TAG_AI_Direction_Resolved_Left,
-        GAS_Tags::TAG_AI_Direction_Resolved_Right     
-    };
-
-    int32 RandomIndex = FMath::RandRange(0, PossibleDirections.Num() - 1);
-    return PossibleDirections[RandomIndex];
-}
-
-float UAC_BehaviorDecision::GetTargetDistance()
-{
-    if (!OwnerEnemyBase || !OwnerController || !OwnerController->GetTarget())
-    {
-        return -1.f;
-    }
-
-    FVector MyLocation = OwnerEnemyBase->GetActorLocation();
-    FVector TargetLocation = OwnerController->GetTarget()->GetActorLocation();
-
-    return FVector::Dist(MyLocation, TargetLocation);
+    return ComingAttackReactionService->GetComingAttackDecision(ComingAttackPayload);
 }
 

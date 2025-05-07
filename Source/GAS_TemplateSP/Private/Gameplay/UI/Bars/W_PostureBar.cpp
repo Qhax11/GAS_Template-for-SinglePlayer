@@ -25,10 +25,12 @@ void UW_PostureBar::PostureChanged(const FAttributeChangeCallbackData& Data)
 {
 	SetPercantage(Data.CurrentValue, Data.MaxValue);
 	SetValuesToTexts(Data.CurrentValue, Data.MaxValue);
+	BP_OnPostureChanged(Data);
 }
 
 void UW_PostureBar::MaxPostureChanged(const FAttributeChangeCallbackData& Data)
 {
 	SetPercantage(Data.CurrentValue, Data.MaxValue);
 	SetValuesToTexts(Data.CurrentValue, Data.MaxValue);
+	BP_OnPostureChanged(Data);
 }

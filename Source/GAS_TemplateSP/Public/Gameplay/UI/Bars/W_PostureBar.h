@@ -21,4 +21,10 @@ protected:
 
 	UFUNCTION()
 	void MaxPostureChanged(const FAttributeChangeCallbackData& Data);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_OnPostureChanged(const FAttributeChangeCallbackData& Data);
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<class UProgressBar> BackgroundProgressBar;
 };

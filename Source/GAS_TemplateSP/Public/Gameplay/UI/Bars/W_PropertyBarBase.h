@@ -19,6 +19,20 @@ class GAS_TEMPLATESP_API UW_PropertyBarBase : public UUserWidget
 public:
 	virtual void InitializePropertyBar(AActor* Owner);
 
+	// Blueprint-callable C++ function; when called (from BP or C++), triggers the Blueprint-implemented fade-in animation event.
+	UFUNCTION(BlueprintCallable)
+	void PlayFadeInAnim();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayFadeOutAnim();
+
+	// Blueprint-implementable event; meant to be implemented in Blueprint to define the actual fade-in animation behavior.
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_PlayFadeInAnim();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_PlayFadeOutAnim();
+
 protected:
 	virtual void SetDefaultValues(UAbilitySystemComponent* OwnerASC);
 

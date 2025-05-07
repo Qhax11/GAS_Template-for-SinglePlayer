@@ -18,6 +18,16 @@ void UW_PropertyBarBase::InitializePropertyBar(AActor* Owner)
 	BindAttributes(OwnerASC);
 }
 
+void UW_PropertyBarBase::PlayFadeInAnim()
+{
+	BP_PlayFadeInAnim();
+}
+
+void UW_PropertyBarBase::PlayFadeOutAnim()
+{
+	BP_PlayFadeOutAnim();
+}
+
 void UW_PropertyBarBase::SetDefaultValues(UAbilitySystemComponent* OwnerASC)
 {
 	// Implementation will be in subclasses

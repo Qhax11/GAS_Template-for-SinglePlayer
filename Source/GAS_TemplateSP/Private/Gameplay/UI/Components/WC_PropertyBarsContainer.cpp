@@ -1,11 +1,12 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/UI/Components/WC_PropertyBar.h"
+#include "Gameplay/UI/Components/WC_PropertyBarsContainer.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
+#include "Gameplay/UI/Bars/W_PropertyBarsContainer.h"
 
 
-void UWC_PropertyBar::BeginPlay()
+void UWC_PropertyBarsContainer::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -18,7 +19,7 @@ void UWC_PropertyBar::BeginPlay()
 	// BeginPlay is running before AbilitySet Initialize, so we need wait
 	if (UAC_AbilitySet* AbiltySetComp = GetOwner()->GetComponentByClass<UAC_AbilitySet>()) 
 	{
-		AbiltySetComp->OnAbilitySetGiven.AddDynamic(this, &UWC_PropertyBar::OnAbilitySetGiven);
+		AbiltySetComp->OnAbilitySetGiven.AddDynamic(this, &UWC_PropertyBarsContainer::OnAbilitySetGiven);
 	}
 	else
 	{
@@ -26,11 +27,11 @@ void UWC_PropertyBar::BeginPlay()
 	}
 }
 
-void UWC_PropertyBar::OnAbilitySetGiven(const AActor* OwnerActor)
+void UWC_PropertyBarsContainer::OnAbilitySetGiven(const AActor* OwnerActor)
 {
-	HealthBar = Cast<UW_HealthBar>(GetUserWidgetObject());
-	if (HealthBar && OwnerActor)
+	PropertyBarsContainer = Cast<UW_PropertyBarsContainer>(GetUserWidgetObject());
+	if (PropertyBarsContainer && OwnerActor)
 	{
-		HealthBar->InitializePropertyBar(GetOwner());
+		PropertyBarsContainer->InitalizePropertyBarsContainer(GetOwner());
 	}
 }

@@ -17,11 +17,9 @@ class GAS_TEMPLATESP_API UW_PropertyBarBase : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
 	virtual void InitializePropertyBar(AActor* Owner);
 
 protected:
-
 	virtual void SetDefaultValues(UAbilitySystemComponent* OwnerASC);
 
 	virtual void BindAttributes(UAbilitySystemComponent* OwnerASC);

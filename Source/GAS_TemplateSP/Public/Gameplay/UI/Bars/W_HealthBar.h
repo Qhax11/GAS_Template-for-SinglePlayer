@@ -15,7 +15,6 @@ class GAS_TEMPLATESP_API UW_HealthBar : public UW_PropertyBarBase
 	GENERATED_BODY()
 
 protected:
-
 	virtual void SetDefaultValues(UAbilitySystemComponent* OwnerASC) override;
 
 	virtual void BindAttributes(UAbilitySystemComponent* OwnerASC) override;

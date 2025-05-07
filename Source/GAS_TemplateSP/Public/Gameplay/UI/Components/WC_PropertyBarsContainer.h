@@ -3,14 +3,11 @@
 #pragma once
 
 #include "Components/WidgetComponent.h"
-#include "Gameplay/UI/Bars/W_HealthBar.h"
-#include "WC_PropertyBar.generated.h"
+#include "WC_PropertyBarsContainer.generated.h"
 
-/**
- *  
- */
+
 UCLASS()
-class GAS_TEMPLATESP_API UWC_PropertyBar : public UWidgetComponent
+class GAS_TEMPLATESP_API UWC_PropertyBarsContainer : public UWidgetComponent
 {
 	GENERATED_BODY()
 
@@ -21,5 +18,5 @@ protected:
 	UFUNCTION()
 	void OnAbilitySetGiven(const AActor* OwnerActor);
 
-	TObjectPtr<UW_HealthBar> HealthBar;
+	TObjectPtr<class UW_PropertyBarsContainer> PropertyBarsContainer;
 };

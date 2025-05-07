@@ -110,6 +110,11 @@ public:
 	ATTRIBUTE_ACCESSORS(UAS_Base, Posture)
 		FOnPropertyValueChanged OnPostureChanged;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Base")
+	FGameplayAttributeData MaxPosture;
+	ATTRIBUTE_ACCESSORS(UAS_Base, MaxPosture)
+		FOnPropertyValueChanged OnMaxPostureChanged;
+
 		UPROPERTY(BlueprintReadOnly, Category = "Base")
 	FGameplayAttributeData PhysicalDamage;
 	ATTRIBUTE_ACCESSORS(UAS_Base, PhysicalDamage)

@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "AbilitySystemComponent.h"
 #include "Components/TextBlock.h"
+#include "Gameplay/Attributes/AS_Base.h"
 #include "W_PropertyBarBase.generated.h"
 
 /**

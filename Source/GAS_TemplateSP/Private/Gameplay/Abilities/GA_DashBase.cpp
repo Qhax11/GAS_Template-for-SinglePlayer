@@ -16,7 +16,7 @@ void UGA_DashBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	DashRootMotionTask = UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
 			this,
@@ -32,7 +32,6 @@ void UGA_DashBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			FinishClampVelocity);
 
 	BindRootMotionTask();
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
 void UGA_DashBase::BindRootMotionTask()

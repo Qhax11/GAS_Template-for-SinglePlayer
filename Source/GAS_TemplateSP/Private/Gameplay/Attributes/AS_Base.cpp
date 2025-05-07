@@ -159,6 +159,12 @@ bool UAS_Base::BroadcastPropertyChange(const FGameplayEffectModCallbackData& Dat
 		PropertyCallbackData.CurrentValue = Posture.GetCurrentValue();
 		OnPostureChanged.Broadcast(PropertyCallbackData);
 	}
+	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, MaxPosture)))
+	{
+		bIsBroadcasted = true;
+		PropertyCallbackData.CurrentValue = MaxPosture.GetCurrentValue();
+		OnMaxPostureChanged.Broadcast(PropertyCallbackData);
+	}
 	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, PhysicalDamage)))
 	{
 		bIsBroadcasted = true;

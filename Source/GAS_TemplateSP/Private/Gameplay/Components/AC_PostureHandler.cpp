@@ -1,11 +1,10 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/Components/AC_PostureHandler.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
-#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 
 
@@ -54,15 +53,6 @@ void UAC_PostureHandler::OnAbilitySetGiven(const AActor* OwnerActor)
 			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full);
 		}
 	}
-
-	UAC_TagDelegates* OwnerCharacterTagDelegatesComp = OwnerCharacter->GetTagDelegatesComponent();
-	if (!OwnerCharacterTagDelegatesComp)
-	{
-		return;
-	}
-
-	OwnerCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded).BindDynamic(this, &UAC_PostureHandler::OnKnocbackTagAdded);
-	OwnerCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash, EListenMode::OnAdded).BindDynamic(this, &UAC_PostureHandler::OnDashTagAdded);
 }
 
 void UAC_PostureHandler::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -77,7 +67,33 @@ void UAC_PostureHandler::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void UAC_PostureHandler::OnHealthChanged(const FAttributeChangeCallbackData& Data)
 {
+	if (!OwnerASC)
+	{
+		return;
+	}
 
+	// Calculate damage taken (old - current)
+	float DamageTaken = Data.OldValue - Data.CurrentValue;
+	if (DamageTaken <= 0.f)
+	{
+		return; // no damage, maybe healing
+	}
+
+	// Optionally, apply a multiplier if you want (e.g., only 50% of damage reduces posture)
+	float PostureReductionAmount = -DamageTaken * PostureDamageMultiplier;;  // Negative value to reduce posture
+
+	UGameplayEffect* DecreasePostureEffect = UGAS_EffectBlueprintFunctionLibary::CreateInstantEffectWithModifier(
+		UAS_Base::GetPostureAttribute(),
+		EGameplayModOp::Additive,
+		PostureReductionAmount
+	);
+
+	if (DecreasePostureEffect)
+	{
+		OwnerASC->ApplyGameplayEffectToSelf(DecreasePostureEffect, 1, FGameplayEffectContextHandle());
+
+		UE_LOG(LogTemp, Log, TEXT("[PostureHandler] Damage: %.2f → Posture reduced by %.2f"), DamageTaken, -PostureReductionAmount);
+	}
 }
 
 void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Data)
@@ -102,16 +118,6 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 
 	GetWorld()->GetTimerManager().ClearTimer(PostureRegenTimerHandle);
 	GetWorld()->GetTimerManager().SetTimer(PostureRegenTimerHandle, this, &UAC_PostureHandler::TriggerPostureRegenEffect, PostureRegenDelay, false);
-}
-
-void UAC_PostureHandler::OnKnocbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-
-}
-
-void UAC_PostureHandler::OnDashTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-
 }
 
 void UAC_PostureHandler::TriggerPostureRegenEffect()

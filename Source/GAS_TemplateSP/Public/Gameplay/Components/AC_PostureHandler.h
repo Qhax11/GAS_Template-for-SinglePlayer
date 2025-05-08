@@ -28,12 +28,6 @@ protected:
 	UFUNCTION()
 	virtual void OnPostureChanged(const FAttributeChangeCallbackData& Data);
 
-	UFUNCTION()
-	void OnKnocbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnDashTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
 	void TriggerPostureRegenEffect();
 
 	class AGAS_CharacterBase* OwnerCharacter;
@@ -48,4 +42,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "PostureHandler")
 	float PostureRegenDelay = 3.f;
+
+	// Multiplier applied to posture reduction when the owner takes damage.
+	UPROPERTY(EditDefaultsOnly, Category = "PostureHandler")
+	float PostureDamageMultiplier = 2.f;
 };

@@ -131,57 +131,67 @@ bool UAS_Base::BroadcastPropertyChange(const FGameplayEffectModCallbackData& Dat
 		return bIsBroadcasted;
 	}
 
-	FGameplayAttributeData AttributeData;
-	if (!Data.EvaluatedData.Attribute.GetGameplayAttributeData(this)) 
+	FGameplayAttribute Attribute = Data.EvaluatedData.Attribute;
+	FGameplayAttributeData* AttributeDataPtr = Attribute.GetGameplayAttributeData(this);
+
+	if (!AttributeDataPtr)
 	{
 		return bIsBroadcasted;
 	}
-	AttributeData = *Data.EvaluatedData.Attribute.GetGameplayAttributeData(this);
 
-	FAttributeChangeCallbackData PropertyCallbackData = FAttributeChangeCallbackData(GetOwningAbilitySystemComponent(), AttributeData);
+	float CurrentValue = AttributeDataPtr->GetCurrentValue();
+	float OldValue = INVALID_ATTRIBUTE_VALUE;
 
-	if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, Health)))
+	// Check if we have a stored old value
+	if (PreviousAttributeValues.Contains(Attribute))
+	{
+		OldValue = PreviousAttributeValues[Attribute];
+	}
+
+	// Update stored value to the latest for next time
+	PreviousAttributeValues.Add(Attribute, CurrentValue);
+
+	FAttributeChangeCallbackData PropertyCallbackData = FAttributeChangeCallbackData(GetOwningAbilitySystemComponent(), *AttributeDataPtr);
+	PropertyCallbackData.CurrentValue = CurrentValue;
+	PropertyCallbackData.OldValue = OldValue;  // << NEW
+	// You can also set MaxValue if needed (like before)
+
+	// Now broadcast to correct delegate
+	if (Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, Health)))
 	{
 		bIsBroadcasted = true;
-		PropertyCallbackData.CurrentValue = Health.GetCurrentValue();
 		PropertyCallbackData.MaxValue = MaxHealth.GetCurrentValue();
 		OnHealthChanged.Broadcast(PropertyCallbackData);
 	}
-	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, MaxHealth)))
+	else if (Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, MaxHealth)))
 	{
 		bIsBroadcasted = true;
-		PropertyCallbackData.CurrentValue = MaxHealth.GetCurrentValue();
 		OnMaxHealthChanged.Broadcast(PropertyCallbackData);
 	}
-	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, PhysicalArmor)))
+	else if (Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, PhysicalArmor)))
 	{
 		bIsBroadcasted = true;
-		PropertyCallbackData.CurrentValue = PhysicalArmor.GetCurrentValue();
 		OnPhysicalArmorChanged.Broadcast(PropertyCallbackData);
 	}
-	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, Posture)))
+	else if (Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, Posture)))
 	{
 		bIsBroadcasted = true;
-		PropertyCallbackData.CurrentValue = Posture.GetCurrentValue();
 		PropertyCallbackData.MaxValue = MaxPosture.GetCurrentValue();
 		OnPostureChanged.Broadcast(PropertyCallbackData);
 	}
-	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, MaxPosture)))
+	else if (Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, MaxPosture)))
 	{
 		bIsBroadcasted = true;
-		PropertyCallbackData.CurrentValue = MaxPosture.GetCurrentValue();
 		OnMaxPostureChanged.Broadcast(PropertyCallbackData);
 	}
-	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, PhysicalDamage)))
+	else if (Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, PhysicalDamage)))
 	{
 		bIsBroadcasted = true;
-		PropertyCallbackData.CurrentValue = PhysicalDamage.GetCurrentValue();
 		OnPhysicalDamageChanged.Broadcast(PropertyCallbackData);
 	}
-	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, MovementSpeed)))
+	else if (Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, MovementSpeed)))
 	{
 		bIsBroadcasted = true;
-		PropertyCallbackData.CurrentValue = MovementSpeed.GetCurrentValue();
 		OnMovementSpeedChanged.Broadcast(PropertyCallbackData);
 	}
 

@@ -31,6 +31,9 @@ public:
 	FGameplayAttributeData AttributeData;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Attribute Change Data")
+	float OldValue = INVALID_ATTRIBUTE_VALUE;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Attribute Change Data")
 	float CurrentValue = INVALID_ATTRIBUTE_VALUE;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Attribute Change Data")
@@ -68,7 +71,6 @@ class GAS_TEMPLATESP_API UAS_Base : public UAttributeSet
 	GENERATED_BODY()
 
 public:
-
 	UAS_Base();
 
 	// We are using "ActiveGameplayEffectAdded" and "ActiveGameplayEffectRemoved" for instant and duration based effects.
@@ -128,4 +130,5 @@ public:
 protected:
 	virtual bool BroadcastPropertyChange(const FGameplayEffectModCallbackData& Data);
 
+	TMap<FGameplayAttribute, float> PreviousAttributeValues;
 };

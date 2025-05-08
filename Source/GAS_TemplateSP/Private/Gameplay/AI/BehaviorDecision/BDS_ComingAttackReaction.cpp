@@ -31,7 +31,7 @@ EComingAttackReaction UBDS_ComingAttackReaction::GetComingAttackDecision(FComing
 
     for (const FComingAttackReactionData& ReactionData : ComingAttackReactionAsset->ComingAttackReactions)
     {
-        if (!PassesChanceRoll(ReactionData))
+        if (!PassesFinalChanceRoll(ReactionData))
         {
             continue;
         }
@@ -80,10 +80,10 @@ float UBDS_ComingAttackReaction::CalculateTagScore(const FComingAttackReactionDa
 
 bool UBDS_ComingAttackReaction::PassesChanceRoll(const FComingAttackReactionData& ReactionData) const
 {
-    const float Roll = FMath::FRandRange(0.f, 1.f);
+    const float Roll = FMath::FRandRange(0.f, 1.f);  // 0–1 arası
     const bool bPassed = Roll <= ReactionData.BaseChance;
 
-    UE_LOG(LogTemp, Log, TEXT("[AI] Reaction %s chance roll: %.2f <= %.2f → %s"),
+    UE_LOG(LogTemp, Log, TEXT("[AI] Static chance reaction %s: roll %.2f <= base chance %.2f → %s"),
         *ReactionData.ComingAttackReactionName.ToString(),
         Roll,
         ReactionData.BaseChance,
@@ -91,3 +91,42 @@ bool UBDS_ComingAttackReaction::PassesChanceRoll(const FComingAttackReactionData
 
     return bPassed;
 }
+
+bool UBDS_ComingAttackReaction::PassesChanceRollBasedOnPosture(const FComingAttackReactionData& ReactionData) const
+{
+    UAS_Base* BaseAttributes = const_cast<UAS_Base*>(EnemyASC->GetSet<UAS_Base>());
+    if (!BaseAttributes)
+    {
+        return false;
+    }
+
+    const float PostureValue = BaseAttributes->GetPosture();  
+    const float Roll = FMath::FRandRange(0.f, 100.f);
+
+    const bool bPassed = Roll <= PostureValue;
+
+    UE_LOG(LogTemp, Log, TEXT("[AI] Posture-based reaction %s: roll %.2f <= posture %.2f → %s"),
+        *ReactionData.ComingAttackReactionName.ToString(),
+        Roll,
+        PostureValue,
+        bPassed ? TEXT("PASS") : TEXT("FAIL"));
+
+    return bPassed;
+}
+
+bool UBDS_ComingAttackReaction::PassesFinalChanceRoll(const FComingAttackReactionData& ReactionData) const
+{
+    if (ReactionData.ReactionType == EComingAttackReaction::Parry)
+    {
+        return PassesChanceRollBasedOnPosture(ReactionData);
+    }
+    else if(ReactionData.ReactionType == EComingAttackReaction::Dodge)
+    {
+        return PassesChanceRoll(ReactionData);
+    }
+    else
+    {
+        return true;
+    }
+}
+

@@ -21,7 +21,10 @@ protected:
 	void OnAbilitySetGiven(const AActor* OwnerActor);
 
 	UFUNCTION()
-	virtual void HealthChanged(const FAttributeChangeCallbackData& Data);
+	virtual void OnHealthChanged(const FAttributeChangeCallbackData& Data);
+
+	UFUNCTION()
+	virtual void OnPostureChanged(const FAttributeChangeCallbackData& Data);
 
 	UFUNCTION()
 	void OnKnocbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
@@ -30,4 +33,5 @@ protected:
 	void OnDashTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	class AGAS_CharacterBase* OwnerCharacter;
+	class UAbilitySystemComponent* OwnerASC;
 };

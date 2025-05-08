@@ -70,5 +70,9 @@ protected:
 
     bool PassesChanceRoll(const FComingAttackReactionData& ReactionData) const;
 
+    bool PassesChanceRollBasedOnPosture(const FComingAttackReactionData& ReactionData) const;
+
+    bool PassesFinalChanceRoll(const FComingAttackReactionData& ReactionData) const;
+
     UComingAttackReactionAsset* ComingAttackReactionAsset;
 };

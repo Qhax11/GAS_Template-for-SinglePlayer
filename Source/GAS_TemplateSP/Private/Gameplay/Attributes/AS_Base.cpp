@@ -113,6 +113,12 @@ bool UAS_Base::ClampAttributeValues(const FGameplayEffectModCallbackData& Data)
 		PhysicalArmor.SetCurrentValue(FMath::Clamp(PhysicalArmor.GetCurrentValue(), 0, 100));
 	}
 
+	else if (Data.EvaluatedData.Attribute == GetPostureAttribute())
+	{
+		Posture.SetBaseValue(FMath::Clamp(Posture.GetCurrentValue(), 0, 100));
+		Posture.SetCurrentValue(FMath::Clamp(Posture.GetCurrentValue(), 0, 100));
+	}
+
 	return true;
 }
 
@@ -157,6 +163,7 @@ bool UAS_Base::BroadcastPropertyChange(const FGameplayEffectModCallbackData& Dat
 	{
 		bIsBroadcasted = true;
 		PropertyCallbackData.CurrentValue = Posture.GetCurrentValue();
+		PropertyCallbackData.MaxValue = MaxPosture.GetCurrentValue();
 		OnPostureChanged.Broadcast(PropertyCallbackData);
 	}
 	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Base::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Base, MaxPosture)))

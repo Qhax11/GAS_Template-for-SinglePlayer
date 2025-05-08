@@ -37,7 +37,7 @@ void UAC_PostureHandler::BeginPlay()
 
 void UAC_PostureHandler::OnAbilitySetGiven(const AActor* OwnerActor)
 {
-	UAbilitySystemComponent* OwnerASC = OwnerCharacter->GetAbilitySystemComponent();
+	OwnerASC = OwnerCharacter->GetAbilitySystemComponent();
 	if (!OwnerASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OwnerASC is null in: %s, cannot initalize"), *GetName());
@@ -46,7 +46,8 @@ void UAC_PostureHandler::OnAbilitySetGiven(const AActor* OwnerActor)
 
 	if (UAS_Base* BaseAttributes = const_cast<UAS_Base*>(OwnerASC->GetSet<UAS_Base>()))
 	{
-		BaseAttributes->OnHealthChanged.AddDynamic(this, &UAC_PostureHandler::HealthChanged);
+		BaseAttributes->OnHealthChanged.AddDynamic(this, &UAC_PostureHandler::OnHealthChanged);
+		BaseAttributes->OnPostureChanged.AddDynamic(this, &UAC_PostureHandler::OnPostureChanged);
 	}
 
 	UAC_TagDelegates* OwnerCharacterTagDelegatesComp = OwnerCharacter->GetTagDelegatesComponent();
@@ -59,9 +60,17 @@ void UAC_PostureHandler::OnAbilitySetGiven(const AActor* OwnerActor)
 	OwnerCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash, EListenMode::OnAdded).BindDynamic(this, &UAC_PostureHandler::OnDashTagAdded);
 }
 
-void UAC_PostureHandler::HealthChanged(const FAttributeChangeCallbackData& Data)
+void UAC_PostureHandler::OnHealthChanged(const FAttributeChangeCallbackData& Data)
 {
 
+}
+
+void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Data)
+{
+	if (Data.CurrentValue <= 0) 
+	{
+		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_Vulnerable);
+	}
 }
 
 void UAC_PostureHandler::OnKnocbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

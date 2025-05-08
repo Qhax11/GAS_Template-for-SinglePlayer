@@ -20,6 +20,8 @@ protected:
 	UFUNCTION()
 	void OnAbilitySetGiven(const AActor* OwnerActor);
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	UFUNCTION()
 	virtual void OnHealthChanged(const FAttributeChangeCallbackData& Data);
 
@@ -32,6 +34,18 @@ protected:
 	UFUNCTION()
 	void OnDashTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
+	void TriggerPostureRegenEffect();
+
 	class AGAS_CharacterBase* OwnerCharacter;
 	class UAbilitySystemComponent* OwnerASC;
+	FTimerHandle PostureRegenTimerHandle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PostureHandler|Regen")
+	TSubclassOf<class UGameplayEffect> PostureRegenGameplayEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PostureHandler|Regen")
+	float PostureRegenPerTick = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "PostureHandler")
+	float PostureRegenDelay = 3.f;
 };

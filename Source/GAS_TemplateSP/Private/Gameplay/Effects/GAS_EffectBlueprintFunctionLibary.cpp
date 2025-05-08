@@ -51,7 +51,7 @@ bool UGAS_EffectBlueprintFunctionLibary::CreateInstantEffectSpecWithSetByCallerV
 	return false;
 }
 
-bool UGAS_EffectBlueprintFunctionLibary::CreateInstantEffectSpecWithSetByCallerValue(FGameplayEffectSpec& OutSpec,
+bool UGAS_EffectBlueprintFunctionLibary::CreateEffectSpecWithSetByCallerValue(FGameplayEffectSpec& OutSpec,
 	UAbilitySystemComponent* SourceASC, 
 	TSubclassOf<UGameplayEffect> GameplayEffectClass, 
 	const FGameplayTag SetByCallerTag, 

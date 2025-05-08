@@ -173,7 +173,7 @@ void UEC_DamageBase::CalculateLifeSteal(FExecCalculationParameters& Params, floa
 
 			// Create Effect and assign spec
 			FGameplayEffectSpec LifeStealSpec;
-			bool bIsLifeStealSpecValid = UGAS_EffectBlueprintFunctionLibary::CreateInstantEffectSpecWithSetByCallerValue(
+			bool bIsLifeStealSpecValid = UGAS_EffectBlueprintFunctionLibary::CreateEffectSpecWithSetByCallerValue(
 				LifeStealSpec, 
 				Params.SourceASC, 
 				UGE_GainHealth::StaticClass(), 

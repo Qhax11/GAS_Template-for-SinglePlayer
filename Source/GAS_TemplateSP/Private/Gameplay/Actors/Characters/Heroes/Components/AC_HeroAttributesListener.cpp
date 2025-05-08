@@ -17,7 +17,7 @@ bool UAC_HeroAttributesListener::Initialize(const AActor* OwnerActor)
 
 		if (BaseAttributes->GetMana() == BaseAttributes->GetMaxMana())
 		{
-			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Mana_Full);
+			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Mana_Full);
 		}
 
 		return true;
@@ -30,13 +30,13 @@ void UAC_HeroAttributesListener::ManaChanged(const FAttributeChangeCallbackData&
 {
 	if (Data.CurrentValue >= Data.MaxValue)
 	{
-		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Mana_Full);
+		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Mana_Full);
 	}
 	else
 	{
-		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Mana_Full))
+		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Mana_Full))
 		{
-			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Mana_Full, 100);
+			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Mana_Full, 100);
 		}
 	}
 }

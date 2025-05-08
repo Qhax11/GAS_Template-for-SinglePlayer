@@ -25,7 +25,7 @@ public:
 	static bool CreateInstantEffectSpecWithSetByCallerValueWithMoreData(FGameplayEffectSpec& OutSpec, UAbilitySystemComponent* SourceASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const FGameplayTag SetByCallerTag, float SetByCallerValue, const FHitResult& InHitResult, const UGameplayAbility* InGameplayAbility = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "GAS_EffectBlueprintFunctionLibary")
-	static bool CreateInstantEffectSpecWithSetByCallerValue(FGameplayEffectSpec& OutSpec, UAbilitySystemComponent* SourceASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const FGameplayTag SetByCallerTag, float SetByCallerValue);
+	static bool CreateEffectSpecWithSetByCallerValue(FGameplayEffectSpec& OutSpec, UAbilitySystemComponent* SourceASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const FGameplayTag SetByCallerTag, float SetByCallerValue);
 	 
 	UFUNCTION(BlueprintCallable, Category = "GAS_EffectBlueprintFunctionLibary")
 	static UGameplayEffect* CreateInstantEffectWithModifier(FGameplayAttribute ModifierAttribute, TEnumAsByte<EGameplayModOp::Type> ModifierOp, float ModifierValue);

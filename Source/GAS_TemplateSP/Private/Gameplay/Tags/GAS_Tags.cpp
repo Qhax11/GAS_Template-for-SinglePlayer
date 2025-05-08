@@ -11,13 +11,17 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay, "Gameplay");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Health, "Gameplay.Health");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Health_Full, "Gameplay.Health.Full");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Health_Regen, "Gameplay.Health.Regen");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Health, "Gameplay.Attribute.Health");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Health_Full, "Gameplay.Attribute.Health.Full");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Health_Regen, "Gameplay.Attribute.Health.Regen");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Mana, "Gameplay.Mana");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Mana_Full, "Gameplay.Mana.Full");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Mana_Regen, "Gameplay.Mana.Regen");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Mana, "Gameplay.Attribute.Mana");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Mana_Full, "Gameplay.Attribute.Mana.Full");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Mana_Regen, "Gameplay.Attribute.Mana.Regen");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture, "Gameplay.Attribute.Posture");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture_Full, "Gameplay.Attribute.Posture.Full");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture_Regen, "Gameplay.Attribute.Posture.Regen");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent, "Gameplay.AttackEvent");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_TraceStart, "Gameplay.AttackEvent.TraceStart");
@@ -65,6 +69,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_SetByCaller_DamageAmount, "Gameplay.EffectData.SetByCaller.DamageAmount");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_SetByCaller_GainHealthAmount, "Gameplay.EffectData.SetByCaller.GainHealthAmount");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_SetByCaller_GainManaAmount, "Gameplay.EffectData.SetByCaller.GainManaAmount");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_SetByCaller_PostureRegenAmount, "Gameplay.EffectData.SetByCaller.PostureRegenAmount");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_EnableLifeSteal, "Gameplay.EffectData.EnableLifeSteal");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_EnableCriticalDamage, "Gameplay.EffectData.EnableCriticalDamage");

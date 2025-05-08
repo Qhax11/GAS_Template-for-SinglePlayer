@@ -37,5 +37,4 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameters")
     FScalableFloat Damage;
 
-
 };

@@ -37,5 +37,4 @@ public:
 	virtual void CalculateLifeSteal(FExecCalculationParameters& Params, float DamageDone, float& HealDone, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const;
 
 	virtual bool CalculateParry(FExecCalculationParameters& Params) const;
-
 };

@@ -47,7 +47,7 @@ bool UAC_AttributesListenerBase::Initialize(const AActor* OwnerActor)
 		BaseAttributes->OnHealthChanged.AddDynamic(this, &UAC_AttributesListenerBase::HealthChanged);
 		if (BaseAttributes->GetHealth() == BaseAttributes->GetMaxHealth())
 		{
-			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Health_Full);
+			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Health_Full);
 		}
 
 		BaseAttributes->OnMovementSpeedChanged.AddDynamic(this, &UAC_AttributesListenerBase::MovementSpeedChanged);
@@ -62,13 +62,13 @@ void UAC_AttributesListenerBase::HealthChanged(const FAttributeChangeCallbackDat
 {
 	if (Data.CurrentValue >= Data.MaxValue)
 	{
-		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Health_Full);
+		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Health_Full);
 	}
 	else
 	{
-		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Health_Full))
+		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Health_Full))
 		{
-			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Health_Full, 100);
+			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Health_Full, 100);
 		}
 	}
 

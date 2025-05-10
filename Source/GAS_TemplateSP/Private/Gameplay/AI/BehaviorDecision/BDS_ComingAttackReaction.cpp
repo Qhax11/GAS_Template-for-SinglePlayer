@@ -21,7 +21,7 @@ void UBDS_ComingAttackReaction::Initialize(const FBehaviorServiceInitParams& Beh
 
 EComingAttackReaction UBDS_ComingAttackReaction::GetComingAttackDecision(FComingAttackPayload ComingAttackPayload)
 {
-    if (!ComingAttackPayload.ComingAttack || !ComingAttackReactionAsset)
+    if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack)
     {
         return EComingAttackReaction::TakeDamage;
     }

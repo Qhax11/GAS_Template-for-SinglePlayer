@@ -20,7 +20,7 @@ void UBDS_GetBestAttack::Initialize(const FBehaviorServiceInitParams& BehaviorSe
 
 FAttackData UBDS_GetBestAttack::GetBestAttack(float DistanceToTarget)
 {
-    if (!AttackAbilityAsset || !EnemyASC)
+    if (!IsValid(AttackAbilityAsset) || !EnemyASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("AttackAbilityAsset or OwnerEnemyASC is null in: %s !"), *GetName());
         return FAttackData();

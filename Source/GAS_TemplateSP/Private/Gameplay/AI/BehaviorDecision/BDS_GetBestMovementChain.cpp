@@ -78,7 +78,7 @@ TArray<UMovementChainAsset*> UBDS_GetBestMovementChain::GetMovementChainsForSele
 {
     TArray<UMovementChainAsset*> Result;
 
-    if (!AttackAbilityMovementChainMapAsset || !SelectedAbilityClass)
+    if (!IsValid(AttackAbilityMovementChainMapAsset) || !SelectedAbilityClass)
     {
         return Result;
     }

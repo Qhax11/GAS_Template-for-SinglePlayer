@@ -74,5 +74,6 @@ protected:
 
     bool PassesFinalChanceRoll(const FComingAttackReactionData& ReactionData) const;
 
+    UPROPERTY()
     UComingAttackReactionAsset* ComingAttackReactionAsset;
 };

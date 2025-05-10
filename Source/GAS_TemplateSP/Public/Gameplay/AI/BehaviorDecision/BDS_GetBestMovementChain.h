@@ -119,5 +119,6 @@ protected:
 
     FGameplayTag GetRandomDirectionTag();
 
+    UPROPERTY()
     UAttackAbilityMovementChainMapAsset* AttackAbilityMovementChainMapAsset;
 };

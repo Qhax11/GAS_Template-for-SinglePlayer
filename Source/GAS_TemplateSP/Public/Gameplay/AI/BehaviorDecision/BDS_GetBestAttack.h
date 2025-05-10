@@ -45,5 +45,6 @@ public:
 protected:
     float CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);
 
+    UPROPERTY()
     UAttackAbilityAsset* AttackAbilityAsset;
 };

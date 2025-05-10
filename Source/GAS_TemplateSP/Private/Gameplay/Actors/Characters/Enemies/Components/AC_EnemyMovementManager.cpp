@@ -62,7 +62,6 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 			return;
 		}
 
-		// Zincir aktif ama ability durmuş → yeniden başlatılmalı
 		UE_LOG(LogTemp, Warning, TEXT("Chain is marked active but ability is invalid. Restarting chain."));
 		MovementChainTracker.ResetChain();
 	}

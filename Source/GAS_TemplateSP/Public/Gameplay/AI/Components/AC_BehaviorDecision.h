@@ -66,7 +66,12 @@ protected:
     class AGAS_HeroBase* HeroBase;
     UAC_HeroMovementListener* HeroMovementListenerComp;
 
+    UPROPERTY()
     UBDS_ComingAttackReaction* ComingAttackReactionService;
+
+    UPROPERTY()
     UBDS_GetBestAttack* GetBestAttackService;
+
+    UPROPERTY()
     UBDS_GetBestMovementChain* GetBestMovementChainService;
 };

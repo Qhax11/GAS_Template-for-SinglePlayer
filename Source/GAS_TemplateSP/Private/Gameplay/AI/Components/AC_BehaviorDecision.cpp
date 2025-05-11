@@ -78,7 +78,12 @@ void UAC_BehaviorDecision::InitalizeServiceses()
 
 FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 {
-    FAttackData BestAttack = GetBestAttackService->GetBestAttack(DistanceToTarget);
+    FAttackData BestAttack;
+
+    if (IsValid(AttackAbilityAsset)) 
+    {
+        BestAttack = GetBestAttackService->GetBestAttack(DistanceToTarget);
+    }
 
     if (GEngine && EnableSelectedDebug && BestAttack.AbilityClass)
     {
@@ -93,7 +98,14 @@ FAttackData UAC_BehaviorDecision::GetBestAttack(float DistanceToTarget)
 
 TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
-    return GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
+    TArray<FMovementAbilityData> BestMovementChain;
+
+    if (IsValid(GetBestMovementChainService)) 
+    {
+        BestMovementChain = GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
+    }
+
+    return BestMovementChain;
     /*
     if (GEngine && EnableSelectedDebug)
     {
@@ -108,6 +120,13 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
 
 EComingAttackReaction UAC_BehaviorDecision::GetComingAttackDecision(FComingAttackPayload ComingAttackPayload)
 {
-    return ComingAttackReactionService->GetComingAttackDecision(ComingAttackPayload);
+    EComingAttackReaction BestComingAttackReaction;
+
+    if (IsValid(ComingAttackReactionService)) 
+    {
+        BestComingAttackReaction = ComingAttackReactionService->GetComingAttackDecision(ComingAttackPayload);
+    }
+
+    return BestComingAttackReaction;
 }
 

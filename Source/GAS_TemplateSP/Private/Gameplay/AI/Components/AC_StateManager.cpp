@@ -9,11 +9,16 @@ UAC_StateManager::UAC_StateManager()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UAC_StateManager::StartStateByClass(TSubclassOf<UStateBase> StateClass)
+void UAC_StateManager::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void UAC_StateManager::StartStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass)
 {
 	if (CurrentState)
 	{
-		CurrentState->OnExit(OwnerEnemy);
+		CurrentState->OnExit(EnemyBase, EnemyController);
 	}
 
 	if (StateClass)
@@ -21,7 +26,7 @@ void UAC_StateManager::StartStateByClass(TSubclassOf<UStateBase> StateClass)
 		CurrentState = Cast<UStateBase>(NewObject<UObject>(this, StateClass));
 		if (CurrentState)
 		{
-			CurrentState->OnEnter(OwnerEnemy);
+			CurrentState->OnEnter(EnemyBase, EnemyController);
 		}
 		else
 		{
@@ -39,9 +44,6 @@ bool UAC_StateManager::IsCurrentStateFinished() const
 	return false;
 }
 
-void UAC_StateManager::BeginPlay()
-{
-	Super::BeginPlay();
-}
+
 
 

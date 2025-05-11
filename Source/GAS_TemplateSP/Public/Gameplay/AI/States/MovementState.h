@@ -12,7 +12,7 @@ class GAS_TEMPLATESP_API UMovementState : public UStateBase
 	GENERATED_BODY()
 
 public:
-	virtual void OnEnter(AGAS_EnemyBase* OwnerEnemy);
+	virtual void OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController);
 
 	
 };

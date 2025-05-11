@@ -46,7 +46,7 @@ protected:
 
 public:
     UFUNCTION(BlueprintCallable)
-    FAttackData GetBestAttack(float DistanceToTarget);
+    FAttackData GetBestAttack();
 
     UFUNCTION(BlueprintCallable)
     TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);

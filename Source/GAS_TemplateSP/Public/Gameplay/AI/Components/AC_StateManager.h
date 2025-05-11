@@ -15,13 +15,13 @@ class GAS_TEMPLATESP_API UAC_StateManager : public UActorComponent
 public:	
 	UAC_StateManager();
 
-	void StartStateByClass(TSubclassOf<UStateBase> StateClass);
+	virtual void BeginPlay() override;
+
+	void StartStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass);
 	void StopCurrentState();
 	bool IsCurrentStateFinished() const;
 
 protected:
-	virtual void BeginPlay() override;
-
 	UPROPERTY()
 	UStateBase* CurrentState = nullptr;
 

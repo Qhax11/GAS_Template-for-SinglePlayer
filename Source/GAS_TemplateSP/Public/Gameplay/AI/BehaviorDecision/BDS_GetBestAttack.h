@@ -40,7 +40,7 @@ class GAS_TEMPLATESP_API UBDS_GetBestAttack : public UBehaviorDecisionServiceBas
 public:
     virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
 
-    FAttackData GetBestAttack(float DistanceToTarget);
+    FAttackData GetBestAttack();
 
 protected:
     float CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);

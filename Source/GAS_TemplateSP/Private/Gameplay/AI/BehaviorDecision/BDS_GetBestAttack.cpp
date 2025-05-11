@@ -18,7 +18,7 @@ void UBDS_GetBestAttack::Initialize(const FBehaviorServiceInitParams& BehaviorSe
     }
 }
 
-FAttackData UBDS_GetBestAttack::GetBestAttack(float DistanceToTarget)
+FAttackData UBDS_GetBestAttack::GetBestAttack()
 {
     if (!IsValid(AttackAbilityAsset) || !EnemyASC)
     {
@@ -43,7 +43,7 @@ FAttackData UBDS_GetBestAttack::GetBestAttack(float DistanceToTarget)
             continue;
         }
 
-        float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(Attack, DistanceToTarget);
+        float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(Attack, GetTargetDistance());
 
         float TotalScore = Attack.ScoreBias + DistanceScore;
 
@@ -66,6 +66,7 @@ FAttackData UBDS_GetBestAttack::GetBestAttack(float DistanceToTarget)
 
     LastSelectedAttackAbilityData = BestAttack;
     */
+
     return BestAttack;
 }
 

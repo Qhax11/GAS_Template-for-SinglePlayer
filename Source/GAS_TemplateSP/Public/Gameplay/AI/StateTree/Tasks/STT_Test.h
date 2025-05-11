@@ -16,8 +16,11 @@ struct FStartStateInstanceData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Context")
+	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<AGAS_EnemyBase> EnemyBase = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<AAIControllerBase> EnemyController = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Default")
 	TSubclassOf<UStateBase> StateClass;

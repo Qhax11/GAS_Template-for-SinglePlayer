@@ -16,7 +16,7 @@ EStateTreeRunStatus FPrintActorNameTask::EnterState(FStateTreeExecutionContext& 
 
 	if (UAC_StateManager* EnemyStateManagerComponent = Data.EnemyBase->GetEnemyStateManagerComponent()) 
 	{
-		Data.EnemyBase->GetEnemyStateManagerComponent()->StartStateByClass(Data.StateClass);
+		Data.EnemyBase->GetEnemyStateManagerComponent()->StartStateByClass(Data.EnemyBase, Data.EnemyController, Data.StateClass);
 	}
 
 	return EStateTreeRunStatus::Running;

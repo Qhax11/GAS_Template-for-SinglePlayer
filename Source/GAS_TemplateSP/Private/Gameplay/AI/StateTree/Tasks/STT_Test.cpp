@@ -6,16 +6,18 @@
 
 EStateTreeRunStatus FPrintActorNameTask::EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult&) const
 {
-	FTestPrintActorNameTaskInstanceData& Data = Context.GetInstanceData(*this);
+	FStartStateInstanceData& Data = Context.GetInstanceData(*this);
 
-	if (Data.TargetActor)
+	if (!Data.EnemyBase || !Data.StateClass)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Target: %s"), *Data.TargetActor->GetName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetActor is NULL"));
+		UE_LOG(LogTemp, Warning, TEXT("StateClass or Component is null."));
+		return EStateTreeRunStatus::Failed;
 	}
 
-	return EStateTreeRunStatus::Succeeded;
+	if (UAC_StateManager* EnemyStateManagerComponent = Data.EnemyBase->GetEnemyStateManagerComponent()) 
+	{
+		Data.EnemyBase->GetEnemyStateManagerComponent()->StartStateByClass(Data.StateClass);
+	}
+
+	return EStateTreeRunStatus::Running;
 }

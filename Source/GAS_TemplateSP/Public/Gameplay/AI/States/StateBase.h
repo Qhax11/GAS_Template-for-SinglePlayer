@@ -3,10 +3,43 @@
 #pragma once
 
 #include "UObject/NoExportTypes.h"
-#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
+#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
+#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "StateBase.generated.h"
 
+USTRUCT()
+struct FStateInitParams
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY()
+    AGAS_EnemyBase* Enemy = nullptr;
+
+    UPROPERTY()
+    AAIControllerBase* EnemyController = nullptr;
+
+    UPROPERTY()
+    UGAS_AbilitySystemComponent* EnemyASC = nullptr;
+
+    UPROPERTY()
+    UAC_BehaviorDecision* BehaviorDecisionComponent = nullptr;
+
+    FStateInitParams(
+        AGAS_EnemyBase* InEnemy, 
+        AAIControllerBase* InEnemyController, 
+        UGAS_AbilitySystemComponent* InEnemyASC,
+        UAC_BehaviorDecision* InBehaviorDecisionComponent)
+        :
+        Enemy(InEnemy),
+        EnemyController(InEnemyController),
+        EnemyASC(InEnemyASC),
+        BehaviorDecisionComponent(InBehaviorDecisionComponent)
+    {}
+
+    FStateInitParams() = default;
+};
 
 UCLASS()
 class GAS_TEMPLATESP_API UStateBase : public UObject
@@ -14,9 +47,17 @@ class GAS_TEMPLATESP_API UStateBase : public UObject
 	GENERATED_BODY()
 	
 public:
+	virtual void StateInitalize(const FStateInitParams& StateInitParams);
+
 	virtual void OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController) {}
 
 	virtual void OnTick(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController, float DeltaTime) {}
 
 	virtual void OnExit(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController) {}
+
+protected:
+    AGAS_EnemyBase* Enemy;
+    AAIControllerBase* EnemyController;
+    UGAS_AbilitySystemComponent* EnemyASC;
+    UAC_BehaviorDecision* BehaviorDecisionComponent;
 };

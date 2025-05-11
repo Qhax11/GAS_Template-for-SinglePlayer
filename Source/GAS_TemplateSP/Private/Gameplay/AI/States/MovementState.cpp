@@ -5,11 +5,38 @@
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 
+void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
+{
+	Super::StateInitalize(StateInitParams);
+
+	MovementManagerComponent = Enemy->GetEnemyMovementManagerComponent();
+	if (!MovementManagerComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MovementManagerComponent is null in: %s"), *GetName());
+		return;
+	}
+
+	MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
+}
+
 void UMovementState::OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController)
 {
-	if (UAC_BehaviorDecision* OwnerBehaviorDecisionComp = OwnerController->GetBehaviorDecisionComponent())
+	StartMovementChain();
+}
+
+void UMovementState::StartMovementChain()
+{
+	if (!BehaviorDecisionComponent || !MovementManagerComponent)
 	{
-		FAttackData BestAttack = OwnerBehaviorDecisionComp->GetBestAttack();
-		OwnerEnemy->GetEnemyMovementManagerComponent()->StartMovementChain(BestAttack.AbilityClass);
+		return;
 	}
+
+	FAttackData BestAttack = BehaviorDecisionComponent->GetBestAttack();
+	MovementManagerComponent->StartMovementChain(BestAttack.AbilityClass);
+}
+
+
+void UMovementState::OnMovementChainEnded()
+{
+	StartMovementChain();
 }

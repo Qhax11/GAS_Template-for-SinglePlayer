@@ -17,7 +17,9 @@ public:
 
 	virtual void BeginPlay() override;
 
-	void StartStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass);
+	void CreateStates();
+
+	void EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass);
 	void StopCurrentState();
 	bool IsCurrentStateFinished() const;
 
@@ -26,6 +28,21 @@ protected:
 	UStateBase* CurrentState = nullptr;
 
 	UPROPERTY()
+	class UMovementState* MovementState;
+
+	UPROPERTY()
+	class UAttackState* AttackState;
+
+
+	UPROPERTY()
 	TObjectPtr<AGAS_EnemyBase> OwnerEnemy = nullptr;
 
+	UPROPERTY()
+	TArray<UStateBase*> StateInstances;
+
+	class AAIControllerBase* OwnerController;
+	class AGAS_EnemyBase* OwnerEnemyBase;
+	class UAC_BehaviorDecision* BehaviorDecisionComponent;
+	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
+	class AGAS_HeroBase* HeroBase;
 };

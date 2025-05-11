@@ -2,6 +2,9 @@
 
 
 #include "Gameplay/AI/Components/AC_StateManager.h"
+#include "Gameplay/AI/States/AttackState.h"
+#include "Gameplay/AI/States/MovementState.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
 
 
 UAC_StateManager::UAC_StateManager()
@@ -12,27 +15,74 @@ UAC_StateManager::UAC_StateManager()
 void UAC_StateManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OwnerEnemyBase = Cast<AGAS_EnemyBase>(GetOwner());
+	if (!OwnerEnemyBase)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
+		return;
+	}
+
+	OwnerController = Cast<AAIControllerBase>(OwnerEnemyBase->GetController());
+	if (!OwnerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
+		return;
+	}
+
+	BehaviorDecisionComponent = OwnerController->GetBehaviorDecisionComponent();
+	if (!BehaviorDecisionComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
+		return;
+	}
+
+	OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
+	if (!OwnerEnemyASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
+		return;
+	}
+
+	CreateStates();
 }
 
-void UAC_StateManager::StartStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass)
+void UAC_StateManager::CreateStates()
 {
+	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent);
+
+	MovementState = Cast<UMovementState>(NewObject<UObject>(this, UMovementState::StaticClass()));
+	MovementState->StateInitalize(StateInitParams);
+	StateInstances.Add(MovementState);
+
+	AttackState = Cast<UAttackState>(NewObject<UObject>(this, UAttackState::StaticClass()));
+	AttackState->StateInitalize(StateInitParams);
+	StateInstances.Add(AttackState);
+}
+
+void UAC_StateManager::EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass)
+{
+	if (!StateClass)
+	{
+		return;
+	}
+
 	if (CurrentState)
 	{
 		CurrentState->OnExit(EnemyBase, EnemyController);
 	}
 
-	if (StateClass)
+	for (UStateBase* State : StateInstances)
 	{
-		CurrentState = Cast<UStateBase>(NewObject<UObject>(this, StateClass));
-		if (CurrentState)
+		if (State && State->GetClass() == StateClass)
 		{
+			CurrentState = State;
 			CurrentState->OnEnter(EnemyBase, EnemyController);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to instantiate state class: %s"), *StateClass->GetName());
+			return;
 		}
 	}
+
+	UE_LOG(LogTemp, Error, TEXT("State class not found in StateInstances: %s"), *GetNameSafe(StateClass));
 }
 
 void UAC_StateManager::StopCurrentState()

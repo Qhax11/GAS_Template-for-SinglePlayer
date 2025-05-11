@@ -14,4 +14,5 @@ class GAS_TEMPLATESP_API UAttackState : public UStateBase
 public:
 	virtual void OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController);
 
+	
 };

@@ -74,6 +74,9 @@ public:
 
 	void CancelMovementAbilities();
 
+	UPROPERTY(BlueprintAssignable)
+	FOnMovementChainEnded OnMovementChainEnded;
+
 protected:
 	void TryExecuteNextMovementAbilityInChain();
 
@@ -82,12 +85,8 @@ protected:
 	UFUNCTION()
 	void OnMovementAbilityEnded(const FAbilityEndedDataBP& AbilityEndedData);
 
-	UPROPERTY(BlueprintAssignable)
-	FOnMovementChainEnded OnMovementChainEnded;
-
 private:
 	FMovementChainTracker MovementChainTracker;
-
 	class AAIControllerBase* OwnerController;
 	class UAC_BehaviorDecision* BehaviorDecisionComp;
 	class AGAS_EnemyBase* OwnerEnemyBase;

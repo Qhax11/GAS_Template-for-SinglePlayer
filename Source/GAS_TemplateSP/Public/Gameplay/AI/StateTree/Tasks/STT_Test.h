@@ -35,5 +35,7 @@ struct FPrintActorNameTask : public FStateTreeTaskCommonBase
 
 	virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult&) const override;
 
+	virtual void ExitState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
+
 	virtual const UStruct* GetInstanceDataType() const override { return FStartStateInstanceData::StaticStruct(); }
 };

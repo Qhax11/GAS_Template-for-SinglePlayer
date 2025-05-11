@@ -85,6 +85,31 @@ void UAC_StateManager::EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControlle
 	UE_LOG(LogTemp, Error, TEXT("State class not found in StateInstances: %s"), *GetNameSafe(StateClass));
 }
 
+void UAC_StateManager::ExitStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass)
+{
+	if (!StateClass)
+	{
+		return;
+	}
+
+	if (CurrentState)
+	{
+		CurrentState->OnExit(EnemyBase, EnemyController);
+	}
+
+	for (UStateBase* State : StateInstances)
+	{
+		if (State && State->GetClass() == StateClass)
+		{
+			CurrentState = State;
+			CurrentState->OnExit(EnemyBase, EnemyController);
+			return;
+		}
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("State class not found in StateInstances: %s"), *GetNameSafe(StateClass));
+}
+
 void UAC_StateManager::StopCurrentState()
 {
 }

@@ -21,3 +21,13 @@ EStateTreeRunStatus FPrintActorNameTask::EnterState(FStateTreeExecutionContext& 
 
 	return EStateTreeRunStatus::Running;
 }
+
+void FPrintActorNameTask::ExitState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const
+{
+	FStartStateInstanceData& Data = Context.GetInstanceData(*this);
+
+	if (Data.EnemyBase && Data.EnemyBase->GetEnemyStateManagerComponent())
+	{
+		Data.EnemyBase->GetEnemyStateManagerComponent()->ExitStateByClass(Data.EnemyBase, Data.EnemyController, Data.StateClass);
+	}
+}

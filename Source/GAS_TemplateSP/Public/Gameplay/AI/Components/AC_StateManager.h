@@ -20,6 +20,9 @@ public:
 	void CreateStates();
 
 	void EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass);
+
+	void ExitStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass);
+
 	void StopCurrentState();
 	bool IsCurrentStateFinished() const;
 

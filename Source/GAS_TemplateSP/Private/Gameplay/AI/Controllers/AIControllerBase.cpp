@@ -10,6 +10,7 @@
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Animation/AN_SendTag.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
+#include "Gameplay/AI/Components/AC_StateManager.h"
 
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
@@ -211,8 +212,7 @@ float AAIControllerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability
 
 void AAIControllerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 {
-	GetStateTreeComponent()->bInComingAttackState = true;
-	ControlledEnemy->GetAbilitySystemComponent()->AddLooseGameplayTag(GAS_Tags::TAG_AI_StateTree_State_ComingAttack);
+	ControlledEnemy->GetEnemyStateManagerComponent()->ComingAttackPayload = EventPayload;
 	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack, FConstStructView::Make(EventPayload));
 }
 

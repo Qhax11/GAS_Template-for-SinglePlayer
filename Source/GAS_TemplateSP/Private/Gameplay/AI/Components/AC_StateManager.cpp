@@ -4,6 +4,7 @@
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/AI/States/AttackState.h"
 #include "Gameplay/AI/States/MovementState.h"
+#include "Gameplay/AI/States/InComingAttackState.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "StateTreeExecutionContext.h"
 
@@ -66,9 +67,13 @@ void UAC_StateManager::CreateStates()
 	AttackState = Cast<UAttackState>(NewObject<UObject>(this, UAttackState::StaticClass()));
 	AttackState->StateInitalize(StateInitParams);
 	StateInstances.Add(AttackState);
+
+	InComingAttackState = Cast<UInComingAttackState>(NewObject<UObject>(this, UInComingAttackState::StaticClass()));
+	InComingAttackState->StateInitalize(StateInitParams);
+	StateInstances.Add(InComingAttackState);
 }
 
-void UAC_StateManager::EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass)
+void UAC_StateManager::EnterStateByClass(TSubclassOf<UStateBase> StateClass)
 {
 	if (!StateClass)
 	{
@@ -77,7 +82,7 @@ void UAC_StateManager::EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControlle
 
 	if (CurrentState)
 	{
-		CurrentState->OnExit(EnemyBase, EnemyController);
+		CurrentState->OnExit();
 	}
 
 	for (UStateBase* State : StateInstances)
@@ -85,7 +90,7 @@ void UAC_StateManager::EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControlle
 		if (State && State->GetClass() == StateClass)
 		{
 			CurrentState = State;
-			CurrentState->OnEnter(EnemyBase, EnemyController);
+			CurrentState->OnEnter();
 			return;
 		}
 	}
@@ -93,7 +98,7 @@ void UAC_StateManager::EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControlle
 	UE_LOG(LogTemp, Error, TEXT("State class not found in StateInstances: %s"), *GetNameSafe(StateClass));
 }
 
-void UAC_StateManager::ExitStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass)
+void UAC_StateManager::ExitStateByClass(TSubclassOf<UStateBase> StateClass)
 {
 	if (!StateClass)
 	{
@@ -102,7 +107,7 @@ void UAC_StateManager::ExitStateByClass(AGAS_EnemyBase* EnemyBase, AAIController
 
 	if (CurrentState)
 	{
-		CurrentState->OnExit(EnemyBase, EnemyController);
+		CurrentState->OnExit();
 	}
 
 	for (UStateBase* State : StateInstances)
@@ -110,7 +115,7 @@ void UAC_StateManager::ExitStateByClass(AGAS_EnemyBase* EnemyBase, AAIController
 		if (State && State->GetClass() == StateClass)
 		{
 			CurrentState = State;
-			CurrentState->OnExit(EnemyBase, EnemyController);
+			CurrentState->OnExit();
 			return;
 		}
 	}

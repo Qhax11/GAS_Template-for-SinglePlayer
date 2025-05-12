@@ -26,6 +26,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     EComingAttackReaction ReactionType;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Ability class that defines the actual gameplay logic and range values"))
+    TSubclassOf<class UGAS_GameplayAbilityBase> RecationAbilityClass;
+
     // Base chance to select this reaction (0.0 to 1.0)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float BaseChance = 0.5f;
@@ -61,7 +64,7 @@ class GAS_TEMPLATESP_API UBDS_ComingAttackReaction : public UBehaviorDecisionSer
 public:
     virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
 
-    EComingAttackReaction GetComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
+    FComingAttackReactionData GetBestComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
 	
 protected:
     float CalculateBehaviorStateScore(const FComingAttackReactionData& Data) const;

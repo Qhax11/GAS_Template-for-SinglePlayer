@@ -52,7 +52,7 @@ public:
     TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
     UFUNCTION(BlueprintCallable)
-    EComingAttackReaction GetComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
+    FComingAttackReactionData GetBestComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
 
     FAttackData LastSelectedAttackAbilityData;
 

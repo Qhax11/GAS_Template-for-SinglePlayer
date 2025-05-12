@@ -47,6 +47,8 @@ public:
     FStateInitParams() = default;
 };
 
+
+
 UCLASS()
 class GAS_TEMPLATESP_API UStateBase : public UObject
 {
@@ -55,11 +57,11 @@ class GAS_TEMPLATESP_API UStateBase : public UObject
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
-	virtual void OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController) {}
+	virtual void OnEnter() {}
 
-	virtual void OnTick(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController, float DeltaTime) {}
+	virtual void OnTick() {}
 
-	virtual void OnExit(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController) {}
+	virtual void OnExit() {}
 
 protected:
     AGAS_EnemyBase* Enemy;

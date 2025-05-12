@@ -14,7 +14,7 @@ class GAS_TEMPLATESP_API UMovementState : public UStateBase
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams) override;
 
-	virtual void OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController);
+	virtual void OnEnter() override;
 
 	void StartMovementChain();
 

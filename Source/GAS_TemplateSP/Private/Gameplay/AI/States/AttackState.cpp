@@ -7,13 +7,9 @@
 #include "Gameplay/Abilities/Enemy/Boss/GA_BossShadowAttack.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 
-void UAttackState::OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController)
+void UAttackState::OnEnter()
 {
 	ExecuteSelectedAttack();
-
-
-
-	
 }
 
 void UAttackState::ExecuteSelectedAttack()

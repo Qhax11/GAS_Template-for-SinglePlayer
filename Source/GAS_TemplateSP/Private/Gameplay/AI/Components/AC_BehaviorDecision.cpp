@@ -125,19 +125,18 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     */
 }
 
-EComingAttackReaction UAC_BehaviorDecision::GetComingAttackDecision(FComingAttackPayload ComingAttackPayload)
+FComingAttackReactionData UAC_BehaviorDecision::GetBestComingAttackDecision(FComingAttackPayload ComingAttackPayload)
 {
+    FComingAttackReactionData BestComingAttackReaction;
     if (!ComingAttackReactionService)
     {
         UE_LOG(LogTemp, Warning, TEXT("ComingAttackReactionService is null in: %s"), *GetName());
-        return EComingAttackReaction::TakeDamage;
+        return BestComingAttackReaction;
     }
-
-    EComingAttackReaction BestComingAttackReaction;
 
     if (IsValid(ComingAttackReactionService)) 
     {
-        BestComingAttackReaction = ComingAttackReactionService->GetComingAttackDecision(ComingAttackPayload);
+        BestComingAttackReaction = ComingAttackReactionService->GetBestComingAttackDecision(ComingAttackPayload);
     }
 
     return BestComingAttackReaction;

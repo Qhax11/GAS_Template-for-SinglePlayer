@@ -19,9 +19,9 @@ public:
 
 	void CreateStates();
 
-	void EnterStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass);
+	void EnterStateByClass(TSubclassOf<UStateBase> StateClass);
 
-	void ExitStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass);
+	void ExitStateByClass(TSubclassOf<UStateBase> StateClass);
 
 	void RequestStateTreeExit(UStateBase* Requester);
 
@@ -29,7 +29,11 @@ public:
 	bool IsCurrentStateFinished() const;
 
 
+	FComingAttackPayload ComingAttackPayload;
+
 protected:
+
+
 	UPROPERTY()
 	UStateBase* CurrentState = nullptr;
 
@@ -39,6 +43,8 @@ protected:
 	UPROPERTY()
 	class UAttackState* AttackState;
 
+	UPROPERTY()
+	class UInComingAttackState* InComingAttackState;
 
 	UPROPERTY()
 	TObjectPtr<AGAS_EnemyBase> OwnerEnemy = nullptr;

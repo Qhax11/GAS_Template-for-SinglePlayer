@@ -19,11 +19,13 @@ void UBDS_ComingAttackReaction::Initialize(const FBehaviorServiceInitParams& Beh
     }
 }
 
-EComingAttackReaction UBDS_ComingAttackReaction::GetComingAttackDecision(FComingAttackPayload ComingAttackPayload)
+FComingAttackReactionData UBDS_ComingAttackReaction::GetBestComingAttackDecision(FComingAttackPayload ComingAttackPayload)
 {
+    FComingAttackReactionData BestComingAttackReaction;
+
     if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack)
     {
-        return EComingAttackReaction::TakeDamage;
+        return BestComingAttackReaction;
     }
 
     EComingAttackReaction BestReaction = EComingAttackReaction::TakeDamage;
@@ -46,11 +48,11 @@ EComingAttackReaction UBDS_ComingAttackReaction::GetComingAttackDecision(FComing
         if (TotalScore > BestScore)
         {
             BestScore = TotalScore;
-            BestReaction = ReactionData.ReactionType;
+            BestComingAttackReaction = ReactionData;
         }
     }
 
-    return BestReaction;
+    return BestComingAttackReaction;
 }
 
 float UBDS_ComingAttackReaction::CalculateBehaviorStateScore(const FComingAttackReactionData& Data) const

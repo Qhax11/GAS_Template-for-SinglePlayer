@@ -16,7 +16,7 @@ EStateTreeRunStatus FPrintActorNameTask::EnterState(FStateTreeExecutionContext& 
 
 	if (UAC_StateManager* EnemyStateManagerComponent = Data.EnemyBase->GetEnemyStateManagerComponent()) 
 	{
-		Data.EnemyBase->GetEnemyStateManagerComponent()->EnterStateByClass(Data.EnemyBase, Data.EnemyController, Data.StateClass);
+		Data.EnemyBase->GetEnemyStateManagerComponent()->EnterStateByClass(Data.StateClass);
 	}
 
 	return EStateTreeRunStatus::Running;
@@ -28,6 +28,6 @@ void FPrintActorNameTask::ExitState(FStateTreeExecutionContext& Context, const F
 
 	if (Data.EnemyBase && Data.EnemyBase->GetEnemyStateManagerComponent())
 	{
-		Data.EnemyBase->GetEnemyStateManagerComponent()->ExitStateByClass(Data.EnemyBase, Data.EnemyController, Data.StateClass);
+		Data.EnemyBase->GetEnemyStateManagerComponent()->ExitStateByClass(Data.StateClass);
 	}
 }

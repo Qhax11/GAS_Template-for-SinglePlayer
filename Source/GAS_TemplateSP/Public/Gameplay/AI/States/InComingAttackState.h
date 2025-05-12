@@ -12,7 +12,7 @@ class GAS_TEMPLATESP_API UInComingAttackState : public UStateBase
 	GENERATED_BODY()
 	
 public:
-	virtual void OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController);
+	virtual void OnEnter() override;
 
-
+	void ActivateParryAbility(FComingAttackReactionData BestComingAttackReaction);
 };

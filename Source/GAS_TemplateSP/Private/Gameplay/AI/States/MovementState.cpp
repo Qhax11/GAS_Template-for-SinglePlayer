@@ -19,7 +19,7 @@ void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 	MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
 }
 
-void UMovementState::OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController)
+void UMovementState::OnEnter()
 {
 	StartMovementChain();
 }

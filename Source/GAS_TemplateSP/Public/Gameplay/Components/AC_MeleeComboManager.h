@@ -121,6 +121,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopCombo();
 
+	UPROPERTY(BlueprintAssignable)
+	FOnComboEnded OnComboEnded;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -135,9 +138,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	UComboChainAsset* ComboChainAsset;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnComboEnded OnComboEnded;
 
 	// Can be set from UI in the future to allow different combo styles.
 	int32 SelectedComboIndex = 0;

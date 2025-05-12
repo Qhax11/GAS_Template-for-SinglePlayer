@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/AI/Components/AC_StateManager.h"
 
 void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -9,4 +10,5 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 	EnemyController = StateInitParams.EnemyController;
 	EnemyASC = StateInitParams.EnemyASC;
 	BehaviorDecisionComponent = StateInitParams.BehaviorDecisionComponent;
+	StateManager = StateInitParams.StateManager;
 }

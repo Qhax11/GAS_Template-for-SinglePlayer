@@ -6,6 +6,7 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
+#include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
 USTRUCT()
@@ -26,16 +27,21 @@ public:
     UPROPERTY()
     UAC_BehaviorDecision* BehaviorDecisionComponent = nullptr;
 
+    UPROPERTY()
+    UAC_StateManager* StateManager = nullptr;
+
     FStateInitParams(
         AGAS_EnemyBase* InEnemy, 
         AAIControllerBase* InEnemyController, 
         UGAS_AbilitySystemComponent* InEnemyASC,
-        UAC_BehaviorDecision* InBehaviorDecisionComponent)
+        UAC_BehaviorDecision* InBehaviorDecisionComponent,
+        UAC_StateManager* InStateManager)
         :
         Enemy(InEnemy),
         EnemyController(InEnemyController),
         EnemyASC(InEnemyASC),
-        BehaviorDecisionComponent(InBehaviorDecisionComponent)
+        BehaviorDecisionComponent(InBehaviorDecisionComponent),
+        StateManager(InStateManager)
     {}
 
     FStateInitParams() = default;
@@ -60,4 +66,5 @@ protected:
     AAIControllerBase* EnemyController;
     UGAS_AbilitySystemComponent* EnemyASC;
     UAC_BehaviorDecision* BehaviorDecisionComponent;
+    class UAC_StateManager* StateManager;
 };

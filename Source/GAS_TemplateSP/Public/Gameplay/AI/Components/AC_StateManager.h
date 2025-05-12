@@ -23,8 +23,11 @@ public:
 
 	void ExitStateByClass(AGAS_EnemyBase* EnemyBase, AAIControllerBase* EnemyController, TSubclassOf<UStateBase> StateClass);
 
+	void RequestStateTreeExit(UStateBase* Requester);
+
 	void StopCurrentState();
 	bool IsCurrentStateFinished() const;
+
 
 protected:
 	UPROPERTY()
@@ -46,6 +49,7 @@ protected:
 	class AAIControllerBase* OwnerController;
 	class AGAS_EnemyBase* OwnerEnemyBase;
 	class UAC_BehaviorDecision* BehaviorDecisionComponent;
+	class UST_Base* OwnerStateTree;
 	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
 	class AGAS_HeroBase* HeroBase;
 };

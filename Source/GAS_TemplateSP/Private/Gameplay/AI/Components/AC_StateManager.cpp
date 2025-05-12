@@ -5,6 +5,7 @@
 #include "Gameplay/AI/States/AttackState.h"
 #include "Gameplay/AI/States/MovementState.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
+#include "StateTreeExecutionContext.h"
 
 
 UAC_StateManager::UAC_StateManager()
@@ -37,6 +38,13 @@ void UAC_StateManager::BeginPlay()
 		return;
 	}
 
+	OwnerStateTree = OwnerController->GetStateTreeComponent();
+	if (!OwnerStateTree)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerStateTree is null in: %s !"), *GetName());
+		return;
+	}
+
 	OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
 	if (!OwnerEnemyASC)
 	{
@@ -49,7 +57,7 @@ void UAC_StateManager::BeginPlay()
 
 void UAC_StateManager::CreateStates()
 {
-	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent);
+	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
 
 	MovementState = Cast<UMovementState>(NewObject<UObject>(this, UMovementState::StaticClass()));
 	MovementState->StateInitalize(StateInitParams);
@@ -108,6 +116,26 @@ void UAC_StateManager::ExitStateByClass(AGAS_EnemyBase* EnemyBase, AAIController
 	}
 
 	UE_LOG(LogTemp, Error, TEXT("State class not found in StateInstances: %s"), *GetNameSafe(StateClass));
+}
+
+void UAC_StateManager::RequestStateTreeExit(UStateBase* Requester)
+{
+	if (!OwnerStateTree || !Requester)
+	{
+		return;
+	}
+
+	FGameplayTag ExitEventTag;
+
+	if (Requester->IsA(UAttackState::StaticClass()))
+	{
+		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_ExitAttackState;
+	}
+
+	if (ExitEventTag.IsValid())
+	{
+		OwnerStateTree->SendStateTreeEvent(ExitEventTag);
+	}
 }
 
 void UAC_StateManager::StopCurrentState()

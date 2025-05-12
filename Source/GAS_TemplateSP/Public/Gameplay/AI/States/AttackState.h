@@ -14,5 +14,16 @@ class GAS_TEMPLATESP_API UAttackState : public UStateBase
 public:
 	virtual void OnEnter(AGAS_EnemyBase* OwnerEnemy, AAIControllerBase* OwnerController);
 
-	
+	void ExecuteSelectedAttack();
+
+	void ExecuteAttack();
+
+	void ExecuteComboAttack();
+
+	void ExecuteShadowAttack();
+
+	void OnAttackAbilityEnded(const FAbilityEndedData& AbilityEndedData);
+
+	UFUNCTION()
+	void OnComboChaindEnded();
 };

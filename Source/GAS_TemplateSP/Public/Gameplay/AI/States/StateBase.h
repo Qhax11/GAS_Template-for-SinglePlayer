@@ -63,6 +63,8 @@ public:
 
 	virtual void OnExit() {}
 
+    virtual void ExitRequest();
+
 protected:
     AGAS_EnemyBase* Enemy;
     AAIControllerBase* EnemyController;

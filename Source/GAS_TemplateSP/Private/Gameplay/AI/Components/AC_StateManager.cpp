@@ -134,7 +134,11 @@ void UAC_StateManager::RequestStateTreeExit(UStateBase* Requester)
 
 	if (Requester->IsA(UAttackState::StaticClass()))
 	{
-		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_ExitAttackState;
+		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Exit;
+	}
+	else if (Requester->IsA(UInComingAttackState::StaticClass()))
+	{
+		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit;
 	}
 
 	if (ExitEventTag.IsValid())

@@ -12,3 +12,14 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 	BehaviorDecisionComponent = StateInitParams.BehaviorDecisionComponent;
 	StateManager = StateInitParams.StateManager;
 }
+
+void UStateBase::ExitRequest()
+{
+	if (!StateManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
+		return;
+	}
+
+	StateManager->RequestStateTreeExit(this);
+}

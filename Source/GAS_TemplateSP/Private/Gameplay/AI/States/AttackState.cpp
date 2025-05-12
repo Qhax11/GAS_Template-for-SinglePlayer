@@ -80,11 +80,5 @@ void UAttackState::OnAttackAbilityEnded(const FAbilityEndedData& AbilityEndedDat
 
 void UAttackState::OnComboChaindEnded()
 {
-	if (!StateManager)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
-		return;
-	}
-
-	StateManager->RequestStateTreeExit(this);
+	ExitRequest();
 }

@@ -102,6 +102,8 @@ public:
 	
 	FOnGameplayTagChangeReceived& RegisterDelegateForTags(const FGameplayTagContainer& TagContainer, const EListenMode ListenMode);
 
+	void UnregisterAllDelegatesForObject(UObject* Target);
+
 protected:
 
 	UAbilitySystemComponent* OwnerASC;

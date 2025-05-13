@@ -12,10 +12,9 @@ class GAS_TEMPLATESP_API UInComingAttackState : public UStateBase
 	GENERATED_BODY()
 
 public:
+	virtual void StateInitalize(const FStateInitParams& StateInitParams);
+
 	virtual void OnEnter() override;
-
-	void ListenTakeDamage();
-
 
 	// Exit of take damage.
 	UFUNCTION()
@@ -25,7 +24,7 @@ public:
 
 	// Exit of Parry.
 	UFUNCTION()
-	void OnParryAbilityEnded(const FAbilityEndedDataBP& ParryAbilityEndedData);
+	void OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	void ActivateDodgeAbility(FComingAttackReactionData BestComingAttackReaction);
 

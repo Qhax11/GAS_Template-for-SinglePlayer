@@ -58,6 +58,31 @@ FOnGameplayTagChangeReceived& UAC_TagDelegates::RegisterDelegateForTags(const FG
 	}
 }
 
+void UAC_TagDelegates::UnregisterAllDelegatesForObject(UObject* Target)
+{
+	for (int32 i = TagDelegates.Num() - 1; i >= 0; --i)
+	{
+		FTagDelegate& Delegate = TagDelegates[i];
+
+		// Check if the bound object matches the target, remove bindings
+		if (Delegate.OnAddedTargetFunction.IsBound() && Delegate.OnAddedTargetFunction.GetUObject() == Target)
+		{
+			Delegate.OnAddedTargetFunction.Unbind();
+		}
+
+		if (Delegate.OnRemovedTargetFunction.IsBound() && Delegate.OnRemovedTargetFunction.GetUObject() == Target)
+		{
+			Delegate.OnRemovedTargetFunction.Unbind();
+		}
+
+		// Eðer ikisi de unbound olduysa, listeyi temizle
+		if (!Delegate.OnAddedTargetFunction.IsBound() && !Delegate.OnRemovedTargetFunction.IsBound())
+		{
+			TagDelegates.RemoveAt(i);
+		}
+	}
+}
+
 
 
 

@@ -12,6 +12,8 @@ class GAS_TEMPLATESP_API UAttackState : public UStateBase
 	GENERATED_BODY()
 	
 public:
+	virtual void StateInitalize(const FStateInitParams& StateInitParams);
+
 	virtual void OnEnter() override;
 
 	void ExecuteSelectedAttack();

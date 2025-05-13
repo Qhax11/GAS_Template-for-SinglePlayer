@@ -7,6 +7,13 @@
 #include "Gameplay/Abilities/Enemy/Boss/GA_BossShadowAttack.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 
+void UAttackState::StateInitalize(const FStateInitParams& StateInitParams)
+{
+	Super::StateInitalize(StateInitParams);
+
+	Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.AddDynamic(this, &UAttackState::OnComboChaindEnded); 
+}
+
 void UAttackState::OnEnter()
 {
 	ExecuteSelectedAttack();
@@ -52,9 +59,8 @@ void UAttackState::ExecuteComboAttack()
 
 	if (AttackClass && AttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
 	{
-		TSubclassOf<UGA_ComboMeleeAttack> ComboAttackClass = AttackClass; // direkt assign edilebilir çünkü TSubclassOf dönüþümlü
+		TSubclassOf<UGA_ComboMeleeAttack> ComboAttackClass = AttackClass; 
 		Enemy->GetEnemyMeleeComboManagerComponent()->StartComboChainWithClass(ComboAttackClass);
-		Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.AddDynamic(this, &UAttackState::OnComboChaindEnded); // TODO: ALREADY BÝNDED CHECK 
 	}
 }
 

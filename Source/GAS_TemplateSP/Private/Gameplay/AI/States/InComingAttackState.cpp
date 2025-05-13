@@ -5,13 +5,20 @@
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 
+void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParams)
+{
+	Super::StateInitalize(StateInitParams);
+}
+
 void UInComingAttackState::OnEnter()
 {
-	FComingAttackReactionData BestComingAttackReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(StateManager->ComingAttackPayload);
+	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 
+	FComingAttackReactionData BestComingAttackReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(StateManager->ComingAttackPayload);
 	switch (BestComingAttackReaction.ReactionType)
 	{
 	case EComingAttackReaction::Parry:
+		Enemy->GetTagDelegatesComponent()->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagRemoved);
 		ActivateParryAbility(BestComingAttackReaction);
 		break;
 
@@ -20,14 +27,9 @@ void UInComingAttackState::OnEnter()
 		break;
 
 	case EComingAttackReaction::TakeDamage:
-		ListenTakeDamage();
+		Enemy->GetTagDelegatesComponent()->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
 		break;
 	}
-}
-
-void UInComingAttackState::ListenTakeDamage()
-{
-	Enemy->GetTagDelegatesComponent()->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
 }
 
 void UInComingAttackState::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -39,6 +41,8 @@ void UInComingAttackState::ActivateParryAbility(FComingAttackReactionData BestCo
 {
 	UGAS_GameplayAbilityBase* ActivatedAbility =
 		EnemyASC->TryActivateAbilityByClassAndReturnInstance(BestComingAttackReaction.RecationAbilityClass);
+	UE_LOG(LogTemp, Warning, TEXT("ActivateParryAbility"));
+	/*
 	if (ActivatedAbility)
 	{
 		if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryAbilityEnded))
@@ -46,10 +50,12 @@ void UInComingAttackState::ActivateParryAbility(FComingAttackReactionData BestCo
 			ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnParryAbilityEnded);
 		}
 	}
+	*/
 }
 
-void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& ParryAbilityEndedData)
+void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnParryKnocbackTagRemoved"));
 	ExitRequest();
 }
 

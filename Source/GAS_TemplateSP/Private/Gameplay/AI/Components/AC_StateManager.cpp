@@ -80,11 +80,7 @@ void UAC_StateManager::EnterStateByClass(TSubclassOf<UStateBase> StateClass)
 		return;
 	}
 
-	if (CurrentState)
-	{
-		CurrentState->OnExit();
-	}
-
+	// Find the instance of the requested state
 	for (UStateBase* State : StateInstances)
 	{
 		if (State && State->GetClass() == StateClass)

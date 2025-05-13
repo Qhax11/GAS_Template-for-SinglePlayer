@@ -16,19 +16,34 @@ public:
 
 	virtual void OnEnter() override;
 
+protected:
 	// Exit of take damage.
 	UFUNCTION()
 	void OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
-	void ActivateParryAbility(FComingAttackReactionData BestComingAttackReaction);
+	//********************* PARRY *********************/
 
-	// Exit of Parry.
+	void MakeParryAbility(FComingAttackReactionData BestComingAttackReaction);
+
+	UFUNCTION()
+	void OnParryTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnParryKnocbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
 	UFUNCTION()
 	void OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	bool bParryKnockbackHappened = false;
+
+	//********************* DODGE *********************/
 
 	void ActivateDodgeAbility(FComingAttackReactionData BestComingAttackReaction);
 
 	// Exit of Dodge.
 	UFUNCTION()
 	void OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+
+private:
+	FGuid InComingAttackStateEnterID;
 };

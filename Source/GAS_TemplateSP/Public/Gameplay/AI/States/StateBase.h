@@ -57,11 +57,11 @@ class GAS_TEMPLATESP_API UStateBase : public UObject
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
-	virtual void OnEnter() {}
+    virtual void OnEnter();
 
 	virtual void OnTick() {}
 
-	virtual void OnExit() {}
+    virtual void OnExit();
 
     virtual void ExitRequest();
 

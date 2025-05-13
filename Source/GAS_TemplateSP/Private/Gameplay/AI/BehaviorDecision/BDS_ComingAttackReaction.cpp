@@ -43,7 +43,7 @@ FComingAttackReactionData UBDS_ComingAttackReaction::GetBestComingAttackDecision
 
         float TotalScore = BehaviorScore + TagScore + ReactionData.ScoreBias;
 
-        UE_LOG(LogTemp, Log, TEXT("[AI] Reaction %s (%d) → Score: %.2f"), *ReactionData.ComingAttackReactionName.ToString(), TotalScore);
+        UE_LOG(LogTemp, Log, TEXT("[AI] Reaction %s → Score: %.2f"), *ReactionData.ComingAttackReactionName.ToString(), TotalScore);
 
         if (TotalScore > BestScore)
         {
@@ -51,6 +51,8 @@ FComingAttackReactionData UBDS_ComingAttackReaction::GetBestComingAttackDecision
             BestComingAttackReaction = ReactionData;
         }
     }
+
+    UE_LOG(LogTemp, Log, TEXT("[AI] SelectedReaction %s"), *BestComingAttackReaction.ComingAttackReactionName.ToString());
 
     return BestComingAttackReaction;
 }

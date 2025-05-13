@@ -40,6 +40,11 @@ TArray<FMovementAbilityData> UBDS_GetBestMovementChain::GetBestMovementChain(TSu
 
     for (UMovementChainAsset* MovementChainAsset : AbilityMovementChainAssets)
     {
+        if (!MovementChainAsset) 
+        {
+            continue;
+        }
+
         if (GetTargetDistance() < MovementChainAsset->MinRange)
         {
             continue;

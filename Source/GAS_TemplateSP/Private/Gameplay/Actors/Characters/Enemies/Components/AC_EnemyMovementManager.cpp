@@ -78,7 +78,6 @@ void UAC_EnemyMovementManager::StopMovementAbilities()
 {
 	CancelMovementAbilities();
 	MovementChainTracker.ResetChain();
-	OnMovementChainEnded.Broadcast();
 }
 
 void UAC_EnemyMovementManager::CancelMovementAbilities()
@@ -101,6 +100,7 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Chain finished."));
 		StopMovementAbilities();
+		OnMovementChainEnded.Broadcast();
 		return;
 	}
 

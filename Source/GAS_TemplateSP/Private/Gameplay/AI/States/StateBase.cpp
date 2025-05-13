@@ -15,16 +15,11 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 
 void UStateBase::OnEnter()
 {
-	if (!bIsEntered)
-	{
-		GenerateNewEntryID();
-		bIsEntered = true;
-	}
+	
 }
 
 void UStateBase::OnExit()
 {
-	//bIsEntered = false;
 }
 
 void UStateBase::ExitRequest()
@@ -38,13 +33,3 @@ void UStateBase::ExitRequest()
 	StateManager->RequestStateTreeExit(this);
 }
 
-FGuid UStateBase::GenerateNewEntryID()
-{
-	StateEntryID = FGuid::NewGuid();
-	return StateEntryID;
-}
-
-bool UStateBase::IsThisEntryIDValid(FGuid EntryID) const
-{
-	return EntryID == StateEntryID;
-}

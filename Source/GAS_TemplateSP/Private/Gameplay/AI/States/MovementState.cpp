@@ -35,7 +35,6 @@ void UMovementState::StartMovementChain()
 	MovementManagerComponent->StartMovementChain(BestAttack.AbilityClass);
 }
 
-
 void UMovementState::OnMovementChainEnded()
 {
 	StartMovementChain();

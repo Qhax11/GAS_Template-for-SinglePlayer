@@ -68,18 +68,18 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 	if (!BossShadowTargetActor)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BossShadowTargetActor is null in: %s"), *GetName());
-		Super::OnTargetActorConfirm(TargetActorData);
+		OnTargetActorCancelled(TargetActorData);
 		return;
 	}
 
 	if (!TargetActorData.AbilityClass || !TargetActorData.AbilityCDO) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AbilityClass or AbilityCDO is null in: %s"), *GetName());
-		Super::OnTargetActorConfirm(TargetActorData);
+		OnTargetActorCancelled(TargetActorData);
 		return;
 	}
 
-	// If we're within range, proceed to perform the attack
+	// If we're within range, proceed to perform the attack, it's mean shadow attack successful
 	if (GetTargetDistance(BossShadowTargetActor) < TargetActorData.AbilityCDO->MaxRange)
 	{
 		// Ensure all shadow attacks start from Section2 of the montage
@@ -89,9 +89,13 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 		GetAvatarActorFromActorInfo()->SetActorRotation(BossShadowTargetActor->GetActorRotation());
 
 		OnBossShadowAttackCompleted.Broadcast(TargetActorData);
+		Super::OnTargetActorConfirm(TargetActorData);
+		return;
 	}
-
-	Super::OnTargetActorConfirm(TargetActorData);
+	else
+	{
+		OnTargetActorCancelled(TargetActorData);
+	}
 }
 
 void UGA_BossShadowAttack::OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData)

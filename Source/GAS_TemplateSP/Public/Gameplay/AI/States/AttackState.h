@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/Abilities/Enemy/Boss/GA_BossShadowAttack.h"
 #include "AttackState.generated.h"
 
 
@@ -16,15 +17,22 @@ public:
 
 	virtual void OnEnter() override;
 
-	void ExecuteSelectedAttack();
+	void SelectedAttack();
 
-	void ExecuteAttack();
+	void MakeAttack();
 
-	void ExecuteComboAttack();
+	void MakeComboAttack();
 
-	void ExecuteShadowAttack();
+	void MakeShadowAttack();
 
-	void OnAttackAbilityEnded(const FAbilityEndedData& AbilityEndedData);
+	UFUNCTION()
+	void OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData);
+
+	UFUNCTION()
+	void ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData);
+
+	UFUNCTION()
+	void OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
 	UFUNCTION()
 	void OnComboChaindEnded();

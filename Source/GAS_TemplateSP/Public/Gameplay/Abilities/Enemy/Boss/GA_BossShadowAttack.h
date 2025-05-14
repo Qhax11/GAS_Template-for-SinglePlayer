@@ -5,6 +5,7 @@
 #include "Gameplay/Abilities/Enemy/Boss/GA_BossTargetBase.h"
 #include "GA_BossShadowAttack.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBossShadowAttackExecute, const FGAS_TargetActorData&, Data);
 
 UCLASS()
 class GAS_TEMPLATESP_API UGA_BossShadowAttack : public UGA_BossTargetBase
@@ -24,8 +25,11 @@ public:
 
 	virtual void OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData) override;
 
+	float GetTargetDistance(AActor* ShadowTargetActor);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnBossShadowAttackExecute OnBossShadowAttackCompleted;
+
 	UPROPERTY(EditDefaultsOnly)
 	float ExecuteTime = 0.5f;
-
-	float GetTargetDistance(AActor* ShadowTargetActor);
 };

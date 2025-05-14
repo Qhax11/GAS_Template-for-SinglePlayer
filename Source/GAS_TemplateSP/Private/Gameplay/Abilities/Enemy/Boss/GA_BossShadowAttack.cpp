@@ -88,10 +88,7 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 		GetAvatarActorFromActorInfo()->SetActorLocation(BossShadowTargetActor->GetActorLocation());
 		GetAvatarActorFromActorInfo()->SetActorRotation(BossShadowTargetActor->GetActorRotation());
 
-		if (UST_Base* BossST = BossController->GetStateTreeComponent())
-		{
-			BossST->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_ExecuteShadowAttack, FConstStructView::Make(TargetActorData));
-		}
+		OnBossShadowAttackCompleted.Broadcast(TargetActorData);
 	}
 
 	Super::OnTargetActorConfirm(TargetActorData);

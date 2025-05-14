@@ -4,7 +4,6 @@
 #include "Gameplay/AI/States/AttackState.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
-#include "Gameplay/Abilities/Enemy/Boss/GA_BossShadowAttack.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 
 void UAttackState::StateInitalize(const FStateInitParams& StateInitParams)
@@ -16,11 +15,6 @@ void UAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 
 void UAttackState::OnEnter()
 {
-	ExecuteSelectedAttack();
-}
-
-void UAttackState::ExecuteSelectedAttack()
-{
 	UE_LOG(LogTemp, Warning, TEXT("Attack State has been enter"));
 	if (!BehaviorDecisionComponent)
 	{
@@ -31,57 +25,91 @@ void UAttackState::ExecuteSelectedAttack()
 
 	if (SelectedAttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
 	{
-		ExecuteComboAttack();
+		MakeComboAttack();
 	}
 	else if (SelectedAttackClass->IsChildOf(UGA_BossShadowAttack::StaticClass()))
 	{
-		ExecuteShadowAttack();
+		MakeShadowAttack();
 	}
 	else
 	{
-		ExecuteAttack();
+		MakeAttack();
 	}
-
 }
 
-void UAttackState::ExecuteAttack()
+void UAttackState::SelectedAttack()
+{
+}
+
+void UAttackState::MakeAttack()
 {
 	UGAS_GameplayAbilityBase* ActivatedAbility =
 		EnemyASC->TryActivateAbilityByClassAndReturnInstance(
 			BehaviorDecisionComponent->LastSelectedAttackAbilityData.AbilityClass);
 
-	ActivatedAbility->OnGameplayAbilityEndedWithData.AddUObject(this, &UAttackState::OnAttackAbilityEnded);
+	if (ActivatedAbility) 
+	{
+		if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAttackState::OnAttackAbilityEnded))
+		{
+			ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAttackState::OnAttackAbilityEnded);
+		}
+	}
 }
 
-void UAttackState::ExecuteComboAttack()
+void UAttackState::MakeComboAttack()
 {
 	UClass* AttackClass = BehaviorDecisionComponent->LastSelectedAttackAbilityData.AbilityClass;
 
 	if (AttackClass && AttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
 	{
-		TSubclassOf<UGA_ComboMeleeAttack> ComboAttackClass = AttackClass; 
+		TSubclassOf<UGA_ComboMeleeAttack> ComboAttackClass = AttackClass;
 		Enemy->GetEnemyMeleeComboManagerComponent()->StartComboChainWithClass(ComboAttackClass);
 	}
 }
 
-void UAttackState::ExecuteShadowAttack()
+void UAttackState::MakeShadowAttack()
 {
 	UGAS_GameplayAbilityBase* ActivatedAbility =
 		EnemyASC->TryActivateAbilityByClassAndReturnInstance(
 			BehaviorDecisionComponent->LastSelectedAttackAbilityData.AbilityClass);
 
-	ActivatedAbility->OnGameplayAbilityEndedWithData.AddUObject(this, &UAttackState::OnAttackAbilityEnded);
+	UGA_BossShadowAttack* ShadowAttack = Cast<UGA_BossShadowAttack>(ActivatedAbility);
+	if (ShadowAttack)
+	{
+		if (!ShadowAttack->OnBossShadowAttackCompleted.IsAlreadyBound(this, &UAttackState::ExecuteShadowAttack))
+		{
+			ShadowAttack->OnBossShadowAttackCompleted.AddDynamic(this, &UAttackState::ExecuteShadowAttack);
+		}
+
+		if (!ShadowAttack->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAttackState::OnShadowAttackAbilityEnded))
+		{
+			ShadowAttack->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAttackState::OnShadowAttackAbilityEnded);
+		}
+	}
 }
 
-void UAttackState::OnAttackAbilityEnded(const FAbilityEndedData& AbilityEndedData)
+void UAttackState::OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData)
 {
-	if (!StateManager) 
+	if (ShadowAttackAbilityEndedData.bWasCancelled) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
-		return;
+		ExitRequest();
 	}
+}
 
-	StateManager->RequestStateTreeExit(this);
+void UAttackState::ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData)
+{
+	//FGAS_TargetActorData NonConstShadowActorData = const_cast<FGAS_TargetActorData&>(ShadowActorData);
+
+	if (ShadowActorData.AbilityClass && ShadowActorData.AbilityClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
+	{
+		TSubclassOf<UGA_ComboMeleeAttack> ComboClass = TSubclassOf<UGA_ComboMeleeAttack>(ShadowActorData.AbilityClass);
+		Enemy->GetEnemyMeleeComboManagerComponent()->StartComboChainWithClass(ComboClass, FName("Section2"));
+	}
+}
+
+void UAttackState::OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+{
+	ExitRequest();
 }
 
 void UAttackState::OnComboChaindEnded()

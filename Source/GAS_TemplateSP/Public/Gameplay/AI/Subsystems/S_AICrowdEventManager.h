@@ -115,6 +115,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnNewAttackIntenderAdded(UAbilitySystemComponent* NewIntender);
 
+	UFUNCTION(BlueprintCallable)
+	bool ForceAddAttackIntender(UAbilitySystemComponent* NewIntender);
+
 	/**
     * Removes the ASC from the attack intender list if it was in it.
     * Can be called when an AI finishes or aborts its attack, or is about to despawn.
@@ -156,9 +159,13 @@ protected:
 
 	FEnemyData* GetFurthestAttackIntender(UAbilitySystemComponent* IgnoreASC);
 
+	FEnemyData* GetClosestAttackIntender(UAbilitySystemComponent* IgnoreASC);
+
 	FEnemyData* GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC);
 
 	void SendStateTreeEventToAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload = FConstStructView());
+
+	void SendStateTreeEventToNonAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload = FConstStructView());
 
 	// ===============================================================
     //                                Debug

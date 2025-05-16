@@ -42,6 +42,9 @@ protected:
 	class UAC_EnemyMovementManager* EnemyMovementManagerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
+	class UAC_PatrolHandler* PatrolHandlerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
 	class UAC_StateManager* EnemyStateManagerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")

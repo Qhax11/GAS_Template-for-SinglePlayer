@@ -9,6 +9,7 @@
 #include "Gameplay/Components/GameplayTag/AC_TagDispatcher.h"
 #include "Gameplay/Components/GameplayTag/AC_TagListenerBase.h"
 #include "Gameplay/Components/AC_GameplayData.h"
+#include "Gameplay/Components/AC_PostureHandler.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 

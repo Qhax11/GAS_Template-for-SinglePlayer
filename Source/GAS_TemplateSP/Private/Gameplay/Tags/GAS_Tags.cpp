@@ -184,6 +184,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash_Cooldown, "AI.Ability.Dash.Cooldown");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement, "AI.AbilityTriggerEvent.Movement");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_MoveToLocation, "AI.AbilityTriggerEvent.Movement.MoveToLocation");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Strafing, "AI.AbilityTriggerEvent.Movement.Strafing");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_ChaseTarget, "AI.AbilityTriggerEvent.Movement.ChaseTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Dash, "AI.AbilityTriggerEvent.Movement.Dash");

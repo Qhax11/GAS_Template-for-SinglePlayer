@@ -96,6 +96,7 @@ void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterDeSpawnData& Charact
 
    // CharacterDeSpawnData.InstigatorASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
     SendStateTreeEventToAttackIntenders(GAS_Tags::TAG_AI_StateTreeEvent_Crowd_HeroFinisher);
+    SendStateTreeEventToNonAttackIntenders(GAS_Tags::TAG_AI_StateTreeEvent_Crowd_HeroFinisher);
 }
 
 bool US_AICrowdEventManager::RequestToBeAttackIntender(UAbilitySystemComponent* ASC)
@@ -127,40 +128,59 @@ bool US_AICrowdEventManager::RequestToBeAttackIntender(UAbilitySystemComponent* 
 
 void US_AICrowdEventManager::OnNewAttackIntenderAdded(UAbilitySystemComponent* NewIntender)
 {
+    //ForceAddAttackIntender(NewIntender);
+}
+
+bool US_AICrowdEventManager::ForceAddAttackIntender(UAbilitySystemComponent* NewIntender)
+{
     if (!IsValid(NewIntender))
     {
-        return;
+        return false;
     }
 
-    FEnemyData* FindedEnemyData = FindEnemyDataByASC(NewIntender);
-    if (!FindedEnemyData)
+    FEnemyData* NewEnemyData = FindEnemyDataByASC(NewIntender);
+    if (!NewEnemyData)
     {
-        return;
+        return false;
     }
 
-    // It is already AttackIntender
-    if (FindedEnemyData->IsAttackIntender())
+    // Already an attack intender
+    if (NewEnemyData->IsAttackIntender())
     {
-        return;
+        return false;
     }
 
-    if (GetAttackIntenders().Num() >= MaxEnemyAttackingCount) 
+    // Check if we need to steal token
+    const int32 CurrentIntenders = GetAttackIntenders().Num();
+    if (CurrentIntenders >= MaxEnemyAttackingCount)
     {
-        return;
-    }
-
-    AddAttackIntender(NewIntender);
-
-    FEnemyData* FurthestIntenderData = GetFurthestAttackIntender(NewIntender);
-    if (FurthestIntenderData)
-    {
-        RemoveAttackIntender(FurthestIntenderData->ASC);
-        if (bDebug && FurthestIntenderData->Character)
+        FEnemyData* ClosestIntender = GetClosestAttackIntender(NewIntender);
+        if (ClosestIntender && ClosestIntender->ASC != NewIntender)
         {
-            UE_LOG(LogTemp, Warning, TEXT("[Crowd] %s removed from AttackIntenders due to proximity override."),
-                *FurthestIntenderData->ASC->GetName());
+            RemoveAttackIntender(ClosestIntender->ASC);
+
+            if (bDebug && ClosestIntender->Character)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("[Crowd] %s lost attack token to %s."),
+                    *ClosestIntender->ASC->GetName(), *NewIntender->GetName());
+            }
+        }
+        else
+        {
+            // No one to remove; cannot add
+            return false;
         }
     }
+
+    // Add new intender
+    AddAttackIntender(NewIntender);
+
+    if (bDebug && NewEnemyData->Character)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("[Crowd] %s added as AttackIntender."), *NewIntender->GetName());
+    }
+
+    return true;
 }
 
 bool US_AICrowdEventManager::ReleaseAttackIntender(UAbilitySystemComponent* ASC)
@@ -302,6 +322,37 @@ FEnemyData* US_AICrowdEventManager::GetFurthestAttackIntender(UAbilitySystemComp
     return FurthestEnemyData;
 }
 
+FEnemyData* US_AICrowdEventManager::GetClosestAttackIntender(UAbilitySystemComponent* IgnoreASC)
+{
+    if (!HeroActor || GetAttackIntenders().Num() == 0)
+    {
+        return nullptr;
+    }
+
+    FEnemyData* ClosestEnemyData = nullptr;
+    float ClosestDistanceSqr = TNumericLimits<float>::Max();
+
+    const FVector HeroLocation = HeroActor->GetActorLocation();
+
+    for (FEnemyData* Data : GetAttackIntenders())
+    {
+        if (!Data || !Data->Character || Data->ASC == IgnoreASC)
+        {
+            continue;
+        }
+
+        const float DistanceSqr = FVector::DistSquared(HeroLocation, Data->Character->GetActorLocation());
+
+        if (DistanceSqr < ClosestDistanceSqr)
+        {
+            ClosestDistanceSqr = DistanceSqr;
+            ClosestEnemyData = Data;
+        }
+    }
+
+    return ClosestEnemyData;
+}
+
 FEnemyData* US_AICrowdEventManager::GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC) 
 {
     if (!HeroActor || GetNonAttackIntenders().Num() == 0)
@@ -338,6 +389,17 @@ void US_AICrowdEventManager::SendStateTreeEventToAttackIntenders(const FGameplay
     for (FEnemyData* AttackIntenderData : GetAttackIntenders())
     {
         if (AttackIntenderData->StateTree) 
+        {
+            AttackIntenderData->StateTree->SendStateTreeEvent(Tag, Payload);
+        }
+    }
+}
+
+void US_AICrowdEventManager::SendStateTreeEventToNonAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload)
+{
+    for (FEnemyData* AttackIntenderData : GetNonAttackIntenders())
+    {
+        if (AttackIntenderData->StateTree)
         {
             AttackIntenderData->StateTree->SendStateTreeEvent(Tag, Payload);
         }

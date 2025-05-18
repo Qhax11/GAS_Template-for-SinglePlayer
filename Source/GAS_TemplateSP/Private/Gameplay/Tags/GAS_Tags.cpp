@@ -41,6 +41,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Slow, "Gameplay.State.Debuff.Slow");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Strafing, "Gameplay.State.Moving.Strafing");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Patrolling, "Gameplay.State.Moving.Patrolling");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Walking, "Gameplay.State.Moving.Walking");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Jogging, "Gameplay.State.Moving.Jogging");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Running, "Gameplay.State.Moving.Running");
@@ -184,7 +185,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash_Cooldown, "AI.Ability.Dash.Cooldown");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement, "AI.AbilityTriggerEvent.Movement");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_MoveToLocation, "AI.AbilityTriggerEvent.Movement.MoveToLocation");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Patrolling, "AI.AbilityTriggerEvent.Movement.Patrolling");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Strafing, "AI.AbilityTriggerEvent.Movement.Strafing");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_ChaseTarget, "AI.AbilityTriggerEvent.Movement.ChaseTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Dash, "AI.AbilityTriggerEvent.Movement.Dash");

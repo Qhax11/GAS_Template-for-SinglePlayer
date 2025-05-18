@@ -28,6 +28,9 @@ void UAC_TagListenerBase::BeginPlay()
 
 	if (UAC_TagDelegates* TagDelegatesComponent = GetOwner()->GetComponentByClass<UAC_TagDelegates>())
 	{
+		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Patrolling, EListenMode::OnAdded).BindDynamic(this, &UAC_TagListenerBase::OnPatrollingTagAdded);
+		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Patrolling, EListenMode::OnRemoved).BindDynamic(this, &UAC_TagListenerBase::OnPatrollingTagRemoved);
+
 		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing, EListenMode::OnAdded).BindDynamic(this, &UAC_TagListenerBase::OnStrafingTagAdded);
 		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing, EListenMode::OnRemoved).BindDynamic(this, &UAC_TagListenerBase::OnStrafingTagRemoved);
 
@@ -45,6 +48,16 @@ void UAC_TagListenerBase::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("TagDelegatesComponent is null in %s, cannot listen tags."), *this->GetName());
 		return;
 	}
+}
+
+void UAC_TagListenerBase::OnPatrollingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+}
+
+void UAC_TagListenerBase::OnPatrollingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	OwnerCharacterMoveComp->bOrientRotationToMovement = false;
 }
 
 void UAC_TagListenerBase::OnStrafingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

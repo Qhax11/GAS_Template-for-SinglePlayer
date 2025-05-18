@@ -22,6 +22,12 @@ protected:
 
 	// Moving Tags
 	UFUNCTION()
+	void OnPatrollingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnPatrollingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
 	void OnStrafingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	UFUNCTION()

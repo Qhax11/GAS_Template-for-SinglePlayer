@@ -31,12 +31,13 @@ void UAC_PatrolHandler::BeginPlay()
 
 void UAC_PatrolHandler::StartPatrolling()
 {
-	if (PatrolPoints.Num() == 0)
+	if (PatrolPoints.Num() == 0 || !OwnerEnemyASC)
 	{
 		return;
 	}
 
 	MoveToNextPatrolPoint();
+	bInPatrolling = true;
 }
 
 void UAC_PatrolHandler::StopPatrolling()
@@ -51,42 +52,53 @@ void UAC_PatrolHandler::StopPatrolling()
 	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement);
 
 	OwnerEnemyASC->CancelAbilities(&CancelTags);
+	bInPatrolling = false;
+
+	if (!LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded))
+	{
+		LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
+	}
 }
 
 void UAC_PatrolHandler::MoveToNextPatrolPoint()
 {
-	if (!OwnerEnemyASC)
-	{
-		return;
-	} 
-
 	if (!PatrolPoints.IsValidIndex(CurrentIndex)) 
+	{
+		CurrentIndex = 0;
+	}
+
+	ActivatePatrollingAbility();
+}
+
+void UAC_PatrolHandler::ActivatePatrollingAbility()
+{
+	if (!OwnerEnemyASC)
 	{
 		return;
 	}
 
 	FGameplayEventData MoveToLocationEventData;
-	MoveToLocationEventData.EventTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_MoveToLocation;
+	MoveToLocationEventData.EventTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Patrolling;
 	MoveToLocationEventData.Target = PatrolPoints[CurrentIndex];
 
-	UGAS_GameplayAbilityBase* MoveToLocationAbility = 
-		OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MoveToLocationAbilityClass, MoveToLocationEventData);
+	UGAS_GameplayAbilityBase* PatrollingAbility =
+		OwnerEnemyASC->TryActivateAbilityByClassWithEventData(EnemyPatrollingAbilityClass, MoveToLocationEventData);
 
-	if (MoveToLocationAbility) 
+	if (PatrollingAbility)
 	{
-		if (!MoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_PatrolHandler::OnMoveToLocationAbilityEnded))
+		if (!PatrollingAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded))
 		{
-			MoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAC_PatrolHandler::OnMoveToLocationAbilityEnded);
+			PatrollingAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
 		}
 	}
 
 	CurrentIndex++;
-	LastMoveToLocationAbility = MoveToLocationAbility;
+	LastMoveToLocationAbility = PatrollingAbility;
 }
 
-void UAC_PatrolHandler::OnMoveToLocationAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData)
+void UAC_PatrolHandler::OnPatrollingAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData)
 {
-	if (!IsValid(this) || !GetWorld() || GetWorld()->bIsTearingDown)
+	if (!bInPatrolling || !IsValid(this) || GetWorld()->bIsTearingDown)
 	{
 		return;
 	}

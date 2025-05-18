@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Gameplay/Abilities/Enemy/Movement/GA_MoveToLocation.h"
+#include "Gameplay/Abilities/Enemy/Movement/GA_EnemyPatrolling.h"
 #include "AC_PatrolHandler.generated.h"
 
 
@@ -26,14 +26,16 @@ protected:
 
 	void MoveToNextPatrolPoint();
 
+	void ActivatePatrollingAbility();
+
 	UFUNCTION()
-	void OnMoveToLocationAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData);
+	void OnPatrollingAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData);
 
 	UPROPERTY(EditAnywhere, Category = "Patrol")
 	TArray<AActor*> PatrolPoints;
 
 	UPROPERTY(EditAnywhere, Category = "Patrol")
-	TSubclassOf<UGA_MoveToLocation> MoveToLocationAbilityClass;
+	TSubclassOf<UGA_EnemyPatrolling> EnemyPatrollingAbilityClass;
 
 private:
 	UPROPERTY()
@@ -46,5 +48,5 @@ private:
 	UGAS_GameplayAbilityBase* LastMoveToLocationAbility = nullptr;
 
 	int32 CurrentIndex = 0;
-	bool bReverse = false;
+	bool bInPatrolling = false;
 };

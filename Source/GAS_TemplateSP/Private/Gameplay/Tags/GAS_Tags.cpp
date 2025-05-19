@@ -140,6 +140,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Hero_Ghost, "GameplayCue.VFX.Hero.Ghost");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Boss_Ghost, "GameplayCue.VFX.Boss.Ghost");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Dissolve_CharacterDead, "GameplayCue.VFX.Dissolve.CharacterDead");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Dissolve_SpawnShadow, "GameplayCue.VFX.Dissolve.SpawnShadow");
 	
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound, "GameplayCue.Sound");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_TakeDamage, "GameplayCue.Sound.TakeDamage");

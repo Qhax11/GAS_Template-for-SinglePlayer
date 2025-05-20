@@ -90,20 +90,20 @@ void UGAS_TraceBase::GetTraceStartLocationAndDirection(AActor* Owner, FVector& O
 
 void UGAS_TraceBase::MakeTeamFilter(TArray<AActor*>& OutActors, const AActor& Owner, ETeamAttitude::Type TeamAttidue)
 {
+	TArray<AActor*> FilteredActors;
+
 	for (AActor* CollectedActor : OutActors)
 	{
 		if (UAC_Team* TeamComp = CollectedActor->GetComponentByClass<UAC_Team>())
 		{
-			if (TeamComp->GetTeamAttitudeTowards(Owner) != TeamAttidue)
+			if (TeamComp->GetTeamAttitudeTowards(Owner) == TeamAttidue)
 			{
-				OutActors.Remove(CollectedActor);
+				FilteredActors.Add(CollectedActor);
 			}
 		}
-		else
-		{
-			OutActors.Remove(CollectedActor);
-		}
 	}
+
+	OutActors = FilteredActors;
 }
 
 void UGAS_TraceBase::MakeTeamFilter(TArray<FHitResult>& OutHitResults, const AActor& Owner, ETeamAttitude::Type TeamAttidue)

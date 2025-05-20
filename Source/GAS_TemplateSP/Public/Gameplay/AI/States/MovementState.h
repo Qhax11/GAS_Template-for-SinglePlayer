@@ -16,6 +16,8 @@ public:
 
 	virtual void OnEnter() override;
 
+	virtual void OnExit() override;
+
 	void StartMovementChain();
 
 	UFUNCTION()

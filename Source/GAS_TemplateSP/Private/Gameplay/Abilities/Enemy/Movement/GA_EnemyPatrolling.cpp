@@ -22,7 +22,7 @@ void UGA_EnemyPatrolling::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (!TriggerEventData)
+	if (!TriggerEventData || !TriggerEventData->Target)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);

@@ -56,12 +56,13 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 
 	if (MovementChainTracker.bIsActive)
 	{
+		/*
 		if (MovementChainTracker.IsCurrentAbilityStillValid())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Chain already active and current ability still valid. Skipping start."));
 			return;
 		}
-
+		*/
 		UE_LOG(LogTemp, Warning, TEXT("Chain is marked active but ability is invalid. Restarting chain."));
 		MovementChainTracker.ResetChain();
 	}
@@ -150,8 +151,8 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedDataBP&
 	if (AbilityEndedData.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
-		StopMovementAbilities(); // veya ResetChain();
-		return;
+		//StopMovementAbilities(); // veya ResetChain();
+		//return;
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("Movement Ability ended: %s."), *AbilityEndedData.AbilityThatEnded->GetName());

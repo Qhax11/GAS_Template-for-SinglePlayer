@@ -16,12 +16,15 @@ void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 		return;
 	}
 
-	MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
 }
 
 void UMovementState::OnEnter()
 {
 	StartMovementChain();
+}
+
+void UMovementState::OnExit()
+{
 }
 
 void UMovementState::StartMovementChain()
@@ -33,9 +36,11 @@ void UMovementState::StartMovementChain()
 
 	FAttackData BestAttack = BehaviorDecisionComponent->GetBestAttack();
 	MovementManagerComponent->StartMovementChain(BestAttack.AbilityClass);
+	MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
 }
 
 void UMovementState::OnMovementChainEnded()
 {
+	MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
 	StartMovementChain();
 }

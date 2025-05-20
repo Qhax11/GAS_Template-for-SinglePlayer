@@ -36,11 +36,17 @@ void UMovementState::StartMovementChain()
 
 	FAttackData BestAttack = BehaviorDecisionComponent->GetBestAttack();
 	MovementManagerComponent->StartMovementChain(BestAttack.AbilityClass);
-	MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
+	if (!MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded)) 
+	{
+		MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
+	}
 }
 
 void UMovementState::OnMovementChainEnded()
 {
-	MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
+	if (MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
+	{
+		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
+	}
 	StartMovementChain();
 }

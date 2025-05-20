@@ -60,6 +60,8 @@ protected:
 protected:
 	virtual void BeginPlay();
 
+	void EndPlay(const EEndPlayReason::Type EndPlayReason);
+
 	UFUNCTION()
 	virtual void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 

@@ -151,8 +151,8 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FAbilityEndedDataBP&
 	if (AbilityEndedData.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
-		//StopMovementAbilities(); // veya ResetChain();
-		//return;
+		StopMovementAbilities();
+		return;
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("Movement Ability ended: %s."), *AbilityEndedData.AbilityThatEnded->GetName());

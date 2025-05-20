@@ -6,7 +6,6 @@
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyPatrolling.h"
 #include "AC_PatrolHandler.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_PatrolHandler : public UActorComponent
 {
@@ -31,11 +30,22 @@ protected:
 	UFUNCTION()
 	void OnPatrollingAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData);
 
-	UPROPERTY(EditAnywhere, Category = "Patrol")
+	UPROPERTY(EditAnywhere, Category = "Patrolling")
 	TArray<AActor*> PatrolPoints;
 
-	UPROPERTY(EditAnywhere, Category = "Patrol")
+	UPROPERTY(EditAnywhere, Category = "Patrolling")
 	TSubclassOf<UGA_EnemyPatrolling> EnemyPatrollingAbilityClass;
+
+	// Minimum and maximum wait time between patrol points
+	UPROPERTY(EditAnywhere, Category = "Patrolling")
+	float MinPatrolWaitTime = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Patrolling")
+	float MaxPatrolWaitTime = 3.0f;
+
+	// Returns a random wait time in range
+	UFUNCTION(BlueprintCallable, Category = "Patrolling")
+	float GetRandomPatrolWaitTime() const;
 
 private:
 	UPROPERTY()

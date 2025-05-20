@@ -103,5 +103,14 @@ void UAC_PatrolHandler::OnPatrollingAbilityEnded(const FAbilityEndedDataBP& Shad
 		return;
 	}
 
-	MoveToNextPatrolPoint();
+	// Delay before moving to next point
+	const float WaitTime = GetRandomPatrolWaitTime();
+
+	FTimerHandle WaitTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(WaitTimerHandle, this, &UAC_PatrolHandler::MoveToNextPatrolPoint, WaitTime, false);
+}
+
+float UAC_PatrolHandler::GetRandomPatrolWaitTime() const
+{
+	return FMath::RandRange(MinPatrolWaitTime, MaxPatrolWaitTime);
 }

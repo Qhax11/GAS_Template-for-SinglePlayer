@@ -2,6 +2,10 @@
 
 
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "AIController.h"
 
 void UGA_EnemyTakeDamage::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 
@@ -10,5 +14,38 @@ void UGA_EnemyTakeDamage::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	SetRotationToInstigator(TriggerEventData->Instigator);
 
+	if (AGAS_EnemyBase* EnemyBase = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo()))
+	{
+		EnemyBase->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	}
+}
+
+void UGA_EnemyTakeDamage::SetRotationToInstigator(const AActor* Instigator)
+{
+	if (!Instigator)
+	{
+		return;
+	}
+
+	AActor* Avatar = GetAvatarActorFromActorInfo();
+	if (!Avatar) return;
+
+	FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(Avatar->GetActorLocation(), Instigator->GetActorLocation());
+
+	// Z eksenine sabitle (dönme yukarýdan olmasýn)
+	LookAtRot.Pitch = 0.f;
+	LookAtRot.Roll = 0.f;
+
+	// Her ikisini de güncelle
+	Avatar->SetActorRotation(LookAtRot);
+
+	if (APawn* Pawn = Cast<APawn>(Avatar))
+	{
+		if (AAIController* AIController = Cast<AAIController>(Pawn->GetController()))
+		{
+			AIController->SetControlRotation(LookAtRot);
+		}
+	}
 }

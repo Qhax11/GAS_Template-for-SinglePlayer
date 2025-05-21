@@ -21,8 +21,6 @@ protected:
 
 	UAnimMontage* GetHitMontage(UAnimMontage* AttackMontage);
 
-	void SetRotationToInstigator(const AActor* Instigator);
-
 	UPROPERTY(EditDefaultsOnly)
 	TMap<UAnimMontage*, UAnimMontage*> AttackAndHitMontages;
 };

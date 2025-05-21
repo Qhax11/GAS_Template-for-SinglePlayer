@@ -16,5 +16,6 @@ class GAS_TEMPLATESP_API UGA_EnemyTakeDamage : public UGA_TakeDamageBase
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	void SetRotationToInstigator(const AActor* Instigator);
 
 };

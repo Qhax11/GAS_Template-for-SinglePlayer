@@ -54,5 +54,15 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UGA_EnemyChaseTarget::OnChaseTimeEnd()
 {
+	if (!IsActive())
+	{
+		return;
+	}
+
+	if (EnemyController && EnemyController->GetPathFollowingComponent())
+	{
+		EnemyController->GetPathFollowingComponent()->OnRequestFinished.RemoveAll(this);
+	}
+
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }

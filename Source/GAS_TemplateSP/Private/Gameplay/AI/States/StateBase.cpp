@@ -33,3 +33,16 @@ void UStateBase::ExitRequest()
 	StateManager->RequestStateTreeExit(this);
 }
 
+float UStateBase::GetTargetDistance() const
+{
+	if (!Enemy || !EnemyController || !EnemyController->GetTarget())
+	{
+		return -1.0f;
+	}
+
+	FVector MyLocation = Enemy->GetActorLocation();
+	FVector TargetLocation = EnemyController->GetTarget()->GetActorLocation();
+
+	return FVector::Dist(MyLocation, TargetLocation);
+}
+

@@ -11,7 +11,7 @@
 
 UAC_StateManager::UAC_StateManager()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UAC_StateManager::BeginPlay()
@@ -54,6 +54,16 @@ void UAC_StateManager::BeginPlay()
 	}
 
 	CreateStates();
+}
+
+void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (CurrentState) 
+	{
+		CurrentState->OnTick(DeltaTime);
+	}
 }
 
 void UAC_StateManager::CreateStates()
@@ -135,6 +145,10 @@ void UAC_StateManager::RequestStateTreeExit(UStateBase* Requester)
 	else if (Requester->IsA(UInComingAttackState::StaticClass()))
 	{
 		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit;
+	}
+	else if (Requester->IsA(UMovementState::StaticClass()))
+	{
+		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Exit;
 	}
 
 	if (ExitEventTag.IsValid())

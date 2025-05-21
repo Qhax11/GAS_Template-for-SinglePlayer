@@ -36,6 +36,9 @@ protected:
 	float ReSpawnDelay = 2.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")
+	bool bDisableSpawn = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")
 	TSubclassOf<class UGameplayEffect> ReSpawnEffectClass;
 
 	AGAS_CharacterBase* OwnerCharacter;

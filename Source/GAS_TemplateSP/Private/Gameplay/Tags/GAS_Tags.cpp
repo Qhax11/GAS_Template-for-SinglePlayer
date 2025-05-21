@@ -163,6 +163,7 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction, "AI.StateTreeEvent.Transaction");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_AttackState_Exit, "AI.StateTreeEvent.Transaction.AttackState.Exit");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_MovementState_Exit, "AI.StateTreeEvent.Transaction.MovementState.Exit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit, "AI.StateTreeEvent.Transaction.InComingAttackState.Exit");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_DetectedPlayer, "AI.StateTreeEvent.DetectedPlayer");

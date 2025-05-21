@@ -48,6 +48,11 @@ void UAC_EnemyRespawn::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnD
 
 void UAC_EnemyRespawn::OnEnemyReSpawn(const FEnemySpawnData& EnemySpawnData)
 {
+    if (bDisableSpawn)
+    {
+        return;
+    }
+
     if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
         SpawnDelegatesSubsystem->OnEnemyReSpawn.Broadcast(EnemySpawnData);

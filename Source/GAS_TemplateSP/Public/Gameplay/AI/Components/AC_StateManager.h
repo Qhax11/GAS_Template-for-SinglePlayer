@@ -17,6 +17,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
+
 	void CreateStates();
 
 	void EnterStateByClass(TSubclassOf<UStateBase> StateClass);

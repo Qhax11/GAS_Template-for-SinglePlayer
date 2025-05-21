@@ -18,12 +18,12 @@ void UBDS_GetBestMovementChain::Initialize(const FBehaviorServiceInitParams& Beh
     }
 }
 
-TArray<FMovementAbilityData> UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
+UMovementChainAsset* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
     if (!SelectedAbilityClass || !AttackAbilityMovementChainMapAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("SelectedAbilityClass or AttackAbilityMovementChainMapAsset is null in: %s!"), *GetName());
-        return TArray<FMovementAbilityData>();
+        return nullptr;
     }
 
     UMovementChainAsset* BestMovementChainDataAsset = nullptr;
@@ -35,7 +35,7 @@ TArray<FMovementAbilityData> UBDS_GetBestMovementChain::GetBestMovementChain(TSu
     TArray<UMovementChainAsset*> AbilityMovementChainAssets = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
     if (AbilityMovementChainAssets.IsEmpty())
     {
-        return TArray<FMovementAbilityData>();
+        return nullptr;
     }
 
     for (UMovementChainAsset* MovementChainAsset : AbilityMovementChainAssets)
@@ -76,7 +76,7 @@ TArray<FMovementAbilityData> UBDS_GetBestMovementChain::GetBestMovementChain(TSu
                 *BestMovementChainDataAsset->MovementChainName.ToString(), BestMovementChainDistanceScore, BestMovementChainTargetMovementScore));
     }
     */
-    return BestMovementChainDataAsset->MovementChain;
+    return BestMovementChainDataAsset;
 }
 
 TArray<UMovementChainAsset*> UBDS_GetBestMovementChain::GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const

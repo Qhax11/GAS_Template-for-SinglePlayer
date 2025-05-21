@@ -88,7 +88,7 @@ float UBDS_GetBestAttack::CalculateAttackAbilityScoreBasedOnTargetDistance(FAtta
     // Minimum Range'in ALTINDA mesafedeyse ekstra ceza uygula (isteğe bağlı)
     if (DistanceToTarget < AbilityMinRange)
     {
-        Score *= 0.5f; // Çok yakınsa etkisizleştir
+        Score = -1; // Çok yakınsa etkisizleştir
     }
 
     return FMath::Clamp(Score, 0.f, 1.f);

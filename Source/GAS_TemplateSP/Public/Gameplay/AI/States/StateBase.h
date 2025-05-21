@@ -59,13 +59,15 @@ public:
 
     virtual void OnEnter();
 
-	virtual void OnTick() {}
+    virtual void OnTick(float DeltaTime) {}
 
     virtual void OnExit();
 
     virtual void ExitRequest();
 
 protected:
+    float GetTargetDistance() const;
+
     AGAS_EnemyBase* Enemy;
     AAIControllerBase* EnemyController;
     UGAS_AbilitySystemComponent* EnemyASC;

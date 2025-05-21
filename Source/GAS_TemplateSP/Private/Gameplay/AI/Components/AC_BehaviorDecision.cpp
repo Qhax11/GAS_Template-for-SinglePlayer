@@ -105,24 +105,24 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
         return TArray<FMovementAbilityData>();
     }
 
-    TArray<FMovementAbilityData> BestMovementChain;
+    UMovementChainAsset* BestMovementChainDataAsset = nullptr;
 
     if (IsValid(GetBestMovementChainService)) 
     {
-        BestMovementChain = GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
+        BestMovementChainDataAsset = GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
     }
 
-    return BestMovementChain;
-    /*
     if (GEngine && EnableSelectedDebug)
     {
+        FString ChainNameStr = BestMovementChainDataAsset
+            ? BestMovementChainDataAsset->MovementChainName.ToString()
+            : TEXT("INVALID");
+
         GEngine->AddOnScreenDebugMessage(10, 3.5f, FColor::Cyan,
-            FString::Printf(TEXT(">> Selected MovementChain: %s | DistanceScore: %.1f | TargetMovementScore: %.1f "),
-                *BestMovementChainDataAsset->MovementChainName.ToString(), BestMovementChainDistanceScore, BestMovementChainTargetMovementScore));
+            FString::Printf(TEXT(">> Selected MovementChain: %s"), *ChainNameStr));
     }
 
     return BestMovementChainDataAsset->MovementChain;
-    */
 }
 
 FComingAttackReactionData UAC_BehaviorDecision::GetBestComingAttackDecision(FComingAttackPayload ComingAttackPayload)

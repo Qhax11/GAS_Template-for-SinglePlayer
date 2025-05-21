@@ -7,6 +7,7 @@
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
+#include "AIController.h"
 
 UGA_TakeDamageBase::UGA_TakeDamageBase()
 {
@@ -46,7 +47,7 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	}
 
 	// Using Motion Warping insted of this
-	//SetRotationToInstigator(TriggerEventData->Instigator);
+	SetRotationToInstigator(TriggerEventData->Instigator);
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
@@ -62,12 +63,28 @@ UAnimMontage* UGA_TakeDamageBase::GetHitMontage(UAnimMontage* AttackMontage)
 
 void UGA_TakeDamageBase::SetRotationToInstigator(const AActor* Instigator)
 {
-	if (!Instigator) 
+	if (!Instigator)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Instigator is null in: %s"), *GetName());
 		return;
 	}
 
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetAvatarActorFromActorInfo()->GetActorLocation(), Instigator->GetActorLocation());
-	GetAvatarActorFromActorInfo()->SetActorRotation(LookAtRotation);
+	AActor* Avatar = GetAvatarActorFromActorInfo();
+	if (!Avatar) return;
+
+	FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(Avatar->GetActorLocation(), Instigator->GetActorLocation());
+
+	// Z eksenine sabitle (dönme yukarýdan olmasýn)
+	LookAtRot.Pitch = 0.f;
+	LookAtRot.Roll = 0.f;
+
+	// Her ikisini de güncelle
+	Avatar->SetActorRotation(LookAtRot);
+
+	if (APawn* Pawn = Cast<APawn>(Avatar))
+	{
+		if (AAIController* AIController = Cast<AAIController>(Pawn->GetController()))
+		{
+			AIController->SetControlRotation(LookAtRot);
+		}
+	}
 }

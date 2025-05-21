@@ -16,12 +16,21 @@ public:
 
 	virtual void OnEnter() override;
 
+	virtual void OnTick(float DeltaTime) override;
+
 	virtual void OnExit() override;
+
+	void TryEnterToAttackState();
+
+	bool IsInRange();
 
 	void StartMovementChain();
 
 	UFUNCTION()
 	void OnMovementChainEnded();
+
+	FAttackData BestAttack;
+	UGAS_GameplayAbilityBase* AbilityCDO;
 
 private:
 	class UAC_EnemyMovementManager* MovementManagerComponent;

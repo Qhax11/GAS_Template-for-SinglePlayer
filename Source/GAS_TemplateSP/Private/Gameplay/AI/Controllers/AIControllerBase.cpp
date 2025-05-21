@@ -173,9 +173,15 @@ void AAIControllerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 	FTimerHandle SendEventTimer;
 	FTimerDelegate TimerDelegate;
 	FComingAttackPayload Payload(Ability, CombinedTags);
-	TimerDelegate.BindLambda([this, Payload]()
+
+	TWeakObjectPtr<AAIControllerBase> WeakThis(this);
+
+	TimerDelegate.BindLambda([WeakThis, Payload]()
 		{
-			this->SendEventToDefense(Payload);
+			if (WeakThis.IsValid())
+			{
+				WeakThis->SendEventToDefense(Payload);
+			}
 		});
 
 	float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility);

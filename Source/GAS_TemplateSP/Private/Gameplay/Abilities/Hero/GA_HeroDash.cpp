@@ -13,6 +13,8 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
 	HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
 	if (!HeroBase)
 	{
@@ -25,7 +27,20 @@ void UGA_HeroDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	// This ensures that the root motion montage is no longer active before applying a new root motion task.
 	GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
 
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	DashRootMotionTask = UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
+		this,
+		TEXT("DashRootMotionTask"),
+		CalculateDestination(),
+		Duration,
+		bSetNewMovementMode,
+		NewMovementMode,
+		bRestrictSpeedToExpected,
+		DashCurve,
+		FinishVelocityMode,
+		FinishSetVelocity,
+		FinishClampVelocity);
+
+	BindRootMotionTask();
 }
 
 FVector UGA_HeroDash::CalculateDestination()

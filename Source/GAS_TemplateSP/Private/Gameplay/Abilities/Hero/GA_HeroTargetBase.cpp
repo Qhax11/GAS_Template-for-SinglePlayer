@@ -56,12 +56,13 @@ bool UGA_HeroTargetBase::BindInputForConfirmAndCancel()
 
 void UGA_HeroTargetBase::ConfirmTargetingFromInput()
 {
+	/*
 	if (!CommitAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo()))
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, true);
 		return;
 	}
-
+	*/
 	ApplyGameplayEffectToSelf(AbilityConfirmEffects);
 
 	if (TargetActor->IsValidLowLevel())

@@ -47,6 +47,21 @@ void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     // This prevents a sudden stop and avoids unintended animation transitions caused by zero velocity.
 	FinishSetVelocity = CalculateDestination();
 
+	DashRootMotionTask = UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
+		this,
+		TEXT("DashRootMotionTask"),
+		CalculateDestination(),
+		Duration,
+		bSetNewMovementMode,
+		NewMovementMode,
+		bRestrictSpeedToExpected,
+		DashCurve,
+		FinishVelocityMode,
+		FinishSetVelocity,
+		FinishClampVelocity);
+
+	BindRootMotionTask();
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 

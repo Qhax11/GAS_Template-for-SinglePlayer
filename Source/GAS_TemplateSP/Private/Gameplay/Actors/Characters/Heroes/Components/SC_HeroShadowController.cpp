@@ -108,7 +108,7 @@ void USC_HeroShadowController::LookAtTarget()
 
 void USC_HeroShadowController::SetHeroShadowLocation()
 {
-	if (!HeroShadow)
+	if (!HeroShadow->IsValidLowLevel())
 	{
 		return;
 	}
@@ -124,8 +124,6 @@ void USC_HeroShadowController::SetHeroShadowLocation()
 	}
 
 	HeroShadowTargetLocation.Z += 90;
-
-	if(HeroShadow->IsValidLowLevel())
 	HeroShadow->SetActorLocation(HeroShadowTargetLocation);
 }
 

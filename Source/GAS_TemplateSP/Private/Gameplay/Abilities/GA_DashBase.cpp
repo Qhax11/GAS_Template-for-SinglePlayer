@@ -17,21 +17,6 @@ void UGA_DashBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
-	DashRootMotionTask = UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
-			this,
-			TEXT("DashRootMotionTask"),
-		    CalculateDestination(),
-			Duration,
-			bSetNewMovementMode,
-			NewMovementMode,
-			bRestrictSpeedToExpected,
-			DashCurve,
-			FinishVelocityMode,
-			FinishSetVelocity,
-			FinishClampVelocity);
-
-	BindRootMotionTask();
 }
 
 void UGA_DashBase::BindRootMotionTask()

@@ -86,12 +86,14 @@ FAttackData UAC_BehaviorDecision::GetBestAttack()
 
     FAttackData BestAttack = GetBestAttackService->GetBestAttack();
 
+#if WITH_EDITOR
     if (GEngine && EnableSelectedDebug && BestAttack.AbilityClass)
     {
         GEngine->AddOnScreenDebugMessage(9, 3.5f, FColor::Red,
             FString::Printf(TEXT(">> Selected Attack: %s"),
                 *BestAttack.AbilityClass->GetName()));
     }
+#endif // WITH_EDITOR
 
     LastSelectedAttackAbilityData = BestAttack;
     return BestAttack;
@@ -112,6 +114,7 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
         BestMovementChainDataAsset = GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
     }
 
+#if WITH_EDITOR
     if (GEngine && EnableSelectedDebug)
     {
         FString ChainNameStr = BestMovementChainDataAsset
@@ -121,6 +124,7 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
         GEngine->AddOnScreenDebugMessage(10, 3.5f, FColor::Cyan,
             FString::Printf(TEXT(">> Selected MovementChain: %s"), *ChainNameStr));
     }
+#endif // WITH_EDITOR
 
     return BestMovementChainDataAsset->MovementChain;
 }

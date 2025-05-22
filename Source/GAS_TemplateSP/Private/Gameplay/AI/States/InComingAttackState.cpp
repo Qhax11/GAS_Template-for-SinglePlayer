@@ -29,13 +29,31 @@ void UInComingAttackState::OnEnter()
 		break;
 
 	case EComingAttackReaction::TakeDamage:
-		Enemy->GetTagDelegatesComponent()->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
+		MakeTakeDamage();
 		break;
 	}
 }
 
+void UInComingAttackState::MakeTakeDamage()
+{
+	// Failsafe: Eğer tag hiç eklenmezse ya da hiç çıkarılmazsa bu süre sonra exit
+	Enemy->GetWorldTimerManager().SetTimer(TakeDamageFailsafeTimer, this,
+		&UInComingAttackState::OnTakeDamageFailsafeTimeout,
+		1.0f, false); // 1 saniye sonra çık (ayarlanabilir)
+
+	Enemy->GetTagDelegatesComponent()->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
+}
+
+void UInComingAttackState::OnTakeDamageFailsafeTimeout()
+{
+	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
+	UE_LOG(LogTemp, Warning, TEXT("Failsafe: TakeDamage tag did not trigger, exiting InComingAttackState."));
+	ExitRequest();
+}
+
 void UInComingAttackState::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
 	ExitRequest();
 }
 

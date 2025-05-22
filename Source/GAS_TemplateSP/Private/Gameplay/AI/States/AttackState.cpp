@@ -98,8 +98,6 @@ void UAttackState::OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowA
 
 void UAttackState::ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData)
 {
-	//FGAS_TargetActorData NonConstShadowActorData = const_cast<FGAS_TargetActorData&>(ShadowActorData);
-
 	if (ShadowActorData.AbilityClass && ShadowActorData.AbilityClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
 	{
 		TSubclassOf<UGA_ComboMeleeAttack> ComboClass = TSubclassOf<UGA_ComboMeleeAttack>(ShadowActorData.AbilityClass);

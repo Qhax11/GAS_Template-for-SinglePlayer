@@ -17,6 +17,12 @@ public:
 	virtual void OnEnter() override;
 
 protected:
+	void MakeTakeDamage();
+
+	// Exit of take damage.
+	void OnTakeDamageFailsafeTimeout();
+	FTimerHandle TakeDamageFailsafeTimer;
+
 	// Exit of take damage.
 	UFUNCTION()
 	void OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);

@@ -150,14 +150,13 @@ void AHeroShadowTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* Ove
 	}
 	else
 	{
-		CurrentTarget = nullptr;
-
 		if (AnimInstance)
 		{
 			AnimInstance->Montage_StopWithBlendOut(0.5f, AttackMontage);
 		}
 	}
 
+	CurrentTarget = nullptr;
 	bIsTargetInRange = false;
 }
 

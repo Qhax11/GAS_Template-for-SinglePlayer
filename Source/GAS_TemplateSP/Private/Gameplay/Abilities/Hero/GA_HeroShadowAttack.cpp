@@ -77,7 +77,7 @@ void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
         FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(ShadowSpawnLocation, CurrentTargetLocation);
         Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), ShadowSpawnLocation);
 
-        SetShadowToShadowController(); 
+        SetShadowToShadowController();
         HeroBase->GetHeroShadowControllerComponent()->SetShadowLocationWithCumulativeMouseValuesTargetLocked();
     }
     else

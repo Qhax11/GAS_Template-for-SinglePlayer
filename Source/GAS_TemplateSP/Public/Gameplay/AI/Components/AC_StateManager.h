@@ -27,15 +27,21 @@ public:
 
 	void RequestStateTreeExit(UStateBase* Requester);
 
+	void ExitFromInComingAttackState();
+
+	void ExitFromAttackState();
+
 	void StopCurrentState();
 	bool IsCurrentStateFinished() const;
 
+	float GetTargetDistance() const;
+
+	bool IsInRange();
 
 	FComingAttackPayload ComingAttackPayload;
+	bool bInComingAttack;
 
 protected:
-
-
 	UPROPERTY()
 	UStateBase* CurrentState = nullptr;
 

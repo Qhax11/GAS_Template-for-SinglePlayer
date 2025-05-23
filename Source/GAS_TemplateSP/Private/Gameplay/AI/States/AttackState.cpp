@@ -21,7 +21,15 @@ void UAttackState::OnEnter()
 		return;
 	}
 
-	TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackClass = BehaviorDecisionComponent->LastSelectedAttackAbilityData.AbilityClass;
+	for (const FGameplayAbilitySpec& Spec : EnemyASC->GetActivatableAbilities())
+	{
+		if (Spec.Ability)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ASC has ability: %s"), *Spec.Ability->GetName());
+		}
+	}
+
+	SelectedAttackClass = BehaviorDecisionComponent->LastSelectedAttackAbilityData.AbilityClass;
 
 	if (SelectedAttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
 	{
@@ -70,8 +78,7 @@ void UAttackState::MakeComboAttack()
 void UAttackState::MakeShadowAttack()
 {
 	UGAS_GameplayAbilityBase* ActivatedAbility =
-		EnemyASC->TryActivateAbilityByClassAndReturnInstance(
-			BehaviorDecisionComponent->LastSelectedAttackAbilityData.AbilityClass);
+		EnemyASC->TryActivateAbilityByClassAndReturnInstance(SelectedAttackClass);
 
 	UGA_BossShadowAttack* ShadowAttack = Cast<UGA_BossShadowAttack>(ActivatedAbility);
 	if (ShadowAttack)

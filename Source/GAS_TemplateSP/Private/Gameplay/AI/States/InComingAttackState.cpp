@@ -5,6 +5,7 @@
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 
 void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -22,13 +23,16 @@ void UInComingAttackState::OnEnter()
 	{
 	case EComingAttackReaction::Parry:
 		MakeParryAbility(BestComingAttackReaction);
+		UE_LOG(LogTemp, Warning, TEXT("OnEnter to MakeParryAbility"));
 		break;
 
 	case EComingAttackReaction::Dodge:
 		ActivateDodgeAbility(BestComingAttackReaction);
+		UE_LOG(LogTemp, Warning, TEXT("OnEnter to ActivateDodgeAbility"));
 		break;
 
 	case EComingAttackReaction::TakeDamage:
+		UE_LOG(LogTemp, Warning, TEXT("OnEnter to MakeTakeDamage"));
 		MakeTakeDamage();
 		break;
 	}
@@ -61,6 +65,7 @@ void UInComingAttackState::MakeParryAbility(FComingAttackReactionData BestComing
 {
 	// Stop any current combo before parrying
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	// Activate the parry ability
 	EnemyASC->TryActivateAbilityByClassAndReturnInstance(BestComingAttackReaction.RecationAbilityClass);
@@ -116,6 +121,7 @@ void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemCompone
 void UInComingAttackState::ActivateDodgeAbility(FComingAttackReactionData BestComingAttackReaction)
 {
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	FGameplayEventData GameplayEventData = FGameplayEventData();
 	GameplayEventData.InstigatorTags.AddTag(GAS_Tags::TAG_AI_Direction_Resolved_Backward);

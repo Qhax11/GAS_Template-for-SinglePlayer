@@ -140,11 +140,13 @@ void UAC_StateManager::RequestStateTreeExit(UStateBase* Requester)
 
 	if (Requester->IsA(UAttackState::StaticClass()))
 	{
-		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Exit;
+		ExitFromAttackState();
+		//ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Exit;
 	}
 	else if (Requester->IsA(UInComingAttackState::StaticClass()))
 	{
-		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit;
+		ExitFromInComingAttackState();
+		//ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit;
 	}
 	else if (Requester->IsA(UMovementState::StaticClass()))
 	{
@@ -157,6 +159,45 @@ void UAC_StateManager::RequestStateTreeExit(UStateBase* Requester)
 	}
 }
 
+void UAC_StateManager::ExitFromInComingAttackState()
+{
+	FAttackData LastSelectedAttackData = BehaviorDecisionComponent->GetBestAttack();
+
+	UGAS_GameplayAbilityBase* AbilityCDO;
+	AbilityCDO = LastSelectedAttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+
+	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())
+	{
+		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Enter);
+	}
+	else
+	{
+		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Enter);
+	}
+}
+
+void UAC_StateManager::ExitFromAttackState()
+{
+	if (bInComingAttack) 
+	{
+		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Enter);
+		return;
+	}
+	FAttackData LastSelectedAttackData = BehaviorDecisionComponent->GetBestAttack();
+
+	UGAS_GameplayAbilityBase* AbilityCDO;
+	AbilityCDO = LastSelectedAttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+
+	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())
+	{
+		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Enter);
+	}
+	else
+	{
+		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Enter);
+	}
+}
+
 void UAC_StateManager::StopCurrentState()
 {
 }
@@ -165,6 +206,26 @@ bool UAC_StateManager::IsCurrentStateFinished() const
 {
 	return false;
 }
+
+float UAC_StateManager::GetTargetDistance() const
+{
+	if (!OwnerEnemyBase || !OwnerController || !OwnerController->GetTarget())
+	{
+		return -1.0f;
+	}
+
+	FVector MyLocation = OwnerEnemyBase->GetActorLocation();
+	FVector TargetLocation = OwnerController->GetTarget()->GetActorLocation();
+
+	return FVector::Dist(MyLocation, TargetLocation);
+}
+
+bool UAC_StateManager::IsInRange()
+{
+	return false;
+}
+
+
 
 
 

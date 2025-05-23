@@ -36,4 +36,7 @@ public:
 
 	UFUNCTION()
 	void OnComboChaindEnded();
+
+protected:
+	TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackClass;
 };

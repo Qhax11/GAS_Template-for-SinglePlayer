@@ -24,16 +24,18 @@ void UMovementState::OnEnter()
 		return;
 	}
 
-	BestAttack = BehaviorDecisionComponent->GetBestAttack();
-	if (!BestAttack.AbilityClass)
+	FAttackData SelectedBestAttack = GetSelectedAttackAbility();
+	if (!SelectedBestAttack.AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No valid BestAttack selected."));
-		ExitRequest();
+		ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Exit);
 		return;
 	}
 
-	AbilityCDO = BestAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	StartMovementChain();
+	bStateFinished = false;
+
+	SelectedAttackCDO = SelectedBestAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+	StartMovementChain(SelectedBestAttack.AbilityClass);
 }
 
 void UMovementState::OnTick(float DeltaTime)
@@ -51,18 +53,25 @@ void UMovementState::OnExit()
 
 void UMovementState::TryEnterToAttackState()
 {
-	if (AbilityCDO->MinRange > GetTargetDistance()) 
+	if (!SelectedAttackCDO)
 	{
-		BestAttack = BehaviorDecisionComponent->GetBestAttack();
-		AbilityCDO = BestAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-		UE_LOG(LogTemp, Warning, TEXT("NEW ATTACK SELECTED"));
-		StartMovementChain();
 		return;
 	}
 
-	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())
+	if (SelectedAttackCDO->MinRange > EnemyController->GetTargetHeroDistance())
 	{
-		ExitRequest();
+		BestAttack = BehaviorDecisionComponent->GetBestAttack();
+		SelectedAttackCDO = BestAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+		UE_LOG(LogTemp, Warning, TEXT("NEW ATTACK SELECTED"));
+		//StartMovementChain(SelectedAttackCDO->GetClass());
+		return;
+	}
+
+	if (SelectedAttackCDO->MaxRange > EnemyController->GetTargetHeroDistance() && SelectedAttackCDO->MinRange < EnemyController->GetTargetHeroDistance())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("attack ability is in range, exit from movement state"));
+		MovementManagerComponent->StopMovementAbilities();
+		ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Enter);
 	}
 }
 
@@ -71,9 +80,9 @@ bool UMovementState::IsInRange()
 	return false;
 }
 
-void UMovementState::StartMovementChain()
+void UMovementState::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackAbilityClass)
 {
-	MovementManagerComponent->StartMovementChain(BestAttack.AbilityClass);
+	MovementManagerComponent->StartMovementChain(SelectedAttackAbilityClass);
 
 	if (!MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded)) 
 	{
@@ -83,10 +92,5 @@ void UMovementState::StartMovementChain()
 
 void UMovementState::OnMovementChainEnded()
 {
-	if (MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
-	{
-		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
-	}
-
-	StartMovementChain();
+	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Enter);
 }

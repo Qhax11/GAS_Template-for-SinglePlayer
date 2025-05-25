@@ -33,7 +33,7 @@ void UGA_BossShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
 {
 	FVector ShadowSpawnLocation = Location;
 
-	if (AActor* Target = BossController->GetTarget()) 
+	if (AActor* Target = BossController->GetTargetActor()) 
 	{
 		FVector TargetLocation = Target->GetActorLocation();
 
@@ -109,13 +109,13 @@ void UGA_BossShadowAttack::OnTargetActorCancelled(const FGAS_TargetActorData& Ta
 
 float UGA_BossShadowAttack::GetTargetDistance(AActor* ShadowTargetActor)
 {
-	if (!BossController || !BossController->GetTarget() || !ShadowTargetActor)
+	if (!BossController || !BossController->GetTargetHero() || !ShadowTargetActor)
 	{
 		return -1.f;
 	}
 
 	FVector MyLocation = ShadowTargetActor->GetActorLocation();
-	FVector TargetLocation = BossController->GetTarget()->GetActorLocation();
+	FVector TargetLocation = BossController->GetTargetHero()->GetActorLocation();
 
 	return FVector::Dist(MyLocation, TargetLocation);
 }

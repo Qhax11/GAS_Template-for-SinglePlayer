@@ -174,7 +174,6 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_DetectedPlayer, "AI.StateTreeEvent.DetectedPlayer");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_PlayerStartedAttack, "AI.StateTreeEvent.PlayerStartedAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_TakeDamage, "AI.StateTreeEvent.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Vulnerable, "AI.StateTreeEvent.State.Vulnerable");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ExecuteShadowAttack, "AI.StateTreeEvent.ExecuteShadowAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Crowd_HeroFinisher, "AI.StateTreeEvent.Crowd.HeroFinisher");

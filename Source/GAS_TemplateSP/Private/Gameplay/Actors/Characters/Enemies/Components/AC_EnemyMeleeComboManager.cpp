@@ -18,7 +18,7 @@ void UAC_EnemyMeleeComboManager::BeginPlay()
 
 void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass, FName MontageSection)
 {
-	if (!ComboChainAsset)
+	if (!ComboChainAsset || !AIController)
 	{
 		return;
 	}
@@ -45,7 +45,7 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
 	float ComboAbilityMaxRange = ActiveComboChainTracker.GetCurrentCombo()->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>()->MaxRange;
-	if (GetTargetDistance() < ComboAbilityMaxRange)
+	if (AIController->GetTargetHeroDistance() < ComboAbilityMaxRange)
 	{
 		return Super::ActivateComboMeleeAttackAbility(MontageSection);
 	}
@@ -89,15 +89,3 @@ float UAC_EnemyMeleeComboManager::GetMaxRangeOfCurrentAttack()
 	return -1.0f;
 }
 
-float UAC_EnemyMeleeComboManager::GetTargetDistance() const
-{
-	if (!CharacterBase || !AIController || !AIController->GetTarget())
-	{
-		return -1.f; 
-	}
-
-	FVector MyLocation = CharacterBase->GetActorLocation();
-	FVector TargetLocation = AIController->GetTarget()->GetActorLocation();
-
-	return FVector::Dist(MyLocation, TargetLocation);
-}

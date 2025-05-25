@@ -11,6 +11,8 @@
 #include "Gameplay/Animation/AN_SendTag.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
+#include <Kismet/GameplayStatics.h>
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
@@ -44,6 +46,16 @@ void AAIControllerBase::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("ControlledCharacter is null in: %s, Controller can not initialize"), *GetName());
 		return;
 	}
+
+	APawn* TargetPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0); 
+	if (!TargetPawn) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetPawn is null in: %s, Controller can not initialize"), *GetName());
+		return;
+	}
+
+	TargetHero = Cast<AGAS_HeroBase>(TargetPawn);
+	RegisterTags(TargetHero);
 
 	if (UCrowdFollowingComponent* CrowdComponent = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent()))
 	{
@@ -88,24 +100,47 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 			return;
 		}
 
-		Target = Actor;
-		OnTargetDetected.Broadcast(Target);
+		//OnTargetDetected.Broadcast(Target);
 		StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DetectedPlayer);
-		RegisterTags(TargetCharacter);
 		bHasTargetBeenDetected = true;
 	}
 }
 
-AActor* AAIControllerBase::GetTarget()
+AGAS_HeroBase* AAIControllerBase::GetTargetHero()
 {
-	if (Target) 
+	if (TargetHero)
 	{
-		return Target;
+		return TargetHero;
 	}
 	else
 	{
 		return nullptr;
 	}
+}
+
+AActor* AAIControllerBase::GetTargetActor()
+{
+	if (TargetHero)
+	{
+		return TargetHero;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+float AAIControllerBase::GetTargetHeroDistance() const
+{
+	if (!ControlledEnemy || !TargetHero)
+	{
+		return -1.0f;
+	}
+
+	FVector MyLocation = ControlledEnemy->GetActorLocation();
+	FVector TargetLocation = TargetHero->GetActorLocation();
+
+	return FVector::Dist(MyLocation, TargetLocation);
 }
 
 ETeamAttitude::Type AAIControllerBase::GetTeamAttitudeTowards(const AActor& Other) const
@@ -236,5 +271,5 @@ void AAIControllerBase::OnVulnerableTagAdded(const UAbilitySystemComponent* Abil
 
 void AAIControllerBase::OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_TakeDamage);
+	//StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_TakeDamage);
 }

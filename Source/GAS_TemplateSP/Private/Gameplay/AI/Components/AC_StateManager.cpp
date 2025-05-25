@@ -7,6 +7,7 @@
 #include "Gameplay/AI/States/InComingAttackState.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "StateTreeExecutionContext.h"
+#include "Gameplay/Components/AC_AbilitySet.h"
 
 
 UAC_StateManager::UAC_StateManager()
@@ -24,6 +25,8 @@ void UAC_StateManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
 		return;
 	}
+
+	OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
 
 	OwnerController = Cast<AAIControllerBase>(OwnerEnemyBase->GetController());
 	if (!OwnerController)
@@ -53,17 +56,22 @@ void UAC_StateManager::BeginPlay()
 		return;
 	}
 
-	CreateStates();
 }
 
-void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UAC_StateManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (CurrentState) 
+	for (UStateBase* State : StateInstances)
 	{
-		CurrentState->OnTick(DeltaTime);
+		State->OnExit();
 	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
+void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
+{
+	CreateStates();
+	StartLogic();
 }
 
 void UAC_StateManager::CreateStates()
@@ -83,6 +91,23 @@ void UAC_StateManager::CreateStates()
 	StateInstances.Add(InComingAttackState);
 }
 
+void UAC_StateManager::StartLogic()
+{
+	SelectNewBestAttack();
+	EnterStateByClass(UMovementState::StaticClass());
+}
+
+void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (CurrentState)
+	{
+		UE_LOG(LogTemp, Log, TEXT("CurrentState: %s"), *GetNameSafe(CurrentState));
+		CurrentState->OnTick(DeltaTime);
+	}
+}
+
 void UAC_StateManager::EnterStateByClass(TSubclassOf<UStateBase> StateClass)
 {
 	if (!StateClass)
@@ -95,8 +120,8 @@ void UAC_StateManager::EnterStateByClass(TSubclassOf<UStateBase> StateClass)
 	{
 		if (State && State->GetClass() == StateClass)
 		{
+			State->OnEnter();
 			CurrentState = State;
-			CurrentState->OnEnter();
 			return;
 		}
 	}
@@ -114,6 +139,8 @@ void UAC_StateManager::ExitStateByClass(TSubclassOf<UStateBase> StateClass)
 	if (CurrentState)
 	{
 		CurrentState->OnExit();
+		CurrentState = nullptr;
+		return;
 	}
 
 	for (UStateBase* State : StateInstances)
@@ -129,44 +156,52 @@ void UAC_StateManager::ExitStateByClass(TSubclassOf<UStateBase> StateClass)
 	UE_LOG(LogTemp, Error, TEXT("State class not found in StateInstances: %s"), *GetNameSafe(StateClass));
 }
 
-void UAC_StateManager::RequestStateTreeExit(UStateBase* Requester)
+void UAC_StateManager::RequestStateTreeEnter(UStateBase* Requester, const FGameplayTag& TransactionTag)
+{
+	if (!Requester)
+	{
+		return;
+	}
+
+	if (Requester->IsA(UAttackState::StaticClass()))
+	{
+		EnterStateByClass(UAttackState::StaticClass());
+	}
+	else if (Requester->IsA(UInComingAttackState::StaticClass()))
+	{
+		EnterStateByClass(UInComingAttackState::StaticClass());
+	}
+	else if (Requester->IsA(UMovementState::StaticClass()))
+	{
+		EnterStateByClass(UMovementState::StaticClass());
+	}
+}
+
+void UAC_StateManager::RequestStateTreeExit(UStateBase* Requester, const FGameplayTag& TransactionTag)
 {
 	if (!OwnerStateTree || !Requester)
 	{
 		return;
 	}
 
-	FGameplayTag ExitEventTag;
-
 	if (Requester->IsA(UAttackState::StaticClass()))
 	{
-		ExitFromAttackState();
-		//ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Exit;
+		ExitFromAttackState(TransactionTag);
 	}
 	else if (Requester->IsA(UInComingAttackState::StaticClass()))
 	{
-		ExitFromInComingAttackState();
-		//ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit;
+		ExitFromInComingAttackState(TransactionTag);
 	}
 	else if (Requester->IsA(UMovementState::StaticClass()))
 	{
-		ExitEventTag = GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Exit;
-	}
-
-	if (ExitEventTag.IsValid())
-	{
-		OwnerStateTree->SendStateTreeEvent(ExitEventTag);
+		ExitFromMovementState(TransactionTag);
 	}
 }
 
-void UAC_StateManager::ExitFromInComingAttackState()
+void UAC_StateManager::ExitFromInComingAttackState(const FGameplayTag& TransactionTag)
 {
-	FAttackData LastSelectedAttackData = BehaviorDecisionComponent->GetBestAttack();
-
-	UGAS_GameplayAbilityBase* AbilityCDO;
-	AbilityCDO = LastSelectedAttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-
-	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())
+	FAttackData NewSelectedAttack = SelectNewBestAttack();
+	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
 	{
 		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Enter);
 	}
@@ -176,53 +211,71 @@ void UAC_StateManager::ExitFromInComingAttackState()
 	}
 }
 
-void UAC_StateManager::ExitFromAttackState()
+void UAC_StateManager::ExitFromAttackState(const FGameplayTag& TransactionTag)
 {
-	if (bInComingAttack) 
+	/*
+	if (bInComingAttack)
 	{
-		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Enter);
+		OwnerStateTree->SendStateTreeEvent(TransactionTag);
 		return;
 	}
-	FAttackData LastSelectedAttackData = BehaviorDecisionComponent->GetBestAttack();
-
-	UGAS_GameplayAbilityBase* AbilityCDO;
-	AbilityCDO = LastSelectedAttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-
-	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())
+	*/
+	
+	FAttackData NewSelectedAttack = SelectNewBestAttack();
+	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
 	{
-		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Enter);
+		EnterStateByClass(UAttackState::StaticClass());
 	}
 	else
 	{
-		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Enter);
+		EnterStateByClass(UMovementState::StaticClass());
 	}
+	
 }
 
-void UAC_StateManager::StopCurrentState()
+void UAC_StateManager::ExitFromMovementState(const FGameplayTag& TransactionTag)
 {
-}
-
-bool UAC_StateManager::IsCurrentStateFinished() const
-{
-	return false;
+	if (TransactionTag == GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Enter)
+	{
+		EnterStateByClass(UAttackState::StaticClass());
+	}
+	else if (TransactionTag == GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Enter) 
+	{
+		EnterStateByClass(UInComingAttackState::StaticClass());
+	}
+	else if (TransactionTag == GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Enter)
+	{
+		EnterStateByClass(UMovementState::StaticClass());
+	}
 }
 
 float UAC_StateManager::GetTargetDistance() const
 {
-	if (!OwnerEnemyBase || !OwnerController || !OwnerController->GetTarget())
+	if (!OwnerController)
 	{
 		return -1.0f;
 	}
 
-	FVector MyLocation = OwnerEnemyBase->GetActorLocation();
-	FVector TargetLocation = OwnerController->GetTarget()->GetActorLocation();
-
-	return FVector::Dist(MyLocation, TargetLocation);
+	return OwnerController->GetTargetHeroDistance();
 }
 
-bool UAC_StateManager::IsInRange()
+bool UAC_StateManager::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)
 {
+	UGAS_GameplayAbilityBase* AbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+
+	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())
+	{
+		return true;
+	}
+
 	return false;
+}
+
+FAttackData UAC_StateManager::SelectNewBestAttack()
+{
+	FAttackData NewAttackData = BehaviorDecisionComponent->GetBestAttack();
+	LastSelectedAttackData = NewAttackData;
+	return NewAttackData;
 }
 
 

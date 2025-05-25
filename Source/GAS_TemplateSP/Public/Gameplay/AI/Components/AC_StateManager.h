@@ -17,29 +17,40 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
+	void EndPlay(const EEndPlayReason::Type EndPlayReason);
+
+	UFUNCTION()
+	void OnAbilitySetGiven(const AActor* OwnerActor);
 
 	void CreateStates();
+
+	void StartLogic();
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
 	void EnterStateByClass(TSubclassOf<UStateBase> StateClass);
 
 	void ExitStateByClass(TSubclassOf<UStateBase> StateClass);
 
-	void RequestStateTreeExit(UStateBase* Requester);
+	void RequestStateTreeEnter(UStateBase* Requester, const FGameplayTag& TransactionTag);
 
-	void ExitFromInComingAttackState();
+	void RequestStateTreeExit(UStateBase* Requester, const FGameplayTag& TransactionTag);
 
-	void ExitFromAttackState();
+	void ExitFromInComingAttackState(const FGameplayTag& TransactionTag);
 
-	void StopCurrentState();
-	bool IsCurrentStateFinished() const;
+	void ExitFromAttackState(const FGameplayTag& TransactionTag);
+
+	void ExitFromMovementState(const FGameplayTag& TransactionTag);
 
 	float GetTargetDistance() const;
 
-	bool IsInRange();
+	bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
 
 	FComingAttackPayload ComingAttackPayload;
 	bool bInComingAttack;
+
+	FAttackData SelectNewBestAttack();
+	FAttackData LastSelectedAttackData;
 
 protected:
 	UPROPERTY()

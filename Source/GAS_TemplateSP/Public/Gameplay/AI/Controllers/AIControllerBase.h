@@ -68,15 +68,20 @@ protected:
 	// bHasTargetBeenDetected prevents multiple triggers of TargetPerceptionUpdated during each tick, ensuring it is only triggered once when the target is detected.
 	bool bHasTargetBeenDetected = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StateTree|Params")
-	AActor* Target;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class AGAS_HeroBase* TargetHero;
 
 	UPROPERTY()
 	AGAS_EnemyBase* ControlledEnemy;
 
 public:
 	UFUNCTION(BlueprintCallable)
-	AActor* GetTarget();
+	AGAS_HeroBase* GetTargetHero();
+
+	UFUNCTION(BlueprintCallable)
+	AActor* GetTargetActor();
+
+	float GetTargetHeroDistance() const;
 
 	FOnTargetDetected OnTargetDetected;
 

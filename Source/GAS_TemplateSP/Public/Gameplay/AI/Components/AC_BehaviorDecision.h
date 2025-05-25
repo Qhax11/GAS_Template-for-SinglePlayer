@@ -10,6 +10,7 @@
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestMovementChain.h"
 #include "AC_BehaviorDecision.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBehaviorDecisionInitialized);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_BehaviorDecision : public UActorComponent
@@ -55,6 +56,9 @@ public:
     FComingAttackReactionData GetBestComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
 
     FAttackData LastSelectedAttackAbilityData;
+
+    UPROPERTY(BlueprintAssignable)
+    FOnBehaviorDecisionInitialized OnBehaviorDecisionInitialized;
 
 protected:
     UPROPERTY(EditDefaultsOnly)

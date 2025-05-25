@@ -63,14 +63,18 @@ public:
 
     virtual void OnExit();
 
-    virtual void ExitRequest();
-
 protected:
-    float GetTargetDistance() const;
+    virtual void ExitRequest(const FGameplayTag& TransactionTag);
+
+    FAttackData GetSelectedAttackAbility() const;
+
+    FAttackData SelectNewAttackAbility() const;
 
     AGAS_EnemyBase* Enemy;
     AAIControllerBase* EnemyController;
     UGAS_AbilitySystemComponent* EnemyASC;
     UAC_BehaviorDecision* BehaviorDecisionComponent;
     class UAC_StateManager* StateManager;
+
+    bool bStateFinished = false;
 };

@@ -22,7 +22,7 @@ void UStateBase::OnExit()
 {
 }
 
-void UStateBase::ExitRequest()
+void UStateBase::ExitRequest(const FGameplayTag& TransactionTag)
 {
 	if (!StateManager)
 	{
@@ -30,19 +30,20 @@ void UStateBase::ExitRequest()
 		return;
 	}
 
-	StateManager->RequestStateTreeExit(this);
+	if (!bStateFinished)
+	{
+		bStateFinished = true;
+		StateManager->RequestStateTreeExit(this, TransactionTag);
+	}
 }
 
-float UStateBase::GetTargetDistance() const
+FAttackData UStateBase::GetSelectedAttackAbility() const
 {
-	if (!Enemy || !EnemyController || !EnemyController->GetTarget())
-	{
-		return -1.0f;
-	}
+	return StateManager->LastSelectedAttackData;
+}
 
-	FVector MyLocation = Enemy->GetActorLocation();
-	FVector TargetLocation = EnemyController->GetTarget()->GetActorLocation();
-
-	return FVector::Dist(MyLocation, TargetLocation);
+FAttackData UStateBase::SelectNewAttackAbility() const
+{
+	return StateManager->SelectNewBestAttack();
 }
 

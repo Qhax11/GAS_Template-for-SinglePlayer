@@ -45,11 +45,6 @@ UMovementChainAsset* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             continue;
         }
 
-        if (GetTargetDistance() < MovementChainAsset->MinRange)
-        {
-            continue;
-        }
-
         float DistanceScore = CalculateMovementChainScoreBasedOnTargetDistance(MovementChainAsset);
         float TargetMovementScore = CalculateMovementChainScoreBasedOnTargetMovement(MovementChainAsset);
         float BehaviorStateScore = CalculateMovementChainScoreBasedOnBehaviorState(MovementChainAsset);
@@ -104,6 +99,11 @@ float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetDistanc
 {
     float Score = 0.0f;
 
+    if (!HeroMovementListenerComp) 
+    {
+        return Score;
+    }
+
     const float HeroDisplacement = HeroMovementListenerComp->GetDisplacementInLastSeconds(2.0f);
 
     if (HeroDisplacement > 50.0f)
@@ -115,6 +115,12 @@ float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetDistanc
         Score += MovementChainAsset->ScoreModifierWhenTargetIsNotMoving;
     }
 
+    // Penalty
+    if (EnemyController->GetTargetHeroDistance() < MovementChainAsset->MinRange) 
+    {
+        Score = -100.0f;
+    }
+
     return Score;
 }
 
@@ -124,7 +130,7 @@ float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetMovemen
 
     if (MovementChainAsset->DistanceScoreCurve)
     {
-        float CurveScore = MovementChainAsset->DistanceScoreCurve->GetFloatValue(GetTargetDistance());
+        float CurveScore = MovementChainAsset->DistanceScoreCurve->GetFloatValue(EnemyController->GetTargetHeroDistance());
         Score += CurveScore;
     }
 

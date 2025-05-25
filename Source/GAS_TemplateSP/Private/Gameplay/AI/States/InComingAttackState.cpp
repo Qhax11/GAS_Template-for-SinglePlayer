@@ -16,6 +16,8 @@ void UInComingAttackState::OnEnter()
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnEnter to InComingAttackState"));
 
+	bStateFinished = false;
+
 	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 
 	FComingAttackReactionData BestComingAttackReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(StateManager->ComingAttackPayload);
@@ -52,13 +54,13 @@ void UInComingAttackState::OnTakeDamageFailsafeTimeout()
 {
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
 	UE_LOG(LogTemp, Warning, TEXT("Failsafe: TakeDamage tag did not trigger, exiting InComingAttackState."));
-	ExitRequest();
+	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
 }
 
 void UInComingAttackState::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
-	ExitRequest();
+	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
 }
 
 void UInComingAttackState::MakeParryAbility(FComingAttackReactionData BestComingAttackReaction)
@@ -97,7 +99,7 @@ void UInComingAttackState::OnParryTagRemoved(const UAbilitySystemComponent* Abil
 			if (!bParryKnockbackHappened)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Parry ended, no knockback happened. Exiting."));
-				ExitRequest();
+				ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
 			}
 			else
 			{
@@ -115,7 +117,7 @@ void UInComingAttackState::OnParryKnocbackTagAdded(const UAbilitySystemComponent
 void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ParryKnockback tag removed. Exiting."));
-	ExitRequest();
+	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
 }
 
 void UInComingAttackState::ActivateDodgeAbility(FComingAttackReactionData BestComingAttackReaction)
@@ -139,7 +141,7 @@ void UInComingAttackState::ActivateDodgeAbility(FComingAttackReactionData BestCo
 }
 void UInComingAttackState::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest();
+	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
 }
 
 

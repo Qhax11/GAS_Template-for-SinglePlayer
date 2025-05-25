@@ -27,7 +27,7 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		return;
 	}
 
-	AActor* TargetActor = EnemyController->GetTarget();
+	AActor* TargetActor = EnemyController->GetTargetActor();
 	if (!TargetActor)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TargetActor is null in: %s"), *GetName());

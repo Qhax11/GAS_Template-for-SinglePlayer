@@ -24,13 +24,13 @@ public:
 
 	bool IsInRange();
 
-	void StartMovementChain();
+	void StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackAbilityClass);
 
 	UFUNCTION()
 	void OnMovementChainEnded();
 
 	FAttackData BestAttack;
-	UGAS_GameplayAbilityBase* AbilityCDO;
+	UGAS_GameplayAbilityBase* SelectedAttackCDO;
 
 private:
 	class UAC_EnemyMovementManager* MovementManagerComponent;

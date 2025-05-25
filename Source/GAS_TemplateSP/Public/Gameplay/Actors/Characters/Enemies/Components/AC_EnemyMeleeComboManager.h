@@ -27,5 +27,4 @@ protected:
 private:
 	class AAIControllerBase* AIController;
 
-	float GetTargetDistance() const;
 };

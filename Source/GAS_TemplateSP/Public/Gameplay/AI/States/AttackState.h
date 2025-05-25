@@ -17,26 +17,31 @@ public:
 
 	virtual void OnEnter() override;
 
+	virtual void OnExit() override;
+
+protected:
 	void SelectedAttack();
 
 	void MakeAttack();
 
+	UFUNCTION()
+	void OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+
+	UGAS_GameplayAbilityBase* LastUsedAttack;
+
 	void MakeComboAttack();
 
-	void MakeShadowAttack();
-
 	UFUNCTION()
-	void OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData);
+	void OnComboChaindEnded();
+
+	void MakeShadowAttack();
 
 	UFUNCTION()
 	void ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData);
 
 	UFUNCTION()
-	void OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData);
 
-	UFUNCTION()
-	void OnComboChaindEnded();
-
-protected:
+	UGA_BossShadowAttack* LastUsedShadowAttack;
 	TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackClass;
 };

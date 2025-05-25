@@ -4,6 +4,7 @@
 
 #include "UObject/NoExportTypes.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "BehaviorDecisionServiceBase.generated.h"
@@ -30,6 +31,9 @@ public:
 	UPROPERTY()
 	AGAS_EnemyBase* Enemy = nullptr;
 
+    UPROPERTY()
+    AAIControllerBase* EnemyController = nullptr;
+
 	UPROPERTY()
 	UAbilitySystemComponent* EnemyASC = nullptr;
 
@@ -45,12 +49,14 @@ public:
     FBehaviorServiceInitParams(
         UObject* InAsset,
         AGAS_EnemyBase* InEnemy,
+        AAIControllerBase* InEnemyController,
         UAbilitySystemComponent* InEnemyASC,
         AGAS_HeroBase* InHero,
         UAC_HeroMovementListener* InHeroMovementListener,
         EBehaviorState InBehaviorState)
         : Asset(InAsset)
         , Enemy(InEnemy)
+        , EnemyController(InEnemyController)
         , EnemyASC(InEnemyASC)
         , Hero(InHero)
         , HeroMovementListenerComp(InHeroMovementListener)
@@ -69,9 +75,8 @@ public:
     virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams);
 
 protected:
-    float GetTargetDistance();
-
     AGAS_EnemyBase* Enemy;
+    AAIControllerBase* EnemyController;
     UAbilitySystemComponent* EnemyASC;
     AGAS_HeroBase* Hero;
 	UAC_HeroMovementListener* HeroMovementListenerComp;

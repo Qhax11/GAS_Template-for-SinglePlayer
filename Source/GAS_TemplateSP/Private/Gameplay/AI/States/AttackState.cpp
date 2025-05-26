@@ -81,7 +81,7 @@ void UAttackState::MakeAttack()
 
 void UAttackState::OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Exit);
+	ExitRequest(GAS_Tags::TAG_AI_State_Attack_Exit);
 }
 
 void UAttackState::MakeComboAttack()
@@ -102,7 +102,7 @@ void UAttackState::MakeComboAttack()
 
 void UAttackState::OnComboChaindEnded()
 {
-	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Exit);
+	ExitRequest(GAS_Tags::TAG_AI_State_Attack_Exit);
 }
 
 void UAttackState::MakeShadowAttack()
@@ -131,7 +131,7 @@ void UAttackState::OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowA
 	// TODO: shadow attack cancelled olmazsa bile takip sorunu var!
 	if (ShadowAttackAbilityEndedData.bWasCancelled) 
 	{
-		ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Exit);
+		ExitRequest(GAS_Tags::TAG_AI_State_Attack_Exit);
 	}
 }
 

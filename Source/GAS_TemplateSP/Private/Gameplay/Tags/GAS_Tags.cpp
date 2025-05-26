@@ -164,13 +164,16 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI, "AI");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction, "AI.StateTreeEvent.Transaction");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_AttackState_Enter, "AI.StateTreeEvent.Transaction.AttackState.Enter");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_AttackState_Exit, "AI.StateTreeEvent.Transaction.AttackState.Exit");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_MovementState_Enter, "AI.StateTreeEvent.Transaction.MovementState.Enter");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_MovementState_Exit, "AI.StateTreeEvent.Transaction.MovementState.Exit");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Enter, "AI.StateTreeEvent.Transaction.InComingAttackState.Enter");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit, "AI.StateTreeEvent.Transaction.InComingAttackState.Exit");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State, "AI.State");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Movement, "AI.State.State.Movement");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Movement_Enter, "AI.State.Movement.Enter");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Movement_Exit, "AI.State.Movement.Exit");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack_Enter, "AI.State.Attack.Enter");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack_Exit, "AI.State.Attack.Exit");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_InComingAttack, "AI.State.InComingAttac");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_InComingAttack_Enter, "AI.State.InComingAttack.Enter");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_InComingAttack_Exit, "AI.State.InComingAttack.Exit");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_DetectedPlayer, "AI.StateTreeEvent.DetectedPlayer");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_PlayerStartedAttack, "AI.StateTreeEvent.PlayerStartedAttack");

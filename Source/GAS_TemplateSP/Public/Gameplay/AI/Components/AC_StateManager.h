@@ -28,13 +28,9 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
-	void EnterStateByClass(TSubclassOf<UStateBase> StateClass);
+	void RequestStateTreeEnter(const FGameplayTag& StateTag);
 
-	void ExitStateByClass(TSubclassOf<UStateBase> StateClass);
-
-	void RequestStateTreeEnter(UStateBase* Requester, const FGameplayTag& TransactionTag);
-
-	void RequestStateTreeExit(UStateBase* Requester, const FGameplayTag& TransactionTag);
+	void RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag);
 
 	void ExitFromInComingAttackState(const FGameplayTag& TransactionTag);
 

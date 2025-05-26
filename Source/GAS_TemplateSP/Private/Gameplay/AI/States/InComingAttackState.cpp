@@ -18,8 +18,6 @@ void UInComingAttackState::OnEnter()
 
 	bStateFinished = false;
 
-	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
-
 	FComingAttackReactionData BestComingAttackReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(StateManager->ComingAttackPayload);
 	switch (BestComingAttackReaction.ReactionType)
 	{
@@ -40,6 +38,20 @@ void UInComingAttackState::OnEnter()
 	}
 }
 
+void UInComingAttackState::OnExit()
+{
+	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
+
+	if (LastUsedDodgeAbility)
+	{
+		if (LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnDodgeAbilityEnded))
+		{
+			LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnDodgeAbilityEnded);
+		}
+		LastUsedDodgeAbility = nullptr;
+	}
+}
+
 void UInComingAttackState::MakeTakeDamage()
 {
 	// Failsafe: Eğer tag hiç eklenmezse ya da hiç çıkarılmazsa bu süre sonra exit
@@ -54,13 +66,13 @@ void UInComingAttackState::OnTakeDamageFailsafeTimeout()
 {
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
 	UE_LOG(LogTemp, Warning, TEXT("Failsafe: TakeDamage tag did not trigger, exiting InComingAttackState."));
-	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
+	ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
 }
 
 void UInComingAttackState::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
-	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
+	ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
 }
 
 void UInComingAttackState::MakeParryAbility(FComingAttackReactionData BestComingAttackReaction)
@@ -99,7 +111,7 @@ void UInComingAttackState::OnParryTagRemoved(const UAbilitySystemComponent* Abil
 			if (!bParryKnockbackHappened)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Parry ended, no knockback happened. Exiting."));
-				ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
+				ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
 			}
 			else
 			{
@@ -117,7 +129,7 @@ void UInComingAttackState::OnParryKnocbackTagAdded(const UAbilitySystemComponent
 void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ParryKnockback tag removed. Exiting."));
-	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
+	ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
 }
 
 void UInComingAttackState::ActivateDodgeAbility(FComingAttackReactionData BestComingAttackReaction)
@@ -137,11 +149,13 @@ void UInComingAttackState::ActivateDodgeAbility(FComingAttackReactionData BestCo
 		{
 			ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnDodgeAbilityEnded);
 		}
+
+		LastUsedDodgeAbility = ActivatedAbility;
 	}
 }
 void UInComingAttackState::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Exit);
+	ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
 }
 
 

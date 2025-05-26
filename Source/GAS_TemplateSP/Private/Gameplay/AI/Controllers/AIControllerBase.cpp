@@ -261,7 +261,7 @@ void AAIControllerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 {
 	ControlledEnemy->GetEnemyStateManagerComponent()->ComingAttackPayload = EventPayload;
 	ControlledEnemy->GetEnemyStateManagerComponent()->bInComingAttack = true;
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Enter);
+	ControlledEnemy->GetEnemyStateManagerComponent()->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack);
 }
 
 void AAIControllerBase::OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

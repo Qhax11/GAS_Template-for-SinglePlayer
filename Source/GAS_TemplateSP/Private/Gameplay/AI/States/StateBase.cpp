@@ -6,6 +6,7 @@
 
 void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 {
+	StateTag = StateInitParams.StateTag;
 	Enemy = StateInitParams.Enemy;
 	EnemyController = StateInitParams.EnemyController;
 	EnemyASC = StateInitParams.EnemyASC;
@@ -33,7 +34,7 @@ void UStateBase::ExitRequest(const FGameplayTag& TransactionTag)
 	if (!bStateFinished)
 	{
 		bStateFinished = true;
-		StateManager->RequestStateTreeExit(this, TransactionTag);
+		StateManager->RequestStateTreeExit(StateTag, TransactionTag);
 	}
 }
 

@@ -16,6 +16,8 @@ public:
 
 	virtual void OnEnter() override;
 
+	virtual void OnExit() override;
+
 protected:
 	void MakeTakeDamage();
 
@@ -50,6 +52,6 @@ protected:
 	UFUNCTION()
 	void OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
-private:
-	FGuid InComingAttackStateEnterID;
+	UGAS_GameplayAbilityBase* LastUsedDodgeAbility;
+
 };

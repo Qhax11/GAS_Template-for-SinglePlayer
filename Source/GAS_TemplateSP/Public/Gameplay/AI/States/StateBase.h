@@ -16,6 +16,9 @@ struct FStateInitParams
 
 public:
     UPROPERTY()
+    FGameplayTag StateTag;
+
+    UPROPERTY()
     AGAS_EnemyBase* Enemy = nullptr;
 
     UPROPERTY()
@@ -31,12 +34,14 @@ public:
     UAC_StateManager* StateManager = nullptr;
 
     FStateInitParams(
+        FGameplayTag InStateTag,
         AGAS_EnemyBase* InEnemy, 
         AAIControllerBase* InEnemyController, 
         UGAS_AbilitySystemComponent* InEnemyASC,
         UAC_BehaviorDecision* InBehaviorDecisionComponent,
         UAC_StateManager* InStateManager)
         :
+        StateTag(InStateTag),
         Enemy(InEnemy),
         EnemyController(InEnemyController),
         EnemyASC(InEnemyASC),
@@ -62,6 +67,8 @@ public:
     virtual void OnTick(float DeltaTime) {}
 
     virtual void OnExit();
+
+    FGameplayTag StateTag;
 
 protected:
     virtual void ExitRequest(const FGameplayTag& TransactionTag);

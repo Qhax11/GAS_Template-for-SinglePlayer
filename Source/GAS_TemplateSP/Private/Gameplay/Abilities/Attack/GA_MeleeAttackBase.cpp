@@ -7,7 +7,18 @@
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include <AbilitySystemGlobals.h>
 
-void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+UGA_MeleeAttackBase::UGA_MeleeAttackBase()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
+	FGameplayTagContainer AssetTags;
+	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Attack);
+	SetAssetTags(AssetTags);
+
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
+}
+
+void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)

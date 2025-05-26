@@ -55,8 +55,7 @@ void UAC_StateManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
 		return;
 	}
-
-}
+} 
 
 void UAC_StateManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
@@ -76,25 +75,32 @@ void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
 
 void UAC_StateManager::CreateStates()
 {
-	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
+	FStateInitParams MovementStateInitParams = FStateInitParams(GAS_Tags::TAG_AI_State_Movement, 
+		OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
 
 	MovementState = Cast<UMovementState>(NewObject<UObject>(this, UMovementState::StaticClass()));
-	MovementState->StateInitalize(StateInitParams);
+	MovementState->StateInitalize(MovementStateInitParams);
 	StateInstances.Add(MovementState);
 
+	FStateInitParams AttackStateInitParams = FStateInitParams(GAS_Tags::TAG_AI_State_Attack,
+		OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
+
 	AttackState = Cast<UAttackState>(NewObject<UObject>(this, UAttackState::StaticClass()));
-	AttackState->StateInitalize(StateInitParams);
+	AttackState->StateInitalize(AttackStateInitParams);
 	StateInstances.Add(AttackState);
 
+	FStateInitParams InComingAttackStateInitParams = FStateInitParams(GAS_Tags::TAG_AI_State_InComingAttack,
+		OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
+
 	InComingAttackState = Cast<UInComingAttackState>(NewObject<UObject>(this, UInComingAttackState::StaticClass()));
-	InComingAttackState->StateInitalize(StateInitParams);
+	InComingAttackState->StateInitalize(InComingAttackStateInitParams);
 	StateInstances.Add(InComingAttackState);
 }
 
 void UAC_StateManager::StartLogic()
 {
 	SelectNewBestAttack();
-	EnterStateByClass(UMovementState::StaticClass());
+	RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 }
 
 void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -108,94 +114,50 @@ void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	}
 }
 
-void UAC_StateManager::EnterStateByClass(TSubclassOf<UStateBase> StateClass)
+void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 {
-	if (!StateClass)
+	if (!StateTag.IsValid())
 	{
 		return;
+	}
+
+	if (CurrentState) 
+	{
+		CurrentState->OnExit();
 	}
 
 	// Find the instance of the requested state
 	for (UStateBase* State : StateInstances)
 	{
-		if (State && State->GetClass() == StateClass)
+		if (State && State->StateTag == StateTag)
 		{
 			State->OnEnter();
 			CurrentState = State;
 			return;
 		}
 	}
-
-	UE_LOG(LogTemp, Error, TEXT("State class not found in StateInstances: %s"), *GetNameSafe(StateClass));
 }
 
-void UAC_StateManager::ExitStateByClass(TSubclassOf<UStateBase> StateClass)
+void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag)
 {
-	if (!StateClass)
+	if (!StateTag.IsValid() || !TransactionTag.IsValid())
 	{
 		return;
 	}
 
-	if (CurrentState)
-	{
-		CurrentState->OnExit();
-		CurrentState = nullptr;
-		return;
-	}
-
-	for (UStateBase* State : StateInstances)
-	{
-		if (State && State->GetClass() == StateClass)
-		{
-			CurrentState = State;
-			CurrentState->OnExit();
-			return;
-		}
-	}
-
-	UE_LOG(LogTemp, Error, TEXT("State class not found in StateInstances: %s"), *GetNameSafe(StateClass));
-}
-
-void UAC_StateManager::RequestStateTreeEnter(UStateBase* Requester, const FGameplayTag& TransactionTag)
-{
-	if (!Requester)
-	{
-		return;
-	}
-
-	if (Requester->IsA(UAttackState::StaticClass()))
-	{
-		EnterStateByClass(UAttackState::StaticClass());
-	}
-	else if (Requester->IsA(UInComingAttackState::StaticClass()))
-	{
-		EnterStateByClass(UInComingAttackState::StaticClass());
-	}
-	else if (Requester->IsA(UMovementState::StaticClass()))
-	{
-		EnterStateByClass(UMovementState::StaticClass());
-	}
-}
-
-void UAC_StateManager::RequestStateTreeExit(UStateBase* Requester, const FGameplayTag& TransactionTag)
-{
-	if (!OwnerStateTree || !Requester)
-	{
-		return;
-	}
-
-	if (Requester->IsA(UAttackState::StaticClass()))
+	if (StateTag == GAS_Tags::TAG_AI_State_Attack)
 	{
 		ExitFromAttackState(TransactionTag);
 	}
-	else if (Requester->IsA(UInComingAttackState::StaticClass()))
+	else if (StateTag == GAS_Tags::TAG_AI_State_InComingAttack)
 	{
 		ExitFromInComingAttackState(TransactionTag);
 	}
-	else if (Requester->IsA(UMovementState::StaticClass()))
+	else if (StateTag == GAS_Tags::TAG_AI_State_Movement)
 	{
 		ExitFromMovementState(TransactionTag);
 	}
+
 }
 
 void UAC_StateManager::ExitFromInComingAttackState(const FGameplayTag& TransactionTag)
@@ -203,11 +165,11 @@ void UAC_StateManager::ExitFromInComingAttackState(const FGameplayTag& Transacti
 	FAttackData NewSelectedAttack = SelectNewBestAttack();
 	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
 	{
-		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Enter);
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
 	}
 	else
 	{
-		OwnerStateTree->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Enter);
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 	}
 }
 
@@ -224,28 +186,28 @@ void UAC_StateManager::ExitFromAttackState(const FGameplayTag& TransactionTag)
 	FAttackData NewSelectedAttack = SelectNewBestAttack();
 	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
 	{
-		EnterStateByClass(UAttackState::StaticClass());
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
 	}
 	else
 	{
-		EnterStateByClass(UMovementState::StaticClass());
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 	}
 	
 }
 
 void UAC_StateManager::ExitFromMovementState(const FGameplayTag& TransactionTag)
 {
-	if (TransactionTag == GAS_Tags::TAG_AI_StateTreeEvent_Transaction_AttackState_Enter)
+	if (TransactionTag == GAS_Tags::TAG_AI_State_Attack_Enter)
 	{
-		EnterStateByClass(UAttackState::StaticClass());
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
 	}
-	else if (TransactionTag == GAS_Tags::TAG_AI_StateTreeEvent_Transaction_InComingAttackState_Enter) 
+	else if (TransactionTag == GAS_Tags::TAG_AI_State_InComingAttack_Enter)
 	{
-		EnterStateByClass(UInComingAttackState::StaticClass());
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack);
 	}
-	else if (TransactionTag == GAS_Tags::TAG_AI_StateTreeEvent_Transaction_MovementState_Enter)
+	else if (TransactionTag == GAS_Tags::TAG_AI_State_Movement_Enter)
 	{
-		EnterStateByClass(UMovementState::StaticClass());
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 	}
 }
 

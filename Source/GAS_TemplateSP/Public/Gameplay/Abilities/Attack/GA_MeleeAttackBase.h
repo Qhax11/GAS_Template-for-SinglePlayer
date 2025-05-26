@@ -12,6 +12,8 @@ class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_MontageAbility
 	GENERATED_BODY()
 
 public:
+	UGA_MeleeAttackBase();
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;

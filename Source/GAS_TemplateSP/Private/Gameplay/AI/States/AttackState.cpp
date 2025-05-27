@@ -14,23 +14,8 @@ void UAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 void UAttackState::OnEnter_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Attack State has been enter"));
-
 	bStateFinished = false;
-
-	SelectedAttackClass = BehaviorDecisionComponent->LastSelectedAttackAbilityData.AbilityClass;
-
-	if (SelectedAttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
-	{
-		MakeComboAttack();
-	}
-	else if (SelectedAttackClass->IsChildOf(UGA_BossShadowAttack::StaticClass()))
-	{
-		MakeShadowAttack();
-	}
-	else
-	{
-		MakeAttack();
-	}
+	SelectAndMakeAttack();
 }
 
 void UAttackState::OnExit_Implementation()
@@ -59,8 +44,22 @@ void UAttackState::OnExit_Implementation()
 	}
 }
 
-void UAttackState::SelectedAttack()
+void UAttackState::SelectAndMakeAttack()
 {
+	SelectedAttackClass = GetSelectedAttackAbilityData().AbilityClass;
+
+	if (SelectedAttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
+	{
+		MakeComboAttack();
+	}
+	else if (SelectedAttackClass->IsChildOf(UGA_BossShadowAttack::StaticClass()))
+	{
+		MakeShadowAttack();
+	}
+	else
+	{
+		MakeAttack();
+	}
 }
 
 void UAttackState::MakeAttack()
@@ -81,7 +80,7 @@ void UAttackState::MakeAttack()
 
 void UAttackState::OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest(GAS_Tags::TAG_AI_State_Attack_Exit);
+	ExitRequest();
 }
 
 void UAttackState::MakeComboAttack()
@@ -102,7 +101,7 @@ void UAttackState::MakeComboAttack()
 
 void UAttackState::OnComboChaindEnded()
 {
-	ExitRequest(GAS_Tags::TAG_AI_State_Attack_Exit);
+	ExitRequest();
 }
 
 void UAttackState::MakeShadowAttack()
@@ -128,10 +127,10 @@ void UAttackState::MakeShadowAttack()
 
 void UAttackState::OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData)
 {
-	// TODO: shadow attack cancelled olmazsa bile takip sorunu var!
+	// If it dosen't cancelled it's mean executed and we keep listening from executed side
 	if (ShadowAttackAbilityEndedData.bWasCancelled) 
 	{
-		ExitRequest(GAS_Tags::TAG_AI_State_Attack_Exit);
+		ExitRequest();
 	}
 }
 

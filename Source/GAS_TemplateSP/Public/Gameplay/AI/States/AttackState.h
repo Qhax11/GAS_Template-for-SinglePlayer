@@ -20,7 +20,7 @@ public:
 	virtual void OnExit_Implementation() override;
 
 protected:
-	void SelectedAttack();
+	void SelectAndMakeAttack();
 
 	void MakeAttack();
 

@@ -101,7 +101,7 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 		}
 
 		//OnTargetDetected.Broadcast(Target);
-		StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_DetectedPlayer);
+		ControlledEnemy->GetEnemyStateManagerComponent()->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 		bHasTargetBeenDetected = true;
 	}
 }

@@ -28,9 +28,26 @@ void UStateBase::ExitRequest(const FGameplayTag& TransactionTag)
 	}
 }
 
-FAttackData UStateBase::GetSelectedAttackAbility() const
+bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)
+{
+	if (!StateManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
+		return false;
+	}
+
+	return StateManager->IsAttackInRange(AbilityClass);
+}
+
+FAttackData UStateBase::GetSelectedAttackAbilityData() const
 {
 	return StateManager->LastSelectedAttackData;
+}
+
+UGAS_GameplayAbilityBase* UStateBase::GetSelectedAttackAbilityCDO() const
+{
+	FAttackData SelectedAttackData = GetSelectedAttackAbilityData();
+	return SelectedAttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 }
 
 FAttackData UStateBase::SelectNewAttackAbility() const

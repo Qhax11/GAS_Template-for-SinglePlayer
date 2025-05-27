@@ -22,14 +22,12 @@ public:
 
 	void TryEnterToAttackState();
 
-	bool IsInRange();
-
 	void StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackAbilityClass);
 
 	UFUNCTION()
 	void OnMovementChainEnded();
 
-	FAttackData BestAttack;
+	FAttackData SelectedAttack;
 	UGAS_GameplayAbilityBase* SelectedAttackCDO;
 
 private:

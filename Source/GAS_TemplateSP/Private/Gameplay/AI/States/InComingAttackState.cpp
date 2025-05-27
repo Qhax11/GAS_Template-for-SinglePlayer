@@ -14,10 +14,28 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 
 void UInComingAttackState::OnEnter_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnEnter to InComingAttackState"));
+	UE_LOG(LogTemp, Warning, TEXT("InComingAttack has been enter"));
 
 	bStateFinished = false;
+	SelectAndMakeInComingAttackReaction();
+}
 
+void UInComingAttackState::OnExit_Implementation()
+{
+	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
+
+	if (LastUsedDodgeAbility)
+	{
+		if (LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnDodgeAbilityEnded))
+		{
+			LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnDodgeAbilityEnded);
+		}
+		LastUsedDodgeAbility = nullptr;
+	}
+}
+
+void UInComingAttackState::SelectAndMakeInComingAttackReaction()
+{
 	FComingAttackReactionData BestComingAttackReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(StateManager->ComingAttackPayload);
 	switch (BestComingAttackReaction.ReactionType)
 	{
@@ -38,20 +56,6 @@ void UInComingAttackState::OnEnter_Implementation()
 	}
 }
 
-void UInComingAttackState::OnExit_Implementation()
-{
-	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
-
-	if (LastUsedDodgeAbility)
-	{
-		if (LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnDodgeAbilityEnded))
-		{
-			LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnDodgeAbilityEnded);
-		}
-		LastUsedDodgeAbility = nullptr;
-	}
-}
-
 void UInComingAttackState::MakeTakeDamage()
 {
 	// Failsafe: Eğer tag hiç eklenmezse ya da hiç çıkarılmazsa bu süre sonra exit
@@ -66,13 +70,13 @@ void UInComingAttackState::OnTakeDamageFailsafeTimeout()
 {
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
 	UE_LOG(LogTemp, Warning, TEXT("Failsafe: TakeDamage tag did not trigger, exiting InComingAttackState."));
-	ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
+	ExitRequest();
 }
 
 void UInComingAttackState::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
-	ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
+	ExitRequest();
 }
 
 void UInComingAttackState::MakeParryAbility(FComingAttackReactionData BestComingAttackReaction)
@@ -111,7 +115,7 @@ void UInComingAttackState::OnParryTagRemoved(const UAbilitySystemComponent* Abil
 			if (!bParryKnockbackHappened)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Parry ended, no knockback happened. Exiting."));
-				ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
+				ExitRequest();
 			}
 			else
 			{
@@ -129,7 +133,7 @@ void UInComingAttackState::OnParryKnocbackTagAdded(const UAbilitySystemComponent
 void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ParryKnockback tag removed. Exiting."));
-	ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
+	ExitRequest();
 }
 
 void UInComingAttackState::ActivateDodgeAbility(FComingAttackReactionData BestComingAttackReaction)
@@ -155,7 +159,7 @@ void UInComingAttackState::ActivateDodgeAbility(FComingAttackReactionData BestCo
 }
 void UInComingAttackState::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest(GAS_Tags::TAG_AI_State_InComingAttack_Exit);
+	ExitRequest();
 }
 
 

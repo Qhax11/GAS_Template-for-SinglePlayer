@@ -72,9 +72,13 @@ public:
     FGameplayTag StateTag;
 
 protected:
-    virtual void ExitRequest(const FGameplayTag& TransactionTag);
+    virtual void ExitRequest(const FGameplayTag& TransactionTag = FGameplayTag());
 
-    FAttackData GetSelectedAttackAbility() const;
+    bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
+
+    FAttackData GetSelectedAttackAbilityData() const;
+
+    UGAS_GameplayAbilityBase* GetSelectedAttackAbilityCDO() const;
 
     FAttackData SelectNewAttackAbility() const;
 

@@ -165,15 +165,10 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI, "AI");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State, "AI.State");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Patrolling, "AI.State.Patrolling");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Movement, "AI.State.Movement");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Movement_Enter, "AI.State.Movement.Enter");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Movement_Exit, "AI.State.Movement.Exit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack_Enter, "AI.State.Attack.Enter");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack_Exit, "AI.State.Attack.Exit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_InComingAttack, "AI.State.InComingAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_InComingAttack_Enter, "AI.State.InComingAttack.Enter");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_InComingAttack_Exit, "AI.State.InComingAttack.Exit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Vulnerable, "AI.State.Vulnerable");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_DetectedPlayer, "AI.StateTreeEvent.DetectedPlayer");

@@ -19,6 +19,8 @@ public:
 	virtual void OnExit_Implementation() override;
 
 protected:
+	void SelectAndMakeInComingAttackReaction();
+
 	void MakeTakeDamage();
 
 	// Exit of take damage.

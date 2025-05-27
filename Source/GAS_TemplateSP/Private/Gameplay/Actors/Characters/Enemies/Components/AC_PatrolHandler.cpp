@@ -54,9 +54,12 @@ void UAC_PatrolHandler::StopPatrolling()
 	OwnerEnemyASC->CancelAbilities(&CancelTags);
 	bInPatrolling = false;
 
-	if (!LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded))
+	if (LastMoveToLocationAbility) 
 	{
-		LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
+		if (!LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded))
+		{
+			LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
+		}
 	}
 }
 

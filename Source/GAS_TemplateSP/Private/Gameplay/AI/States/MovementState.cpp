@@ -19,23 +19,25 @@ void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 
 void UMovementState::OnEnter_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Movement State has been enter"));
+
 	if (!BehaviorDecisionComponent || !MovementManagerComponent)
 	{
 		return;
 	}
 
-	FAttackData SelectedBestAttack = GetSelectedAttackAbility();
-	if (!SelectedBestAttack.AbilityClass)
+	SelectedAttack = SelectNewAttackAbility();
+	if (!SelectedAttack.AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No valid BestAttack selected."));
-		ExitRequest(GAS_Tags::TAG_AI_State_Movement_Enter);
+		ExitRequest(GAS_Tags::TAG_AI_State_Movement);
 		return;
 	}
 
 	bStateFinished = false;
 
-	SelectedAttackCDO = SelectedBestAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	StartMovementChain(SelectedBestAttack.AbilityClass);
+	SelectedAttackCDO = SelectedAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+	StartMovementChain(SelectedAttack.AbilityClass);
 }
 
 void UMovementState::OnExit_Implementation()
@@ -58,26 +60,19 @@ void UMovementState::TryEnterToAttackState()
 		return;
 	}
 
-	if (SelectedAttackCDO->MinRange > EnemyController->GetTargetHeroDistance())
+	if (GetSelectedAttackAbilityCDO()->MinRange > EnemyController->GetTargetHeroDistance())
 	{
-		BestAttack = BehaviorDecisionComponent->GetBestAttack();
-		SelectedAttackCDO = BestAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-		UE_LOG(LogTemp, Warning, TEXT("NEW ATTACK SELECTED"));
-		//StartMovementChain(SelectedAttackCDO->GetClass());
+		FAttackData NewAttack = SelectNewAttackAbility();
+		StartMovementChain(NewAttack.AbilityClass);
 		return;
 	}
 
-	if (SelectedAttackCDO->MaxRange > EnemyController->GetTargetHeroDistance() && SelectedAttackCDO->MinRange < EnemyController->GetTargetHeroDistance())
+	if (IsAttackInRange(SelectedAttack.AbilityClass))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("attack ability is in range, exit from movement state"));
 		MovementManagerComponent->StopMovementAbilities();
-		ExitRequest(GAS_Tags::TAG_AI_State_Attack_Enter);
+		ExitRequest(GAS_Tags::TAG_AI_State_Attack);
 	}
-}
-
-bool UMovementState::IsInRange()
-{
-	return false;
 }
 
 void UMovementState::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackAbilityClass)
@@ -92,5 +87,5 @@ void UMovementState::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBa
 
 void UMovementState::OnMovementChainEnded()
 {
-	ExitRequest(GAS_Tags::TAG_AI_State_Movement_Enter);
+	ExitRequest(GAS_Tags::TAG_AI_State_Movement);
 }

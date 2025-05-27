@@ -26,17 +26,20 @@ public:
 
 	void StartLogic();
 
+	UFUNCTION(BlueprintCallable)
+	void StopLogic();
+
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
 	void RequestStateTreeEnter(const FGameplayTag& StateTag);
 
 	void RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag);
 
-	void ExitFromInComingAttackState(const FGameplayTag& TransactionTag);
+	void ExitFromMovementState();
 
-	void ExitFromAttackState(const FGameplayTag& TransactionTag);
+	void ExitFromAttackState();
 
-	void ExitFromMovementState(const FGameplayTag& TransactionTag);
+	void ExitFromInComingAttackState();
 
 	float GetTargetDistance() const;
 
@@ -52,8 +55,13 @@ public:
 	bool bEnableDebug = false;
 
 protected:
+	bool bActive = true;
+
 	UPROPERTY(EditDefaultsOnly, Category = "States")
 	TArray<TSubclassOf<UStateBase>> StateClassArray;
+
+	UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.State"))
+	FGameplayTag StartState;
 
 	UPROPERTY()
 	TArray<UStateBase*> StateInstances;

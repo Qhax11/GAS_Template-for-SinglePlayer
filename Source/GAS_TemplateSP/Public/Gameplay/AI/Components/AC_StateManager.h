@@ -48,24 +48,21 @@ public:
 	FAttackData SelectNewBestAttack();
 	FAttackData LastSelectedAttackData;
 
+	UPROPERTY(EditDefaultsOnly)
+	bool bEnableDebug = false;
+
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "States")
+	TArray<TSubclassOf<UStateBase>> StateClassArray;
+
+	UPROPERTY()
+	TArray<UStateBase*> StateInstances;
+
 	UPROPERTY()
 	UStateBase* CurrentState = nullptr;
 
 	UPROPERTY()
-	class UMovementState* MovementState;
-
-	UPROPERTY()
-	class UAttackState* AttackState;
-
-	UPROPERTY()
-	class UInComingAttackState* InComingAttackState;
-
-	UPROPERTY()
 	TObjectPtr<AGAS_EnemyBase> OwnerEnemy = nullptr;
-
-	UPROPERTY()
-	TArray<UStateBase*> StateInstances;
 
 	class AAIControllerBase* OwnerController;
 	class AGAS_EnemyBase* OwnerEnemyBase;

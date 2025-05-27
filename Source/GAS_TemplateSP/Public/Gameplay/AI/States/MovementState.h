@@ -14,11 +14,11 @@ class GAS_TEMPLATESP_API UMovementState : public UStateBase
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams) override;
 
-	virtual void OnEnter() override;
+	virtual void OnEnter_Implementation() override;
 
-	virtual void OnTick(float DeltaTime) override;
+	virtual void OnExit_Implementation() override;
 
-	virtual void OnExit() override;
+	virtual void OnTick_Implementation(float DeltaTime) override;
 
 	void TryEnterToAttackState();
 

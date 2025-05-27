@@ -12,7 +12,7 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 	Super::StateInitalize(StateInitParams);
 }
 
-void UInComingAttackState::OnEnter()
+void UInComingAttackState::OnEnter_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnEnter to InComingAttackState"));
 
@@ -38,7 +38,7 @@ void UInComingAttackState::OnEnter()
 	}
 }
 
-void UInComingAttackState::OnExit()
+void UInComingAttackState::OnExit_Implementation()
 {
 	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 

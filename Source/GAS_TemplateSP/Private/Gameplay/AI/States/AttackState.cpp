@@ -11,7 +11,7 @@ void UAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 	Super::StateInitalize(StateInitParams);
 }
 
-void UAttackState::OnEnter()
+void UAttackState::OnEnter_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Attack State has been enter"));
 
@@ -33,14 +33,14 @@ void UAttackState::OnEnter()
 	}
 }
 
-void UAttackState::OnExit()
+void UAttackState::OnExit_Implementation()
 {
 	if (Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.IsAlreadyBound(this, &UAttackState::OnComboChaindEnded))
 	{
 		Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.RemoveDynamic(this, &UAttackState::OnComboChaindEnded);
 	}
 
-	if(LastUsedShadowAttack)
+	if (LastUsedShadowAttack)
 	{
 		if (LastUsedShadowAttack->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAttackState::OnShadowAttackAbilityEnded))
 		{
@@ -48,8 +48,8 @@ void UAttackState::OnExit()
 		}
 		LastUsedShadowAttack = nullptr;
 	}
-		
-	if (LastUsedAttack) 
+
+	if (LastUsedAttack)
 	{
 		if (LastUsedAttack->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAttackState::OnAttackAbilityEnded))
 		{

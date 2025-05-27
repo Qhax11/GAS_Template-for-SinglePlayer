@@ -16,9 +16,6 @@ struct FStateInitParams
 
 public:
     UPROPERTY()
-    FGameplayTag StateTag;
-
-    UPROPERTY()
     AGAS_EnemyBase* Enemy = nullptr;
 
     UPROPERTY()
@@ -34,14 +31,12 @@ public:
     UAC_StateManager* StateManager = nullptr;
 
     FStateInitParams(
-        FGameplayTag InStateTag,
-        AGAS_EnemyBase* InEnemy, 
+        AGAS_EnemyBase* InEnemy,
         AAIControllerBase* InEnemyController, 
         UGAS_AbilitySystemComponent* InEnemyASC,
         UAC_BehaviorDecision* InBehaviorDecisionComponent,
         UAC_StateManager* InStateManager)
         :
-        StateTag(InStateTag),
         Enemy(InEnemy),
         EnemyController(InEnemyController),
         EnemyASC(InEnemyASC),
@@ -53,8 +48,7 @@ public:
 };
 
 
-
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class GAS_TEMPLATESP_API UStateBase : public UObject
 {
 	GENERATED_BODY()
@@ -62,12 +56,19 @@ class GAS_TEMPLATESP_API UStateBase : public UObject
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
-    virtual void OnEnter();
+    UFUNCTION(BlueprintNativeEvent, Category = "State")
+    void OnEnter();
+    virtual void OnEnter_Implementation() {};  // C++ default davranýþý
 
-    virtual void OnTick(float DeltaTime) {}
+    UFUNCTION(BlueprintNativeEvent, Category = "State")
+    void OnExit();
+    virtual void OnExit_Implementation() {};
 
-    virtual void OnExit();
+    UFUNCTION(BlueprintNativeEvent, Category = "State")
+    void OnTick(float DeltaTime);
+    virtual void OnTick_Implementation(float DeltaTime) {};
 
+    UPROPERTY(EditDefaultsOnly)
     FGameplayTag StateTag;
 
 protected:
@@ -77,11 +78,18 @@ protected:
 
     FAttackData SelectNewAttackAbility() const;
 
+    UPROPERTY(BlueprintReadOnly)
     AGAS_EnemyBase* Enemy;
-    AAIControllerBase* EnemyController;
-    UGAS_AbilitySystemComponent* EnemyASC;
-    UAC_BehaviorDecision* BehaviorDecisionComponent;
-    class UAC_StateManager* StateManager;
 
+    UPROPERTY(BlueprintReadOnly)
+    AAIControllerBase* EnemyController;
+
+    UPROPERTY(BlueprintReadOnly)
+    UGAS_AbilitySystemComponent* EnemyASC;
+
+    UPROPERTY(BlueprintReadOnly)
+    UAC_BehaviorDecision* BehaviorDecisionComponent;
+
+    class UAC_StateManager* StateManager;
     bool bStateFinished = false;
 };

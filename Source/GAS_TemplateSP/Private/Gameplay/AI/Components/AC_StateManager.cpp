@@ -75,26 +75,27 @@ void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
 
 void UAC_StateManager::CreateStates()
 {
-	FStateInitParams MovementStateInitParams = FStateInitParams(GAS_Tags::TAG_AI_State_Movement, 
-		OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
+	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
 
-	MovementState = Cast<UMovementState>(NewObject<UObject>(this, UMovementState::StaticClass()));
-	MovementState->StateInitalize(MovementStateInitParams);
-	StateInstances.Add(MovementState);
+	// Find the instance of the requested state
+	for (TSubclassOf<UStateBase> StateClass : StateClassArray)
+	{
+		if (!*StateClass)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Invalid state class in array."));
+			continue;
+		}
 
-	FStateInitParams AttackStateInitParams = FStateInitParams(GAS_Tags::TAG_AI_State_Attack,
-		OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
+		UStateBase* NewState = NewObject<UStateBase>(this, StateClass);
+		if (!NewState || !NewState->StateTag.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to instantiate: %s"), *StateClass->GetName());
+			continue;
+		}
 
-	AttackState = Cast<UAttackState>(NewObject<UObject>(this, UAttackState::StaticClass()));
-	AttackState->StateInitalize(AttackStateInitParams);
-	StateInstances.Add(AttackState);
-
-	FStateInitParams InComingAttackStateInitParams = FStateInitParams(GAS_Tags::TAG_AI_State_InComingAttack,
-		OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
-
-	InComingAttackState = Cast<UInComingAttackState>(NewObject<UObject>(this, UInComingAttackState::StaticClass()));
-	InComingAttackState->StateInitalize(InComingAttackStateInitParams);
-	StateInstances.Add(InComingAttackState);
+		NewState->StateInitalize(StateInitParams);
+		StateInstances.Add(NewState);
+	}
 }
 
 void UAC_StateManager::StartLogic()
@@ -109,8 +110,14 @@ void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	if (CurrentState)
 	{
-		UE_LOG(LogTemp, Log, TEXT("CurrentState: %s"), *GetNameSafe(CurrentState));
 		CurrentState->OnTick(DeltaTime);
+
+		if (bEnableDebug) 
+		{
+			const FVector Location = OwnerEnemyBase->GetActorLocation() + FVector(0.f, 0.f, 150.f);
+			const FString DebugText = FString::Printf(TEXT("State: %s"), *CurrentState->GetName());
+			DrawDebugString(GetWorld(), Location, DebugText, nullptr, FColor::Cyan, 0.f, true, 1.5f);
+		}
 	}
 }
 

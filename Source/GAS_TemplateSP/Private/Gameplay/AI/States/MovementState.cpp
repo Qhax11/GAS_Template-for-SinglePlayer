@@ -17,7 +17,7 @@ void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 	}
 }
 
-void UMovementState::OnEnter()
+void UMovementState::OnEnter_Implementation()
 {
 	if (!BehaviorDecisionComponent || !MovementManagerComponent)
 	{
@@ -38,17 +38,17 @@ void UMovementState::OnEnter()
 	StartMovementChain(SelectedBestAttack.AbilityClass);
 }
 
-void UMovementState::OnTick(float DeltaTime)
-{
-	TryEnterToAttackState();
-}
-
-void UMovementState::OnExit()
+void UMovementState::OnExit_Implementation()
 {
 	if (MovementManagerComponent && MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
 	{
 		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
 	}
+}
+
+void UMovementState::OnTick_Implementation(float DeltaTime)
+{
+	TryEnterToAttackState();
 }
 
 void UMovementState::TryEnterToAttackState()

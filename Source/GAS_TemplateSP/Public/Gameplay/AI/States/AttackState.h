@@ -15,9 +15,9 @@ class GAS_TEMPLATESP_API UAttackState : public UStateBase
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
-	virtual void OnEnter() override;
+	virtual void OnEnter_Implementation() override;
 
-	virtual void OnExit() override;
+	virtual void OnExit_Implementation() override;
 
 protected:
 	void SelectedAttack();

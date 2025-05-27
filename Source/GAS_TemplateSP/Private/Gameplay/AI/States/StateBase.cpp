@@ -6,21 +6,11 @@
 
 void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 {
-	StateTag = StateInitParams.StateTag;
 	Enemy = StateInitParams.Enemy;
 	EnemyController = StateInitParams.EnemyController;
 	EnemyASC = StateInitParams.EnemyASC;
 	BehaviorDecisionComponent = StateInitParams.BehaviorDecisionComponent;
 	StateManager = StateInitParams.StateManager;
-}
-
-void UStateBase::OnEnter()
-{
-	
-}
-
-void UStateBase::OnExit()
-{
 }
 
 void UStateBase::ExitRequest(const FGameplayTag& TransactionTag)

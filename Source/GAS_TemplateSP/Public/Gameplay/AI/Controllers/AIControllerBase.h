@@ -24,14 +24,17 @@ public:
 	UGameplayAbility* ComingAttack;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float ComingAttackHitTime;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FGameplayTagContainer ComingAttackTags;
 
 	FComingAttackPayload()
 		: ComingAttack(nullptr)
 	{}
 
-	FComingAttackPayload(UGameplayAbility* InComingAttack, FGameplayTagContainer InComingAttackTags)
-		: ComingAttack(InComingAttack), ComingAttackTags(InComingAttackTags)
+	FComingAttackPayload(UGameplayAbility* InComingAttack, float InComingAttackHitTime, FGameplayTagContainer InComingAttackTags)
+		: ComingAttack(InComingAttack), ComingAttackHitTime(InComingAttackHitTime), ComingAttackTags(InComingAttackTags)
 	{}
 };
 
@@ -94,7 +97,7 @@ protected:
 	UFUNCTION()
 	void OnTargetAbilityActivated(UGameplayAbility* Ability);
 
-	float GetAttackNotifyTriggerTime(class UGA_MeleeAttackBase* Ability) const;
+	float GetAttackNotifyTriggerTime(class UGA_MeleeAttackBase* Ability, const FGameplayTagContainer& AbilityTags);
 
 	void SendEventToDefense(FComingAttackPayload EventPayload);
 

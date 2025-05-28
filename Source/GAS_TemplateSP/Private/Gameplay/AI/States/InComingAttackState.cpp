@@ -12,11 +12,6 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 	Super::StateInitalize(StateInitParams);
 }
 
-bool UInComingAttackState::EnterCondition_Implementation()
-{
-	return false;
-}
-
 void UInComingAttackState::OnEnter_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("InComingAttack has been enter"));
@@ -27,7 +22,7 @@ void UInComingAttackState::OnEnter_Implementation()
 
 void UInComingAttackState::OnExit_Implementation()
 {
-	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
+	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this); // test?
 
 	if (LastUsedDodgeAbility)
 	{
@@ -41,22 +36,44 @@ void UInComingAttackState::OnExit_Implementation()
 
 void UInComingAttackState::SelectAndMakeInComingAttackReaction()
 {
-	FComingAttackReactionData BestComingAttackReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(StateManager->ComingAttackPayload);
-	switch (BestComingAttackReaction.ReactionType)
+	const FComingAttackPayload& Payload = StateManager->ComingAttackPayload;
+	const FComingAttackReactionData BestReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(Payload);
+
+	const float TimeToHit = Payload.ComingAttackHitTime;
+	const float PreferredDelay = TimeToHit - BestReaction.PreferredTriggerTimeBeforeHit;
+
+	// Çok geç kaldıysak, hemen uygula
+	if (PreferredDelay <= 0.f)
+	{
+		TriggerIncomingReaction(BestReaction);
+	}
+	else
+	{
+		// Timer kur, ideal zamanda reaction tetiklenecek
+		Enemy->GetWorldTimerManager().SetTimer(DelayedReactionTimerHandle, FTimerDelegate::CreateUObject(
+			this, &UInComingAttackState::TriggerIncomingReaction, BestReaction), PreferredDelay, false);
+
+		UE_LOG(LogTemp, Warning, TEXT("Delaying Reaction by %.2f seconds..."), PreferredDelay);
+	}
+}
+
+void UInComingAttackState::TriggerIncomingReaction(FComingAttackReactionData Reaction)
+{
+	switch (Reaction.ReactionType)
 	{
 	case EComingAttackReaction::Parry:
-		MakeParryAbility(BestComingAttackReaction);
-		UE_LOG(LogTemp, Warning, TEXT("OnEnter to MakeParryAbility"));
+		MakeParryAbility(Reaction);
+		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeParryAbility"));
 		break;
 
 	case EComingAttackReaction::Dodge:
-		ActivateDodgeAbility(BestComingAttackReaction);
-		UE_LOG(LogTemp, Warning, TEXT("OnEnter to ActivateDodgeAbility"));
+		ActivateDodgeAbility(Reaction);
+		UE_LOG(LogTemp, Warning, TEXT("Triggered ActivateDodgeAbility"));
 		break;
 
 	case EComingAttackReaction::TakeDamage:
-		UE_LOG(LogTemp, Warning, TEXT("OnEnter to MakeTakeDamage"));
 		MakeTakeDamage();
+		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeTakeDamage"));
 		break;
 	}
 }

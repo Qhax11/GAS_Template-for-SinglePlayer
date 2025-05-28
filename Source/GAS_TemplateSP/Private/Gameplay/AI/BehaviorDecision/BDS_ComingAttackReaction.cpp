@@ -38,6 +38,12 @@ FComingAttackReactionData UBDS_ComingAttackReaction::GetBestComingAttackDecision
             continue;
         }
 
+        // This reaction is to late
+        if (ComingAttackPayload.ComingAttackHitTime < ReactionData.MinimumTimeBeforeHitToReact)
+        {
+            continue;
+        }
+
         float BehaviorScore = CalculateBehaviorStateScore(ReactionData);
         float TagScore = CalculateTagScore(ReactionData, ComingAttackPayload);
 

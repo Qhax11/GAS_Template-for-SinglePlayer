@@ -1,4 +1,4 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
@@ -205,56 +205,55 @@ void AAIControllerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 		CombinedTags.AppendTags(Spec->DynamicAbilityTags);
 	}
 
-	FTimerHandle SendEventTimer;
-	FTimerDelegate TimerDelegate;
-	FComingAttackPayload Payload(Ability, CombinedTags);
-
-	TWeakObjectPtr<AAIControllerBase> WeakThis(this);
-
-	TimerDelegate.BindLambda([WeakThis, Payload]()
-		{
-			if (WeakThis.IsValid())
-			{
-				WeakThis->SendEventToDefense(Payload);
-			}
-		});
-
-	float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility);
-	if (AttackTime < 0) 
-	{
-		return;
-	}
-
-	float ReactionDelay = AttackTime - 0.5;
-	if (ReactionDelay > 0) 
-	{
-		GetWorld()->GetTimerManager().SetTimer(SendEventTimer, TimerDelegate, ReactionDelay, false);
-	}
-	else
-	{
-		SendEventToDefense(Payload);
-	}
+	float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility, CombinedTags);
+	FComingAttackPayload Payload(Ability, AttackTime, CombinedTags);
+	SendEventToDefense(Payload);
 }
 
-float AAIControllerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability) const
+float AAIControllerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability, const FGameplayTagContainer& AbilityTags) 
 {
 	if (!Ability || !Ability->AnimMontage)
 	{
 		return -1.0f;
 	}
 
-	for (const FAnimNotifyEvent& Notify : Ability->AnimMontage->Notifies)
+	const UAnimMontage* Montage = Ability->AnimMontage;
+
+	// 1. TraceStart notify'inin süresini bul
+	float NotifyTime = -1.0f;
+
+	for (const FAnimNotifyEvent& Notify : Montage->Notifies)
 	{
 		if (const UAN_SendTag* TagNotify = Cast<UAN_SendTag>(Notify.Notify))
 		{
 			if (TagNotify->NotifyTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceStart)
 			{
-				return Notify.GetTriggerTime();
+				NotifyTime = Notify.GetTriggerTime();
+				break;
 			}
 		}
 	}
 
-	return -1.0f;
+	if (NotifyTime < 0.f)
+	{
+		return -1.0f;
+	}
+
+	// 2. Eğer ShadowLinked tag'i varsa Section2 offsetini çıkar
+	if (AbilityTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked))
+	{
+		const FName SectionName = FName("Section2");
+		const int32 SectionIndex = Montage->GetSectionIndex(SectionName);
+
+		if (Montage->CompositeSections.IsValidIndex(SectionIndex))
+		{
+			const float SectionStartTime = Montage->CompositeSections[SectionIndex].GetTime();
+			return FMath::Max(NotifyTime - SectionStartTime, 0.0f);
+		}
+	}
+
+	// 3. Normal durumda NotifyTime döner
+	return NotifyTime;
 }
 
 void AAIControllerBase::SendEventToDefense(FComingAttackPayload EventPayload)

@@ -29,6 +29,14 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Ability class that defines the actual gameplay logic and range values"))
     TSubclassOf<class UGAS_GameplayAbilityBase> RecationAbilityClass;
 
+    // Minimum time required before impact to allow this reaction (otherwise it's too late)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))
+    float MinimumTimeBeforeHitToReact = 0.1f;
+
+    // The time before hit at which this reaction should be triggered
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))
+    float PreferredTriggerTimeBeforeHit = 0.2f;
+
     // Base chance to select this reaction (0.0 to 1.0)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float BaseChance = 0.5f;

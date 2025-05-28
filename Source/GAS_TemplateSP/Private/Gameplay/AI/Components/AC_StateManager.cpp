@@ -75,7 +75,7 @@ void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
 
 void UAC_StateManager::CreateStates()
 {
-	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, BehaviorDecisionComponent, this);
+	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, OwnerController->GetTargetActor(), BehaviorDecisionComponent, this);
 
 	for (TSubclassOf<UStateBase> StateClass : StateClassArray)
 	{
@@ -131,19 +131,26 @@ void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 		return;
 	}
 
-	if (CurrentState) 
-	{
-		CurrentState->OnExit();
-	}
-
 	// Find the instance of the requested state
 	for (UStateBase* State : StateInstances)
 	{
 		if (State && State->StateTag == StateTag)
 		{
-			State->OnEnter();
-			CurrentState = State;
-			return;
+			if (State->EnterCondition()) 
+			{
+				if (CurrentState)
+				{
+					CurrentState->OnExit();
+				}
+
+				State->OnEnter();
+				CurrentState = State;
+				return;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Condition of %s is false, cannot enter"), *State->GetName());
+			}
 		}
 	}
 }

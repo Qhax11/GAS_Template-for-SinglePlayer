@@ -12,6 +12,11 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 	Super::StateInitalize(StateInitParams);
 }
 
+bool UInComingAttackState::EnterCondition_Implementation()
+{
+	return false;
+}
+
 void UInComingAttackState::OnEnter_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("InComingAttack has been enter"));

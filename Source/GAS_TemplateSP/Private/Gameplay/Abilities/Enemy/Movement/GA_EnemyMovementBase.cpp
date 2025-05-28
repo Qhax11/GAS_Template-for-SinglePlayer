@@ -52,7 +52,7 @@ void UGA_EnemyMovementBase::RequestMoveToLocation(const FVector& MoveLocation)
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Move Location: %s"), *MoveLocation.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Move Location: %s, from: %s"), *MoveLocation.ToString(), *GetName());
 
 	FAIMoveRequest MoveReq;
 	MoveReq.SetGoalLocation(MoveLocation);
@@ -105,6 +105,11 @@ void UGA_EnemyMovementBase::RequestMoveToTarget(AActor* TargetActor)
 
 void UGA_EnemyMovementBase::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
+	if (bAbilityEnded) 
+	{
+		return;
+	}
+
 	if (!Result.IsSuccess())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MoveTo strafing failed or was aborted: %s"), *GetName());
@@ -120,6 +125,8 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
+	bAbilityEnded = true;
+
 	if (EnemyController)
 	{
 		EnemyController->StopMovement(); 

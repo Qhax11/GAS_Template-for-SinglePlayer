@@ -5,6 +5,7 @@
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 
 void UAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -15,6 +16,7 @@ void UAttackState::OnEnter_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Attack State has been enter"));
 	bStateFinished = false;
+	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 	SelectAndMakeAttack();
 }
 

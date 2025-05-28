@@ -39,4 +39,6 @@ protected:
 	UCharacterMovementComponent* EnemyMovementComp;
 
 	FTimerHandle MovementTimerHandle;
+
+	bool bAbilityEnded = false;
 };

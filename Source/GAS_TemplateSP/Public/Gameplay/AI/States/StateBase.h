@@ -25,6 +25,9 @@ public:
     UGAS_AbilitySystemComponent* EnemyASC = nullptr;
 
     UPROPERTY()
+    AActor* HeroTarget = nullptr;
+
+    UPROPERTY()
     UAC_BehaviorDecision* BehaviorDecisionComponent = nullptr;
 
     UPROPERTY()
@@ -34,12 +37,14 @@ public:
         AGAS_EnemyBase* InEnemy,
         AAIControllerBase* InEnemyController, 
         UGAS_AbilitySystemComponent* InEnemyASC,
+        AActor* InHeroTarget,
         UAC_BehaviorDecision* InBehaviorDecisionComponent,
         UAC_StateManager* InStateManager)
         :
         Enemy(InEnemy),
         EnemyController(InEnemyController),
         EnemyASC(InEnemyASC),
+        HeroTarget(InHeroTarget),
         BehaviorDecisionComponent(InBehaviorDecisionComponent),
         StateManager(InStateManager)
     {}
@@ -55,6 +60,10 @@ class GAS_TEMPLATESP_API UStateBase : public UObject
 	
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
+
+    UFUNCTION(BlueprintNativeEvent, Category = "State")
+    bool EnterCondition();
+    virtual bool EnterCondition_Implementation() {return true;}
 
     UFUNCTION(BlueprintNativeEvent, Category = "State")
     void OnEnter();
@@ -90,6 +99,9 @@ protected:
 
     UPROPERTY(BlueprintReadOnly)
     UGAS_AbilitySystemComponent* EnemyASC;
+
+    UPROPERTY(BlueprintReadOnly)
+    AActor* HeroTarget;
 
     UPROPERTY(BlueprintReadOnly)
     UAC_BehaviorDecision* BehaviorDecisionComponent;

@@ -9,6 +9,7 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 	Enemy = StateInitParams.Enemy;
 	EnemyController = StateInitParams.EnemyController;
 	EnemyASC = StateInitParams.EnemyASC;
+	HeroTarget = StateInitParams.HeroTarget;
 	BehaviorDecisionComponent = StateInitParams.BehaviorDecisionComponent;
 	StateManager = StateInitParams.StateManager;
 }

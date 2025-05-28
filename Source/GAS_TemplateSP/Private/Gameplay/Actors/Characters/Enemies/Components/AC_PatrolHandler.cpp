@@ -29,6 +29,12 @@ void UAC_PatrolHandler::BeginPlay()
 	}
 }
 
+void UAC_PatrolHandler::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(WaitForNextPatrolTimerHandle);
+	Super::EndPlay(EndPlayReason);
+}
+
 void UAC_PatrolHandler::StartPatrolling()
 {
 	if (PatrolPoints.Num() == 0 || !OwnerEnemyASC)
@@ -61,6 +67,8 @@ void UAC_PatrolHandler::StopPatrolling()
 			LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
 		}
 	}
+
+	GetWorld()->GetTimerManager().ClearTimer(WaitForNextPatrolTimerHandle);
 }
 
 void UAC_PatrolHandler::MoveToNextPatrolPoint()
@@ -109,8 +117,7 @@ void UAC_PatrolHandler::OnPatrollingAbilityEnded(const FAbilityEndedDataBP& Shad
 	// Delay before moving to next point
 	const float WaitTime = GetRandomPatrolWaitTime();
 
-	FTimerHandle WaitTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(WaitTimerHandle, this, &UAC_PatrolHandler::MoveToNextPatrolPoint, WaitTime, false);
+	GetWorld()->GetTimerManager().SetTimer(WaitForNextPatrolTimerHandle, this, &UAC_PatrolHandler::MoveToNextPatrolPoint, WaitTime, false);
 }
 
 float UAC_PatrolHandler::GetRandomPatrolWaitTime() const

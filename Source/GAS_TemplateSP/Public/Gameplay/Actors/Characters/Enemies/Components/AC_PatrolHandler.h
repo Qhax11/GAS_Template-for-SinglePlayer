@@ -23,6 +23,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	void MoveToNextPatrolPoint();
 
 	void ActivatePatrollingAbility();
@@ -57,6 +59,7 @@ private:
 	UPROPERTY()
 	UGAS_GameplayAbilityBase* LastMoveToLocationAbility = nullptr;
 
+	FTimerHandle WaitForNextPatrolTimerHandle;
 	int32 CurrentIndex = 0;
 	bool bInPatrolling = false;
 };

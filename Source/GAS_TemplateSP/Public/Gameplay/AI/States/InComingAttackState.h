@@ -14,6 +14,8 @@ class GAS_TEMPLATESP_API UInComingAttackState : public UStateBase
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
+	virtual bool EnterCondition_Implementation() override;
+
 	virtual void OnEnter_Implementation() override;
 
 	virtual void OnExit_Implementation() override;

@@ -5,6 +5,10 @@
 
 UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
 {
+	FGameplayTagContainer AssetTags;
+	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Knocback);
+	SetAssetTags(AssetTags);
+
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback);
 
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;

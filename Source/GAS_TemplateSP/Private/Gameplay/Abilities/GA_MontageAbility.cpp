@@ -65,6 +65,7 @@ void UGA_MontageAbility::ActivateMotionWarping()
 
 void UGA_MontageAbility::CleanupMotionWarping()
 {
+	/*
 	if (!bEnableMotionWarping)
 	{
 		return;
@@ -81,6 +82,7 @@ void UGA_MontageAbility::CleanupMotionWarping()
 		//MotionWarping->RemoveWarpTarget(MotionWarpingName); 
 		MotionWarping->RemoveAllWarpTargets();// veya ClearWarpTargets() kullanabilirsin
 	}
+	*/
 }
 
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()

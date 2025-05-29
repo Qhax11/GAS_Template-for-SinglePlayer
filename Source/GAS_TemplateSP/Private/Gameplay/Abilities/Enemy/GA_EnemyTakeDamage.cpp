@@ -12,14 +12,14 @@ void UGA_EnemyTakeDamage::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
-	SetRotationToInstigator(TriggerEventData->Instigator);
-
 	if (AGAS_EnemyBase* EnemyBase = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo()))
 	{
 		EnemyBase->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	}
+
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	SetRotationToInstigator(TriggerEventData->Instigator);
 }
 
 void UGA_EnemyTakeDamage::SetRotationToInstigator(const AActor* Instigator)

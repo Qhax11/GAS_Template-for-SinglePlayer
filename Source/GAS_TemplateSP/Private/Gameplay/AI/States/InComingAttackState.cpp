@@ -6,10 +6,12 @@
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
+#include "Gameplay/Abilities/GA_TakeDamageBase.h"
 
 void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 {
 	Super::StateInitalize(StateInitParams);
+	EnemyASC->AbilityActivatedCallbacks.AddUObject(this, &UInComingAttackState::OnTargetAbilityActivated);
 }
 
 void UInComingAttackState::OnEnter_Implementation()
@@ -31,6 +33,16 @@ void UInComingAttackState::OnExit_Implementation()
 			LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnDodgeAbilityEnded);
 		}
 		LastUsedDodgeAbility = nullptr;
+	}
+
+	if (LastUsedTakeDamageAbility)
+	{
+		if (LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("LastUsedTakeDamageAbility, REMOVED BIND!"));
+			LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+		}
+		LastUsedTakeDamageAbility = nullptr;
 	}
 }
 
@@ -72,32 +84,44 @@ void UInComingAttackState::TriggerIncomingReaction(FComingAttackReactionData Rea
 		break;
 
 	case EComingAttackReaction::TakeDamage:
-		MakeTakeDamage();
+		MakeTakeDamage(Reaction);
 		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeTakeDamage"));
 		break;
 	}
 }
 
-void UInComingAttackState::MakeTakeDamage()
+void UInComingAttackState::MakeTakeDamage(FComingAttackReactionData BestComingAttackReaction)
 {
-	// Failsafe: Eğer tag hiç eklenmezse ya da hiç çıkarılmazsa bu süre sonra exit
-	Enemy->GetWorldTimerManager().SetTimer(TakeDamageFailsafeTimer, this,
-		&UInComingAttackState::OnTakeDamageFailsafeTimeout,
-		1.0f, false); // 1 saniye sonra çık (ayarlanabilir)
+	// Combo/movement kes
+	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
-	Enemy->GetTagDelegatesComponent()->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
+	// Dinle: Eğer o ability aktif edilirse, referans al ve End event'ine bind ol
 }
 
-void UInComingAttackState::OnTakeDamageFailsafeTimeout()
+void UInComingAttackState::OnTargetAbilityActivated(UGameplayAbility* Ability)
 {
-	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
-	UE_LOG(LogTemp, Warning, TEXT("Failsafe: TakeDamage tag did not trigger, exiting InComingAttackState."));
-	ExitRequest();
+	UGA_TakeDamageBase* TakeDamageAbility = Cast<UGA_TakeDamageBase>(Ability);
+	if (!TakeDamageAbility)
+	{
+		return;
+	}
+
+	if (TakeDamageAbility)
+	{
+		if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TakeDamageAbility Binded!"));
+			TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+		}
+
+		LastUsedTakeDamageAbility = TakeDamageAbility;
+	}
 }
 
-void UInComingAttackState::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
+	UE_LOG(LogTemp, Warning, TEXT("OnTakeDamageAbilityEnded!"));
 	ExitRequest();
 }
 

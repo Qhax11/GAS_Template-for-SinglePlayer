@@ -9,6 +9,8 @@
 
 UGA_TakeDamageBase::UGA_TakeDamageBase()
 {
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerExecution;
+
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
 
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();

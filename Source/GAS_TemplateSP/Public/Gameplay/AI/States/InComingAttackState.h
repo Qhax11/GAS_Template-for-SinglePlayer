@@ -25,15 +25,18 @@ protected:
 
 	void TriggerIncomingReaction(FComingAttackReactionData Reaction);
 
-	void MakeTakeDamage();
+	//********************* TAKE DAMAGE *********************/
 
-	// Exit of take damage.
-	void OnTakeDamageFailsafeTimeout();
-	FTimerHandle TakeDamageFailsafeTimer;
+	void MakeTakeDamage(FComingAttackReactionData BestComingAttackReaction);
 
-	// Exit of take damage.
 	UFUNCTION()
-	void OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnTargetAbilityActivated(UGameplayAbility* Ability);
+
+	// Exit of Take Damage.
+	UFUNCTION()
+	void OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+
+	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility;
 
 	//********************* PARRY *********************/
 

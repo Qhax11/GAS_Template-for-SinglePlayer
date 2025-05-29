@@ -49,23 +49,22 @@ void UInComingAttackState::OnExit_Implementation()
 
 void UInComingAttackState::SelectAndMakeInComingAttackReaction()
 {
-	const FComingAttackPayload& Payload = StateManager->ComingAttackPayload;
-	const FComingAttackReactionData BestReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(Payload);
+	FComingAttackReactionData SelectedReactionData = GetSelectedReactionData();
 
-	switch (BestReaction.ReactionType)
+	switch (SelectedReactionData.ReactionType)
 	{
 	case EComingAttackReaction::Parry:
-		MakeParryAbility(BestReaction);
+		MakeParryAbility(SelectedReactionData);
 		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeParryAbility"));
 		break;
 
 	case EComingAttackReaction::Dodge:
-		ActivateDodgeAbility(BestReaction);
+		ActivateDodgeAbility(SelectedReactionData);
 		UE_LOG(LogTemp, Warning, TEXT("Triggered ActivateDodgeAbility"));
 		break;
 
 	case EComingAttackReaction::TakeDamage:
-		MakeTakeDamage(BestReaction);
+		MakeTakeDamage(SelectedReactionData);
 		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeTakeDamage"));
 		break;
 	}

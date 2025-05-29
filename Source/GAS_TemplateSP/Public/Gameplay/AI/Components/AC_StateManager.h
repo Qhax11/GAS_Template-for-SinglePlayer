@@ -50,6 +50,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FComingAttackPayload ComingAttackPayload;
 
+	FComingAttackReactionData SelectedReactionData;
+
 	bool bInComingAttack;
 
 	FAttackData SelectNewBestAttack();

@@ -279,6 +279,7 @@ void AAIControllerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 void AAIControllerBase::TriggerIncomingAttackReaction(FComingAttackReactionData Reaction, FComingAttackPayload Payload)
 {
 	ControlledEnemy->GetEnemyStateManagerComponent()->ComingAttackPayload = Payload;
+	ControlledEnemy->GetEnemyStateManagerComponent()->SelectedReactionData = Reaction;
 	ControlledEnemy->GetEnemyStateManagerComponent()->bInComingAttack = true;
 	ControlledEnemy->GetEnemyStateManagerComponent()->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack);
 }

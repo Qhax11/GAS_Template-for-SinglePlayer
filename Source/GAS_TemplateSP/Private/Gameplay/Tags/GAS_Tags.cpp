@@ -84,6 +84,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility2, "Gameplay.Hero.Ability2");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility3, "Gameplay.Hero.Ability3");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_TakeDamage, "Gameplay.Ability.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Parry, "Gameplay.Ability.Parry");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Knocback, "Gameplay.Ability.Knocback");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack, "Gameplay.Ability.Attack");

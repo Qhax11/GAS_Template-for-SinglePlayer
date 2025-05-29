@@ -21,6 +21,7 @@ UGA_TakeDamageBase::UGA_TakeDamageBase()
 
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Dead);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_TakeDamage);
 }
 
 void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

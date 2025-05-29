@@ -45,6 +45,11 @@ FAttackData UStateBase::GetSelectedAttackAbilityData() const
 	return StateManager->LastSelectedAttackData;
 }
 
+FComingAttackReactionData UStateBase::GetSelectedReactionData() const
+{
+	return StateManager->SelectedReactionData;
+}
+
 UGAS_GameplayAbilityBase* UStateBase::GetSelectedAttackAbilityCDO() const
 {
 	FAttackData SelectedAttackData = GetSelectedAttackAbilityData();

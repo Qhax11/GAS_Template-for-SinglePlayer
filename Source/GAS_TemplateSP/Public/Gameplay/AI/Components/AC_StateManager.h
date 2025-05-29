@@ -31,6 +31,8 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
+	void OnTargetDetected();
+
 	void RequestStateTreeEnter(const FGameplayTag& StateTag);
 
 	void RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag);

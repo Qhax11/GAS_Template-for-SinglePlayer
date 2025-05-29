@@ -101,6 +101,8 @@ protected:
 
 	void SendEventToDefense(FComingAttackPayload EventPayload);
 
+	void TriggerIncomingAttackReaction(struct FComingAttackReactionData Reaction, FComingAttackPayload Payload);
+
 	UFUNCTION()
 	void OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 

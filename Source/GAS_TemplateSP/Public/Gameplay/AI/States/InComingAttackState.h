@@ -29,6 +29,9 @@ protected:
 
 	void MakeTakeDamage(FComingAttackReactionData BestComingAttackReaction);
 
+	void OnTakeDamageFailsafeTimeout();
+	FTimerHandle TakeDamageFailsafeTimer;
+
 	UFUNCTION()
 	void OnTargetAbilityActivated(UGameplayAbility* Ability);
 

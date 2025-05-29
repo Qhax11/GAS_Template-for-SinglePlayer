@@ -124,6 +124,24 @@ void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	}
 }
 
+void UAC_StateManager::OnTargetDetected()
+{
+	if (CurrentState->StateTag == GAS_Tags::TAG_AI_State_InComingAttack) 
+	{
+		return;
+	}
+
+	FAttackData NewSelectedAttack = SelectNewBestAttack();
+	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
+	{
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
+	}
+	else
+	{
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
+	}
+}
+
 void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 {
 	if (!StateTag.IsValid() || !bActive)

@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "AIController.h"
@@ -14,6 +15,8 @@ void UGA_EnemyTakeDamage::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	if (AGAS_EnemyBase* EnemyBase = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo()))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UGA_EnemyTakeDamage Stopped movement and combos."));
+		EnemyBase->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 		EnemyBase->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	}
 

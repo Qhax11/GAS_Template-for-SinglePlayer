@@ -63,8 +63,11 @@ void UMovementState::TryEnterToAttackState()
 	if (GetSelectedAttackAbilityCDO()->MinRange > EnemyController->GetTargetHeroDistance())
 	{
 		FAttackData NewAttack = SelectNewAttackAbility();
-		StartMovementChain(NewAttack.AbilityClass);
-		return;
+		if (NewAttack.AbilityClass) 
+		{
+			StartMovementChain(NewAttack.AbilityClass);
+			return;
+		}
 	}
 
 	if (IsAttackInRange(SelectedAttack.AbilityClass))

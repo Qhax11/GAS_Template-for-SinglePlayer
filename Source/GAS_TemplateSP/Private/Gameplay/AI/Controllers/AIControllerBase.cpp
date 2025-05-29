@@ -10,6 +10,7 @@
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Animation/AN_SendTag.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include <Kismet/GameplayStatics.h>
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
@@ -101,7 +102,7 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 		}
 
 		//OnTargetDetected.Broadcast(Target);
-		ControlledEnemy->GetEnemyStateManagerComponent()->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
+		ControlledEnemy->GetEnemyStateManagerComponent()->OnTargetDetected();
 		bHasTargetBeenDetected = true;
 	}
 }
@@ -258,7 +259,26 @@ float AAIControllerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability
 
 void AAIControllerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 {
-	ControlledEnemy->GetEnemyStateManagerComponent()->ComingAttackPayload = EventPayload;
+	const FComingAttackReactionData BestReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(EventPayload);
+	const float PreferredDelay = EventPayload.ComingAttackHitTime - BestReaction.PreferredTriggerTimeBeforeHit;
+
+	if (PreferredDelay <= 0.f)
+	{
+		TriggerIncomingAttackReaction(BestReaction, EventPayload);
+	}
+	else
+	{
+		FTimerHandle ReactionDelayTimer;
+		GetWorld()->GetTimerManager().SetTimer(ReactionDelayTimer, FTimerDelegate::CreateUObject(
+			this, &AAIControllerBase::TriggerIncomingAttackReaction, BestReaction, EventPayload), PreferredDelay, false);
+
+		UE_LOG(LogTemp, Warning, TEXT("IncomingAttack Reaction delayed by %.2f seconds."), PreferredDelay);
+	}
+}
+
+void AAIControllerBase::TriggerIncomingAttackReaction(FComingAttackReactionData Reaction, FComingAttackPayload Payload)
+{
+	ControlledEnemy->GetEnemyStateManagerComponent()->ComingAttackPayload = Payload;
 	ControlledEnemy->GetEnemyStateManagerComponent()->bInComingAttack = true;
 	ControlledEnemy->GetEnemyStateManagerComponent()->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack);
 }

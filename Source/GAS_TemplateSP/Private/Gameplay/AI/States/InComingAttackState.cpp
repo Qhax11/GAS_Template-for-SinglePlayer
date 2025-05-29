@@ -44,6 +44,7 @@ void UInComingAttackState::OnExit_Implementation()
 		}
 		LastUsedTakeDamageAbility = nullptr;
 	}
+
 }
 
 void UInComingAttackState::SelectAndMakeInComingAttackReaction()
@@ -51,26 +52,33 @@ void UInComingAttackState::SelectAndMakeInComingAttackReaction()
 	const FComingAttackPayload& Payload = StateManager->ComingAttackPayload;
 	const FComingAttackReactionData BestReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(Payload);
 
-	const float TimeToHit = Payload.ComingAttackHitTime;
-	const float PreferredDelay = TimeToHit - BestReaction.PreferredTriggerTimeBeforeHit;
-
-	// Çok geç kaldıysak, hemen uygula
-	if (PreferredDelay <= 0.f)
+	switch (BestReaction.ReactionType)
 	{
-		TriggerIncomingReaction(BestReaction);
-	}
-	else
-	{
-		// Timer kur, ideal zamanda reaction tetiklenecek
-		Enemy->GetWorldTimerManager().SetTimer(DelayedReactionTimerHandle, FTimerDelegate::CreateUObject(
-			this, &UInComingAttackState::TriggerIncomingReaction, BestReaction), PreferredDelay, false);
+	case EComingAttackReaction::Parry:
+		MakeParryAbility(BestReaction);
+		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeParryAbility"));
+		break;
 
-		UE_LOG(LogTemp, Warning, TEXT("Delaying Reaction by %.2f seconds..."), PreferredDelay);
+	case EComingAttackReaction::Dodge:
+		ActivateDodgeAbility(BestReaction);
+		UE_LOG(LogTemp, Warning, TEXT("Triggered ActivateDodgeAbility"));
+		break;
+
+	case EComingAttackReaction::TakeDamage:
+		MakeTakeDamage(BestReaction);
+		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeTakeDamage"));
+		break;
 	}
 }
 
 void UInComingAttackState::TriggerIncomingReaction(FComingAttackReactionData Reaction)
 {
+	const FComingAttackPayload& Payload = StateManager->ComingAttackPayload;
+	const FComingAttackReactionData BestReaction = BehaviorDecisionComponent->GetBestComingAttackDecision(Payload);
+
+	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
+
 	switch (Reaction.ReactionType)
 	{
 	case EComingAttackReaction::Parry:
@@ -92,11 +100,22 @@ void UInComingAttackState::TriggerIncomingReaction(FComingAttackReactionData Rea
 
 void UInComingAttackState::MakeTakeDamage(FComingAttackReactionData BestComingAttackReaction)
 {
-	// Combo/movement kes
-	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
+	// Komboyu/movement'i durdurma buraya da ekleyebilirsin ama zaten TriggerIncomingReaction içinde var.
 
-	// Dinle: Eğer o ability aktif edilirse, referans al ve End event'ine bind ol
+// Eğer ability aktif edilirse dinlenecek zaten
+// Şimdi failsafe başlat — eğer ability 0.5 saniye içinde aktive edilmezse çık
+
+	Enemy->GetWorldTimerManager().SetTimer(TakeDamageFailsafeTimer, this,
+		&UInComingAttackState::OnTakeDamageFailsafeTimeout,
+		0.2f, false);
+
+	UE_LOG(LogTemp, Warning, TEXT("TakeDamage failsafe timer started."));
+}
+
+void UInComingAttackState::OnTakeDamageFailsafeTimeout()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Failsafe triggered: TakeDamage ability not activated in time."));
+	ExitRequest();
 }
 
 void UInComingAttackState::OnTargetAbilityActivated(UGameplayAbility* Ability)
@@ -107,16 +126,15 @@ void UInComingAttackState::OnTargetAbilityActivated(UGameplayAbility* Ability)
 		return;
 	}
 
-	if (TakeDamageAbility)
-	{
-		if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("TakeDamageAbility Binded!"));
-			TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
-		}
+	// Timer’ı durdur, çünkü ability gerçekten aktive oldu
+	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
 
-		LastUsedTakeDamageAbility = TakeDamageAbility;
+	if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TakeDamageAbility Binded!"));
+		TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
 	}
+	LastUsedTakeDamageAbility = TakeDamageAbility;
 }
 
 void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
@@ -127,7 +145,6 @@ void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& D
 
 void UInComingAttackState::MakeParryAbility(FComingAttackReactionData BestComingAttackReaction)
 {
-	// Stop any current combo before parrying
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
@@ -205,6 +222,7 @@ void UInComingAttackState::ActivateDodgeAbility(FComingAttackReactionData BestCo
 }
 void UInComingAttackState::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnDodgeAbilityEnded, exiting."));
 	ExitRequest();
 }
 

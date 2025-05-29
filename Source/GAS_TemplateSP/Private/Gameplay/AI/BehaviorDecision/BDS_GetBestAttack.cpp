@@ -47,8 +47,6 @@ FAttackData UBDS_GetBestAttack::GetBestAttack()
 
         float TotalScore = Attack.ScoreBias + DistanceScore;
 
-        UE_LOG(LogTemp, Log, TEXT("[AI] Attack %s → Score: %.2f"), *Attack.AbilityClass->GetName(), TotalScore);
-
         if (TotalScore > BestScore)
         {
             BestScore = TotalScore;

@@ -18,6 +18,8 @@ public:
 
 	void ActivateMotionWarping();
 
+	void CleanupMotionWarping();
+
 	void CreatePlayMontageWaitForEvent();
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
@@ -61,5 +63,6 @@ protected:
 	UFUNCTION()
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
 
+	void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 	
 };

@@ -63,6 +63,26 @@ void UGA_MontageAbility::ActivateMotionWarping()
 	}
 }
 
+void UGA_MontageAbility::CleanupMotionWarping()
+{
+	if (!bEnableMotionWarping)
+	{
+		return;
+	}
+
+	AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
+	if (!CharacterBase)
+	{
+		return;
+	}
+
+	if (UMotionWarpingComponent* MotionWarping = CharacterBase->GetMotionWarpingComponent())
+	{
+		//MotionWarping->RemoveWarpTarget(MotionWarpingName); 
+		MotionWarping->RemoveAllWarpTargets();// veya ClearWarpTargets() kullanabilirsin
+	}
+}
+
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
 	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
@@ -87,5 +107,11 @@ void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEven
 void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	/* Will be implemented in child classes */
+}
+
+void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	CleanupMotionWarping();
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

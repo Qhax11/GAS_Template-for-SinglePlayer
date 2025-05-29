@@ -2,6 +2,8 @@
 
 
 #include "Gameplay/Abilities/Enemy/Death/GA_EnemyDeathBase.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/AI/Components/AC_StateManager.h"
 #include "AIController.h"
 #include "BrainComponent.h"
 
@@ -12,14 +14,14 @@ void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	APawn* OwnerPawn = Cast<APawn>(GetAvatarActorFromActorInfo());
-	if (!OwnerPawn) 
+	AGAS_EnemyBase* Enemy = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
+	if (!Enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerPawn is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Enemy is null in: %s"), *GetName());
 		return;
 	}
 
-	AAIController* EnemyController = Cast<AAIController>(OwnerPawn->GetController());
+	AAIController* EnemyController = Cast<AAIController>(Enemy->GetController());
 	if (!EnemyController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
@@ -33,6 +35,7 @@ void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
+	Enemy->GetEnemyStateManagerComponent()->StopLogic();
 	EnemyController->GetBrainComponent()->StopLogic(TEXT("Enemey is dead"));
 }
 

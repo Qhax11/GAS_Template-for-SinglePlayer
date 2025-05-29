@@ -206,7 +206,7 @@ void AAIControllerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 	}
 
 	float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility, CombinedTags);
-	FComingAttackPayload Payload(Ability, AttackTime, CombinedTags);
+	FComingAttackPayload Payload(MeleeAttackAbility, AttackTime, CombinedTags);
 	SendEventToDefense(Payload);
 }
 

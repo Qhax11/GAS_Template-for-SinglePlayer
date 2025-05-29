@@ -45,7 +45,9 @@ public:
 
 	bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
 
+	UPROPERTY(BlueprintReadOnly)
 	FComingAttackPayload ComingAttackPayload;
+
 	bool bInComingAttack;
 
 	FAttackData SelectNewBestAttack();

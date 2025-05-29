@@ -21,7 +21,7 @@ struct FComingAttackPayload
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UGameplayAbility* ComingAttack;
+	UGAS_GameplayAbilityBase* ComingAttack;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float ComingAttackHitTime;
@@ -33,7 +33,7 @@ public:
 		: ComingAttack(nullptr)
 	{}
 
-	FComingAttackPayload(UGameplayAbility* InComingAttack, float InComingAttackHitTime, FGameplayTagContainer InComingAttackTags)
+	FComingAttackPayload(UGAS_GameplayAbilityBase* InComingAttack, float InComingAttackHitTime, FGameplayTagContainer InComingAttackTags)
 		: ComingAttack(InComingAttack), ComingAttackHitTime(InComingAttackHitTime), ComingAttackTags(InComingAttackTags)
 	{}
 };

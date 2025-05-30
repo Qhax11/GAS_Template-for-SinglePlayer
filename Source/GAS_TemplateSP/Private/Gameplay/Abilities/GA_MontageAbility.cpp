@@ -53,7 +53,24 @@ void UGA_MontageAbility::ActivateMotionWarping()
 	{
 		FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
 		FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
-		FVector TargetLocation = StartLocation + (Forward * MotionWarpingForwardForce);
+		FVector TargetLocation = StartLocation;
+
+		// Determine direction
+		if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Forward)
+		{
+			// Move forward
+			TargetLocation += Forward * MotionWarpingForce;
+		}
+		else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Backward)
+		{
+			// Move backward
+			TargetLocation -= Forward * MotionWarpingForce;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Unknown DirectionTag in: %s, defaulting to forward motion"), *GetName());
+			TargetLocation += Forward * MotionWarpingForce;
+		}
 
 		CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
 	}
@@ -65,7 +82,6 @@ void UGA_MontageAbility::ActivateMotionWarping()
 
 void UGA_MontageAbility::CleanupMotionWarping()
 {
-	/*
 	if (!bEnableMotionWarping)
 	{
 		return;
@@ -79,10 +95,10 @@ void UGA_MontageAbility::CleanupMotionWarping()
 
 	if (UMotionWarpingComponent* MotionWarping = CharacterBase->GetMotionWarpingComponent())
 	{
-		//MotionWarping->RemoveWarpTarget(MotionWarpingName); 
-		MotionWarping->RemoveAllWarpTargets();// veya ClearWarpTargets() kullanabilirsin
+		UE_LOG(LogTemp, Warning, TEXT("CleanupMotionWarping in %s"), *GetName());
+		MotionWarping->RemoveWarpTarget(MotionWarpingName); 
+		//MotionWarping->RemoveAllWarpTargets();// veya ClearWarpTargets() kullanabilirsin
 	}
-	*/
 }
 
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()

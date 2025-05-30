@@ -29,7 +29,10 @@ public:
 	FName MotionWarpingName = NAME_None;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	float MotionWarpingForwardForce = 0.0f;
+	float MotionWarpingForce = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"), meta = (Categories = "AI.Direction.Resolved"))
+	FGameplayTag DirectionTag;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	TObjectPtr<UAnimMontage> AnimMontage;

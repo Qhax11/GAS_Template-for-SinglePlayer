@@ -95,9 +95,7 @@ void UGA_MontageAbility::CleanupMotionWarping()
 
 	if (UMotionWarpingComponent* MotionWarping = CharacterBase->GetMotionWarpingComponent())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CleanupMotionWarping in %s"), *GetName());
 		MotionWarping->RemoveWarpTarget(MotionWarpingName); 
-		//MotionWarping->RemoveAllWarpTargets();// veya ClearWarpTargets() kullanabilirsin
 	}
 }
 

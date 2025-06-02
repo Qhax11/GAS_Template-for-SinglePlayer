@@ -126,6 +126,11 @@ void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UAC_StateManager::OnTargetDetected()
 {
+	if (!CurrentState) 
+	{
+		return;
+	}
+
 	if (CurrentState->StateTag == GAS_Tags::TAG_AI_State_InComingAttack) 
 	{
 		return;
@@ -252,6 +257,12 @@ float UAC_StateManager::GetTargetDistance() const
 
 bool UAC_StateManager::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)
 {
+	if (!AbilityClass) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability Class is null in: %s"), *GetName());
+		return false;
+	}
+
 	UGAS_GameplayAbilityBase* AbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 
 	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())

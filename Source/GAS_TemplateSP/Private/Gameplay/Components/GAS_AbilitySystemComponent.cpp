@@ -40,7 +40,10 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 			}
 			else
 			{
-				return CastChecked<UGAS_GameplayAbilityBase>(Spec.GetAbilityInstances()[0]);
+				if (Spec.GetAbilityInstances().IsValidIndex(0)) 
+				{
+					return CastChecked<UGAS_GameplayAbilityBase>(Spec.GetAbilityInstances()[0]);
+				}
 			}
 		}
 	}

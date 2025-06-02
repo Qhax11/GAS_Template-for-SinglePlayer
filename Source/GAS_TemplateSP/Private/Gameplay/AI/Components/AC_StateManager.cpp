@@ -208,19 +208,19 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 
 void UAC_StateManager::ExitFromMovementState()
 {
-	
+	FAttackData NewSelectedAttack = SelectNewBestAttack();
+	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
+	{
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
+	}
+	else
+	{
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
+	}
 }
 
 void UAC_StateManager::ExitFromAttackState()
 {
-	/*
-	if (bInComingAttack)
-	{
-		OwnerStateTree->SendStateTreeEvent(TransactionTag);
-		return;
-	}
-	*/
-
 	FAttackData NewSelectedAttack = SelectNewBestAttack();
 	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
 	{

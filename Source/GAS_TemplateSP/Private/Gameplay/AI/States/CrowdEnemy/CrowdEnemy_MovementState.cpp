@@ -57,6 +57,9 @@ void UCrowdEnemy_MovementState::OnExit_Implementation()
 		}
 		LastUsedStrafingAbility = nullptr;
 	}
+
+	GetWorld()->GetTimerManager().ClearTimer(WaitForNextStrafingOrbitTimerHandle);
+
 }
 
 void UCrowdEnemy_MovementState::OnTick_Implementation(float DeltaTime)
@@ -128,6 +131,14 @@ void UCrowdEnemy_MovementState::MakeStrafingAbility()
 
 void UCrowdEnemy_MovementState::OnStrafingAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
+	// Delay before make strafing again
+	float WaitTime = FMath::RandRange(MinStrafingWaitTime, MaxStrafingWaitTime);
+	GetWorld()->GetTimerManager().SetTimer(WaitForNextStrafingOrbitTimerHandle, this, &UCrowdEnemy_MovementState::OnWaitTimeFinished, WaitTime, false);
+}
+
+void UCrowdEnemy_MovementState::OnWaitTimeFinished()
+{
 	ExitRequest();
 }
+
 

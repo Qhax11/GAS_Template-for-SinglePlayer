@@ -34,6 +34,8 @@ public:
 	UFUNCTION()
 	void OnStrafingAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
+	void OnWaitTimeFinished();
+
 	FAttackData SelectedAttack;
 	UGAS_GameplayAbilityBase* SelectedAttackCDO;
 
@@ -45,6 +47,13 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayEventData StrafingAbilityEventData;
 
+	UPROPERTY(EditDefaultsOnly)
+	float MinStrafingWaitTime= 0.5f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float MaxStrafingWaitTime = 3.0f;
+
 private:
 	class UAC_EnemyMovementManager* MovementManagerComponent;
+	FTimerHandle WaitForNextStrafingOrbitTimerHandle;
 };

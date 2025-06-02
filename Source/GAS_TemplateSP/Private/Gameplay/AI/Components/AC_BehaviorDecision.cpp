@@ -130,6 +130,12 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     }
 #endif // WITH_EDITOR
 
+    if (!BestMovementChainDataAsset) 
+    {
+        UE_LOG(LogTemp, Warning, TEXT("BestMovementChainDataAsset is null in: %s"), *GetName());
+        return TArray<FMovementAbilityData>();
+    }
+
     return BestMovementChainDataAsset->MovementChain;
 }
 

@@ -1,18 +1,11 @@
 ﻿// Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Enemy/Movement/GA_EnemyStrafingBase.h"
+#include "Gameplay/Abilities/Enemy/Movement/Strafing/GA_EnemyStrafingBase.h"
 
 UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 {
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
-
-	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
-	FAbilityTriggerData TriggerData = FAbilityTriggerData();
-	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Strafing;
-
-	AbilityTriggers.Add(TriggerData);
 }
 
 void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

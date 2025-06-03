@@ -24,6 +24,8 @@ class GAS_TEMPLATESP_API AAIControllerBoss : public AAIControllerBase
 	GENERATED_BODY()
 	
 protected:
+	AAIControllerBoss(const FObjectInitializer& ObjectInitializer);
+
 	virtual void BeginPlay();
 
 	virtual void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus) override;
@@ -35,5 +37,6 @@ protected:
 	UFUNCTION()
 	void OnDeadWithFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class UAC_IntendHandlerBoss> IntendHandlerBossComponent;
 };

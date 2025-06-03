@@ -2,6 +2,13 @@
 
 
 #include "Gameplay/AI/Controllers/AIControllerBoss.h"
+#include "Gameplay/AI/Components/IntendHandler/AC_IntendHandlerBoss.h"
+
+AAIControllerBoss::AAIControllerBoss(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	IntendHandlerBossComponent = CreateDefaultSubobject<UAC_IntendHandlerBoss>(TEXT("IntendHandlerBossComponent"));
+}
 
 void AAIControllerBoss::BeginPlay()
 {

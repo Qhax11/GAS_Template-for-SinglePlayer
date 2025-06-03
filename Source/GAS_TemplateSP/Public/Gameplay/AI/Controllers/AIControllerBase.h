@@ -14,29 +14,6 @@ class UAISenseConfig_Sight;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, DetectedTarget);
 
-USTRUCT(BlueprintType)
-struct FComingAttackPayload
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UGAS_GameplayAbilityBase* ComingAttack;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float ComingAttackHitTime;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FGameplayTagContainer ComingAttackTags;
-
-	FComingAttackPayload()
-		: ComingAttack(nullptr)
-	{}
-
-	FComingAttackPayload(UGAS_GameplayAbilityBase* InComingAttack, float InComingAttackHitTime, FGameplayTagContainer InComingAttackTags)
-		: ComingAttack(InComingAttack), ComingAttackHitTime(InComingAttackHitTime), ComingAttackTags(InComingAttackTags)
-	{}
-};
 
 UCLASS()
 class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
@@ -50,6 +27,9 @@ public:
 
 	FORCEINLINE class UAC_BehaviorDecision* GetBehaviorDecisionComponent() const { return BehaviorDecisionComponent; }
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class UAC_StateManager* GetEnemyStateManagerComponent() const { return EnemyStateManagerComponent; }
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
@@ -59,6 +39,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UAC_BehaviorDecision> BehaviorDecisionComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
+	class UAC_StateManager* EnemyStateManagerComponent;
 
 protected:
 	virtual void BeginPlay();
@@ -89,28 +72,6 @@ public:
 	FOnTargetDetected OnTargetDetected;
 
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
-
-protected:
-	// Listening own tags and target tag's
-	virtual bool RegisterTags(AGAS_CharacterBase* TargetCharacter);
-
-	UFUNCTION()
-	void OnTargetAbilityActivated(UGameplayAbility* Ability);
-
-	float GetAttackNotifyTriggerTime(class UGA_MeleeAttackBase* Ability, const FGameplayTagContainer& AbilityTags);
-
-	void SendEventToDefense(FComingAttackPayload EventPayload);
-
-	void TriggerIncomingAttackReaction(struct FComingAttackReactionData Reaction, FComingAttackPayload Payload);
-
-	UFUNCTION()
-	void OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UPROPERTY(EditDefaultsOnly)
-	FGameplayTagContainer TargetAbilityTagsCheck;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Detaour Crowd Avoidance Config")

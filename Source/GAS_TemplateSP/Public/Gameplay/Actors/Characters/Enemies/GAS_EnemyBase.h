@@ -27,9 +27,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class UAC_EnemyMovementManager* GetEnemyMovementManagerComponent() const { return EnemyMovementManagerComponent; }
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE class UAC_StateManager* GetEnemyStateManagerComponent() const { return EnemyStateManagerComponent; }
-
 protected:
 	//* Components *//
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
@@ -43,9 +40,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
 	class UAC_PatrolHandler* PatrolHandlerComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
-	class UAC_StateManager* EnemyStateManagerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
     USceneComponent* FinisherPointComponent;

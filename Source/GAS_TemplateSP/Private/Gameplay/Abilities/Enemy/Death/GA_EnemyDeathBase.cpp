@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/Enemy/Death/GA_EnemyDeathBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "AIController.h"
 #include "BrainComponent.h"
@@ -21,7 +22,7 @@ void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	AAIController* EnemyController = Cast<AAIController>(Enemy->GetController());
+	AAIControllerBase* EnemyController = Cast<AAIControllerBase>(Enemy->GetController());
 	if (!EnemyController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
@@ -35,7 +36,7 @@ void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	Enemy->GetEnemyStateManagerComponent()->StopLogic();
+	EnemyController->GetEnemyStateManagerComponent()->StopLogic();
 	EnemyController->GetBrainComponent()->StopLogic(TEXT("Enemey is dead"));
 }
 

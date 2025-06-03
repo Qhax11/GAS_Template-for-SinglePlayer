@@ -7,6 +7,8 @@
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/Abilities/GA_TakeDamageBase.h"
+#include "Gameplay/AI/Components/IntendHandler/AC_IntendHandlerBase.h"
+
 
 void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 {

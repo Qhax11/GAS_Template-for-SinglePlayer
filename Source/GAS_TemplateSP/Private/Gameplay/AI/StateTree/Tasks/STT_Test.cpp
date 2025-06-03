@@ -13,11 +13,13 @@ EStateTreeRunStatus FPrintActorNameTask::EnterState(FStateTreeExecutionContext& 
 		UE_LOG(LogTemp, Warning, TEXT("StateClass or Component is null."));
 		return EStateTreeRunStatus::Failed;
 	}
+	/*
 
 	if (UAC_StateManager* EnemyStateManagerComponent = Data.EnemyBase->GetEnemyStateManagerComponent()) 
 	{
 		//Data.EnemyBase->GetEnemyStateManagerComponent()->EnterStateByClass(Data.StateClass);
 	}
+	*/
 
 	return EStateTreeRunStatus::Running;
 }
@@ -25,9 +27,10 @@ EStateTreeRunStatus FPrintActorNameTask::EnterState(FStateTreeExecutionContext& 
 void FPrintActorNameTask::ExitState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const
 {
 	FStartStateInstanceData& Data = Context.GetInstanceData(*this);
-
+	/*
 	if (Data.EnemyBase && Data.EnemyBase->GetEnemyStateManagerComponent())
 	{
 		//Data.EnemyBase->GetEnemyStateManagerComponent()->ExitStateByClass(Data.StateClass);
 	}
+	*/
 }

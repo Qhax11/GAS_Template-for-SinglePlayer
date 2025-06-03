@@ -6,7 +6,6 @@
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_PatrolHandler.h"
-#include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 
 
@@ -18,8 +17,6 @@ AGAS_EnemyBase::AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer
 	EnemyMovementManagerComponent = CreateDefaultSubobject<UAC_EnemyMovementManager>(TEXT("EnemyMovementManagerComponent"));
 
 	PatrolHandlerComponent = CreateDefaultSubobject<UAC_PatrolHandler>(TEXT("PatrolHandlerComponent"));
-
-	EnemyStateManagerComponent = CreateDefaultSubobject<UAC_StateManager>(TEXT("EnemyStateManagerComponent"));
 
 	FinisherPointComponent = CreateDefaultSubobject<USceneComponent>(TEXT("FinisherPointComponent"));
 	FinisherPointComponent->SetupAttachment(RootComponent);

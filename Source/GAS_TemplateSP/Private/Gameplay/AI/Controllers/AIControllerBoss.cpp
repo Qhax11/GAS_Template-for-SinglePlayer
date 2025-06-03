@@ -25,24 +25,4 @@ void AAIControllerBoss::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 	Super::TargetPreceptionUpdated(Actor, Stimulus);
 }
 
-bool AAIControllerBoss::RegisterTags(AGAS_CharacterBase* TargetCharacter)
-{
-	if (!Super::RegisterTags(TargetCharacter)) 
-	{
-		return false;
-	}
-
-	return true;
-}
-
-/*
-void AAIControllerBoss::OnPlayerStartedAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	StateTreeAIComponent->SendStateTreeEvent(GAS_Tags::TAG_AI_StateTreeEvent_PlayerStartedAttack, FConstStructView::Make(FMyStateTreePayload(23, FVector(100, 200, 300))));
-}
-*/
-void AAIControllerBoss::OnDeadWithFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-}
-
 

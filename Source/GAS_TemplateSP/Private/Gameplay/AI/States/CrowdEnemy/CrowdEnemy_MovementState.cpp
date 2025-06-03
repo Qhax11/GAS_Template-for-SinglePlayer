@@ -59,7 +59,6 @@ void UCrowdEnemy_MovementState::OnExit_Implementation()
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(WaitForNextStrafingOrbitTimerHandle);
-
 }
 
 void UCrowdEnemy_MovementState::OnTick_Implementation(float DeltaTime)

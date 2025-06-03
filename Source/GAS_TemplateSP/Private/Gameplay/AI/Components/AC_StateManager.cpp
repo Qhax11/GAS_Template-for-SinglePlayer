@@ -19,7 +19,14 @@ void UAC_StateManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerEnemyBase = Cast<AGAS_EnemyBase>(GetOwner());
+	OwnerController = Cast<AAIControllerBase>(GetOwner());
+	if (!OwnerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
+		return;
+	}
+
+	OwnerEnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
 	if (!OwnerEnemyBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
@@ -27,13 +34,6 @@ void UAC_StateManager::BeginPlay()
 	}
 
 	OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
-
-	OwnerController = Cast<AAIControllerBase>(OwnerEnemyBase->GetController());
-	if (!OwnerController)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
-		return;
-	}
 
 	BehaviorDecisionComponent = OwnerController->GetBehaviorDecisionComponent();
 	if (!BehaviorDecisionComponent)

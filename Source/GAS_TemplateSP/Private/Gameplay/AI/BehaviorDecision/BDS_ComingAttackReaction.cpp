@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/BDS_ComingAttackReaction.h"
-#include "Gameplay/AI/Controllers/AIControllerBase.h"
+#include "Gameplay/AI/DataTypes/CombatTypes.h"
 
 void UBDS_ComingAttackReaction::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {

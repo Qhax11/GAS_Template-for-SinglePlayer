@@ -4,6 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "AC_StateManager.generated.h"
 
 

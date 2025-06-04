@@ -189,18 +189,16 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 		return;
 	}
 
-	if (StateTag == GAS_Tags::TAG_AI_State_Movement)
+	FAttackData NewSelectedAttack = SelectNewBestAttack();
+	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
 	{
-		ExitFromMovementState();
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
 	}
-	else if (StateTag == GAS_Tags::TAG_AI_State_Attack)
+	else
 	{
-		ExitFromAttackState();
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 	}
-	else if (StateTag == GAS_Tags::TAG_AI_State_InComingAttack)
-	{
-		ExitFromInComingAttackState();
-	}
+
 }
 
 void UAC_StateManager::ExitFromMovementState()

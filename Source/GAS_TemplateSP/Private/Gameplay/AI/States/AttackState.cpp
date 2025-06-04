@@ -14,8 +14,8 @@ void UAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 
 void UAttackState::OnEnter_Implementation()
 {
+	Super::OnEnter_Implementation(); 
 	UE_LOG(LogTemp, Warning, TEXT("Attack State has been enter"));
-	bStateFinished = false;
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 	SelectAndMakeAttack();
 }

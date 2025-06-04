@@ -34,8 +34,6 @@ void UCrowdEnemy_MovementState::OnEnter_Implementation()
 		return;
 	}
 
-	bStateFinished = false;
-
 	SelectedAttackCDO = SelectedAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	SelectMovement();
 }

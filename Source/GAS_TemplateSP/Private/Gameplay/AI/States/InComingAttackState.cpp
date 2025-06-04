@@ -18,9 +18,8 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 
 void UInComingAttackState::OnEnter_Implementation()
 {
+	Super::OnEnter_Implementation();
 	UE_LOG(LogTemp, Warning, TEXT("InComingAttack has been enter"));
-
-	bStateFinished = false;
 	SelectAndMakeInComingAttackReaction();
 }
 

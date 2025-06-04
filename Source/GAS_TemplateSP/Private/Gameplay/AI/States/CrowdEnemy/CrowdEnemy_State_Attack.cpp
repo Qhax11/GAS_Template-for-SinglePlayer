@@ -10,8 +10,6 @@ void UCrowdEnemy_State_Attack::OnEnter_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CrowdEnemy Attack State has been enter"));
 
-	bStateFinished = false;
-
 	UClass* AttackClass = GetSelectedAttackAbilityData().AbilityClass;
 
 	if (AttackClass && AttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))

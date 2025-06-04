@@ -19,22 +19,17 @@ void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 
 void UMovementState::OnEnter_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Movement State has been enter"));
+	Super::OnEnter_Implementation();
 
-	if (!BehaviorDecisionComponent || !MovementManagerComponent)
-	{
-		return;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Movement State has been enter"));
 
 	SelectedAttack = SelectNewAttackAbility();
 	if (!SelectedAttack.AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No valid BestAttack selected."));
-		ExitRequest(GAS_Tags::TAG_AI_State_Movement);
+		ExitRequest();
 		return;
 	}
-
-	bStateFinished = false;
 
 	SelectedAttackCDO = SelectedAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	StartMovementChain(SelectedAttack.AbilityClass);

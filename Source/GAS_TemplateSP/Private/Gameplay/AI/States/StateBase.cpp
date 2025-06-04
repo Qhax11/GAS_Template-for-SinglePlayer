@@ -22,11 +22,7 @@ void UStateBase::ExitRequest(const FGameplayTag& TransactionTag)
 		return;
 	}
 
-	if (!bStateFinished)
-	{
-		bStateFinished = true;
-		StateManager->RequestStateTreeExit(StateTag, TransactionTag);
-	}
+	StateManager->RequestStateTreeExit(StateTag, TransactionTag);
 }
 
 bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)

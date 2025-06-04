@@ -67,7 +67,7 @@ public:
 
     UFUNCTION(BlueprintNativeEvent, Category = "State")
     void OnEnter();
-    virtual void OnEnter_Implementation() {};  // C++ default davranýþý
+    virtual void OnEnter_Implementation() {};
 
     UFUNCTION(BlueprintNativeEvent, Category = "State")
     void OnExit();
@@ -81,6 +81,7 @@ public:
     FGameplayTag StateTag;
 
 protected:
+    UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "TransactionTag"))
     virtual void ExitRequest(const FGameplayTag& TransactionTag = FGameplayTag());
 
     bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
@@ -109,5 +110,4 @@ protected:
     UAC_BehaviorDecision* BehaviorDecisionComponent;
 
     class UAC_StateManager* StateManager;
-    bool bStateFinished = false;
 };

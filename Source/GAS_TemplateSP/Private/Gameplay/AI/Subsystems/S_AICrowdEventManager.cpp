@@ -94,9 +94,8 @@ void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterDeSpawnData& Charact
     }
     OnNewAttackIntenderAdded(ClosestNonAttackIntenderData->ASC);
 
-   // CharacterDeSpawnData.InstigatorASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
-    SendStateTreeEventToAttackIntenders(GAS_Tags::TAG_AI_StateTreeEvent_Crowd_HeroFinisher);
-    SendStateTreeEventToNonAttackIntenders(GAS_Tags::TAG_AI_StateTreeEvent_Crowd_HeroFinisher);
+    CharacterDeSpawnData.InstigatorASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
+    OnRequestEnemyBackupReaction.Broadcast();
 }
 
 bool US_AICrowdEventManager::RequestToBeAttackIntender(UAbilitySystemComponent* ASC)
@@ -382,28 +381,6 @@ FEnemyData* US_AICrowdEventManager::GetClosestNonAttackIntender(UAbilitySystemCo
     }
 
     return ClosestEnemyData;
-}
-
-void US_AICrowdEventManager::SendStateTreeEventToAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload)
-{
-    for (FEnemyData* AttackIntenderData : GetAttackIntenders())
-    {
-        if (AttackIntenderData->StateTree) 
-        {
-            AttackIntenderData->StateTree->SendStateTreeEvent(Tag, Payload);
-        }
-    }
-}
-
-void US_AICrowdEventManager::SendStateTreeEventToNonAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload)
-{
-    for (FEnemyData* AttackIntenderData : GetNonAttackIntenders())
-    {
-        if (AttackIntenderData->StateTree)
-        {
-            AttackIntenderData->StateTree->SendStateTreeEvent(Tag, Payload);
-        }
-    }
 }
 
 #if WITH_EDITOR

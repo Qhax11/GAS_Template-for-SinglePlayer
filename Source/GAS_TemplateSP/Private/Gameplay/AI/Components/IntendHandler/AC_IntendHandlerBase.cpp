@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/AI/Components/IntendHandler/AC_IntendHandlerBase.h"
+#include "Gameplay/AI/Subsystems/S_AICrowdEventManager.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
@@ -46,7 +47,15 @@ void UAC_IntendHandlerBase::BeginPlay()
 		return;
 	}
 
+	US_AICrowdEventManager* AICrowdEventManager = GetWorld()->GetGameInstance()->GetSubsystem<US_AICrowdEventManager>();
+	if (!AICrowdEventManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AICrowdEventManager is null in: %s, can not initialize"), *GetName());
+		return;
+	}
+
 	OwnerController->OnTargetDetected.AddDynamic(this, &UAC_IntendHandlerBase::OnTargetDetected);
+	AICrowdEventManager->OnRequestEnemyBackupReaction.AddDynamic(this, &UAC_IntendHandlerBase::OnRequestEnemyBackupReaction);
 }
 
 void UAC_IntendHandlerBase::OnTargetDetected(AActor* DetectedTarget)
@@ -55,6 +64,11 @@ void UAC_IntendHandlerBase::OnTargetDetected(AActor* DetectedTarget)
 	RegisterTags(TargetHero);
 
 	OwnerStateManager->OnTargetDetected();
+}
+
+void UAC_IntendHandlerBase::OnRequestEnemyBackupReaction()
+{
+	OwnerStateManager->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_BackupReaction);
 }
 
 bool UAC_IntendHandlerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
@@ -77,7 +91,7 @@ bool UAC_IntendHandlerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
 	}
 
 	TargetCharacter->GetAbilitySystemComponent()->AbilityActivatedCallbacks.AddUObject(this, &UAC_IntendHandlerBase::OnTargetAbilityActivated);
-	ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &UAC_IntendHandlerBase::OnVulnerableTagAdded);
+	ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &UAC_IntendHandlerBase::OnVulnerableTagAdded);
 	return false;
 }
 
@@ -184,7 +198,6 @@ void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(FComingAttackReactionD
 {
 	OwnerStateManager->ComingAttackPayload = Payload;
 	OwnerStateManager->SelectedReactionData = Reaction;
-	OwnerStateManager->bInComingAttack = true;
 	OwnerStateManager->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack);
 }
 

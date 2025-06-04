@@ -2,14 +2,11 @@
 
 
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
-#include "Gameplay/Components/AC_Team.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
-#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
-#include <Kismet/GameplayStatics.h>
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Components/AC_Team.h"
 
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :

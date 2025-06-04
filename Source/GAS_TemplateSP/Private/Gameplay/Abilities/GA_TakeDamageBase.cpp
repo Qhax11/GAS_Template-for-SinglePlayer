@@ -19,7 +19,7 @@ UGA_TakeDamageBase::UGA_TakeDamageBase()
 
 	AbilityTriggers.Add(TriggerData);
 
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Dead);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_TakeDamage);
 }

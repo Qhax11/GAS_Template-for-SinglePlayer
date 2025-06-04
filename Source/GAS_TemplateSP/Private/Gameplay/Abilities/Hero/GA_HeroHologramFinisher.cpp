@@ -10,7 +10,7 @@
 
 UGA_HeroHologramFinisher::UGA_HeroHologramFinisher()
 {
-    ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_CanActivateFinisher);
+    ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
 }
 
 void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
@@ -28,9 +28,9 @@ void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& 
 
     if (HeroHologramTargetActor->GetSelectedShadowAbilityClass() && HeroHologramTargetActor->GetCurrentTarget())
     {
-        if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_CanActivateFinisher))
+        if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher))
         {
-            GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_CanActivateFinisher);
+            GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
         }
 
         if (GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(FinisherAbilityClass)) 

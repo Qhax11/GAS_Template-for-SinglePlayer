@@ -49,7 +49,7 @@ void UCrowdEnemy_MovementState::OnExit_Implementation()
 		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UCrowdEnemy_MovementState::OnMovementChainEnded);
 	}
 
-	if (LastUsedStrafingAbility)
+	if (LastUsedStrafingAbility && LastUsedStrafingAbility->IsValidLowLevel())
 	{
 		if (LastUsedStrafingAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UCrowdEnemy_MovementState::OnStrafingAbilityEnded))
 		{

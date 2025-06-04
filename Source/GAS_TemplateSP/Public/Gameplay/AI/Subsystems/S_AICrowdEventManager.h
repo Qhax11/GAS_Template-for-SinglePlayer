@@ -9,6 +9,9 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "S_AICrowdEventManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRequestEnemyBackupReaction);
+
+
 class AAIController;
 struct FCharacterSpawnData;
 struct FGameplayTag;
@@ -127,6 +130,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool ReleaseAttackIntender(UAbilitySystemComponent* ASC);
 
+	UPROPERTY(BlueprintAssignable)
+	FOnRequestEnemyBackupReaction OnRequestEnemyBackupReaction;
+
 	// ===============================================================
     //                                Internal Logic
     // ===============================================================
@@ -162,10 +168,6 @@ protected:
 	FEnemyData* GetClosestAttackIntender(UAbilitySystemComponent* IgnoreASC);
 
 	FEnemyData* GetClosestNonAttackIntender(UAbilitySystemComponent* IgnoreASC);
-
-	void SendStateTreeEventToAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload = FConstStructView());
-
-	void SendStateTreeEventToNonAttackIntenders(const FGameplayTag Tag, const FConstStructView Payload = FConstStructView());
 
 	// ===============================================================
     //                                Debug

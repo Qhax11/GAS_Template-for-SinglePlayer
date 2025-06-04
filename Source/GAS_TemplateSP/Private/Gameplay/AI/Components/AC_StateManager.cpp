@@ -6,7 +6,6 @@
 #include "Gameplay/AI/States/MovementState.h"
 #include "Gameplay/AI/States/InComingAttackState.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
-#include "StateTreeExecutionContext.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
 
 
@@ -33,19 +32,10 @@ void UAC_StateManager::BeginPlay()
 		return;
 	}
 
-	OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
-
 	BehaviorDecisionComponent = OwnerController->GetBehaviorDecisionComponent();
 	if (!BehaviorDecisionComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
-		return;
-	}
-
-	OwnerStateTree = OwnerController->GetStateTreeComponent();
-	if (!OwnerStateTree)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerStateTree is null in: %s !"), *GetName());
 		return;
 	}
 
@@ -55,13 +45,15 @@ void UAC_StateManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
 		return;
 	}
+
+	OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
 } 
 
 void UAC_StateManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	for (UStateBase* State : StateInstances)
+	if (CurrentState)
 	{
-		State->OnExit();
+		CurrentState->OnExit();
 	}
 
 	Super::EndPlay(EndPlayReason);
@@ -104,6 +96,11 @@ void UAC_StateManager::StartLogic()
 
 void UAC_StateManager::StopLogic()
 {
+	if (CurrentState)
+	{
+		CurrentState->OnExit();
+	}
+
 	bActive = false;
 }
 

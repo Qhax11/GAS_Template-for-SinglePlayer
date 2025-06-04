@@ -32,6 +32,9 @@ protected:
 	UFUNCTION()
 	void OnTargetDetected(AActor* DetectedTarget);
 
+	UFUNCTION()
+	void OnRequestEnemyBackupReaction();
+
 	UPROPERTY()
 	class AAIControllerBase* OwnerController;
 

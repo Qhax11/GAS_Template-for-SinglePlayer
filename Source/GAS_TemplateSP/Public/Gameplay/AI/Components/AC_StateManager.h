@@ -53,13 +53,14 @@ public:
 
 	FComingAttackReactionData SelectedReactionData;
 
-	bool bInComingAttack;
-
 	FAttackData SelectNewBestAttack();
 	FAttackData LastSelectedAttackData;
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bEnableDebug = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	UStateBase* CurrentState = nullptr;
 
 protected:
 	bool bActive = true;
@@ -74,15 +75,11 @@ protected:
 	TArray<UStateBase*> StateInstances;
 
 	UPROPERTY()
-	UStateBase* CurrentState = nullptr;
-
-	UPROPERTY()
 	TObjectPtr<AGAS_EnemyBase> OwnerEnemy = nullptr;
 
 	class AAIControllerBase* OwnerController;
 	class AGAS_EnemyBase* OwnerEnemyBase;
 	class UAC_BehaviorDecision* BehaviorDecisionComponent;
-	class UST_Base* OwnerStateTree;
 	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
 	class AGAS_HeroBase* HeroBase;
 };

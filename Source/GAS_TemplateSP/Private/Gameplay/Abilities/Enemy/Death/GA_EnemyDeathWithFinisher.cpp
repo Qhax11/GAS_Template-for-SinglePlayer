@@ -5,7 +5,7 @@
 
 UGA_EnemyDeathWithFinisher::UGA_EnemyDeathWithFinisher()
 {
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_FinisherDead);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
 
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
 

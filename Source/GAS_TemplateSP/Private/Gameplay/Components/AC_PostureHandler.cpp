@@ -113,7 +113,7 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 
 	if (Data.CurrentValue <= 0)
 	{
-		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_Vulnerable);
+		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(PostureRegenTimerHandle);

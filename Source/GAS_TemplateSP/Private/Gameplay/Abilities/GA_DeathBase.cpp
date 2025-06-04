@@ -14,8 +14,8 @@ UGA_DeathBase::UGA_DeathBase()
 
 	AbilityTriggers.Add(TriggerData);
 
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Dead);
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Dead);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
 }
 
 void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 

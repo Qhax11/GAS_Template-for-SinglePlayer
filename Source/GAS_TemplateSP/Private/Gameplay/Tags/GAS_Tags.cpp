@@ -47,20 +47,19 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Running, "Gameplay.State.Moving.Running");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Dash, "Gameplay.State.Moving.Dash");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Dead, "Gameplay.State.Dead");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_FinisherDead, "Gameplay.State.FinisherDead");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Vulnerable, "Gameplay.State.Vulnerable");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_CanActivateFinisher, "Gameplay.State.CanActivateFinisher");
-
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat, "Gameplay.State.InCombat");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_TakeDamage, "Gameplay.State.InCombat.TakeDamage");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Parry, "Gameplay.State.InCombat.Parry");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_ParryKnockback, "Gameplay.State.InCombat.ParryKnockback");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Finisher, "Gameplay.State.InCombat.Finisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo1, "Gameplay.State.InCombat.MeleeCombo1");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo2, "Gameplay.State.InCombat.MeleeCombo2");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo3, "Gameplay.State.InCombat.MeleeCombo3");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnstoppableAttack, "Gameplay.State.InCombat.UnstoppableAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_TakeDamage, "Gameplay.State.InCombat.TakeDamage");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Parry, "Gameplay.State.InCombat.Parry");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_ParryKnockback, "Gameplay.State.InCombat.ParryKnockback");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Vulnerable, "Gameplay.State.Vulnerable");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_CanActivateFinisher, "Gameplay.State.CanActivateFinisher");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Finisher, "Gameplay.State.InCombat.Finisher");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Dead, "Gameplay.State.InCombat.Dead");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Dead_Finisher, "Gameplay.State.InCombat.Dead.Finisher");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting, "Gameplay.State.AbilityTargeting");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting_Shadow, "Gameplay.State.AbilityTargeting.Shadow");
@@ -172,14 +171,9 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_InComingAttack, "AI.State.InComingAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Vulnerable, "AI.State.Vulnerable");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_BackupReaction, "AI.State.BackupReaction");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_DetectedPlayer, "AI.StateTreeEvent.DetectedPlayer");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_PlayerStartedAttack, "AI.StateTreeEvent.PlayerStartedAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_State_Vulnerable, "AI.StateTreeEvent.State.Vulnerable");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_ExecuteShadowAttack, "AI.StateTreeEvent.ExecuteShadowAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTreeEvent_Crowd_HeroFinisher, "AI.StateTreeEvent.Crowd.HeroFinisher");
-
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateTree_State_ComingAttack, "AI.StateTree.State.ComingAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_HeroFinisher, "AI.State.HeroFinisher");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_IsAttackIntender, "AI.State.IsAttackIntender");
 
@@ -189,7 +183,6 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_LineBreaker_Cooldown, "AI.Ability.LineBreaker.Cooldown");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_ShadowAttack, "AI.Ability.ShadowAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_ShadowAttack_Cooldown, "AI.Ability.ShadowAttack.Cooldown");
-
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash, "AI.Ability.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash_Cooldown, "AI.Ability.Dash.Cooldown");
 

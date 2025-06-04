@@ -77,7 +77,7 @@ public:
     void OnTick(float DeltaTime);
     virtual void OnTick_Implementation(float DeltaTime) {};
 
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.State"))
+    UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (Categories = "AI.State"))
     FGameplayTag StateTag;
 
 protected:

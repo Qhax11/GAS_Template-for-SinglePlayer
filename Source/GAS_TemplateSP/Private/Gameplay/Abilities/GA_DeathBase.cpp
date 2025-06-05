@@ -6,16 +6,8 @@
 
 UGA_DeathBase::UGA_DeathBase()
 {
-	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
-
-	FAbilityTriggerData TriggerData = FAbilityTriggerData();
-	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death;
-
-	AbilityTriggers.Add(TriggerData);
-
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
 }
 
 void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 

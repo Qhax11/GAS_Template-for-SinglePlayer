@@ -33,6 +33,7 @@ public:
 
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
+	UFUNCTION()
 	virtual void OnTargetActorInitialized();
 
 	/** The TargetActor class that we spawned */

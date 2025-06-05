@@ -31,8 +31,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageImmune, "Gameplay.DamageImmune");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_TakeDamage, "Gameplay.AbilityTriggerEvent.TakeDamage");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Death, "Gameplay.AbilityTriggerEvent.Death");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_FinisherDeath, "Gameplay.AbilityTriggerEvent.FinisherDeath");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Death_Basic, "Gameplay.AbilityTriggerEvent.Death.Basic");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Death_Finisher, "Gameplay.AbilityTriggerEvent.Death.Finisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ComboMelee, "Gameplay.AbilityTriggerEvent.ComboMelee");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ParryKnockback, "Gameplay.AbilityTriggerEvent.ParryKnockback");
 	
@@ -58,7 +58,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Vulnerable, "Gameplay.State.Vulnerable");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_CanActivateFinisher, "Gameplay.State.CanActivateFinisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Finisher, "Gameplay.State.InCombat.Finisher");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Dead, "Gameplay.State.InCombat.Dead");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Dead_Basic, "Gameplay.State.InCombat.Dead.Basic");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Dead_Finisher, "Gameplay.State.InCombat.Dead.Finisher");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting, "Gameplay.State.AbilityTargeting");

@@ -5,7 +5,13 @@
 
 UGA_EnemyBasicDeath::UGA_EnemyBasicDeath()
 {
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
+	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
+	FAbilityTriggerData TriggerData = FAbilityTriggerData();
+	TriggerData.TriggerSource = TriggerSource;
+	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Basic;
+	AbilityTriggers.Add(TriggerData);
+
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic);
 }
 
 void UGA_EnemyBasicDeath::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 

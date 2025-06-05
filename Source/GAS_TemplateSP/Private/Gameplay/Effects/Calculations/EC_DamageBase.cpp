@@ -44,7 +44,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 
 	if (MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())
 	{
-		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death);
+		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Basic);
 	}
 	
 	float LifeStealDone = .0f;

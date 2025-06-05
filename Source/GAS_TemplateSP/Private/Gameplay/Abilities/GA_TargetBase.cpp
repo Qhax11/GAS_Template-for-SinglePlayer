@@ -64,6 +64,7 @@ void UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locatio
 		{
 			TargetActor->OnConfirm.AddDynamic(this, &UGA_TargetBase::OnTargetActorConfirm);
 			TargetActor->OnCancel.AddDynamic(this, &UGA_TargetBase::OnTargetActorCancelled);
+			TargetActor->OnInitialized.AddDynamic(this, &UGA_TargetBase::OnTargetActorInitialized);
 		}
 		else
 		{
@@ -71,6 +72,11 @@ void UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locatio
 			EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 		}
 	}
+}
+
+void UGA_TargetBase::OnTargetActorInitialized()
+{
+	// Logic will be implemented in subclasses if necessary.
 }
 
 void UGA_TargetBase::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)

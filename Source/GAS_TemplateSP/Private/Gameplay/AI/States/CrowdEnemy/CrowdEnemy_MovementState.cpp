@@ -15,6 +15,13 @@ void UCrowdEnemy_MovementState::StateInitalize(const FStateInitParams& StateInit
 		UE_LOG(LogTemp, Warning, TEXT("MovementManagerComponent is null in: %s"), *GetName());
 		return;
 	}
+
+	AICrowdEventManager = GetWorld()->GetGameInstance()->GetSubsystem<US_AICrowdEventManager>();
+	if (!AICrowdEventManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AICrowdEventManager is null in: %s"), *GetName());
+		return;
+	}
 }
 
 void UCrowdEnemy_MovementState::OnEnter_Implementation()
@@ -81,19 +88,22 @@ void UCrowdEnemy_MovementState::TryEnterToAttackState()
 
 void UCrowdEnemy_MovementState::SelectMovement()
 {
-	if (US_AICrowdEventManager* AICrowdEventManager = GetWorld()->GetGameInstance()->GetSubsystem<US_AICrowdEventManager>())
+	if (!AICrowdEventManager) 
 	{
-		bool IsAttackIntender = AICrowdEventManager->RequestToBeAttackIntender(EnemyASC);
-		if (IsAttackIntender) 
-		{
-			UE_LOG(LogTemp, Warning, TEXT("StartMovementChain"));
-			StartMovementChain(SelectedAttack.AbilityClass);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("MakeStrafingAbility"));
-			MakeStrafingAbility();
-		}
+		UE_LOG(LogTemp, Warning, TEXT("AICrowdEventManager is null in: %s"), *GetName());
+		return;
+	}
+
+	bool IsAttackIntender = AICrowdEventManager->RequestToBeAttackIntender(EnemyASC);
+	if (IsAttackIntender)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StartMovementChain"));
+		StartMovementChain(SelectedAttack.AbilityClass);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MakeStrafingAbility"));
+		MakeStrafingAbility();
 	}
 }
 

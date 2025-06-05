@@ -56,4 +56,6 @@ public:
 private:
 	class UAC_EnemyMovementManager* MovementManagerComponent;
 	FTimerHandle WaitForNextStrafingOrbitTimerHandle;
+
+	class US_AICrowdEventManager* AICrowdEventManager;
 };

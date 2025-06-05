@@ -33,6 +33,8 @@ public:
 
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
+	virtual void OnTargetActorInitialized();
+
 	/** The TargetActor class that we spawned */
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
 	TSubclassOf<AGAS_TargetActorBase> TargetActorClass;

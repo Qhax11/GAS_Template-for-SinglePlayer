@@ -85,6 +85,7 @@ void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterDeSpawnData& Charact
         return;
     }
 
+    CharacterDeSpawnData.ASC->RemoveLooseGameplayTag(GAS_Tags::TAG_AI_State_IsAttackIntender);
     SafeRemoveEnemyByASC(CharacterDeSpawnData.ASC);
 
     FEnemyData* ClosestNonAttackIntenderData = GetClosestNonAttackIntender(CharacterDeSpawnData.ASC);
@@ -94,8 +95,10 @@ void US_AICrowdEventManager::OnEnemyDeSpawn(const FCharacterDeSpawnData& Charact
     }
     OnNewAttackIntenderAdded(ClosestNonAttackIntenderData->ASC);
 
-    CharacterDeSpawnData.InstigatorASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
-    OnRequestEnemyBackupReaction.Broadcast();
+    if (CharacterDeSpawnData.InstigatorASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher)) 
+    {
+        OnRequestEnemyBackupReaction.Broadcast();
+    }
 }
 
 bool US_AICrowdEventManager::RequestToBeAttackIntender(UAbilitySystemComponent* ASC)
@@ -127,7 +130,7 @@ bool US_AICrowdEventManager::RequestToBeAttackIntender(UAbilitySystemComponent* 
 
 void US_AICrowdEventManager::OnNewAttackIntenderAdded(UAbilitySystemComponent* NewIntender)
 {
-    //ForceAddAttackIntender(NewIntender);
+    ForceAddAttackIntender(NewIntender);
 }
 
 bool US_AICrowdEventManager::ForceAddAttackIntender(UAbilitySystemComponent* NewIntender)

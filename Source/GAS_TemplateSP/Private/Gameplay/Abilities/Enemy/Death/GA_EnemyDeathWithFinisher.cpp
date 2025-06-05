@@ -22,7 +22,7 @@ void UGA_EnemyDeathWithFinisher::ActivateAbility(const FGameplayAbilitySpecHandl
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	UE_LOG(LogTemp, Warning, TEXT("UGA_EnemyDeathWithFinisher ActivateAbility"));
 	//DisableOwnerCollision();
 }
 

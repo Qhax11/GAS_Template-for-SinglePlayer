@@ -12,17 +12,19 @@ void UGA_HeroTargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (BindInputForConfirmAndCancel())
+	if (bActorWillSpawnWithEQS)
 	{
-		if (bActorWillSpawnWithEQS)
-		{
-			StartEQSForTargetActorSpawnLocation();
-		}
-		else
-		{
-			SpawnAndSetupTargetActor();
-		}
+		StartEQSForTargetActorSpawnLocation();
 	}
+	else
+	{
+		SpawnAndSetupTargetActor();
+	}
+}
+
+void UGA_HeroTargetBase::OnTargetActorInitialized()
+{
+	BindInputForConfirmAndCancel();
 }
 
 bool UGA_HeroTargetBase::BindInputForConfirmAndCancel()

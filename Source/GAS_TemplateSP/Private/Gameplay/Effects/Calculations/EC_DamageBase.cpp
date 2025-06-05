@@ -36,18 +36,15 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 
 	const float DamageDealt = CalculateHealth(Params, MitigatedDamage, OutExecutionOutput);
 
-	if (!Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
+	// Trigger events based on the damage dealt
+	if (DamageDealt > 0 && !Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack))
 	{
-		// Trigger events based on the damage dealt
-		if (DamageDealt > 0 && !Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack))
-		{
-			TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, DamageDealt);
-		}
+		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, DamageDealt);
+	}
 
-		if (MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())
-		{
-			TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death);
-		}
+	if (MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())
+	{
+		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death);
 	}
 	
 	float LifeStealDone = .0f;

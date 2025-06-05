@@ -19,8 +19,8 @@ public:
 	bool BindInputForConfirmAndCancel();
 
 	UFUNCTION()
-	void ConfirmTargetingFromInput();
+	virtual void ConfirmTargetingFromInput();
 
 	UFUNCTION()
-	void CancelAbilityFromInput();
+	virtual void CancelAbilityFromInput();
 };

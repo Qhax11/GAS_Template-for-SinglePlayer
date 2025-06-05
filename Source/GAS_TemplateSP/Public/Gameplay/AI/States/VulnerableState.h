@@ -10,5 +10,9 @@ UCLASS()
 class GAS_TEMPLATESP_API UVulnerableState : public UStateBase
 {
 	GENERATED_BODY()
+
+public:
+	virtual void OnEnter_Implementation() override;
+
 	
 };

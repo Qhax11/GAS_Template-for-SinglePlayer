@@ -24,4 +24,5 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UGA_MeleeAttackBase> FinisherAbilityClass;
 
+	virtual void CancelAbilityFromInput() override;
 };

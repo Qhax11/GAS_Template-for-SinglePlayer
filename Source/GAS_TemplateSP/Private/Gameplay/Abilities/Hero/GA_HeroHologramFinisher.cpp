@@ -71,3 +71,8 @@ void UGA_HeroHologramFinisher::OnTargetActorSpawnLocationQueryFinished(TSharedPt
     Super::OnTargetActorSpawnLocationQueryFinished(Result);
 
 }
+
+void UGA_HeroHologramFinisher::CancelAbilityFromInput()
+{
+    
+}

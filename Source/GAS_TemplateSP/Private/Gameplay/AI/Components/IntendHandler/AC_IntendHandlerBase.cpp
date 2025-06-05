@@ -47,6 +47,14 @@ void UAC_IntendHandlerBase::BeginPlay()
 		return;
 	}
 
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	TargetHero = Cast<AGAS_HeroBase>(PlayerPawn);
+	if (!TargetHero) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetHero is null in: %s, can not initialize"), *GetName());
+		return;
+	}
+
 	US_AICrowdEventManager* AICrowdEventManager = GetWorld()->GetGameInstance()->GetSubsystem<US_AICrowdEventManager>();
 	if (!AICrowdEventManager)
 	{
@@ -54,15 +62,13 @@ void UAC_IntendHandlerBase::BeginPlay()
 		return;
 	}
 
+	RegisterTags(TargetHero);
 	OwnerController->OnTargetDetected.AddDynamic(this, &UAC_IntendHandlerBase::OnTargetDetected);
 	AICrowdEventManager->OnRequestEnemyBackupReaction.AddDynamic(this, &UAC_IntendHandlerBase::OnRequestEnemyBackupReaction);
 }
 
 void UAC_IntendHandlerBase::OnTargetDetected(AActor* DetectedTarget)
 {
-	TargetHero = Cast<AGAS_HeroBase>(DetectedTarget);
-	RegisterTags(TargetHero);
-
 	OwnerStateManager->OnTargetDetected();
 }
 

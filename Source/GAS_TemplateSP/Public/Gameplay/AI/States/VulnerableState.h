@@ -2,13 +2,10 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Gameplay/AI/States/StateBase.h"
 #include "VulnerableState.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API UVulnerableState : public UStateBase
 {

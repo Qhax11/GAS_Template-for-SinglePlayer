@@ -7,6 +7,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Gameplay/Components/AC_Team.h"
+#include <Kismet/GameplayStatics.h>
 
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
@@ -40,6 +41,14 @@ void AAIControllerBase::BeginPlay()
 	if (!ControlledEnemy)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ControlledCharacter is null in: %s, Controller can not initialize"), *GetName());
+		return;
+	}
+
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	TargetHero = Cast<AGAS_HeroBase>(PlayerPawn);
+	if (!TargetHero)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetHero is null in: %s, can not initialize"), *GetName());
 		return;
 	}
 
@@ -86,7 +95,6 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 			return;
 		}
 
-		TargetHero = Cast<AGAS_HeroBase>(TargetCharacter);
 		OnTargetDetected.Broadcast(Actor);
 		bHasTargetBeenDetected = true;
 	}

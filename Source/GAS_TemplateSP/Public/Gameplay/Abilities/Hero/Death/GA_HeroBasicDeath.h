@@ -10,5 +10,8 @@ UCLASS()
 class GAS_TEMPLATESP_API UGA_HeroBasicDeath : public UGA_HeroDeathBase
 {
 	GENERATED_BODY()
+
+public:
+	UGA_HeroBasicDeath();
 	
 };

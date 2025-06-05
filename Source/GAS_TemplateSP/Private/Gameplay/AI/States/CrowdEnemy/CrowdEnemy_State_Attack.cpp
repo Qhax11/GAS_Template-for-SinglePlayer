@@ -21,8 +21,6 @@ void UCrowdEnemy_State_Attack::StateInitalize(const FStateInitParams& StateInitP
 
 void UCrowdEnemy_State_Attack::OnEnter_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CrowdEnemy Attack State has been enter"));
-
 	UClass* AttackClass = GetSelectedAttackAbilityData().AbilityClass;
 
 	if (AttackClass && AttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
@@ -49,6 +47,6 @@ void UCrowdEnemy_State_Attack::OnExit_Implementation()
 
 void UCrowdEnemy_State_Attack::OnComboChaindEnded()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CrowdEnemy OnComboChaindEnded"));
+	UE_LOG(LogTemp, Warning, TEXT("CrowdEnemyAttackState OnComboChaindEnded"));
 	ExitRequest();
 }

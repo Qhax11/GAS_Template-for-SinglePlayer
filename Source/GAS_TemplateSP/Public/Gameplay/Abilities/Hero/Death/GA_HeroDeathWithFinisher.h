@@ -11,4 +11,7 @@ class GAS_TEMPLATESP_API UGA_HeroDeathWithFinisher : public UGA_HeroDeathBase
 {
 	GENERATED_BODY()
 	
+public:
+	UGA_HeroDeathWithFinisher();
+
 };

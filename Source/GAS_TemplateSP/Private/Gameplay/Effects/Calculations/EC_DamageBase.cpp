@@ -37,7 +37,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	const float DamageDealt = CalculateHealth(Params, MitigatedDamage, OutExecutionOutput);
 
 	// Trigger events based on the damage dealt
-	if (DamageDealt > 0 && !Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack))
+	if (DamageDealt > 0)
 	{
 		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, DamageDealt);
 	}

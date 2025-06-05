@@ -26,8 +26,6 @@ void UCrowdEnemy_MovementState::StateInitalize(const FStateInitParams& StateInit
 
 void UCrowdEnemy_MovementState::OnEnter_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Movement State has been enter"));
-
 	if (!BehaviorDecisionComponent)
 	{
 		return;

@@ -21,8 +21,6 @@ void UMovementState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
-	UE_LOG(LogTemp, Warning, TEXT("Movement State has been enter"));
-
 	SelectedAttack = SelectNewAttackAbility();
 	if (!SelectedAttack.AbilityClass)
 	{

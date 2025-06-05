@@ -162,6 +162,11 @@ void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 				{
 					CurrentState->OnExit();
 				}
+			
+				if (bEnableDebug)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s has been enter"), *StateTag.ToString());
+				}
 
 				State->OnEnter();
 				CurrentState = State;
@@ -169,7 +174,10 @@ void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Condition of %s is false, cannot enter"), *State->GetName());
+				if (bEnableDebug) 
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot enter"), *State->GetName());
+				}
 			}
 		}
 	}
@@ -180,6 +188,11 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 	if (!StateTag.IsValid() || !bActive)
 	{
 		return;
+	}
+
+	if (bEnableDebug)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to exit"), *StateTag.ToString());
 	}
 
 	// If request coming with trancastion tag we directly enter

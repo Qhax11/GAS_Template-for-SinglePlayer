@@ -19,7 +19,6 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
-	UE_LOG(LogTemp, Warning, TEXT("InComingAttack has been enter"));
 	SelectAndMakeInComingAttackReaction();
 }
 
@@ -103,7 +102,7 @@ void UInComingAttackState::MakeTakeDamage(FComingAttackReactionData BestComingAt
 	// Komboyu/movement'i durdurma buraya da ekleyebilirsin ama zaten TriggerIncomingReaction içinde var.
 
 // Eğer ability aktif edilirse dinlenecek zaten
-// Şimdi failsafe başlat — eğer ability 0.5 saniye içinde aktive edilmezse çık
+// Şimdi failsafe başlat — eğer ability 0.2 saniye içinde aktive edilmezse çık
 
 	Enemy->GetWorldTimerManager().SetTimer(TakeDamageFailsafeTimer, this,
 		&UInComingAttackState::OnTakeDamageFailsafeTimeout,

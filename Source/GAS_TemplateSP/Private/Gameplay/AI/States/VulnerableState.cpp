@@ -15,6 +15,4 @@ void UVulnerableState::OnEnter_Implementation()
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	EnemyController->GetEnemyStateManagerComponent()->StopLogic();
-
-	EnemyASC()
 }

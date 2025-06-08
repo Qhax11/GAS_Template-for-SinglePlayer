@@ -38,6 +38,9 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	}
 
 	CreatePlayMontageWaitForEvent();
+
+	UE_LOG(LogTemp, Warning, TEXT("Ability is triggered: %s"), *GetName());
+	UE_LOG(LogTemp, Warning, TEXT("AnimMontage is: %s"), *AnimMontage->GetName());
 }
 
 void UGA_MontageAbility::ActivateMotionWarping()
@@ -101,17 +104,18 @@ void UGA_MontageAbility::CleanupMotionWarping()
 
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
-	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
-	Task->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-	Task->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-	Task->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-	Task->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-	Task->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
-	Task->ReadyForActivation();
+	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
+	PlayMontageWaitForEventTask->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+	PlayMontageWaitForEventTask->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+	PlayMontageWaitForEventTask->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+	PlayMontageWaitForEventTask->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+	PlayMontageWaitForEventTask->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
+	PlayMontageWaitForEventTask->ReadyForActivation();
 }
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnMontageCancelled: AnimMontage is: %s"), *AnimMontage->GetName());
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
@@ -127,6 +131,11 @@ void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventDa
 
 void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (PlayMontageWaitForEventTask) 
+	{
+		PlayMontageWaitForEventTask->EndTask();
+	}
+
 	CleanupMotionWarping();
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

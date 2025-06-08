@@ -19,11 +19,14 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
+
 	SelectAndMakeInComingAttackReaction();
 }
 
 void UInComingAttackState::OnExit_Implementation()
 {
+	Super::OnExit_Implementation();
+
 	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this); // test?
 
 	if (LastUsedDodgeAbility)

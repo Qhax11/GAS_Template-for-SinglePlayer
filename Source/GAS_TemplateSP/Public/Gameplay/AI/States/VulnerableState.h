@@ -13,6 +13,5 @@ class GAS_TEMPLATESP_API UVulnerableState : public UStateBase
 
 public:
 	virtual void OnEnter_Implementation() override;
-
 	
 };

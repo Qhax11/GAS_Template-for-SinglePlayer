@@ -67,11 +67,11 @@ public:
 
     UFUNCTION(BlueprintNativeEvent, Category = "State")
     void OnEnter();
-    virtual void OnEnter_Implementation() {};
+    virtual void OnEnter_Implementation();
 
     UFUNCTION(BlueprintNativeEvent, Category = "State")
     void OnExit();
-    virtual void OnExit_Implementation() {};
+    virtual void OnExit_Implementation();
 
     UFUNCTION(BlueprintNativeEvent, Category = "State")
     void OnTick(float DeltaTime);

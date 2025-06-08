@@ -26,6 +26,8 @@ void UCrowdEnemy_MovementState::StateInitalize(const FStateInitParams& StateInit
 
 void UCrowdEnemy_MovementState::OnEnter_Implementation()
 {
+	Super::OnEnter_Implementation();
+
 	if (!BehaviorDecisionComponent)
 	{
 		return;
@@ -45,7 +47,7 @@ void UCrowdEnemy_MovementState::OnEnter_Implementation()
 
 void UCrowdEnemy_MovementState::OnExit_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnExit"));
+	Super::OnExit_Implementation();
 
 	if (MovementManagerComponent && MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UCrowdEnemy_MovementState::OnMovementChainEnded))
 	{

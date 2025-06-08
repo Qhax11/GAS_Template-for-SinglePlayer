@@ -21,6 +21,8 @@ void UCrowdEnemy_State_Attack::StateInitalize(const FStateInitParams& StateInitP
 
 void UCrowdEnemy_State_Attack::OnEnter_Implementation()
 {
+	Super::OnEnter_Implementation();
+
 	UClass* AttackClass = GetSelectedAttackAbilityData().AbilityClass;
 
 	if (AttackClass && AttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
@@ -39,6 +41,8 @@ void UCrowdEnemy_State_Attack::OnEnter_Implementation()
 
 void UCrowdEnemy_State_Attack::OnExit_Implementation()
 {
+	Super::OnExit_Implementation();
+
 	if (Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.IsAlreadyBound(this, &UCrowdEnemy_State_Attack::OnComboChaindEnded))
 	{
 		Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.RemoveDynamic(this, &UCrowdEnemy_State_Attack::OnComboChaindEnded);

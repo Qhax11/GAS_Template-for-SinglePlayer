@@ -14,6 +14,34 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 	StateManager = StateInitParams.StateManager;
 }
 
+void UStateBase::OnEnter_Implementation()
+{
+	if (!StateManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
+		return;
+	}
+
+	if (StateManager->bEnableDebug)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StataBase]: %s has been enter"), *StateTag.ToString());
+	}
+}
+
+void UStateBase::OnExit_Implementation()
+{
+	if (!StateManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
+		return;
+	}
+
+	if (StateManager->bEnableDebug)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[StataBase]: %s has been exit"), *StateTag.ToString());
+	}
+}
+
 void UStateBase::ExitRequest(const FGameplayTag& TransactionTag)
 {
 	if (!StateManager)

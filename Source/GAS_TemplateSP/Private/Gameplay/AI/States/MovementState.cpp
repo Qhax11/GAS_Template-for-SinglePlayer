@@ -35,6 +35,8 @@ void UMovementState::OnEnter_Implementation()
 
 void UMovementState::OnExit_Implementation()
 {
+	Super::OnExit_Implementation();
+
 	if (MovementManagerComponent && MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
 	{
 		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);

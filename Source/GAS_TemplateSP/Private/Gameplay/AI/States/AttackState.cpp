@@ -21,6 +21,8 @@ void UAttackState::OnEnter_Implementation()
 
 void UAttackState::OnExit_Implementation()
 {
+	Super::OnExit_Implementation();
+
 	if (Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.IsAlreadyBound(this, &UAttackState::OnComboChaindEnded))
 	{
 		Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.RemoveDynamic(this, &UAttackState::OnComboChaindEnded);

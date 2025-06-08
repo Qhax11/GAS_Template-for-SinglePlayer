@@ -96,11 +96,6 @@ void UAC_StateManager::StartLogic()
 
 void UAC_StateManager::StopLogic()
 {
-	if (CurrentState)
-	{
-		CurrentState->OnExit();
-	}
-
 	bActive = false;
 }
 
@@ -163,11 +158,6 @@ void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 					CurrentState->OnExit();
 				}
 			
-				if (bEnableDebug)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s has been enter"), *StateTag.ToString());
-				}
-
 				State->OnEnter();
 				CurrentState = State;
 				return;

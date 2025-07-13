@@ -13,6 +13,27 @@ UGA_HeroHologramFinisher::UGA_HeroHologramFinisher()
     ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
 }
 
+bool UGA_HeroHologramFinisher::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+    // First, run the default checks (cooldown, blocking tags, etc.)
+    if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+    {
+        return false;
+    }
+
+    // Prevent activation if the hero is not currently target locked.
+    // This ability requires the hero to be in a target lock state to execute.
+    if (ActorInfo->AbilitySystemComponent.IsValid())
+    {
+        if (!ActorInfo->AbilitySystemComponent.Get()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
     AHeroShadowTargetActor* HeroHologramTargetActor = Cast<AHeroShadowTargetActor>(TargetActorData.TargetActor);

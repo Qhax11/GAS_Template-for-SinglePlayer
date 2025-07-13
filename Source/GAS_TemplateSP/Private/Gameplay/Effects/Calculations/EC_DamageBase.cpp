@@ -111,7 +111,6 @@ float UEC_DamageBase::CalculateHealth(FExecCalculationParameters& Params, float&
 
 void UEC_DamageBase::TriggerGameplayEvent(FExecCalculationParameters& Params, const FGameplayTag& EventTag, float EventMagnitude) const
 {
-	// Sanity checks
 	if (!Params.TargetASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TriggerGameplayEvent: TargetASC is null!"));
@@ -138,12 +137,6 @@ void UEC_DamageBase::TriggerGameplayEvent(FExecCalculationParameters& Params, co
 	Payload.ContextHandle = Params.GetSpec().GetContext();
 	Payload.InstigatorTags = Params.GetSpec().CapturedSourceTags.GetActorTags();
 	Payload.EventMagnitude = EventMagnitude;
-
-	// Dispatch the event
-	UE_LOG(LogTemp, Log, TEXT("TriggerGameplayEvent: Sending GameplayEvent [%s] to [%s] with magnitude [%f]"),
-		*EventTag.ToString(),
-		*GetNameSafe(Params.TargetActor),
-		EventMagnitude);
 
 	Params.TargetASC->HandleGameplayEvent(EventTag, &Payload);
 }

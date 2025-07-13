@@ -15,6 +15,15 @@ class GAS_TEMPLATESP_API UGA_HeroHologramFinisher : public UGA_HeroTargetBase
 protected:
 	UGA_HeroHologramFinisher();
 
+	/** Override this to control whether the ability can activate */
+	virtual bool CanActivateAbility(
+		const FGameplayAbilitySpecHandle Handle,
+		const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayTagContainer* SourceTags = nullptr,
+		const FGameplayTagContainer* TargetTags = nullptr,
+		FGameplayTagContainer* OptionalRelevantTags = nullptr
+	) const override;
+
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);

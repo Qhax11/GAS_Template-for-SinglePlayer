@@ -161,7 +161,10 @@ bool UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(UAbilitySystem
 
 	for (TSubclassOf<UGameplayEffect> GameplayEffect : EffectClasses)
 	{
-		OwnerASC->ApplyGameplayEffectToTarget(CreateEffectWithTSubclass(GameplayEffect), TargetASC);
+		if (GameplayEffect.Get()->IsValidLowLevelFast()) 
+		{
+			OwnerASC->ApplyGameplayEffectToTarget(CreateEffectWithTSubclass(GameplayEffect), TargetASC);
+		}
 	}
 
 	return true;

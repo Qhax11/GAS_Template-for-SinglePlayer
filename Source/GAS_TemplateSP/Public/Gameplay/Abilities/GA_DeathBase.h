@@ -25,6 +25,11 @@ protected:
 
 	void DisableOwnerCollision();
 
+	UPROPERTY(EditDefaultsOnly, Category = "DeathBase")
+	FGameplayTagContainer TagsToRemove;
+
 private:
 	void SetupBrodcastDeSpawn(const AActor* Instigator);
+
+	void RemoveTags();
 };

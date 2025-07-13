@@ -32,10 +32,10 @@ protected:
 
 	FTimerHandle CharacterDeSpawnCountDownTimerHandle;
 
-	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")
+	UPROPERTY(EditAnywhere, Category = "RespawnBase")
 	float ReSpawnDelay = 2.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")
+	UPROPERTY(EditAnywhere, Category = "RespawnBase")
 	bool bDisableSpawn = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")

@@ -98,6 +98,11 @@ void UAC_PostureHandler::OnHealthChanged(const FAttributeChangeCallbackData& Dat
 
 void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Data)
 {
+	if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic) || OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher))
+	{
+		return;
+	}
+
 	if (Data.CurrentValue >= Data.MaxValue)
 	{
 		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full);

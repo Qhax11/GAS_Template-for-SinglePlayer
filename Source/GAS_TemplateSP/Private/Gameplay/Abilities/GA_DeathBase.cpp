@@ -25,6 +25,7 @@ void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 
 	SetupBrodcastDeSpawn(TriggerEventData->Instigator);
+	RemoveTags();
 }
 
 void UGA_DeathBase::SetupBrodcastDeSpawn(const AActor* Instigator)
@@ -46,6 +47,18 @@ void UGA_DeathBase::SetupBrodcastDeSpawn(const AActor* Instigator)
 
 	FCharacterDeSpawnData CharacterDeSpawnData(OwnerCharacter, OwnerASC, InstigatorCharacter, InstigatorASC);
 	BroadcastDeSpawn(CharacterDeSpawnData);
+}
+
+void UGA_DeathBase::RemoveTags()
+{
+	UAbilitySystemComponent* OwnerASC = GetAbilitySystemComponentFromActorInfo();
+	if (OwnerASC)
+	{
+		for (const FGameplayTag& Tag : TagsToRemove)
+		{
+			OwnerASC->RemoveLooseGameplayTag(Tag, 100);
+		}
+	}
 }
 
 void UGA_DeathBase::BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData)

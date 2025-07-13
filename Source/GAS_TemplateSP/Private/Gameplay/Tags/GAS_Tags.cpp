@@ -55,8 +55,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_TakeDamage, "Gameplay.State.InCombat.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Parry, "Gameplay.State.InCombat.Parry");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_ParryKnockback, "Gameplay.State.InCombat.ParryKnockback");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Vulnerable, "Gameplay.State.Vulnerable");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_CanActivateFinisher, "Gameplay.State.CanActivateFinisher");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Vulnerable, "Gameplay.State.InCombat.Vulnerable");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_CanActivateFinisher, "Gameplay.State.InCombat.CanActivateFinisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Finisher, "Gameplay.State.InCombat.Finisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Dead_Basic, "Gameplay.State.InCombat.Dead.Basic");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Dead_Finisher, "Gameplay.State.InCombat.Dead.Finisher");

@@ -32,10 +32,10 @@ protected:
 
 	FTimerHandle CharacterDeSpawnCountDownTimerHandle;
 
-	UPROPERTY(EditAnywhere, Category = "RespawnBase")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RespawnBase")
 	float ReSpawnDelay = 2.0f;
 
-	UPROPERTY(EditAnywhere, Category = "RespawnBase")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "RespawnBase")
 	bool bDisableSpawn = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RespawnBase")

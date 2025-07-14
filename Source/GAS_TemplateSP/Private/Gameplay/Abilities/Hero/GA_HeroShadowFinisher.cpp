@@ -1,19 +1,19 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Hero/GA_HeroHologramFinisher.h"
+#include "Gameplay/Abilities/Hero/GA_HeroShadowFinisher.h"
 #include "Gameplay/Abilities/TargetActors/Shadows/HeroShadowTargetActor.h"
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 
-UGA_HeroHologramFinisher::UGA_HeroHologramFinisher()
+UGA_HeroShadowFinisher::UGA_HeroShadowFinisher()
 {
     ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
 }
 
-bool UGA_HeroHologramFinisher::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+bool UGA_HeroShadowFinisher::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
     // First, run the default checks (cooldown, blocking tags, etc.)
     if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
@@ -34,20 +34,20 @@ bool UGA_HeroHologramFinisher::CanActivateAbility(const FGameplayAbilitySpecHand
     return true;
 }
 
-void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
+void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
-    AHeroShadowTargetActor* HeroHologramTargetActor = Cast<AHeroShadowTargetActor>(TargetActorData.TargetActor);
-    if (!HeroHologramTargetActor)
+    AHeroShadowTargetActor* HeroShadowTargetActor = Cast<AHeroShadowTargetActor>(TargetActorData.TargetActor);
+    if (!HeroShadowTargetActor)
     {
         Super::OnTargetActorConfirm(TargetActorData);
     }
 
     BP_OnTargetActorConfirm(TargetActorData);
 
-    GetAvatarActorFromActorInfo()->SetActorLocation(HeroHologramTargetActor->GetActorLocation());
-    GetAvatarActorFromActorInfo()->SetActorRotation(HeroHologramTargetActor->GetActorRotation());
+    GetAvatarActorFromActorInfo()->SetActorLocation(HeroShadowTargetActor->GetActorLocation());
+    GetAvatarActorFromActorInfo()->SetActorRotation(HeroShadowTargetActor->GetActorRotation());
 
-    if (HeroHologramTargetActor->GetSelectedShadowAbilityClass() && HeroHologramTargetActor->GetCurrentTarget())
+    if (HeroShadowTargetActor->GetSelectedShadowAbilityClass() && HeroShadowTargetActor->GetCurrentTarget())
     {
         if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher))
         {
@@ -67,7 +67,7 @@ void UGA_HeroHologramFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& 
     }
 }
 
-void UGA_HeroHologramFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
+void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
 { 
     // Adjust the rotation towards the target enemy before spawning the target actor.
     if (AGAS_HeroBase* OwnerHero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
@@ -83,17 +83,16 @@ void UGA_HeroHologramFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVect
         }
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("Couldn't set rotation correctly for Finisher Hologram in: %s"), *GetName());
+    UE_LOG(LogTemp, Warning, TEXT("Couldn't set rotation correctly for Finisher Shadow in: %s"), *GetName());
     Super::SpawnAndSetupTargetActor(Rotation, Location);
 }
 
-void UGA_HeroHologramFinisher::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
+void UGA_HeroShadowFinisher::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
 {
     Super::OnTargetActorSpawnLocationQueryFinished(Result);
-
 }
 
-void UGA_HeroHologramFinisher::CancelAbilityFromInput()
+void UGA_HeroShadowFinisher::CancelAbilityFromInput()
 {
     
 }

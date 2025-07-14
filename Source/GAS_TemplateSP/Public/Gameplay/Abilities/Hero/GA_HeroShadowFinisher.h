@@ -3,17 +3,17 @@
 #pragma once
 
 #include "Gameplay/Abilities/Hero/GA_HeroTargetBase.h"
-#include "GA_HeroHologramFinisher.generated.h"
+#include "GA_HeroShadowFinisher.generated.h"
 
-// The UGA_HeroHologramFinisher class is responsible for triggering the actual finisher class  
+// The UGA_HeroShadowFinisher class is responsible for triggering the actual finisher class  
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_HeroHologramFinisher : public UGA_HeroTargetBase
+class GAS_TEMPLATESP_API UGA_HeroShadowFinisher : public UGA_HeroTargetBase
 {
 	GENERATED_BODY()
 
 protected:
-	UGA_HeroHologramFinisher();
+	UGA_HeroShadowFinisher();
 
 	/** Override this to control whether the ability can activate */
 	virtual bool CanActivateAbility(

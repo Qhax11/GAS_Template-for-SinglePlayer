@@ -204,45 +204,6 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 
 }
 
-void UAC_StateManager::ExitFromMovementState()
-{
-	FAttackData NewSelectedAttack = SelectNewBestAttack();
-	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
-	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
-	}
-	else
-	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
-	}
-}
-
-void UAC_StateManager::ExitFromAttackState()
-{
-	FAttackData NewSelectedAttack = SelectNewBestAttack();
-	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
-	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
-	}
-	else
-	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
-	}
-}
-
-void UAC_StateManager::ExitFromInComingAttackState()
-{
-	FAttackData NewSelectedAttack = SelectNewBestAttack();
-	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
-	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
-	}
-	else
-	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
-	}
-}
-
 float UAC_StateManager::GetTargetDistance() const
 {
 	if (!OwnerController)

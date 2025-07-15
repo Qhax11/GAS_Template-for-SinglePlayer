@@ -32,17 +32,12 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
+	// Its called from UAC_IntendHandlerBase
 	void OnTargetDetected();
 
 	void RequestStateTreeEnter(const FGameplayTag& StateTag);
 
 	void RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag);
-
-	void ExitFromMovementState();
-
-	void ExitFromAttackState();
-
-	void ExitFromInComingAttackState();
 
 	float GetTargetDistance() const;
 

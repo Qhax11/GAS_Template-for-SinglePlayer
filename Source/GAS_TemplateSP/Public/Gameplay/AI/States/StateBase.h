@@ -88,7 +88,7 @@ protected:
 
     FAttackData GetSelectedAttackAbilityData() const;
 
-    FComingAttackReactionData GetSelectedReactionData() const;
+    //FComingAttackReactionData GetSelectedReactionData() const;
 
     UGAS_GameplayAbilityBase* GetSelectedAttackAbilityCDO() const;
 

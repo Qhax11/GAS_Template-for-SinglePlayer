@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gameplay/AI/BehaviorDecision/BehaviorDecisionServiceBase.h"
+#include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
 #include "BDS_GetBestAttack.generated.h"
 
 USTRUCT(BlueprintType)

@@ -39,6 +39,11 @@ void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
+	if (TriggerEventData->EventMagnitude > 0) 
+	{
+		DistanceMultiplier = TriggerEventData->EventMagnitude;
+	}
+
 	FGameplayTagContainer CancelAbilityTags;
 	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Attack);
 	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Knocback);

@@ -190,16 +190,3 @@ bool UBDS_GetBestMovementChain::ApplyDirectionPoliciesToSelectedMovementChain(UM
     return bChanged;
 }
 
-FGameplayTag UBDS_GetBestMovementChain::GetRandomDirectionTag()
-{
-    static const TArray<FGameplayTag> PossibleDirections =
-    {
-        //GAS_Tags::TAG_AI_Direction_Resolved_Forward,
-        GAS_Tags::TAG_AI_Direction_Resolved_Backward,
-        GAS_Tags::TAG_AI_Direction_Resolved_Left,
-        GAS_Tags::TAG_AI_Direction_Resolved_Right
-    };
-
-    int32 RandomIndex = FMath::RandRange(0, PossibleDirections.Num() - 1);
-    return PossibleDirections[RandomIndex];
-}

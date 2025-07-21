@@ -183,8 +183,14 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 
 void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 {
-	const FComingAttackReactionData BestReaction = OwnerBehaviorDecisionComp->GetBestComingAttackDecision(EventPayload);
-	const float PreferredDelay = EventPayload.ComingAttackHitTime - BestReaction.PreferredTriggerTimeBeforeHit;
+	UBDS_ComingAttackReactionBase* BestReaction = OwnerBehaviorDecisionComp->GetBestComingAttackReaction(EventPayload);
+	if (!BestReaction) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BestReaction is null in: %s"), *GetName());
+		return;
+	}
+
+	const float PreferredDelay = EventPayload.ComingAttackHitTime - BestReaction->PreferredTriggerTimeBeforeHit;
 
 	if (PreferredDelay <= 0.f)
 	{
@@ -200,10 +206,10 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 	}
 }
 
-void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(FComingAttackReactionData Reaction, FComingAttackPayload Payload)
+void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload)
 {
 	OwnerStateManager->ComingAttackPayload = Payload;
-	OwnerStateManager->SelectedReactionData = Reaction;
+	//OwnerStateManager->SelectedReactionData = Reaction;
 	OwnerStateManager->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack);
 }
 

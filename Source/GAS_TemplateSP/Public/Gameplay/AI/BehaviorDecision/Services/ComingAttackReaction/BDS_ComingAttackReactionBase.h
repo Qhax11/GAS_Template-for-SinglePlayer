@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Gameplay/AI/BehaviorDecision/BehaviorDecisionServiceBase.h"
-#include "BDS_ComingAttackReaction.generated.h"
+#include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
+#include "BDS_ComingAttackReactionBase.generated.h"
 
 UENUM(BlueprintType)
 enum class EComingAttackReaction : uint8
@@ -13,10 +13,27 @@ enum class EComingAttackReaction : uint8
     Dodge     UMETA(DisplayName = "Dodge"),
 };
 
-USTRUCT(BlueprintType)
-struct FComingAttackReactionData
+UCLASS(BlueprintType)
+class UComingAttackReactionAsset : public UPrimaryDataAsset
 {
     GENERATED_BODY()
+
+public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<TObjectPtr<UBDS_ComingAttackReactionBase>> ComingAttackReactions;
+};
+
+UCLASS(Blueprintable, DefaultToInstanced, EditInLineNew)
+class GAS_TEMPLATESP_API UBDS_ComingAttackReactionBase : public UBehaviorDecisionServiceBase
+{
+	GENERATED_BODY()
+
+public:
+    virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
+
+    virtual float CalculateComingAttackReactionScore(struct FComingAttackPayload ComingAttackPayload);
+	
+    bool IsEnable(FComingAttackPayload ComingAttackPayload) const;
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Coming Attack Reaction. Used for debugging or referencing in logic."))
@@ -25,9 +42,6 @@ public:
     // Defense reaction type this data represents (e.g., Parry or Dodge)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     EComingAttackReaction ReactionType;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Ability class that defines the actual gameplay logic and range values"))
-    TSubclassOf<class UGAS_GameplayAbilityBase> RecationAbilityClass;
 
     // Minimum time required before impact to allow this reaction (otherwise it's too late)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))
@@ -52,38 +66,17 @@ public:
     // Flat score bias to encourage/discourage selection
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float ScoreBias = 0.f;
-};
 
-UCLASS(BlueprintType)
-class UComingAttackReactionAsset : public UPrimaryDataAsset
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<FComingAttackReactionData> ComingAttackReactions;
-};
-
-UCLASS()
-class GAS_TEMPLATESP_API UBDS_ComingAttackReaction : public UBehaviorDecisionServiceBase
-{
-	GENERATED_BODY()
-
-public:
-    virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
-
-    FComingAttackReactionData GetBestComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
-	
 protected:
-    float CalculateBehaviorStateScore(const FComingAttackReactionData& Data) const;
+    float CalculateBehaviorStateScore() const;
 
-    float CalculateTagScore(const FComingAttackReactionData& Data, const FComingAttackPayload ComingAttackPayload) const;
+    float CalculateTagScore(const FComingAttackPayload ComingAttackPayload) const;
 
-    bool PassesChanceRoll(const FComingAttackReactionData& ReactionData) const;
+    bool PassesChanceRoll() const;
 
-    bool PassesChanceRollBasedOnPosture(const FComingAttackReactionData& ReactionData) const;
+    bool PassesChanceRollBasedOnPosture() const;
 
-    bool PassesFinalChanceRoll(const FComingAttackReactionData& ReactionData) const;
+    bool PassesFinalChanceRoll() const;
 
     UPROPERTY()
     UComingAttackReactionAsset* ComingAttackReactionAsset;

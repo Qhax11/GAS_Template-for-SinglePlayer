@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/AI/BehaviorDecision/BehaviorDecisionServiceBase.h"
+#include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
 #include "BDS_GetBestMovementChain.generated.h"
 
 UENUM(BlueprintType)
@@ -15,32 +15,7 @@ enum class EMovementDirection : uint8
     Right        UMETA(DisplayName = "Right")
 };
 
-USTRUCT(BlueprintType)
-struct FMovementAbilityData
-{
-    GENERATED_BODY()
 
-public:
-    // The gameplay ability class used for movement.
-    UPROPERTY(EditDefaultsOnly)
-    TSubclassOf<UGAS_GameplayAbilityBase> MovementAbilityClass;
-
-    // The gameplay tag used to trigger this ability.
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.AbilityTriggerEvent.Movement"))
-    FGameplayTag AbilityTriggerTag;
-
-    // The resolved direction for this ability, typically determined at runtime by a direction policy.
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Resolved", ToolTip = "Resolved direction tag used by this ability at runtime. Typically set based on the direction policy."))
-    FGameplayTag ResolvedDirectionTag;
-
-    // The policy used to resolve the direction, like random or based on player position.
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Policy", ToolTip = "Defines how the direction should be resolved at runtime (e.g., LastPlayerDirection, Random)."))
-    FGameplayTag DirectionPolicyTag;
-
-    // How long the ability should stay active before ending automatically (e.g., for chase abilities).
-    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "How long (in seconds) this movement ability should stay active before ending. Useful for chase or flee behaviors. Set to 0 to ignore."))
-    float TimeLimit = 0.f;
-};
 
 UCLASS(BlueprintType)
 class UMovementChainAsset : public UPrimaryDataAsset
@@ -116,8 +91,6 @@ protected:
     float CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset);
 
     bool ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset);
-
-    FGameplayTag GetRandomDirectionTag();
 
     UPROPERTY()
     UAttackAbilityMovementChainMapAsset* AttackAbilityMovementChainMapAsset;

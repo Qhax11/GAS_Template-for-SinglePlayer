@@ -5,7 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
-#include "Gameplay/AI/BehaviorDecision/BDS_ComingAttackReaction.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestMovementChain.h"
 #include "AC_BehaviorDecision.generated.h"
@@ -53,9 +53,10 @@ public:
     TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
     UFUNCTION(BlueprintCallable)
-    FComingAttackReactionData GetBestComingAttackDecision(struct FComingAttackPayload ComingAttackPayload);
+    UBDS_ComingAttackReactionBase* GetBestComingAttackReaction(struct FComingAttackPayload ComingAttackPayload);
 
     FAttackData LastSelectedAttackAbilityData;
+    UBDS_ComingAttackReactionBase* LastSelectedComingAttackReaction;
 
     UPROPERTY(BlueprintAssignable)
     FOnBehaviorDecisionInitialized OnBehaviorDecisionInitialized;
@@ -71,7 +72,7 @@ protected:
     UAC_HeroMovementListener* HeroMovementListenerComp;
 
     UPROPERTY()
-    UBDS_ComingAttackReaction* ComingAttackReactionService;
+    UBDS_ComingAttackReactionBase* ComingAttackReactionService;
 
     UPROPERTY()
     UBDS_GetBestAttack* GetBestAttackService;

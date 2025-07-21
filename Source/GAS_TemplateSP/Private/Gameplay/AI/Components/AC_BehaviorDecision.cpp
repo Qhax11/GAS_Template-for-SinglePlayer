@@ -64,10 +64,12 @@ void UAC_BehaviorDecision::OnTargetDetected(AActor* Target)
 
 void UAC_BehaviorDecision::InitalizeServiceses()
 {
-    ComingAttackReactionService = NewObject<UBDS_ComingAttackReaction>(GetOwner());
-    FBehaviorServiceInitParams ComingAttackReactionServiceInitData = FBehaviorServiceInitParams(
-        ComingAttackReactionAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
-    ComingAttackReactionService->Initialize(ComingAttackReactionServiceInitData);
+    for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionAsset->ComingAttackReactions)
+    {
+        FBehaviorServiceInitParams ComingAttackReactionServiceInitData = FBehaviorServiceInitParams(
+            ComingAttackReactionAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
+        ReactionInstance->Initialize(ComingAttackReactionServiceInitData);
+    }
 
     GetBestAttackService = NewObject<UBDS_GetBestAttack>(GetOwner());
     FBehaviorServiceInitParams GetBestAttackServiceInitData = FBehaviorServiceInitParams
@@ -139,20 +141,42 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     return BestMovementChainDataAsset->MovementChain;
 }
 
-FComingAttackReactionData UAC_BehaviorDecision::GetBestComingAttackDecision(FComingAttackPayload ComingAttackPayload)
+UBDS_ComingAttackReactionBase* UAC_BehaviorDecision::GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload)
 {
-    FComingAttackReactionData BestComingAttackReaction;
-    if (!ComingAttackReactionService)
+    UBDS_ComingAttackReactionBase* BestComingAttackInstance = nullptr;
+
+    if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack)
     {
-        UE_LOG(LogTemp, Warning, TEXT("ComingAttackReactionService is null in: %s"), *GetName());
-        return BestComingAttackReaction;
+        return BestComingAttackInstance;
     }
 
-    if (IsValid(ComingAttackReactionService)) 
+    EComingAttackReaction BestReaction = EComingAttackReaction::TakeDamage;
+    float BestScore = -FLT_MAX;
+
+    for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionAsset->ComingAttackReactions)
     {
-        BestComingAttackReaction = ComingAttackReactionService->GetBestComingAttackDecision(ComingAttackPayload);
+        if (!ReactionInstance->IsEnable(ComingAttackPayload))
+        {
+            continue;
+        }
+
+        float ComingAttackReactionScore = ReactionInstance->CalculateComingAttackReactionScore(ComingAttackPayload);
+        UE_LOG(LogTemp, Log, TEXT("[AI] Reaction %s → Score: %.2f"), *ReactionInstance->ComingAttackReactionName.ToString(), ComingAttackReactionScore);
+
+        if (ComingAttackReactionScore > BestScore)
+        {
+            BestScore = ComingAttackReactionScore;
+            BestComingAttackInstance = ReactionInstance;
+        }
     }
 
-    return BestComingAttackReaction;
+    if (BestComingAttackInstance)
+    {
+        BestComingAttackInstance->InitializeAfterSelection();
+        LastSelectedComingAttackReaction = BestComingAttackInstance;
+        UE_LOG(LogTemp, Log, TEXT("[AI] SelectedReaction %s"), *BestComingAttackInstance->ComingAttackReactionName.ToString());
+    }
+
+    return BestComingAttackInstance;
 }
 

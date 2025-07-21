@@ -23,17 +23,15 @@ protected:
 
 	void SelectAndMakeInComingAttackReaction();
 
-	void TriggerIncomingReaction(FComingAttackReactionData Reaction);
-
 	//********************* TAKE DAMAGE *********************/
 
-	void MakeTakeDamage(FComingAttackReactionData BestComingAttackReaction);
+	void MakeTakeDamage(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
 
 	void OnTakeDamageFailsafeTimeout();
 	FTimerHandle TakeDamageFailsafeTimer;
 
 	UFUNCTION()
-	void OnTargetAbilityActivated(UGameplayAbility* Ability);
+	void OnTakeDamageAbilityActivated(UGameplayAbility* Ability);
 
 	// Exit of Take Damage.
 	UFUNCTION()
@@ -43,7 +41,7 @@ protected:
 
 	//********************* PARRY *********************/
 
-	void MakeParryAbility(FComingAttackReactionData BestComingAttackReaction);
+	void MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
 
 	UFUNCTION()
 	void OnParryTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
@@ -54,11 +52,12 @@ protected:
 	UFUNCTION()
 	void OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
+	const class UBDS_ComingAttackReaction_Parry* BDS_Parry;
 	bool bParryKnockbackHappened = false;
 
 	//********************* DODGE *********************/
 
-	void ActivateDodgeAbility(FComingAttackReactionData BestComingAttackReaction);
+	void ActivateDodgeAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
 
 	// Exit of Dodge.
 	UFUNCTION()

@@ -102,11 +102,6 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 	}
 }
 
-void UGA_BossShadowAttack::OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData)
-{
-	Super::OnTargetActorCancelled(TargetActorData);
-}
-
 float UGA_BossShadowAttack::GetTargetDistance(AActor* ShadowTargetActor)
 {
 	if (!BossController || !BossController->GetTargetHero() || !ShadowTargetActor)
@@ -118,4 +113,17 @@ float UGA_BossShadowAttack::GetTargetDistance(AActor* ShadowTargetActor)
 	FVector TargetLocation = BossController->GetTargetHero()->GetActorLocation();
 
 	return FVector::Dist(MyLocation, TargetLocation);
+}
+
+void UGA_BossShadowAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, 
+	const FGameplayAbilityActorInfo* ActorInfo, 
+	const FGameplayAbilityActivationInfo ActivationInfo, 
+	bool bReplicateEndAbility, bool bWasCancelled)
+{
+	if (UAC_EnemyMovementManager* EnemyMovementManagerComp = BossCharacter->GetEnemyMovementManagerComponent())
+	{
+		EnemyMovementManagerComp->StopMovementAbilities();
+	}
+
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

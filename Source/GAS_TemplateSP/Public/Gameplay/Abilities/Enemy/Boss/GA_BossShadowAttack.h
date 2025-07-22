@@ -23,9 +23,9 @@ public:
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
-	virtual void OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData) override;
-
 	float GetTargetDistance(AActor* ShadowTargetActor);
+
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnBossShadowAttackExecute OnBossShadowAttackCompleted;

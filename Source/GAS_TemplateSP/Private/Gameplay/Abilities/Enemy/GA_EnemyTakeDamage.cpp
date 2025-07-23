@@ -13,13 +13,6 @@ void UGA_EnemyTakeDamage::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	if (AGAS_EnemyBase* EnemyBase = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo()))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UGA_EnemyTakeDamage Stopped movement and combos."));
-		EnemyBase->GetEnemyMovementManagerComponent()->StopMovementAbilities();
-		EnemyBase->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	}
-
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	SetRotationToInstigator(TriggerEventData->Instigator);

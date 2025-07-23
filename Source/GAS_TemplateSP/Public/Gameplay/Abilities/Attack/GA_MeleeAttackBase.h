@@ -28,6 +28,8 @@ public:
 
 	void AttackLogic(TArray<FHitResult>& OutHitResults);
 
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+
 	class AGAS_CharacterBase* CharacterBase;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Parameters")

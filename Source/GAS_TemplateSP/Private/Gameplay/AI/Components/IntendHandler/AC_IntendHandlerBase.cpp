@@ -190,6 +190,12 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 		return;
 	}
 
+	if (BestReaction->ReactionType == EComingAttackReaction::TakeDamage) 
+	{
+		//TriggerIncomingAttackReaction(BestReaction, EventPayload);
+		return;
+	}
+
 	const float PreferredDelay = EventPayload.ComingAttackHitTime - BestReaction->PreferredTriggerTimeBeforeHit;
 
 	if (PreferredDelay <= 0.f)

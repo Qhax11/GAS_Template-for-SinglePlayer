@@ -68,6 +68,11 @@ void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEnde
 	ActiveComboChainTracker.bNextAttackAllowed = true;
 	ActiveComboChainTracker.Advance();
 
+	if (EndedData.bWasCancelled)
+	{
+		return;
+	}
+
 	if (ActiveComboChainTracker.IsChainFinished())
 	{
 		OnComboEnded.Broadcast();

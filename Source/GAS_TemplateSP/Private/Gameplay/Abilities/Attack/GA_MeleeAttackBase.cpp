@@ -37,6 +37,7 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 {
 	if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceStart)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("OnEventReceived, trace started from: %s"), *GetName());
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle_TraceTick, this, &UGA_MeleeAttackBase::TraceTick, TraceTickValue, true, 0);
 	}
 	else if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceEnd) 
@@ -102,4 +103,12 @@ void UGA_MeleeAttackBase::AttackLogic(TArray<FHitResult>& OutHitResults)
 	}
 }
 
+void UGA_MeleeAttackBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	bool bReplicateEndAbility, bool bWasCancelled)
+{
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
 

@@ -32,7 +32,7 @@ float UBDS_ComingAttackReactionBase::CalculateComingAttackReactionScore(FComingA
 
 bool UBDS_ComingAttackReactionBase::IsEnable(FComingAttackPayload ComingAttackPayload) const
 {
-    return PassesFinalChanceRoll() && ComingAttackPayload.ComingAttackHitTime < MinimumTimeBeforeHitToReact;
+    return PassesFinalChanceRoll() && ComingAttackPayload.ComingAttackHitTime > MinimumTimeBeforeHitToReact;
 }
 
 float UBDS_ComingAttackReactionBase::CalculateBehaviorStateScore() const

@@ -19,6 +19,8 @@ protected:
 
 	virtual void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus) override;
 
+	virtual bool ShouldUpdateRotation() const override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UAC_IntendHandlerBoss> IntendHandlerBossComponent;
 };

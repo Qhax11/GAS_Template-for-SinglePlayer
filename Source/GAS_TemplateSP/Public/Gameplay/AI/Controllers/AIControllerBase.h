@@ -46,7 +46,16 @@ protected:
 protected:
 	virtual void BeginPlay();
 
+	virtual void Tick(float DeltaTime) override;
+
 	void EndPlay(const EEndPlayReason::Type EndPlayReason);
+
+	void UpdateRotationTowardsTarget(float DeltaTime);
+
+	virtual bool ShouldUpdateRotation() const;
+
+	UPROPERTY(EditDefaultsOnly)
+	float RotationSpeed = 10.f;
 
 	UFUNCTION()
 	virtual void TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus);

@@ -8,6 +8,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Gameplay/Components/AC_Team.h"
 #include <Kismet/GameplayStatics.h>
+#include "Gameplay/AI/Components/AC_StateManager.h"
 
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
@@ -72,10 +73,44 @@ void AAIControllerBase::BeginPlay()
 	}
 }
 
+void AAIControllerBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (ShouldUpdateRotation()) 
+	{
+		UpdateRotationTowardsTarget(DeltaTime);
+	}
+}
+
 void AAIControllerBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 	Super::EndPlay(EndPlayReason);
+}
+
+void AAIControllerBase::UpdateRotationTowardsTarget(float DeltaTime)
+{
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+		FVector Direction = (PlayerLocation - ControlledPawn->GetActorLocation()).GetSafeNormal();
+		FRotator TargetRot = Direction.Rotation();
+
+		FRotator CurrentRot = ControlledPawn->GetActorRotation();
+		FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, RotationSpeed);
+		ControlledPawn->SetActorRotation(NewRot);
+	}
+}
+
+bool AAIControllerBase::ShouldUpdateRotation() const
+{
+	if (!EnemyStateManagerComponent) 
+	{
+		return false;
+	}
+
+	return EnemyStateManagerComponent->CurrentState->StateTag != GAS_Tags::TAG_AI_State_Patrolling;
 }
 
 void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus)

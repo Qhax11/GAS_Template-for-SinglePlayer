@@ -51,9 +51,8 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 	}
 	else if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_UnLockRotationTowardsTarget)
 	{
-		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
+		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget, 100);
 	}
-
 }
 
 void UGA_MeleeAttackBase::TraceTick()
@@ -118,6 +117,7 @@ void UGA_MeleeAttackBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
+	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

@@ -9,6 +9,7 @@
 #include "Gameplay/Components/AC_Team.h"
 #include <Kismet/GameplayStatics.h>
 #include "Gameplay/AI/Components/AC_StateManager.h"
+#include <Kismet/KismetMathLibrary.h>
 
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
@@ -109,10 +110,17 @@ void AAIControllerBase::UpdateRotationTowardsTarget(float DeltaTime)
 		FVector Direction = (PlayerLocation - ControlledPawn->GetActorLocation()).GetSafeNormal();
 		FRotator TargetRot = Direction.Rotation();
 
+		FRotator NewRot = UKismetMathLibrary::FindLookAtRotation(ControlledEnemy->GetActorLocation(), PlayerLocation);
 		FRotator CurrentRot = ControlledPawn->GetActorRotation();
-		FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, RotationSpeed);
-		ControlledPawn->SetActorRotation(NewRot);
+		//FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, RotationSpeed);
+		ControlledPawn->SetActorRotation(FRotator(CurrentRot.Pitch, NewRot.Yaw, CurrentRot.Roll));
+
+
+		DrawDebugLine(GetWorld(), ControlledPawn->GetActorLocation(),
+			ControlledPawn->GetActorLocation() + ControlledPawn->GetActorForwardVector() * 350.f,
+			FColor::Green, false, 0.1f, 0, 2.f);
 	}
+
 }
 
 void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus)

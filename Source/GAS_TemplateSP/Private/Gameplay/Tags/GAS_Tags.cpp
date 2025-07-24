@@ -27,6 +27,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Attack_TraceStart, "Gameplay.AnimNotify.Event.Attack.TraceStart");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Attack_TraceEnd, "Gameplay.AnimNotify.Event.Attack.TraceEnd");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Attack_CanActivateNextAttack, "Gameplay.AnimNotify.Event.Attack.CanActivateNextAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_MotionWarping, "Gameplay.AnimNotify.Event.MotionWarping");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_LockRotationTowardsTarget, "Gameplay.AnimNotify.Event.LockRotationTowardsTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_UnLockRotationTowardsTarget, "Gameplay.AnimNotify.Event.UnLockRotationTowardsTarget");
 

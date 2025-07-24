@@ -32,11 +32,6 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	if (bEnableMotionWarping) 
-	{
-		ActivateMotionWarping();
-	}
-
 	CreatePlayMontageWaitForEvent();
 
 	UE_LOG(LogTemp, Warning, TEXT("Ability is triggered: %s"), *GetName());
@@ -127,7 +122,13 @@ void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEven
 
 void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	/* Will be implemented in child classes */
+	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_MotionWarping)
+	{
+		if (bEnableMotionWarping)
+		{
+			ActivateMotionWarping();
+		}
+	}
 }
 
 void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

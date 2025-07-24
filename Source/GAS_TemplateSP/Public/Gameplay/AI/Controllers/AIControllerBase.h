@@ -52,8 +52,6 @@ protected:
 
 	void UpdateRotationTowardsTarget(float DeltaTime);
 
-	virtual bool ShouldUpdateRotation() const;
-
 	UPROPERTY(EditDefaultsOnly)
 	float RotationSpeed = 10.f;
 
@@ -68,6 +66,9 @@ protected:
 
 	UPROPERTY()
 	AGAS_EnemyBase* ControlledEnemy;
+
+	UPROPERTY()
+	UAbilitySystemComponent* ControlledEnemyASC;
 
 public:
 	UFUNCTION(BlueprintCallable)

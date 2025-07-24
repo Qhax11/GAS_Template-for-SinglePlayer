@@ -44,6 +44,16 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 	{
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
 	}
+
+	if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_LockRotationTowardsTarget)
+	{
+		GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
+	}
+	else if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_UnLockRotationTowardsTarget)
+	{
+		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
+	}
+
 }
 
 void UGA_MeleeAttackBase::TraceTick()

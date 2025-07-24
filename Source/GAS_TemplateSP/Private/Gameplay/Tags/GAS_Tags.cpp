@@ -27,6 +27,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_TraceStart, "Gameplay.AttackEvent.TraceStart");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_TraceEnd, "Gameplay.AttackEvent.TraceEnd");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_CanActivateNextAttack, "Gameplay.AttackEvent.CanActivateNextAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_LockRotationTowardsTarget, "Gameplay.AttackEvent.LockRotationTowardsTarget");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AttackEvent_UnLockRotationTowardsTarget, "Gameplay.AttackEvent.UnLockRotationTowardsTarget");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageImmune, "Gameplay.DamageImmune");
 
@@ -65,6 +67,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting_Shadow, "Gameplay.State.AbilityTargeting.Shadow");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, "Gameplay.State.TargetLockSystem.Hero.TargetLocked");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted, "Gameplay.State.TargetLockSystem.Enemy.Targeted");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_LockRotationTowardsTarget, "Gameplay.State.LockRotationTowardsTarget");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_UnLockRotationTowardsTarget, "Gameplay.State.UnLockRotationTowardsTarget");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_SetByCaller_DamageAmount, "Gameplay.EffectData.SetByCaller.DamageAmount");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_SetByCaller_GainHealthAmount, "Gameplay.EffectData.SetByCaller.GainHealthAmount");

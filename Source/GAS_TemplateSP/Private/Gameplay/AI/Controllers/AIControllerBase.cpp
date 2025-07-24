@@ -45,6 +45,11 @@ void AAIControllerBase::BeginPlay()
 		return;
 	}
 
+	if (ControlledEnemy->GetAbilitySystemComponent()) 
+	{
+		ControlledEnemyASC = ControlledEnemy->GetAbilitySystemComponent();
+	}
+
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	TargetHero = Cast<AGAS_HeroBase>(PlayerPawn);
 	if (!TargetHero)
@@ -77,10 +82,7 @@ void AAIControllerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (ShouldUpdateRotation()) 
-	{
-		UpdateRotationTowardsTarget(DeltaTime);
-	}
+	UpdateRotationTowardsTarget(DeltaTime);
 }
 
 void AAIControllerBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -91,6 +93,16 @@ void AAIControllerBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AAIControllerBase::UpdateRotationTowardsTarget(float DeltaTime)
 {
+	if (!ControlledEnemyASC) 
+	{
+		return;
+	}
+
+	if (!ControlledEnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget))
+	{
+		return;
+	}
+
 	if (APawn* ControlledPawn = GetPawn())
 	{
 		FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
@@ -101,16 +113,6 @@ void AAIControllerBase::UpdateRotationTowardsTarget(float DeltaTime)
 		FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, RotationSpeed);
 		ControlledPawn->SetActorRotation(NewRot);
 	}
-}
-
-bool AAIControllerBase::ShouldUpdateRotation() const
-{
-	if (!EnemyStateManagerComponent) 
-	{
-		return false;
-	}
-
-	return EnemyStateManagerComponent->CurrentState->StateTag != GAS_Tags::TAG_AI_State_Patrolling;
 }
 
 void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus)

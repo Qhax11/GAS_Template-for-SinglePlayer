@@ -25,15 +25,5 @@ void AAIControllerBoss::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 	Super::TargetPreceptionUpdated(Actor, Stimulus);
 }
 
-bool AAIControllerBoss::ShouldUpdateRotation() const
-{
-	bool BossInUnstoppableAttack = ControlledEnemy->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
-	if (BossInUnstoppableAttack) 
-	{
-		return false;
-	}
-
-	return Super::ShouldUpdateRotation();
-}
 
 

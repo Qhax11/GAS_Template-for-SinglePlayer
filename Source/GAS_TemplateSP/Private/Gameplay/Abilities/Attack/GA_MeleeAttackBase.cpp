@@ -35,21 +35,20 @@ void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceStart)
+	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Attack_TraceStart)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnEventReceived, trace started from: %s"), *GetName());
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle_TraceTick, this, &UGA_MeleeAttackBase::TraceTick, TraceTickValue, true, 0);
 	}
-	else if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceEnd) 
+	else if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Attack_TraceEnd) 
 	{
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
 	}
 
-	if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_LockRotationTowardsTarget)
+	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_LockRotationTowardsTarget)
 	{
 		GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
 	}
-	else if (EventTag == GAS_Tags::TAG_Gameplay_AttackEvent_UnLockRotationTowardsTarget)
+	else if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_UnLockRotationTowardsTarget)
 	{
 		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget, 100);
 	}

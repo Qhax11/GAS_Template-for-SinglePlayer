@@ -151,7 +151,7 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 	{
 		if (const UAN_SendTag* TagNotify = Cast<UAN_SendTag>(Notify.Notify))
 		{
-			if (TagNotify->NotifyTag == GAS_Tags::TAG_Gameplay_AttackEvent_TraceStart)
+			if (TagNotify->NotifyTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Attack_TraceStart)
 			{
 				NotifyTime = Notify.GetTriggerTime();
 				break;

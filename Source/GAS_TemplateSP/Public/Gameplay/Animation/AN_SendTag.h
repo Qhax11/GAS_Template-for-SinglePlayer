@@ -13,7 +13,7 @@ class GAS_TEMPLATESP_API UAN_SendTag : public UAnimNotify
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (Categories = "Gameplay.AnimNotify.Event"))
 	FGameplayTag NotifyTag;
 
 };

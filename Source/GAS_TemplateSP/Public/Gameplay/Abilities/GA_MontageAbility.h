@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"), meta = (Categories = "AI.Direction.Resolved"))
 	FGameplayTag DirectionTag;
 
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	bool bDebugMotionWarping = false;
+
 	class UGAS_Task_PlayMontageWaitForEvent* PlayMontageWaitForEventTask;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")

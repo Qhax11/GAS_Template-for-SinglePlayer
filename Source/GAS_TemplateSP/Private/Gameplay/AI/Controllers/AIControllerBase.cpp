@@ -94,7 +94,7 @@ void AAIControllerBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AAIControllerBase::UpdateRotationTowardsTarget(float DeltaTime)
 {
-	if (!ControlledEnemyASC) 
+	if (!ControlledEnemyASC || !ControlledEnemy || !TargetHero)
 	{
 		return;
 	}
@@ -104,23 +104,13 @@ void AAIControllerBase::UpdateRotationTowardsTarget(float DeltaTime)
 		return;
 	}
 
-	if (APawn* ControlledPawn = GetPawn())
-	{
-		FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-		FVector Direction = (PlayerLocation - ControlledPawn->GetActorLocation()).GetSafeNormal();
-		FRotator TargetRot = Direction.Rotation();
+	FVector PlayerLocation = TargetHero->GetActorLocation();
+	FVector Direction = (PlayerLocation - ControlledEnemy->GetActorLocation()).GetSafeNormal();
+	FRotator TargetRot = Direction.Rotation();
 
-		FRotator NewRot = UKismetMathLibrary::FindLookAtRotation(ControlledEnemy->GetActorLocation(), PlayerLocation);
-		FRotator CurrentRot = ControlledPawn->GetActorRotation();
-		//FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, RotationSpeed);
-		ControlledPawn->SetActorRotation(FRotator(CurrentRot.Pitch, NewRot.Yaw, CurrentRot.Roll));
-
-
-		DrawDebugLine(GetWorld(), ControlledPawn->GetActorLocation(),
-			ControlledPawn->GetActorLocation() + ControlledPawn->GetActorForwardVector() * 350.f,
-			FColor::Green, false, 0.1f, 0, 2.f);
-	}
-
+	FRotator CurrentRot = ControlledEnemy->GetActorRotation();
+	FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, RotationSpeed);
+	ControlledEnemy->SetActorRotation(NewRot);
 }
 
 void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus)

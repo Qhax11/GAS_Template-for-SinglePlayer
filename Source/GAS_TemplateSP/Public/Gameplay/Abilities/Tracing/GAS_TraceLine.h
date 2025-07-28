@@ -15,9 +15,9 @@ class GAS_TEMPLATESP_API UGAS_TraceLine : public UGAS_TraceBase
 	
 protected:
 
-	virtual void TraceLogic(const UWorld* World, const FVector& Location, const FRotator& Direction, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults) override;
+	virtual void TraceLogic(const UWorld* World, const FTraceRequest& TraceRequest, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults) override;
 
 #if WITH_EDITOR
-	virtual void DrawDebugShape(const UWorld* World, const FVector& Location) const override;
+	virtual void DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const override;
 #endif // WITH_EDITOR
 };

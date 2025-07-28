@@ -2,6 +2,8 @@
 
 
 #include "Gameplay/Abilities/Tracing/GAS_TraceCapsule.h"
+#include "KismetTraceUtils.h"
+
 
 FCollisionShape UGAS_TraceCapsule::GetCollisionShape() const
 {
@@ -9,14 +11,14 @@ FCollisionShape UGAS_TraceCapsule::GetCollisionShape() const
 }
 
 #if WITH_EDITOR
-void UGAS_TraceCapsule::DrawDebugShape(const UWorld* World, const FVector& Location) const
+void UGAS_TraceCapsule::DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const
 {
 	DrawDebugCapsule(
 		World,
-		Location + TraceDirection.Vector().GetSafeNormal() * TraceDistance,
+		TraceRequest.StartLocation + TraceRequest.Direction.Vector().GetSafeNormal() * TraceDistance,
 		HalfHeight,
 		Radius,
-		TraceDirection.Quaternion(),
+		TraceRequest.Direction.Quaternion(),
 		DrawColor,
 		false,
 		DebugShapeDrawDuration,

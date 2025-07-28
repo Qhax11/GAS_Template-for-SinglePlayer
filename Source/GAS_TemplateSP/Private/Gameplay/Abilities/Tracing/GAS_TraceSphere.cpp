@@ -9,14 +9,14 @@ FCollisionShape UGAS_TraceSphere::GetCollisionShape() const
 }
 
 #if WITH_EDITOR
-void UGAS_TraceSphere::DrawDebugShape(const UWorld* World, const FVector& Location) const
+void UGAS_TraceSphere::DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const
 {
 	DrawDebugCapsule(
 		World,
-		Location + TraceDirection.Vector() * (TraceDistance / 2.0f),
+		TraceRequest.StartLocation + TraceRequest.Direction.Vector() * (TraceDistance / 2.0f),
 		TraceDistance / 2.0f + Radius,
 		Radius,
-		FQuat::MakeFromEuler(FVector(.0f, 90.0f + TraceDirection.Euler().Y, TraceDirection.Euler().Z)),
+		FQuat::MakeFromEuler(FVector(.0f, 90.0f + TraceRequest.Direction.Euler().Y, TraceRequest.Direction.Euler().Z)),
 		DrawColor,
 		false,
 		DebugShapeDrawDuration,

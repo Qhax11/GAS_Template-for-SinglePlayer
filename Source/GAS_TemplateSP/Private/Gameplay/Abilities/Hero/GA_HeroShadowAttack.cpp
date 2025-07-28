@@ -88,7 +88,9 @@ void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
         ShadowSpawnLocation.Z += 90;
 
         TArray<AActor*> OutResultActors;
-        TraceData->Trace->CreateTraceWithTeamFilterWithLocation(GetWorld(), HeroBase, ETeamAttitude::Hostile, ShadowSpawnLocation, OutResultActors);
+        FTraceRequest TraceRequest;
+        TraceRequest.StartLocation = ShadowSpawnLocation;
+        TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), HeroBase, ETeamAttitude::Hostile, OutResultActors, TraceRequest);
 
         if (OutResultActors.IsValidIndex(0))
         {

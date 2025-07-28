@@ -5,6 +5,7 @@
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/Actors/Weapons/WeaponBase.h"
 #include <AbilitySystemGlobals.h>
 
 UGA_MeleeAttackBase::UGA_MeleeAttackBase()
@@ -72,10 +73,11 @@ bool UGA_MeleeAttackBase::TraceForHostileUnits(TArray<FHitResult>& OutHitResults
 	{
 		if (CharacterBase->GetWeapon())
 		{
-			FVector TraceLocation = CharacterBase->GetWeapon()->GetComponentLocation();
-			FRotator TraceRotation = CharacterBase->GetWeapon()->GetComponentRotation();
-			TraceData->Trace->CreateTraceWithTeamFilterWithLocationAndDirection(
-				GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, TraceLocation, TraceRotation, OutHitResults);
+			FTraceRequest TraceRequest;
+			TraceRequest.StartLocation = CharacterBase->GetWeapon()->GetTraceMid();
+			TraceRequest.EndLocation = CharacterBase->GetWeapon()->GetTraceEnd();
+			TraceRequest.Direction = CharacterBase->GetWeapon()->GetActorRotation();
+			TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutHitResults, TraceRequest);
 		}
 	}
 	return OutHitResults.IsValidIndex(0);

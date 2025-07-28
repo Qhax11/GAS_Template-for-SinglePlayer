@@ -3,61 +3,98 @@
 
 #include "Gameplay/Abilities/Tracing/GAS_TraceBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
-void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors)
+void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors, const FTraceRequest& TraceRequests)
 {
-	FVector StartLocation;
-	FRotator StartDirection;
+	FVector StartLocation = TraceRequests.StartLocation;
+	FVector EndLocation = TraceRequests.EndLocation;
+	FRotator Direction = TraceRequests.Direction;
 
-	GetTraceStartLocationAndDirection(Owner, StartLocation, StartDirection);
+	// If TraceStartLocation is Camera, adjust the start location and direction based on Hero's camera
+	if (TraceStartLocation == ETraceStartLocation::Camera)
+	{
+		if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(Owner))
+		{
+			StartLocation = HeroBase->GetFollowCamera()->GetComponentLocation() +
+				HeroBase->GetFollowCamera()->GetForwardVector() * StartLocationForwardOffset;
 
-	MakeTrace(Owner, World, StartLocation, StartDirection, OutActors);
+			if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
+			{
+				Direction = HeroBase->GetFollowCamera()->GetForwardVector().Rotation();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TraceOriginActor is set to Camera, but the current actor is not the hero!"));
+		}
+	}
+	else if (TraceStartLocation == ETraceStartLocation::Avatar)
+	{
+		StartLocation = Owner->GetActorLocation();
+
+		if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
+		{
+			Direction = Owner->GetActorForwardVector().Rotation();
+		}
+	}
+
+	FTraceRequest TraceRequest;
+	TraceRequest.StartLocation = StartLocation;
+	TraceRequest.EndLocation = EndLocation;
+	TraceRequest.Direction = Direction;
+
+	MakeTrace(Owner, World, TraceRequest, OutActors);
 
 	MakeTeamFilter(OutActors, *Owner, TeamAttidue);
 }
 
-void UGAS_TraceBase::CreateTraceWithTeamFilterWithLocation(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, TArray<AActor*>& OutActors)
+void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<FHitResult>& HitResults, const FTraceRequest& TraceRequests)
 {
-	FRotator StartDirection;
+	FVector StartLocation = TraceRequests.StartLocation;
+	FVector EndLocation = TraceRequests.EndLocation;
+	FRotator Direction = TraceRequests.Direction;
 
-	GetTraceStartLocationAndDirection(Owner, Location, StartDirection);
+	// If TraceStartLocation is Camera, adjust the start location and direction based on Hero's camera
+	if (TraceStartLocation == ETraceStartLocation::Camera)
+	{
+		if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(Owner))
+		{
+			StartLocation = HeroBase->GetFollowCamera()->GetComponentLocation() +
+				HeroBase->GetFollowCamera()->GetForwardVector() * StartLocationForwardOffset;
 
-	MakeTrace(Owner, World, Location, FRotator::ZeroRotator, OutActors);
+			if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
+			{
+				Direction = HeroBase->GetFollowCamera()->GetForwardVector().Rotation();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TraceOriginActor is set to Camera, but the current actor is not the hero!"));
+		}
+	}
+	else if (TraceStartLocation == ETraceStartLocation::Avatar)
+	{
+		StartLocation = Owner->GetActorLocation();
 
-	MakeTeamFilter(OutActors, *Owner, TeamAttidue);
+		if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
+		{
+			Direction = Owner->GetActorForwardVector().Rotation();
+		}
+	}
+
+	FTraceRequest TraceRequest;
+	TraceRequest.StartLocation = StartLocation;
+	TraceRequest.EndLocation = EndLocation;
+	TraceRequest.Direction = Direction;
+
+	MakeTrace(Owner, World, TraceRequest, HitResults);
+
+	MakeTeamFilter(HitResults, *Owner, TeamAttidue);
 }
 
-void UGAS_TraceBase::CreateTraceWithTeamFilterWithDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors)
-{
-	FVector StartLocation;
-
-	GetTraceStartLocationAndDirection(Owner, StartLocation, Direction);
-
-	MakeTrace(Owner, World, StartLocation, Direction, OutActors);
-
-	MakeTeamFilter(OutActors, *Owner, TeamAttidue);
-}
-
-void UGAS_TraceBase::CreateTraceWithTeamFilterWithLocationAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, FRotator& Direction, TArray<AActor*>& OutActors)
-{
-	GetTraceStartLocationAndDirection(Owner, Location, Direction);
-
-	MakeTrace(Owner, World, Location, Direction, OutActors);
-
-	MakeTeamFilter(OutActors, *Owner, TeamAttidue);
-}
-
-void UGAS_TraceBase::CreateTraceWithTeamFilterWithLocationAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, FRotator& Direction, TArray<FHitResult>& OutHitResults)
-{
-	GetTraceStartLocationAndDirection(Owner, Location, Direction);
-
-	MakeTrace(Owner, World, Location, Direction, OutHitResults);
-
-	MakeTeamFilter(OutHitResults, *Owner, TeamAttidue);
-}
-
-void UGAS_TraceBase::GetTraceStartLocationAndDirection(AActor* Owner, FVector& OutStartLocation, FRotator& OutDirection)
+void UGAS_TraceBase::GetTraceStartLocationAndDirection(AActor* Owner, FVector& OutStartLocation, FVector& OutEndLocation, FRotator& OutDirection)
 {
 	// If TraceStartLocation is Camera, adjust the start location and direction based on Hero's camera
 	if (TraceStartLocation == ETraceStartLocation::Camera)
@@ -67,7 +104,7 @@ void UGAS_TraceBase::GetTraceStartLocationAndDirection(AActor* Owner, FVector& O
 			OutStartLocation = HeroBase->GetFollowCamera()->GetComponentLocation() +
 				HeroBase->GetFollowCamera()->GetForwardVector() * StartLocationForwardOffset;
 
-			if (TraceDirectionType == ETraceDirectionType::ForwardVector)
+			if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
 			{
 				OutDirection = HeroBase->GetFollowCamera()->GetForwardVector().Rotation();
 			}
@@ -81,7 +118,7 @@ void UGAS_TraceBase::GetTraceStartLocationAndDirection(AActor* Owner, FVector& O
 	{
 		OutStartLocation = Owner->GetActorLocation();
 
-		if (TraceDirectionType == ETraceDirectionType::ForwardVector)
+		if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
 		{
 			OutDirection = Owner->GetActorForwardVector().Rotation();
 		}
@@ -128,7 +165,7 @@ void UGAS_TraceBase::MakeTeamFilter(TArray<FHitResult>& OutHitResults, const AAc
 	}
 }
 
-void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const FVector& Location, const FRotator& Direction, TArray<AActor*>& OutActors)
+void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const FTraceRequest& TraceRequest, TArray<AActor*>& OutActors)
 {
 	if (!Owner)
 	{
@@ -136,7 +173,7 @@ void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const 
 		return;
 	}
 
-	Initialize(Owner, Direction);
+	Initialize(Owner, TraceRequest.Direction);
 
 	FCollisionQueryParams QueryParams;
 	if (bIgnoreSelf)
@@ -151,11 +188,11 @@ void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const 
 	ResponseParams.CollisionResponse = ResponseContainer;
 
 	TArray<FHitResult> HitResults;
-	TraceLogic(World, Location, Direction, QueryParams, ResponseParams, HitResults);
+	TraceLogic(World, TraceRequest, QueryParams, ResponseParams, HitResults);
 
 #if WITH_EDITOR
 	if(bDrawEnable)
-		DrawDebugShape(World, Location);
+		DrawDebugShape(World, TraceRequest);
 #endif // WITH_EDITOR
 
 	if (HitResults.IsEmpty())
@@ -169,7 +206,7 @@ void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const 
 	}
 }
 
-void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const FVector& Location, const FRotator& Direction, TArray<FHitResult>& OutHitResults)
+void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const FTraceRequest& TraceRequest, TArray<FHitResult>& OutHitResults)
 {
 	if (!Owner)
 	{
@@ -177,7 +214,7 @@ void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const 
 		return;
 	}
 
-	Initialize(Owner, Direction);
+	Initialize(Owner, TraceRequest.Direction);
 
 	FCollisionQueryParams QueryParams;
 	if (bIgnoreSelf)
@@ -191,32 +228,26 @@ void UGAS_TraceBase::MakeTrace(const UObject* Owner, const UWorld* World, const 
 	FCollisionResponseParams ResponseParams;
 	ResponseParams.CollisionResponse = ResponseContainer;
 
-	TraceLogic(World, Location, Direction, QueryParams, ResponseParams, OutHitResults);
+	TraceLogic(World, TraceRequest, QueryParams, ResponseParams, OutHitResults);
 
 #if WITH_EDITOR
 	if (bDrawEnable)
-		DrawDebugShape(World, Location);
+		DrawDebugShape(World, TraceRequest);
 #endif // WITH_EDITOR
 }
 
 void UGAS_TraceBase::Initialize(const UObject* Owner, FRotator Direction)
 {
 	OwnerActor = Cast<AActor>(Owner);
-
-	if (!bOverrideTraceDirection) 
-	{
-		TraceDirection = Direction;
-	}
-
 }
 
-void UGAS_TraceBase::TraceLogic(const UWorld* World, const FVector& Location, const FRotator& Direction, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults)
+void UGAS_TraceBase::TraceLogic(const UWorld* World, const FTraceRequest& TraceRequest, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults)
 {
 	World->SweepMultiByChannel(
 		OutHitResults,
-		Location,
-		Location + TraceDirection.Vector().GetSafeNormal() * TraceDistance,
-		Direction.Quaternion(),
+		TraceRequest.StartLocation,
+		TraceRequest.EndLocation,
+		TraceRequest.Direction.Quaternion(),
 		TraceChannel,
 		GetCollisionShape(),
 		QueryParams
@@ -229,7 +260,7 @@ FCollisionShape UGAS_TraceBase::GetCollisionShape() const
 }
 
 #if WITH_EDITOR
-void UGAS_TraceBase::DrawDebugShape(const UWorld* World, const FVector& Location) const
+void UGAS_TraceBase::DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const
 {
 	// Logic will be implmeneted in subclasses.
 }

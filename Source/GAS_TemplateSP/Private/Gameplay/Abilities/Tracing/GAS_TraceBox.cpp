@@ -9,13 +9,13 @@ FCollisionShape UGAS_TraceBox::GetCollisionShape() const
 }
 
 #if WITH_EDITOR
-void UGAS_TraceBox::DrawDebugShape(const UWorld* World, const FVector& Location) const
+void UGAS_TraceBox::DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const
 {
 	DrawDebugBox(
 		World,
-		Location + TraceDirection.Vector() * HalfLength,
+		TraceRequest.StartLocation + TraceRequest.Direction.Vector() * HalfLength,
 		FVector(HalfLength, HalfWidth, HalfHeight),
-		TraceDirection.Quaternion(),
+		TraceRequest.Direction.Quaternion(),
 		DrawColor,
 		false,
 		DebugShapeDrawDuration,

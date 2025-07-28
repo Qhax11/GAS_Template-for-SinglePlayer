@@ -34,8 +34,8 @@ AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectIni
 
 	PostureHandlerComponent = CreateDefaultSubobject<UAC_PostureHandler>(TEXT("PostureHandlerComponent"));
 
-	SM_Weapon = CreateDefaultSubobject <UStaticMeshComponent>(TEXT("SM_Weapon"));
-	SM_Weapon->SetupAttachment(GetMesh());
+	WeaponChildComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("WeaponChildComponent"));
+	WeaponChildComponent->SetupAttachment(GetMesh(), FName("Weapon"));
 
 	MotionWarpingComp = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComp"));
 }
@@ -52,15 +52,6 @@ void AGAS_CharacterBase::BeginPlay()
 
 	CharacterASC->InitAbilityActorInfo(this, this);
 	AbilitySetComponent->Initialize(CharacterASC);
-
-	if (GetMesh()->DoesSocketExist(WeaponSocketName))
-	{
-		SM_Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("WeaponSocketName does not exist on mesh: %s"), *GetMesh()->GetName());
-	}
 }
 
 UAbilitySystemComponent* AGAS_CharacterBase::GetAbilitySystemComponent() const

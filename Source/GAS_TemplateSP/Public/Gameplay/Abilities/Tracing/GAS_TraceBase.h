@@ -12,18 +12,40 @@ enum ETraceStartLocation: uint8
 {
 	Avatar,
 	Camera,
-	CustomLocation
+	CustomStartLocation
+};
+
+UENUM(BlueprintType)
+enum ETraceEndLocation : uint8
+{
+	ForwardVector,
+	CustomEndLocation
 };
 
 UENUM(BlueprintType)
 enum ETraceDirectionType : uint8
 {
-	ForwardVector,
+	ForwardDirection,
 	CustomDirection
 };
 
 #define ECC_DEAD ECC_GameTraceChannel1
 #define ECC_DAMAGE ECC_GameTraceChannel2
+
+USTRUCT(BlueprintType)
+struct FTraceRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector StartLocation = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector EndLocation = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FRotator Direction = FRotator::ZeroRotator;
+};
 
 UCLASS(Abstract, Blueprintable, DefaultToInstanced, EditInLineNew)
 class GAS_TEMPLATESP_API UGAS_TraceBase : public UObject
@@ -35,21 +57,18 @@ protected:
 	const AActor* OwnerActor = nullptr;
 
 public:
-	void CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors);
+	void CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors, const FTraceRequest& TraceRequest = FTraceRequest());
 
-	void CreateTraceWithTeamFilterWithLocation(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, TArray<AActor*>& OutActors);
-
-	void CreateTraceWithTeamFilterWithDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FRotator& Direction, TArray<AActor*>& OutActors);
-
-	void CreateTraceWithTeamFilterWithLocationAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, FRotator& Direction, TArray<AActor*>& OutActors);
-
-	void CreateTraceWithTeamFilterWithLocationAndDirection(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, FVector& Location, FRotator& Direction, TArray<FHitResult>& HitResults);
+	void CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<FHitResult>& HitResults, const FTraceRequest& TraceRequest = FTraceRequest());
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
-	TEnumAsByte<ETraceStartLocation> TraceStartLocation = ETraceStartLocation::Avatar;
+	TEnumAsByte<ETraceStartLocation> TraceStartLocation = ETraceStartLocation::CustomStartLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
-	TEnumAsByte<ETraceDirectionType> TraceDirectionType = ETraceDirectionType::ForwardVector;
+	TEnumAsByte<ETraceEndLocation> TraceEndLocation = ETraceEndLocation::CustomEndLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
+	TEnumAsByte<ETraceDirectionType> TraceDirectionType = ETraceDirectionType::CustomDirection;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	bool bIgnoreSelf = true;
@@ -69,9 +88,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams")
 	bool bOverrideTraceDirection = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true), meta = (EditCondition = "bOverrideTraceDirection"))
-	FRotator TraceDirection;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	TEnumAsByte<ECollisionResponse> CollisionResponse = ECollisionResponse::ECR_Overlap;
 
@@ -88,25 +104,25 @@ public:
 	FColor DrawColor = FColor::White;
 
 protected:
-	void GetTraceStartLocationAndDirection(AActor* Owner, FVector& OutStartLocation, FRotator& OutDirection);
+	void GetTraceStartLocationAndDirection(AActor* Owner, FVector& OutStartLocation, FVector& OutEndLocation, FRotator& OutDirection);
 
 	void MakeTeamFilter(TArray<AActor*>& OutActors, const AActor& Owner, ETeamAttitude::Type TeamAttidue);
 
 	void MakeTeamFilter(TArray<FHitResult>& OutHitResults, const AActor& Owner, ETeamAttitude::Type TeamAttidue);
 
-	void MakeTrace(const UObject* Owner, const UWorld* World, const FVector& Location, const FRotator& Direction, TArray<AActor*>& OutActors);
+	void MakeTrace(const UObject* Owner, const UWorld* World, const FTraceRequest& TraceRequest, TArray<AActor*>& OutActors);
 
-	void MakeTrace(const UObject* Owner, const UWorld* World, const FVector& Location, const FRotator& Direction, TArray<FHitResult>& OutHitResults);
+	void MakeTrace(const UObject* Owner, const UWorld* World, const FTraceRequest& TraceRequest, TArray<FHitResult>& OutHitResults);
 
 	virtual void Initialize(const UObject* Owner, FRotator Direction);
 
-	virtual void TraceLogic(const UWorld* World, const FVector& Location, const FRotator& Direction, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults);
+	virtual void TraceLogic(const UWorld* World, const FTraceRequest& TraceRequest, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults);
 
 	virtual FCollisionShape GetCollisionShape() const;
 
 #if WITH_EDITOR
 protected:
-	virtual void DrawDebugShape(const UWorld* World, const FVector& Location) const;
+	virtual void DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const;
 #endif // WITH_EDITOR
 
 };

@@ -22,12 +22,6 @@ void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
-	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack)) 
-	{
-		ExitRequest();
-		return;
-	}
-
 	SelectAndMakeInComingAttackReaction();
 }
 

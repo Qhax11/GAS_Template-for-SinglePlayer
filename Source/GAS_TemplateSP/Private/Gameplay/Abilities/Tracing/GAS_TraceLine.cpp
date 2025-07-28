@@ -3,12 +3,12 @@
 
 #include "Gameplay/Abilities/Tracing/GAS_TraceLine.h"
 
-void UGAS_TraceLine::TraceLogic(const UWorld* World, const FVector& Location, const FRotator& Direction, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults)
+void UGAS_TraceLine::TraceLogic(const UWorld* World, const FTraceRequest& TraceRequest, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults)
 {
 	World->LineTraceMultiByChannel(
 		OutHitResults,
-		Location,
-		Location + Direction.Vector() * TraceDistance,
+		TraceRequest.StartLocation,
+		TraceRequest.EndLocation,
 		TraceChannel,
 		QueryParams,
 		ResponseParams
@@ -16,12 +16,12 @@ void UGAS_TraceLine::TraceLogic(const UWorld* World, const FVector& Location, co
 }
 
 #if WITH_EDITOR
-void UGAS_TraceLine::DrawDebugShape(const UWorld* World, const FVector& Location) const
+void UGAS_TraceLine::DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const
 {
 	DrawDebugLine(
 		World,
-		Location,
-		Location + TraceDirection.Vector() * TraceDistance,
+		TraceRequest.StartLocation,
+		TraceRequest.StartLocation + TraceRequest.Direction.Vector() * TraceDistance,
 		DrawColor,
 		false,
 		DebugShapeDrawDuration,

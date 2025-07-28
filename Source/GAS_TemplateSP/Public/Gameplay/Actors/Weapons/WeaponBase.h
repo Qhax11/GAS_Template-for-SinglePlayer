@@ -17,5 +17,28 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	// Trace start and end getters
+	FVector GetTraceStart() const;
+	FVector GetTraceMid() const;
+	FVector GetTraceEnd() const;
+
+protected:
+
+	// Weapon mesh
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	UStaticMeshComponent* WeaponMesh;
+
+	// Start point for melee trace
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Trace")
+	USceneComponent* TraceStart;
+
+	// Mid point for melee trace
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Trace")
+	USceneComponent* TraceMid;
+
+	// End point for melee trace
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Trace")
+	USceneComponent* TraceEnd;
 
 };

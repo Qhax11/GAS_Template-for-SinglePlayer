@@ -158,6 +158,12 @@ UBDS_ComingAttackReactionBase* UAC_BehaviorDecision::GetBestComingAttackReaction
 
     for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionAsset->ComingAttackReactions)
     {
+        if (!ReactionInstance) 
+        {
+            UE_LOG(LogTemp, Warning, TEXT("ReactionInstance is null in: %s"), *GetName());
+            continue;
+        }
+
         if (!ReactionInstance->IsEnable(ComingAttackPayload))
         {
             continue;

@@ -58,10 +58,6 @@ void UGA_MontageAbility::ActivateMotionWarping()
 		{
 			// Move forward
 			TargetLocation += Forward * MotionWarpingForce;
-			if (bDebugMotionWarping) 
-			{
-				DrawDebugPoint(GetWorld(), TargetLocation, 10.0f, FColor::Red, false, 3);
-			}
 		}
 		else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Backward)
 		{
@@ -72,6 +68,11 @@ void UGA_MontageAbility::ActivateMotionWarping()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Unknown DirectionTag in: %s, defaulting to forward motion"), *GetName());
 			TargetLocation += Forward * MotionWarpingForce;
+		}
+
+		if (bDebugMotionWarping)
+		{
+			DrawDebugPoint(GetWorld(), TargetLocation, 10.0f, FColor::Red, false, 3);
 		}
 
 		CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);

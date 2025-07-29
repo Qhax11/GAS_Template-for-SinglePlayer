@@ -139,6 +139,7 @@ void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 {
 	if (PlayMontageWaitForEventTask) 
 	{
+		PlayMontageWaitForEventTask->StopPlayingMontage();
 		PlayMontageWaitForEventTask->EndTask();
 	}
 

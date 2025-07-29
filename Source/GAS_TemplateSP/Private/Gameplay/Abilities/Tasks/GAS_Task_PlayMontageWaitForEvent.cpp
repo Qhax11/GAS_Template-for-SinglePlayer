@@ -154,6 +154,11 @@ UGAS_Task_PlayMontageWaitForEvent* UGAS_Task_PlayMontageWaitForEvent::PlayMontag
 
 bool UGAS_Task_PlayMontageWaitForEvent::StopPlayingMontage() const
 {
+    if (!AbilitySystemComponent.IsValid() || !Ability)
+    {
+        return false;
+    }
+
     const FGameplayAbilityActorInfo* ActorInfo = Ability->GetCurrentActorInfo();
     if (!ActorInfo)
     {
@@ -168,21 +173,18 @@ bool UGAS_Task_PlayMontageWaitForEvent::StopPlayingMontage() const
 
     // Check if the montage is still playing
     // The ability would have been interrupted, in which case we should automatically stop the montage
-    if (AbilitySystemComponent.IsValid() && Ability)
+    if (AbilitySystemComponent->GetAnimatingAbility() == Ability && AbilitySystemComponent->GetCurrentMontage() == MontageToPlay)
     {
-        if (AbilitySystemComponent->GetAnimatingAbility() == Ability && AbilitySystemComponent->GetCurrentMontage() == MontageToPlay)
+        // Unbind delegates so they don't get called as well
+        FAnimMontageInstance* MontageInstance = AnimInstance->GetActiveInstanceForMontage(MontageToPlay);
+        if (MontageInstance)
         {
-            // Unbind delegates so they don't get called as well
-            FAnimMontageInstance* MontageInstance = AnimInstance->GetActiveInstanceForMontage(MontageToPlay);
-            if (MontageInstance)
-            {
-                MontageInstance->OnMontageBlendingOutStarted.Unbind();
-                MontageInstance->OnMontageEnded.Unbind();
-            }
-
-            AbilitySystemComponent->CurrentMontageStop();
-            return true;
+            MontageInstance->OnMontageBlendingOutStarted.Unbind();
+            MontageInstance->OnMontageEnded.Unbind();
         }
+
+        AbilitySystemComponent->CurrentMontageStop();
+        return true;
     }
 
     return false;

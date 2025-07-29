@@ -27,6 +27,10 @@ class GAS_TEMPLATESP_API UGAS_Task_PlayMontageWaitForEvent : public UAbilityTask
 public:
 
 	virtual void Activate() override;
+
+	/** Checks if the ability is playing a montage and stops that montage, returns true if a montage was stopped, false if not. */
+	bool StopPlayingMontage() const;
+
 	virtual void ExternalCancel() override;
 	virtual FString GetDebugString() const override;
 	virtual void OnDestroy(bool AbilityEnded) override;
@@ -111,8 +115,7 @@ private:
 	UPROPERTY()
 	bool bStopWhenAbilityEnds = true;
 
-	/** Checks if the ability is playing a montage and stops that montage, returns true if a montage was stopped, false if not. */
-	bool StopPlayingMontage() const;
+
 
 	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) const;
 	void OnAbilityCancelled() const;

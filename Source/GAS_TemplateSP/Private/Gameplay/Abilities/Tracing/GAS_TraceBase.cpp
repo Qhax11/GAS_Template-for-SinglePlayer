@@ -8,26 +8,34 @@
 
 void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors, const FTraceRequest& TraceRequests)
 {
-	FVector StartLocation = TraceRequests.StartLocation;
-	FVector EndLocation = TraceRequests.EndLocation;
-	FRotator Direction = TraceRequests.Direction;
+	FVector StartLocation;
+	FVector EndLocation;
+	FRotator Direction;
 
-	// If TraceStartLocation is Camera, adjust the start location and direction based on Hero's camera
+	// StartLocation and Direction
 	if (TraceStartLocation == ETraceStartLocation::Camera)
 	{
 		if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(Owner))
 		{
-			StartLocation = HeroBase->GetFollowCamera()->GetComponentLocation() +
-				HeroBase->GetFollowCamera()->GetForwardVector() * StartLocationForwardOffset;
+			const FVector CameraLoc = HeroBase->GetFollowCamera()->GetComponentLocation();
+			const FVector CameraForward = HeroBase->GetFollowCamera()->GetForwardVector();
+
+			StartLocation = CameraLoc + CameraForward * StartLocationForwardOffset;
 
 			if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
 			{
-				Direction = HeroBase->GetFollowCamera()->GetForwardVector().Rotation();
+				Direction = CameraForward.Rotation();
+			}
+			else // Use original direction from TraceRequests
+			{
+				Direction = TraceRequests.Direction;
 			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("TraceOriginActor is set to Camera, but the current actor is not the hero!"));
+			UE_LOG(LogTemp, Warning, TEXT("TraceStartLocation is set to Camera, but the actor is not HeroBase!"));
+			StartLocation = TraceRequests.StartLocation;
+			Direction = TraceRequests.Direction;
 		}
 	}
 	else if (TraceStartLocation == ETraceStartLocation::Avatar)
@@ -38,40 +46,70 @@ void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owne
 		{
 			Direction = Owner->GetActorForwardVector().Rotation();
 		}
+		else
+		{
+			Direction = TraceRequests.Direction;
+		}
+	}
+	else // Default fallback (use given values)
+	{
+		StartLocation = TraceRequests.StartLocation;
+		Direction = TraceRequests.Direction;
 	}
 
+	// EndLocation
+	if (TraceEndLocation == ETraceEndLocation::ForwardVector)
+	{
+		EndLocation = StartLocation + Direction.Vector() * TraceDistance;
+	}
+	else // Use fixed EndLocation (e.g. socket or custom location)
+	{
+		EndLocation = TraceRequests.EndLocation;
+	}
+
+	// Final TraceRequest
 	FTraceRequest TraceRequest;
 	TraceRequest.StartLocation = StartLocation;
 	TraceRequest.EndLocation = EndLocation;
 	TraceRequest.Direction = Direction;
 
+	// Perform trace
 	MakeTrace(Owner, World, TraceRequest, OutActors);
 
+	// Filter by team
 	MakeTeamFilter(OutActors, *Owner, TeamAttidue);
 }
 
 void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<FHitResult>& HitResults, const FTraceRequest& TraceRequests)
 {
-	FVector StartLocation = TraceRequests.StartLocation;
-	FVector EndLocation = TraceRequests.EndLocation;
-	FRotator Direction = TraceRequests.Direction;
+	FVector StartLocation;
+	FVector EndLocation;
+	FRotator Direction;
 
-	// If TraceStartLocation is Camera, adjust the start location and direction based on Hero's camera
+	// StartLocation and Direction
 	if (TraceStartLocation == ETraceStartLocation::Camera)
 	{
 		if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(Owner))
 		{
-			StartLocation = HeroBase->GetFollowCamera()->GetComponentLocation() +
-				HeroBase->GetFollowCamera()->GetForwardVector() * StartLocationForwardOffset;
+			const FVector CameraLoc = HeroBase->GetFollowCamera()->GetComponentLocation();
+			const FVector CameraForward = HeroBase->GetFollowCamera()->GetForwardVector();
+
+			StartLocation = CameraLoc + CameraForward * StartLocationForwardOffset;
 
 			if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
 			{
-				Direction = HeroBase->GetFollowCamera()->GetForwardVector().Rotation();
+				Direction = CameraForward.Rotation();
+			}
+			else // Use original direction from TraceRequests
+			{
+				Direction = TraceRequests.Direction;
 			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("TraceOriginActor is set to Camera, but the current actor is not the hero!"));
+			UE_LOG(LogTemp, Warning, TEXT("TraceStartLocation is set to Camera, but the actor is not HeroBase!"));
+			StartLocation = TraceRequests.StartLocation;
+			Direction = TraceRequests.Direction;
 		}
 	}
 	else if (TraceStartLocation == ETraceStartLocation::Avatar)
@@ -82,15 +120,37 @@ void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owne
 		{
 			Direction = Owner->GetActorForwardVector().Rotation();
 		}
+		else
+		{
+			Direction = TraceRequests.Direction;
+		}
+	}
+	else // Default fallback (use given values)
+	{
+		StartLocation = TraceRequests.StartLocation;
+		Direction = TraceRequests.Direction;
 	}
 
+	// EndLocation
+	if (TraceEndLocation == ETraceEndLocation::ForwardVector)
+	{
+		EndLocation = StartLocation + Direction.Vector() * TraceDistance;
+	}
+	else // Use fixed EndLocation (e.g. socket or custom location)
+	{
+		EndLocation = TraceRequests.EndLocation;
+	}
+
+	// Final TraceRequest
 	FTraceRequest TraceRequest;
 	TraceRequest.StartLocation = StartLocation;
 	TraceRequest.EndLocation = EndLocation;
 	TraceRequest.Direction = Direction;
 
+	// Perform trace
 	MakeTrace(Owner, World, TraceRequest, HitResults);
 
+	// Filter by team
 	MakeTeamFilter(HitResults, *Owner, TeamAttidue);
 }
 

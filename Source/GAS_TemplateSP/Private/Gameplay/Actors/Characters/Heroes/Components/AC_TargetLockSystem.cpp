@@ -97,7 +97,7 @@ void UAC_TargetLockSystem::ActivateTargetLock(const FInputActionValue& Value)
 
 void UAC_TargetLockSystem::StartTargetLock()
 {
-	if (!TracingDataStart)
+ 	if (!TracingDataStart)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TargetingData is null in: %s, cannot initialize TargetLockSystem."), *GetName());
 		return;

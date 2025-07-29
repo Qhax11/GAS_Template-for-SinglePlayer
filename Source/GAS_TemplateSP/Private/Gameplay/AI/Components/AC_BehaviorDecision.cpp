@@ -66,9 +66,12 @@ void UAC_BehaviorDecision::InitalizeServiceses()
 {
     for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionAsset->ComingAttackReactions)
     {
-        FBehaviorServiceInitParams ComingAttackReactionServiceInitData = FBehaviorServiceInitParams(
-            ComingAttackReactionAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
-        ReactionInstance->Initialize(ComingAttackReactionServiceInitData);
+        if (ReactionInstance) 
+        {
+            FBehaviorServiceInitParams ComingAttackReactionServiceInitData = FBehaviorServiceInitParams(
+                ComingAttackReactionAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
+            ReactionInstance->Initialize(ComingAttackReactionServiceInitData);
+        }
     }
 
     GetBestAttackService = NewObject<UBDS_GetBestAttack>(GetOwner());

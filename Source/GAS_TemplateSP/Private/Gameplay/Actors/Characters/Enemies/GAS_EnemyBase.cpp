@@ -20,6 +20,8 @@ AGAS_EnemyBase::AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer
 
 	FinisherPointComponent = CreateDefaultSubobject<USceneComponent>(TEXT("FinisherPointComponent"));
 	FinisherPointComponent->SetupAttachment(RootComponent);
+
+	//WeaponChildComponent->SetupAttachment(GetMesh(), FName("BigSword"));
 }
 
 void AGAS_EnemyBase::BeginPlay()

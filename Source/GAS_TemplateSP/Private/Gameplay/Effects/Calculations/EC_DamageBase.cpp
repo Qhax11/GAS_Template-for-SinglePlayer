@@ -6,6 +6,7 @@
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Gameplay/Effects/GE_GainHealth.h"
 #include "Gameplay/Abilities/GA_ParryBase.h"
+#include "Gameplay/StaticDelegates/S_DamageDelegates.h"
 
 
 void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -18,6 +19,24 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		return;
 	}
 
+	float MitigatedDamage = GetTotalDamage(Params);
+
+	CalculateCritical(Params, MitigatedDamage, OutExecutionOutput);
+
+	CalculateDamageReduction(Params, MitigatedDamage, OutExecutionOutput);
+
+	const float DamageDealt = CalculateHealth(Params, MitigatedDamage, OutExecutionOutput);
+
+	if (Params.SourceASC->GetWorld()) 
+	{
+		if (US_DamageDelegates* DamageSubsystem = Params.SourceASC->GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>())
+		{
+			FDamageData DamageData = FDamageData(Params);
+			DamageSubsystem->OnDamageDealt.Broadcast(DamageData);
+			UE_LOG(LogTemp, Warning, TEXT("Broadcast yapýldý!"));
+		}
+	}
+
 	if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry))
 	{
 		if (CalculateParry(Params))
@@ -28,13 +47,12 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		}
 	}
 
-	float MitigatedDamage = GetTotalDamage(Params);
-
-	CalculateCritical(Params, MitigatedDamage, OutExecutionOutput);
-
-	CalculateDamageReduction(Params, MitigatedDamage, OutExecutionOutput);
-
-	const float DamageDealt = CalculateHealth(Params, MitigatedDamage, OutExecutionOutput);
+	// ****************** APPLY DAMAGE ******************
+	// Apply that damage to the target's health  
+	if (DamageDealt > 0)
+	{
+		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(Params.GetTargetAttributeSet()->GetHealthAttribute(), EGameplayModOp::Additive, -DamageDealt));
+	}
 
 	// Trigger events based on the damage dealt
 	if (DamageDealt > 0)
@@ -98,13 +116,6 @@ float UEC_DamageBase::CalculateHealth(FExecCalculationParameters& Params, float&
 
 	// This clamp prevents us from doing more damage than there is health available.
 	const float HealthDamageDone = FMath::Clamp(MitigatedDamage, 0.0f, CurrentTargetHealth);
-
-	// ****************** APPLY DAMAGE ******************
-	// Apply that damage to the target's health  
-	if (HealthDamageDone > 0)
-	{
-		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(Params.GetTargetAttributeSet()->GetHealthAttribute(), EGameplayModOp::Additive, -HealthDamageDone));
-	}
 
 	return HealthDamageDone;
 }

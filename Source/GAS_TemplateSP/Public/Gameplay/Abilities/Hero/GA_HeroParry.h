@@ -17,6 +17,24 @@ public:
 
 	virtual void OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Knocback")
+	TObjectPtr<UAnimMontage> KnocbackMontage;
+
+	UFUNCTION()
+	virtual void OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	UFUNCTION()
+	virtual void OnKnocbackMontageMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	UFUNCTION()
+	virtual void OnKnocbackMontageMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	UFUNCTION()
+	virtual void OnKnocbackMontageMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	UFUNCTION()
+	virtual void OnKnocbackMontageMontageEventReceived(FGameplayTag EventTag, FGameplayEventData EventData);
+
 	// TODO: U can make as AbilityTask so every ability can use easly and it will be blueprintable.
 	UFUNCTION()
 	void OnDamageDealt(const FDamageData& DamageData);

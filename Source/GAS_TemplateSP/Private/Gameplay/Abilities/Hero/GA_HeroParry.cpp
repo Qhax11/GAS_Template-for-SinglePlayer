@@ -16,12 +16,40 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		DamageSubsystem->OnDamageDealt.AddDynamic(this, &UGA_HeroParry::OnDamageDealt);
 	}
-
 }
 
 void UGA_HeroParry::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	
 }
+
+void UGA_HeroParry::OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+}
+
+void UGA_HeroParry::OnKnocbackMontageMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+}
+
+void UGA_HeroParry::OnKnocbackMontageMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+}
+
+void UGA_HeroParry::OnKnocbackMontageMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+}
+
+void UGA_HeroParry::OnKnocbackMontageMontageEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_MotionWarping)
+	{
+		if (bEnableMotionWarping)
+		{
+			ActivateMotionWarping();
+		}
+	}
+}
+
 
 void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 {
@@ -33,6 +61,21 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 		UE_LOG(LogTemp, Warning, TEXT("Ability is not active!"));
 		return;
 	}
+
+
+	FScriptDelegate BlendOutDel;
+	BlendOutDel.BindUFunction(this, FName("OnKnocbackMontageMontageBlendOut"));
+	FScriptDelegate CompletedDel;
+	CompletedDel.BindUFunction(this, FName("OnKnocbackMontageMontageCompleted"));
+	FScriptDelegate InterruptedDel;
+	InterruptedDel.BindUFunction(this, FName("OnKnocbackMontageMontageInterrupted"));
+	FScriptDelegate CancelledDel;
+	CancelledDel.BindUFunction(this, FName("OnKnocbackMontageMontageCancelled"));
+	FScriptDelegate EventReceivedDel;
+	EventReceivedDel.BindUFunction(this, FName("OnKnocbackMontageMontageEventReceived"));
+	CreatePlayMontageWaitForEvent(NAME_None, KnocbackMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
+	
+	/*
 
 	// Direction to push — here we're pushing the owner backward
 	FVector PushDirection = -GetAvatarActorFromActorInfo()->GetActorForwardVector();
@@ -61,7 +104,7 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 	{
 		RootMotionTask->ReadyForActivation();
 	}
-
+	*/
 	BPOnDamageDealt(DamageData);
 }
 

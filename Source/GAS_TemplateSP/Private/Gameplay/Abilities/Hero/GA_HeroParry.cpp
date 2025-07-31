@@ -2,6 +2,8 @@
 
 
 #include "Gameplay/Abilities/Hero/GA_HeroParry.h"
+#include <Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h>
+#include "GameFramework/RootMotionSource.h"
 
 void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 
@@ -19,7 +21,44 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnDamageDealted!"));
+	UE_LOG(LogTemp, Warning, TEXT("OnDamageDealt!"));
+
+	// Check if the ability is active and valid
+	if (!IsActive())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability is not active!"));
+		return;
+	}
+
+	// Direction to push — here we're pushing the owner backward
+	FVector PushDirection = -GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	float Strength = 800.f;
+	float Duration = 0.4f;
+	bool bIsAdditive = true;
+	bool bDisableCollision = false;
+	ERootMotionFinishVelocityMode VelocityMode = ERootMotionFinishVelocityMode::MaintainLastRootMotionVelocity;
+
+	// Create the task
+	UAbilityTask_ApplyRootMotionConstantForce* RootMotionTask = UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(
+		this,                           // Owning Ability
+		FName("ParryPushback"),         // Task Instance Name
+		PushDirection,                  // Direction
+		Strength,                       // Strength
+		Duration,                       // Duration
+		false,                          // bIsAdditive
+		CurveFloat,                     // StrengthOverTime (optional)
+		ERootMotionFinishVelocityMode::MaintainLastRootMotionVelocity, // VelocityMode
+		FVector(0,0,0),
+		0.0f,                           // SetVelocityOnFinish
+		false                          // bEnableGravity
+	);
+
+	if (RootMotionTask)
+	{
+		RootMotionTask->ReadyForActivation();
+	}
+
+	BPOnDamageDealt(DamageData);
 }
 
 void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle, 

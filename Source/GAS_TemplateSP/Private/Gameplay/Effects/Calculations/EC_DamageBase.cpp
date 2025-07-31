@@ -42,7 +42,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		if (CalculateParry(Params))
 		{
 			// If parry is successful, send the data to the ability for further processing.
-			TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback);
+			//TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback);
 			return;
 		}
 	}

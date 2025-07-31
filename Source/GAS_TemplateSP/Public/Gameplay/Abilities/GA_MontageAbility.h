@@ -63,6 +63,12 @@ public:
 
 protected:
 	UFUNCTION()
+	virtual void OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	UFUNCTION()
+	virtual void OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	UFUNCTION()
 	virtual void OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData);
 
 	UFUNCTION()

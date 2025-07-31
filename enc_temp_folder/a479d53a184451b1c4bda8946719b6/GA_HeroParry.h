@@ -15,8 +15,6 @@ class GAS_TEMPLATESP_API UGA_HeroParry : public UGA_ParryBase
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	virtual void OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) override;
-
 	// TODO: U can make as AbilityTask so every ability can use easly and it will be blueprintable.
 	UFUNCTION()
 	void OnDamageDealt(const FDamageData& DamageData);

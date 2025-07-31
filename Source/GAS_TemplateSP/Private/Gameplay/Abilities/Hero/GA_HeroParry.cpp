@@ -19,6 +19,10 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 }
 
+void UGA_HeroParry::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+}
+
 void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnDamageDealt!"));

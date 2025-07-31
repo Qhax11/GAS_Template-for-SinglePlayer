@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Knocback")
 	TObjectPtr<UAnimMontage> KnocbackMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Knocback")
+	TSubclassOf<UGameplayEffect> ParryKnockbackEffect;
+
 	UFUNCTION()
 	virtual void OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData);
 

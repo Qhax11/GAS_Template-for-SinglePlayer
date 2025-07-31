@@ -25,18 +25,62 @@ void UGA_HeroParry::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventDa
 
 void UGA_HeroParry::OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	FScriptDelegate BlendOutDel;
+	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
+	FScriptDelegate CompletedDel;
+	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
+	FScriptDelegate InterruptedDel;
+	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
+	FScriptDelegate CancelledDel;
+	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
+	FScriptDelegate EventReceivedDel;
+	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
+	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	FScriptDelegate BlendOutDel;
+	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
+	FScriptDelegate CompletedDel;
+	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
+	FScriptDelegate InterruptedDel;
+	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
+	FScriptDelegate CancelledDel;
+	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
+	FScriptDelegate EventReceivedDel;
+	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
+	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	FScriptDelegate BlendOutDel;
+	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
+	FScriptDelegate CompletedDel;
+	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
+	FScriptDelegate InterruptedDel;
+	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
+	FScriptDelegate CancelledDel;
+	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
+	FScriptDelegate EventReceivedDel;
+	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
+	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	FScriptDelegate BlendOutDel;
+	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
+	FScriptDelegate CompletedDel;
+	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
+	FScriptDelegate InterruptedDel;
+	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
+	FScriptDelegate CancelledDel;
+	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
+	FScriptDelegate EventReceivedDel;
+	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
+	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -75,6 +119,19 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 	EventReceivedDel.BindUFunction(this, FName("OnKnocbackMontageMontageEventReceived"));
 	CreatePlayMontageWaitForEvent(NAME_None, KnocbackMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
 	
+	if (!ParryKnockbackEffect)
+	{
+		return;
+	}
+
+	FGameplayEffectSpecHandle EffectSpecHandle = GetAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(ParryKnockbackEffect, 1.0f, DamageData.ExecCalculationParameters.GetSpec().GetContext());
+	if (!EffectSpecHandle.IsValid())
+	{
+		return;
+	}
+
+	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+
 	/*
 
 	// Direction to push — here we're pushing the owner backward

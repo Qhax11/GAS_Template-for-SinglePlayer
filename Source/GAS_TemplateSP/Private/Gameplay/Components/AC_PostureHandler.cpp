@@ -107,7 +107,6 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 	{
 		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full);
 	}
-
 	else if(Data.CurrentValue < Data.MaxValue)
 	{
 		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full))
@@ -118,7 +117,15 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 
 	if (Data.CurrentValue <= 0)
 	{
+		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty);
 		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
+	}
+	else
+	{
+		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty))
+		{
+			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full, 100);
+		}
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(PostureRegenTimerHandle);

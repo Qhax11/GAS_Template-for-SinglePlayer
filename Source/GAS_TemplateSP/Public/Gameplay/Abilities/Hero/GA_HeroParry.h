@@ -15,13 +15,20 @@ class GAS_TEMPLATESP_API UGA_HeroParry : public UGA_ParryBase
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	virtual void OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData) override;
+
 	virtual void OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) override;
+
+	virtual void OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Knocback")
 	TObjectPtr<UAnimMontage> KnocbackMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Knocback")
 	TSubclassOf<UGameplayEffect> ParryKnockbackEffect;
+
+	UFUNCTION()
+	void OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	UFUNCTION()
 	virtual void OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData);
@@ -49,7 +56,7 @@ public:
 
 	UCurveFloat* CurveFloat;
 
-	double X = 0.0f;
+	class UGAS_Task_PlayMontageWaitForEvent* PlayMontageKnocback;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 };

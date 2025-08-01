@@ -20,16 +20,7 @@ public:
 
 	void CleanupMotionWarping();
 
-	void CreatePlayMontageWaitForEvent(FName TaskInstanceName, 
-		UAnimMontage* MontageToPlay, 
-		FGameplayTagContainer EventTags, 
-		float Rate, FName StartSection, 
-		bool bStopWhenAbilityEnds, float AnimRootMotionTranslationScale, 
-		const FScriptDelegate& OnBlendOutDelegate,
-		const FScriptDelegate& OnCompletedDelegate,
-		const FScriptDelegate& OnInterruptedDelegate,
-		const FScriptDelegate& OnCancelledDelegate,
-		const FScriptDelegate& OnEventReceivedDelegate);
+	void CreatePlayMontageWaitForEvent();
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
 	bool bEnableMotionWarping = false;

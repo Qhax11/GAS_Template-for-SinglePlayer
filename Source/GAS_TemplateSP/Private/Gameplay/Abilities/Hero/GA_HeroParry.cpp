@@ -2,8 +2,11 @@
 
 
 #include "Gameplay/Abilities/Hero/GA_HeroParry.h"
-#include <Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h>
+#include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 #include "GameFramework/RootMotionSource.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Abilities/Tasks/GAS_Task_PlayMontageWaitForEvent.h"
 
 void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 
@@ -16,71 +19,65 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		DamageSubsystem->OnDamageDealt.AddDynamic(this, &UGA_HeroParry::OnDamageDealt);
 	}
+
+	AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
+	if (!Hero)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hero is null in: %s, can not initialize"), *GetName());
+		return;
+	}
+
+	UAC_TagDelegates* TargetCharacterTagDelegatesComp = Hero->GetTagDelegatesComponent();
+	if (!TargetCharacterTagDelegatesComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hero is null in: %s, can not initialize"), *GetName());
+		return;
+	}
+
+	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty, EListenMode::OnAdded).BindDynamic(this, &UGA_HeroParry::OnPostureEmptyTagAdded);
+}
+
+void UGA_HeroParry::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	// Overridden so that when the knockback montage is played/interrupted, 
+	// the ability does NOT end. Prevents automatic ending of the ability on interruption.
 }
 
 void UGA_HeroParry::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	
+	// Overridden so that when the knockback montage is played/interrupted, 
+    // the ability does NOT end. Prevents automatic ending of the ability on interruption.
+}
+
+void UGA_HeroParry::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	// Overridden so that when the knockback montage is played/interrupted, 
+	// the ability does NOT end. Prevents automatic ending of the ability on interruption.
+}
+
+void UGA_HeroParry::OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	FScriptDelegate BlendOutDel;
-	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
-	FScriptDelegate CompletedDel;
-	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
-	FScriptDelegate InterruptedDel;
-	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
-	FScriptDelegate CancelledDel;
-	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
-	FScriptDelegate EventReceivedDel;
-	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
-	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
+	CreatePlayMontageWaitForEvent();
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	FScriptDelegate BlendOutDel;
-	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
-	FScriptDelegate CompletedDel;
-	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
-	FScriptDelegate InterruptedDel;
-	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
-	FScriptDelegate CancelledDel;
-	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
-	FScriptDelegate EventReceivedDel;
-	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
-	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
+	CreatePlayMontageWaitForEvent();
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	FScriptDelegate BlendOutDel;
-	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
-	FScriptDelegate CompletedDel;
-	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
-	FScriptDelegate InterruptedDel;
-	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
-	FScriptDelegate CancelledDel;
-	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
-	FScriptDelegate EventReceivedDel;
-	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
-	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
+	CreatePlayMontageWaitForEvent();
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	FScriptDelegate BlendOutDel;
-	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
-	FScriptDelegate CompletedDel;
-	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
-	FScriptDelegate InterruptedDel;
-	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
-	FScriptDelegate CancelledDel;
-	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
-	FScriptDelegate EventReceivedDel;
-	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
-	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
+	CreatePlayMontageWaitForEvent();
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -94,11 +91,8 @@ void UGA_HeroParry::OnKnocbackMontageMontageEventReceived(FGameplayTag EventTag,
 	}
 }
 
-
 void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnDamageDealt!"));
-
 	// Check if the ability is active and valid
 	if (!IsActive())
 	{
@@ -106,18 +100,13 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 		return;
 	}
 
-
-	FScriptDelegate BlendOutDel;
-	BlendOutDel.BindUFunction(this, FName("OnKnocbackMontageMontageBlendOut"));
-	FScriptDelegate CompletedDel;
-	CompletedDel.BindUFunction(this, FName("OnKnocbackMontageMontageCompleted"));
-	FScriptDelegate InterruptedDel;
-	InterruptedDel.BindUFunction(this, FName("OnKnocbackMontageMontageInterrupted"));
-	FScriptDelegate CancelledDel;
-	CancelledDel.BindUFunction(this, FName("OnKnocbackMontageMontageCancelled"));
-	FScriptDelegate EventReceivedDel;
-	EventReceivedDel.BindUFunction(this, FName("OnKnocbackMontageMontageEventReceived"));
-	CreatePlayMontageWaitForEvent(NAME_None, KnocbackMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
+	PlayMontageKnocback = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, KnocbackMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
+	PlayMontageKnocback->OnBlendOut.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageBlendOut);
+	PlayMontageKnocback->OnCompleted.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageCompleted);
+	PlayMontageKnocback->OnInterrupted.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageInterrupted);
+	PlayMontageKnocback->OnCancelled.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageCancelled);
+	PlayMontageKnocback->EventReceived.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageEventReceived);
+	PlayMontageKnocback->ReadyForActivation();
 	
 	if (!ParryKnockbackEffect)
 	{
@@ -174,5 +163,12 @@ void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UGA_HeroParry::OnDamageDealt);
 	}
+
+	if (PlayMontageKnocback)
+	{
+		PlayMontageKnocback->StopPlayingMontage();
+		PlayMontageKnocback->EndTask();
+	}
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

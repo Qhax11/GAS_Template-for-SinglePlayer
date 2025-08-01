@@ -32,20 +32,7 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	FScriptDelegate BlendOutDel;
-	BlendOutDel.BindUFunction(this, FName("OnMontageBlendOut"));
-	FScriptDelegate CompletedDel;
-	CompletedDel.BindUFunction(this, FName("OnMontageCompleted"));
-	FScriptDelegate InterruptedDel;
-	InterruptedDel.BindUFunction(this, FName("OnMontageInterrupted"));
-	FScriptDelegate CancelledDel;
-	CancelledDel.BindUFunction(this, FName("OnMontageCancelled"));
-	FScriptDelegate EventReceivedDel;
-	EventReceivedDel.BindUFunction(this, FName("OnEventReceived"));
-	CreatePlayMontageWaitForEvent(NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f, BlendOutDel, CompletedDel, InterruptedDel, CancelledDel, EventReceivedDel);
-
-	UE_LOG(LogTemp, Warning, TEXT("Ability is triggered: %s"), *GetName());
-	UE_LOG(LogTemp, Warning, TEXT("AnimMontage is: %s"), *AnimMontage->GetName());
+	CreatePlayMontageWaitForEvent();
 }
 
 void UGA_MontageAbility::ActivateMotionWarping()
@@ -112,45 +99,15 @@ void UGA_MontageAbility::CleanupMotionWarping()
 	}
 }
 
-void UGA_MontageAbility::CreatePlayMontageWaitForEvent(
-	FName TaskInstanceName,
-	UAnimMontage* MontageToPlay,
-	FGameplayTagContainer EventTags,
-	float Rate,
-	FName StartSection,
-	bool StopWhenAbilityEnds,
-	float AnimRootMotionTranslationScale,
-	const FScriptDelegate& OnBlendOutDelegate,
-	const FScriptDelegate& OnCompletedDelegate,
-	const FScriptDelegate& OnInterruptedDelegate,
-	const FScriptDelegate& OnCancelledDelegate,
-	const FScriptDelegate& OnEventReceivedDelegate)
+void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
-	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
-		this, TaskInstanceName, MontageToPlay, EventTags, Rate, StartSection, StopWhenAbilityEnds, AnimRootMotionTranslationScale);
-
-	if (OnBlendOutDelegate.IsBound())
-	{
-		PlayMontageWaitForEventTask->OnBlendOut.Add(OnBlendOutDelegate);
-	}
-	if (OnCompletedDelegate.IsBound())
-	{
-		PlayMontageWaitForEventTask->OnCompleted.Add(OnCompletedDelegate);
-	}
-	if (OnInterruptedDelegate.IsBound())
-	{
-		PlayMontageWaitForEventTask->OnInterrupted.Add(OnInterruptedDelegate);
-	}
-	if (OnCancelledDelegate.IsBound())
-	{
-		PlayMontageWaitForEventTask->OnCancelled.Add(OnCancelledDelegate);
-	}
-	if (OnEventReceivedDelegate.IsBound())
-	{
-		PlayMontageWaitForEventTask->EventReceived.Add(OnEventReceivedDelegate);
-	}
-
-	PlayMontageWaitForEventTask->ReadyForActivation();
+	UGAS_Task_PlayMontageWaitForEvent* Task = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
+	Task->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
+	Task->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+	Task->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
+	Task->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+	Task->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
+	Task->ReadyForActivation();
 }
 
 void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)

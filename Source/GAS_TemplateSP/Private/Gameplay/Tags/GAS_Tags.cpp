@@ -21,6 +21,7 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture, "Gameplay.Attribute.Posture");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture_Full, "Gameplay.Attribute.Posture.Full");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture_Empty, "Gameplay.Attribute.Posture.Empty");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture_Regen, "Gameplay.Attribute.Posture.Regen");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Attack, "Gameplay.AnimNotify.Event.Attack");

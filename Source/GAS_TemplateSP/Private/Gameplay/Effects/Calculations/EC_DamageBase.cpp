@@ -19,6 +19,8 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		return;
 	}
 
+	bool bParrySucces = Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry) && CalculateParry(Params);
+
 	float MitigatedDamage = GetTotalDamage(Params);
 
 	CalculateCritical(Params, MitigatedDamage, OutExecutionOutput);
@@ -27,24 +29,21 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 
 	const float DamageDealt = CalculateHealth(Params, MitigatedDamage, OutExecutionOutput);
 
-	if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry))
-	{
-		if (CalculateParry(Params))
-		{
-			// If parry is successful, send the data to the ability for further processing.
-			TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback);
-			return;
-		}
-	}
-
 	if (Params.SourceASC->GetWorld())
 	{
 		if (US_DamageDelegates* DamageSubsystem = Params.SourceASC->GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>())
 		{
-			FDamageData DamageData = FDamageData(Params);
+			FDamageData DamageData = FDamageData(Params, bParrySucces);
 			DamageSubsystem->OnDamageDealt.Broadcast(DamageData);
 			UE_LOG(LogTemp, Warning, TEXT("Broadcast yapýldý!"));
 		}
+	}
+
+	if (bParrySucces)
+	{
+		// If parry is successful, send the data to the ability for further processing.
+		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback);
+		return;
 	}
 
 	// ****************** APPLY DAMAGE ******************

@@ -17,10 +17,12 @@ struct FDamageData
 public:
 	FExecCalculationParameters ExecCalculationParameters;
 
+	bool bParrySucces = false;
+
 	FDamageData() {}
 
-	FDamageData(FExecCalculationParameters InExecCalculationParameters)
-		: ExecCalculationParameters(InExecCalculationParameters)
+	FDamageData(FExecCalculationParameters InExecCalculationParameters, bool InbParrySucces)
+		: ExecCalculationParameters(InExecCalculationParameters), bParrySucces(InbParrySucces)
 	{}
 };
 

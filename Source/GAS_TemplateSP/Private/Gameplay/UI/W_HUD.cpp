@@ -5,6 +5,7 @@
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/UI/Bars/W_HealthBar.h"
 #include "Gameplay/UI/Bars/W_ManaBar.h"
+#include "Gameplay/UI/Bars/W_PropertyBarsContainer.h"
 
 void UW_HUD::NativeConstruct()
 {
@@ -25,4 +26,5 @@ void UW_HUD::OnAbilitySetGiven(const AActor* OwnerActor)
 {
 	HealthBar->InitializePropertyBar(GetOwningPlayerPawn());
 	ManaBar->InitializePropertyBar(GetOwningPlayerPawn());
+	PropertyBarsContainer->InitalizePropertyBarsContainer(GetOwningPlayerPawn());
 }

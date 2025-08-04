@@ -14,7 +14,6 @@ class GAS_TEMPLATESP_API UW_HUD : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
 	virtual void NativeConstruct();
 
 	UFUNCTION()
@@ -25,4 +24,7 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UW_ManaBar> ManaBar;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<class UW_PropertyBarsContainer> PropertyBarsContainer;
 };

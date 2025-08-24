@@ -148,10 +148,11 @@ void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle,
 		DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UGA_HeroParry::OnDamageDealt);
 	}
 
-	if (PlayMontageKnocback)
+	if (PlayMontageKnocback && PlayMontageKnocback->IsValidLowLevelFast())
 	{
 		PlayMontageKnocback->StopPlayingMontage();
 		PlayMontageKnocback->EndTask();
+		PlayMontageKnocback = nullptr;
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

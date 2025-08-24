@@ -36,7 +36,14 @@ void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	if (bHasEnded)
+	{
+		return;
+	}
+
 	Super::OnEventReceived(EventTag, EventData);
+
+	UE_LOG(LogTemp, Warning, TEXT("%s's %s ability OnEventReceived"), *GetAvatarActorFromActorInfo()->GetName(), *GetName());
 
 	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Attack_TraceStart)
 	{

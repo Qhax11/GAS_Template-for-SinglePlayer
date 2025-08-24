@@ -99,7 +99,7 @@ void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* B
 void UInComingAttackState::OnTakeDamageFailsafeTimeout()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Failsafe triggered: TakeDamage ability not activated in time."));
-	ExitRequest();
+	//ExitRequest();
 }
 
 void UInComingAttackState::OnTakeDamageAbilityActivated(UGameplayAbility* Ability)
@@ -109,6 +109,9 @@ void UInComingAttackState::OnTakeDamageAbilityActivated(UGameplayAbility* Abilit
 	{
 		return;
 	}
+
+	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	// Timer’ı durdur, çünkü ability gerçekten aktive oldu
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
@@ -123,7 +126,7 @@ void UInComingAttackState::OnTakeDamageAbilityActivated(UGameplayAbility* Abilit
 
 void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnTakeDamageAbilityEnded!"));
+	UE_LOG(LogTemp, Warning, TEXT("BP_Boss_C_1 OnTakeDamageAbilityEnded!"));
 	ExitRequest();
 }
 

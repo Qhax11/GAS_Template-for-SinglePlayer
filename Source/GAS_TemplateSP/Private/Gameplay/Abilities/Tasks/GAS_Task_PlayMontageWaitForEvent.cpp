@@ -101,23 +101,26 @@ FString UGAS_Task_PlayMontageWaitForEvent::GetDebugString() const
 
 void UGAS_Task_PlayMontageWaitForEvent::OnDestroy(bool AbilityEnded)
 {
-    // Note: Clearing montage end delegate isn't necessary since its not a multicast and will be cleared when the next montage plays.
-   // (If we are destroyed, it will detect this and not do anything)
+    // Eðer task sonlanýyorsa ve montage durdurulacaksa
+    if (Ability && bStopWhenAbilityEnds)
+    {
+        StopPlayingMontage();
+    }
 
-   // This delegate, however, should be cleared as it is a multicast
+    // Cancel delegate temizliði
     if (Ability)
     {
         Ability->OnGameplayAbilityCancelled.Remove(CancelledHandle);
-        if (AbilityEnded && bStopWhenAbilityEnds)
-        {
-            StopPlayingMontage();
-        }
     }
 
+    // Gameplay event delegate temizliði
     if (AbilitySystemComponent.IsValid())
     {
         AbilitySystemComponent->RemoveGameplayEventTagContainerDelegate(EventTags, EventHandle);
     }
+
+    // Task’in kendi delegate’lerini temizle
+    UnbindAllDelegate();
 
     Super::OnDestroy(AbilityEnded);
 }
@@ -154,36 +157,30 @@ UGAS_Task_PlayMontageWaitForEvent* UGAS_Task_PlayMontageWaitForEvent::PlayMontag
 
 bool UGAS_Task_PlayMontageWaitForEvent::StopPlayingMontage() const
 {
-    if (!AbilitySystemComponent.IsValid() || !Ability)
+    if (!Ability || !AbilitySystemComponent.IsValid())
     {
         return false;
     }
 
     const FGameplayAbilityActorInfo* ActorInfo = Ability->GetCurrentActorInfo();
-    if (!ActorInfo)
+    if (!ActorInfo || !ActorInfo->GetAnimInstance())
     {
         return false;
     }
 
-    const UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
-    if (AnimInstance == nullptr)
-    {
-        return false;
-    }
+    UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
 
-    // Check if the montage is still playing
-    // The ability would have been interrupted, in which case we should automatically stop the montage
-    if (AbilitySystemComponent->GetAnimatingAbility() == Ability && AbilitySystemComponent->GetCurrentMontage() == MontageToPlay)
+    // Montage instance üzerinden direkt kontrol et
+    FAnimMontageInstance* MontageInstance = AnimInstance->GetActiveInstanceForMontage(MontageToPlay);
+    if (MontageInstance)
     {
-        // Unbind delegates so they don't get called as well
-        FAnimMontageInstance* MontageInstance = AnimInstance->GetActiveInstanceForMontage(MontageToPlay);
-        if (MontageInstance)
-        {
-            MontageInstance->OnMontageBlendingOutStarted.Unbind();
-            MontageInstance->OnMontageEnded.Unbind();
-        }
+        // Delegate’leri temizle, böylece notify gelmez
+        MontageInstance->OnMontageBlendingOutStarted.Unbind();
+        MontageInstance->OnMontageEnded.Unbind();
 
-        AbilitySystemComponent->CurrentMontageStop();
+        // Montage’u force stop
+        AnimInstance->Montage_Stop(0.f, MontageToPlay);
+
         return true;
     }
 
@@ -200,11 +197,7 @@ void UGAS_Task_PlayMontageWaitForEvent::OnMontageBlendingOut(UAnimMontage* Monta
 
             // Reset AnimRootMotionTranslationScale
             ACharacter* Character = Cast<ACharacter>(GetAvatarActor());
-            if (Character && (Character->GetLocalRole() == ROLE_Authority || (Character->GetLocalRole() == ROLE_AutonomousProxy && Ability->GetNetExecutionPolicy() == EGameplayAbilityNetExecutionPolicy::LocalPredicted)))
-            {
-                Character->SetAnimRootMotionTranslationScale(1.f);
-            }
-
+            Character->SetAnimRootMotionTranslationScale(1.f);
         }
     }
 

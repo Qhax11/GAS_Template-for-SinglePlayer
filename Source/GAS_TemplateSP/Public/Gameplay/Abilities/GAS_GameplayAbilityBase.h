@@ -93,6 +93,7 @@ public:
     // NOTE: This function is intended to be used with the CDO of the ability, so a valid ASC must be provided.
 	bool IsOnCooldown(UAbilitySystemComponent* ASC);
 
+	bool bHasEnded = false;
 protected:
 	/**
 	 * For "Instanced Per Actor" abilities:

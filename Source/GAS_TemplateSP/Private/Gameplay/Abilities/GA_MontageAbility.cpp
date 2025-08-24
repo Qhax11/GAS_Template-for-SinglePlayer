@@ -1,4 +1,4 @@
-// Qhax's GAS Template for SinglePlayer
+ï»¿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
@@ -101,7 +101,7 @@ void UGA_MontageAbility::CleanupMotionWarping()
 
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
-	// Eðer önceki task varsa onu temizle (montage da kesinlikle durmalý)
+	// EÄŸer Ã¶nceki task varsa onu temizle (montage da kesinlikle durmalÄ±)
 	if (PlayMontageWaitForEventTask)
 	{
 		PlayMontageWaitForEventTask->OnBlendOut.RemoveDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
@@ -115,7 +115,7 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 		PlayMontageWaitForEventTask = nullptr;
 	}
 
-	// Yeni task oluþtur
+	// Yeni task oluÅŸtur
 	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
 		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
 
@@ -136,7 +136,7 @@ void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEvent
 void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnMontageInterrupted: AnimMontage is: %s"), *AnimMontage->GetName());
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -165,14 +165,8 @@ void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 {
 	if (PlayMontageWaitForEventTask)
 	{
-		PlayMontageWaitForEventTask->StopPlayingMontage();
 		PlayMontageWaitForEventTask->EndTask();
 		PlayMontageWaitForEventTask = nullptr;
-	}
-
-	if (AnimMontage && ActorInfo && ActorInfo->GetAnimInstance())
-	{
-		ActorInfo->GetAnimInstance()->Montage_Stop(0.2f, AnimMontage);
 	}
 
 	CleanupMotionWarping();

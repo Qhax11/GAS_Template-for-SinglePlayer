@@ -29,7 +29,10 @@ void UInComingAttackState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
 
-	Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this); // test?
+	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())
+	{
+		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
+	}
 
 	if (LastUsedDodgeAbility)
 	{

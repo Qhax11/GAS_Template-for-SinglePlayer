@@ -47,12 +47,12 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 UAnimMontage* UGA_TakeDamageBase::GetHitMontage(UAnimMontage* AttackMontage)
 {
-	if (AttackAndHitMontages.Contains(AttackMontage))
+	if (!ReactionDataAsset) 
 	{
-		return AttackAndHitMontages[AttackMontage];
+		return nullptr;
 	}
 
-	return nullptr;
+	return ReactionDataAsset->FindHitMontage(AttackMontage);
 }
 
 

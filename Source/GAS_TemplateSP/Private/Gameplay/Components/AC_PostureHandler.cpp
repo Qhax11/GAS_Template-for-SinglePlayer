@@ -67,6 +67,7 @@ void UAC_PostureHandler::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void UAC_PostureHandler::OnHealthChanged(const FAttributeChangeCallbackData& Data)
 {
+	/*
 	if (!OwnerASC)
 	{
 		return;
@@ -94,6 +95,7 @@ void UAC_PostureHandler::OnHealthChanged(const FAttributeChangeCallbackData& Dat
 
 		UE_LOG(LogTemp, Log, TEXT("[PostureHandler] Damage: %.2f → Posture reduced by %.2f"), DamageTaken, -PostureReductionAmount);
 	}
+	*/
 }
 
 void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Data)

@@ -15,6 +15,8 @@ class GAS_TEMPLATESP_API UGA_HeroParry : public UGA_ParryBase
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
+
 	virtual void OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
 	virtual void OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData) override;
@@ -26,9 +28,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Knocback")
 	TSubclassOf<UGameplayEffect> ParryKnockbackEffect;
-
-	UFUNCTION()
-	void OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	UFUNCTION()
 	virtual void OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData);
@@ -49,14 +48,14 @@ public:
 	UFUNCTION()
 	void OnDamageDealt(const FDamageData& DamageData);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void BPOnDamageDealt(const FDamageData& DamageData);
-
 	FName TaskName;
 
 	UCurveFloat* CurveFloat;
 
 	class UGAS_Task_PlayMontageWaitForEvent* PlayMontageKnocback;
+
+	UFUNCTION()
+	void OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 };

@@ -74,10 +74,10 @@ public:
 	class UGAS_AbilityTraceData* TraceData;
 
 	// Icon of ability that will seen on Gameplay UI
-	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase|UI")
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbilityBase|UI")
 	class UTexture2D* AbilityIcon;
 
-	UPROPERTY(EditAnywhere, Category = "GameplayAbilityBase")
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbilityBase")
 	TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")

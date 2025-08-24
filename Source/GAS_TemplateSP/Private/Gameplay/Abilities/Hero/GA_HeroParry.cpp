@@ -37,6 +37,24 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty, EListenMode::OnAdded).BindDynamic(this, &UGA_HeroParry::OnPostureEmptyTagAdded);
 }
 
+bool UGA_HeroParry::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	const UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!ASC) return false;
+
+	if (UAS_Base* BaseAttributes = const_cast<UAS_Base*>(ASC->GetSet<UAS_Base>()))
+	{
+		return BaseAttributes->GetPosture() > 0.f;
+	}
+
+	return false;
+}
+
 void UGA_HeroParry::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	// Overridden so that when the knockback montage is played/interrupted, 
@@ -53,11 +71,6 @@ void UGA_HeroParry::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData
 {
 	// Overridden so that when the knockback montage is played/interrupted, 
 	// the ability does NOT end. Prevents automatic ending of the ability on interruption.
-}
-
-void UGA_HeroParry::OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_HeroParry::OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -118,9 +131,11 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 	}
 
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+}
 
-	
-	BPOnDamageDealt(DamageData);
+void UGA_HeroParry::OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle, 

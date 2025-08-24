@@ -130,6 +130,8 @@ void UGAS_Task_PlayMontageWaitForEvent::UnbindAllDelegate()
     OnCompleted.Clear();
     OnBlendOut.Clear();
     OnInterrupted.Clear();
+    OnCancelled.Clear();
+    EventReceived.Clear();
 }
 
 UGAS_Task_PlayMontageWaitForEvent* UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(UGameplayAbility* OwningAbility, FName TaskInstanceName, UAnimMontage* MontageToPlay, FGameplayTagContainer EventTags, float Rate, FName StartSection, bool bStopWhenAbilityEnds, float AnimRootMotionTranslationScale)
@@ -170,17 +172,10 @@ bool UGAS_Task_PlayMontageWaitForEvent::StopPlayingMontage() const
 
     UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
 
-    // Montage instance üzerinden direkt kontrol et
-    FAnimMontageInstance* MontageInstance = AnimInstance->GetActiveInstanceForMontage(MontageToPlay);
-    if (MontageInstance)
+    // Direkt MontageToPlay’i force stop et
+    if (AnimInstance->Montage_IsPlaying(MontageToPlay))
     {
-        // Delegate’leri temizle, böylece notify gelmez
-        MontageInstance->OnMontageBlendingOutStarted.Unbind();
-        MontageInstance->OnMontageEnded.Unbind();
-
-        // Montage’u force stop
         AnimInstance->Montage_Stop(0.f, MontageToPlay);
-
         return true;
     }
 

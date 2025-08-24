@@ -110,8 +110,8 @@ void UInComingAttackState::OnTakeDamageAbilityActivated(UGameplayAbility* Abilit
 		return;
 	}
 
-	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
+	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	// Timer’ı durdur, çünkü ability gerçekten aktive oldu
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);

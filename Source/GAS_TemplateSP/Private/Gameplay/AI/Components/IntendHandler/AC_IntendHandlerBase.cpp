@@ -190,7 +190,8 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 		return;
 	}
 
-	if (BestReaction->ReactionType == EComingAttackReaction::TakeDamage) 
+	bool IsShadowAttack = EventPayload.ComingAttackTags.HasTagExact(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked);
+	if (IsShadowAttack && BestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		//TriggerIncomingAttackReaction(BestReaction, EventPayload);
 		//return;

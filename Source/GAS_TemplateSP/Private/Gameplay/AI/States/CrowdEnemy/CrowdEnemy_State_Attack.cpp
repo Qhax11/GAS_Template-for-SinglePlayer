@@ -52,5 +52,5 @@ void UCrowdEnemy_State_Attack::OnExit_Implementation()
 void UCrowdEnemy_State_Attack::OnComboChaindEnded()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CrowdEnemyAttackState OnComboChaindEnded"));
-	ExitRequest();
+	ExitRequest("OnComboChaindEnded");
 }

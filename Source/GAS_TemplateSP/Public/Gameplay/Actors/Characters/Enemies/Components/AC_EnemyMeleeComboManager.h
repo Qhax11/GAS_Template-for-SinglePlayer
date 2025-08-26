@@ -22,9 +22,19 @@ protected:
 
 	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
 
-	void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData) override;
+	UFUNCTION()
+	void OnEnemyCanActivateNextAttack();
+
+	UFUNCTION()
+	void OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	void OnOwnerAbilityEnd(const FAbilityEndedData& EndedData) override;
 	
 private:
 	class AAIControllerBase* AIController;
 
+	bool bOnTakeDamageState;
 };

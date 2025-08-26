@@ -26,7 +26,7 @@ void UAC_MeleeComboManager::BeginPlay()
 		return;
 	}
 
-	CharacterBaseASC->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd);
+	CharacterBaseASC->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnOwnerAbilityEnd);
 	InitComboChainTracker();
 }
 
@@ -54,10 +54,12 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 		return nullptr;
 	}
 
+	/*
 	if (!ActiveComboChainTracker.bNextAttackAllowed)
 	{
 		return nullptr;
 	}
+	*/
 
 	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
 	if (ComboAbilityData && ComboAbilityData->ComboAbilityClass)
@@ -72,6 +74,8 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 				ActivatedComboMeleeAttack->SectionName = MontageSection;
 				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityData->ComboAbilityClass))
 				{
+					UE_LOG(LogTemp, Warning, TEXT("[StateManager]: TryActivateAbilityByClass: %s"), *ComboAbilityData->ComboAbilityClass->GetName());
+
 					AbilitySpec->DynamicAbilityTags.RemoveTag(AdditionalTag); 
 					ActiveComboChainTracker.bNextAttackAllowed = false;
 					return ActivatedComboMeleeAttack;
@@ -83,7 +87,7 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	return nullptr;
 }
 
-void UAC_MeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
+void UAC_MeleeComboManager::OnOwnerAbilityEnd(const FAbilityEndedData& EndedData)
 {
 	// Implementation will be in subclasses.
 }

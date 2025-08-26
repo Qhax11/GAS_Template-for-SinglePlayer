@@ -37,7 +37,7 @@ void UCrowdEnemy_MovementState::OnEnter_Implementation()
 	if (!SelectedAttack.AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No valid BestAttack selected."));
-		ExitRequest(GAS_Tags::TAG_AI_State_Movement);
+		ExitRequest("SelectedAttack is null", GAS_Tags::TAG_AI_State_Movement);
 		return;
 	}
 
@@ -82,7 +82,7 @@ void UCrowdEnemy_MovementState::TryEnterToAttackState()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("attack ability is in range, exit from movement state"));
 		MovementManagerComponent->StopMovementAbilities();
-		ExitRequest(GAS_Tags::TAG_AI_State_Attack);
+		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack);
 	}
 }
 
@@ -119,7 +119,7 @@ void UCrowdEnemy_MovementState::StartMovementChain(TSubclassOf<class UGAS_Gamepl
 
 void UCrowdEnemy_MovementState::OnMovementChainEnded()
 {
-	ExitRequest();
+	ExitRequest("OnMovementChainEnded");
 }
 
 void UCrowdEnemy_MovementState::MakeStrafingAbility()
@@ -145,7 +145,7 @@ void UCrowdEnemy_MovementState::OnStrafingAbilityEnded(const FAbilityEndedDataBP
 
 void UCrowdEnemy_MovementState::OnWaitTimeFinished()
 {
-	ExitRequest();
+	ExitRequest("OnWaitTimeFinished");
 }
 
 

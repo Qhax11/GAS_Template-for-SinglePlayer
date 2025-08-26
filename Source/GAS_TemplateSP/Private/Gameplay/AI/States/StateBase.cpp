@@ -10,6 +10,7 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 	EnemyController = StateInitParams.EnemyController;
 	EnemyASC = StateInitParams.EnemyASC;
 	HeroTarget = StateInitParams.HeroTarget;
+	EnemyTagDelegatesComp = StateInitParams.EnemyTagDelegatesComp;
 	BehaviorDecisionComponent = StateInitParams.BehaviorDecisionComponent;
 	StateManager = StateInitParams.StateManager;
 }
@@ -24,7 +25,7 @@ void UStateBase::OnEnter_Implementation()
 
 	if (StateManager->bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[StataBase]: %s has been enter"), *StateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[StateManager]: %s has been enter"), *StateTag.ToString());
 	}
 }
 
@@ -38,11 +39,11 @@ void UStateBase::OnExit_Implementation()
 
 	if (StateManager->bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[StataBase]: %s has been exit"), *StateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[StateManager]: %s has been exit"), *StateTag.ToString());
 	}
 }
 
-void UStateBase::ExitRequest(const FGameplayTag& TransactionTag)
+void UStateBase::ExitRequest(FString Reason, const FGameplayTag& TransactionTag)
 {
 	if (!StateManager)
 	{
@@ -50,7 +51,7 @@ void UStateBase::ExitRequest(const FGameplayTag& TransactionTag)
 		return;
 	}
 
-	StateManager->RequestStateTreeExit(StateTag, TransactionTag);
+	StateManager->RequestStateTreeExit(StateTag, TransactionTag, Reason);
 }
 
 bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)

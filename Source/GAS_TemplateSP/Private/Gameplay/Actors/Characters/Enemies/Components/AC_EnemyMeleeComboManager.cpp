@@ -14,6 +14,22 @@ void UAC_EnemyMeleeComboManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("AIController is null in: %s"), *GetName());
 		return;
 	}
+
+	if (!CharacterBase)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		return;
+	}
+
+	UAC_TagDelegates* CharacterTagDelegatesComp = CharacterBase->GetTagDelegatesComponent();
+	if (!CharacterTagDelegatesComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		return;
+	}
+
+	CharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnAdded).BindDynamic(this, &UAC_EnemyMeleeComboManager::OnTakeDamageTagAdded);
+	CharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved);
 }
 
 void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass, FName MontageSection)
@@ -39,6 +55,7 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 		return;
 	}
 
+	ActiveComboChainTracker.bIsActive = true;
 	ActivateComboMeleeAttackAbility(MontageSection);
 }
  
@@ -57,31 +74,71 @@ UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbilit
 	}
 }
 
-void UAC_EnemyMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
+void UAC_EnemyMeleeComboManager::OnEnemyCanActivateNextAttack()
 {
-	if (EndedData.AbilitySpecHandle != ActiveComboChainTracker.CurrentAbilitySpecHandle)
-	{
-		return;
-	}
-
-	if (EndedData.bWasCancelled) 
-	{
-		OnComboEnded.Broadcast();
-		return;
-	}
-
-	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
 	ActiveComboChainTracker.bNextAttackAllowed = true;
 	ActiveComboChainTracker.Advance();
 
 	if (ActiveComboChainTracker.IsChainFinished())
 	{
+		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}
-	else
+}
+
+void UAC_EnemyMeleeComboManager::OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnTakeDamageTagAdded: "));
+}
+
+void UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnTakeDamageTagRemovedFrom CombatManager: "));
+
+	if (ActiveComboChainTracker.bIsActive) 
 	{
+		ActiveComboChainTracker.bNextAttackAllowed = true;
+		ActiveComboChainTracker.Advance();
 		ActivateComboMeleeAttackAbility();
 	}
+}
+
+void UAC_EnemyMeleeComboManager::OnOwnerAbilityEnd(const FAbilityEndedData& EndedData)
+{
+	/*
+	if (EndedData.AbilitySpecHandle != ActiveComboChainTracker.CurrentAbilitySpecHandle)
+	{
+		return;
+	}
+	*/
+	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
+	{
+		return;
+	}
+
+	// It is mean combo ability ended with take damage
+	bool OnTakeDamage = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
+	if (OnTakeDamage) 
+	{
+		return;
+	}
+
+	// buraya take damage dinle ve ona göre iþ yap. 
+	// 
+	// 
+	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
+	ActiveComboChainTracker.bNextAttackAllowed = true;
+	ActiveComboChainTracker.Advance();
+
+	if (ActiveComboChainTracker.IsChainFinished() || EndedData.bWasCancelled)
+	{
+		OnComboEnded.Broadcast();
+		ActiveComboChainTracker.Reset();
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnOwnerAbilityEnd: %s"), *EndedData.AbilitySpecHandle.ToString());
+	ActivateComboMeleeAttackAbility();
 }
 
 float UAC_EnemyMeleeComboManager::GetMaxRangeOfCurrentAttack()

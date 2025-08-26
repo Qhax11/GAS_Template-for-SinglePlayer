@@ -15,13 +15,13 @@
 void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 {
 	Super::StateInitalize(StateInitParams);
-	EnemyASC->AbilityActivatedCallbacks.AddUObject(this, &UInComingAttackState::OnTakeDamageAbilityActivated);
 }
 
 void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
+	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
 	SelectAndMakeInComingAttackReaction();
 }
 
@@ -43,15 +43,7 @@ void UInComingAttackState::OnExit_Implementation()
 		LastUsedDodgeAbility = nullptr;
 	}
 
-	if (LastUsedTakeDamageAbility)
-	{
-		if (LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("LastUsedTakeDamageAbility, REMOVED BIND!"));
-			LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
-		}
-		LastUsedTakeDamageAbility = nullptr;
-	}
+	EnemyTagDelegatesComp->UnregisterAllDelegatesForObject(this);
 }
 
 void UInComingAttackState::SelectAndMakeInComingAttackReaction()
@@ -102,32 +94,9 @@ void UInComingAttackState::OnTakeDamageFailsafeTimeout()
 	//ExitRequest();
 }
 
-void UInComingAttackState::OnTakeDamageAbilityActivated(UGameplayAbility* Ability)
+void UInComingAttackState::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	UGA_TakeDamageBase* TakeDamageAbility = Cast<UGA_TakeDamageBase>(Ability);
-	if (!TakeDamageAbility)
-	{
-		return;
-	}
-
-	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
-
-	// Timer’ı durdur, çünkü ability gerçekten aktive oldu
-	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
-
-	if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TakeDamageAbility Binded!"));
-		TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
-	}
-	LastUsedTakeDamageAbility = TakeDamageAbility;
-}
-
-void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
-{
-	UE_LOG(LogTemp, Warning, TEXT("BP_Boss_C_1 OnTakeDamageAbilityEnded!"));
-	ExitRequest();
+	ExitRequest("TakeDamageTagRemoved");
 }
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
@@ -172,7 +141,7 @@ void UInComingAttackState::OnParryTagRemoved(const UAbilitySystemComponent* Abil
 			if (!bParryKnockbackHappened)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Parry ended, no knockback happened. Exiting."));
-				ExitRequest();
+				ExitRequest("bParryKnockbackHappened");
 			}
 			else
 			{
@@ -184,22 +153,20 @@ void UInComingAttackState::OnParryTagRemoved(const UAbilitySystemComponent* Abil
 void UInComingAttackState::OnParryKnocbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	bParryKnockbackHappened = true;
-	UE_LOG(LogTemp, Warning, TEXT("ParryKnockback tag added."));
 
 	if (BDS_Parry->bCounterImmediatelyAfterParry)
 	{
 		FTimerHandle DelayHandle;
 		Enemy->GetWorldTimerManager().SetTimer(DelayHandle, [this]()
 			{
-				ExitRequest();
+				ExitRequest("ParryKnockbackTimer");
 			}, 0.1f, false); 
 	}
 }
 
 void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ParryKnockback tag removed. Exiting."));
-	ExitRequest();
+	ExitRequest("OnParryKnocbackTagRemoved");
 }
 
 void UInComingAttackState::ActivateDodgeAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
@@ -246,8 +213,7 @@ void UInComingAttackState::ActivateDodgeAbility(const UBDS_ComingAttackReactionB
 }
 void UInComingAttackState::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnDodgeAbilityEnded, exiting."));
-	ExitRequest();
+	ExitRequest("OnDodgeAbilityEnded");
 }
 
 

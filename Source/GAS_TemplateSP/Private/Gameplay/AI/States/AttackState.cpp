@@ -23,10 +23,14 @@ void UAttackState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
 
-	if (Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.IsAlreadyBound(this, &UAttackState::OnComboChaindEnded))
+	if (Enemy->GetEnemyMeleeComboManagerComponent()) 
 	{
-		Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.RemoveDynamic(this, &UAttackState::OnComboChaindEnded);
+		if (Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.IsAlreadyBound(this, &UAttackState::OnComboChaindEnded))
+		{
+			Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.RemoveDynamic(this, &UAttackState::OnComboChaindEnded);
+		}
 	}
+	
 
 	if (LastUsedShadowAttack)
 	{
@@ -83,7 +87,7 @@ void UAttackState::MakeAttack()
 
 void UAttackState::OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest();
+	ExitRequest("OnAttackAbilityEnded");
 }
 
 void UAttackState::MakeComboAttack()
@@ -104,7 +108,7 @@ void UAttackState::MakeComboAttack()
 
 void UAttackState::OnComboChaindEnded()
 {
-	ExitRequest();
+	ExitRequest("OnComboChaindEnded");
 }
 
 void UAttackState::MakeShadowAttack()
@@ -133,7 +137,7 @@ void UAttackState::OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowA
 	// If it dosen't cancelled it's mean executed and we keep listening from executed side
 	if (ShadowAttackAbilityEndedData.bWasCancelled) 
 	{
-		ExitRequest();
+		ExitRequest("OnShadowAttackAbilityEnded");
 	}
 }
 

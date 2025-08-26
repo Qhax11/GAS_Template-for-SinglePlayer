@@ -31,6 +31,7 @@ void UAC_StateManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
 		return;
 	}
+	OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
 
 	BehaviorDecisionComponent = OwnerController->GetBehaviorDecisionComponent();
 	if (!BehaviorDecisionComponent)
@@ -46,7 +47,12 @@ void UAC_StateManager::BeginPlay()
 		return;
 	}
 
-	OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
+	EnemyTagDelegatesComponent = OwnerEnemyBase->GetTagDelegatesComponent();
+	if (!EnemyTagDelegatesComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnemyTagDelegatesComponent is null in: %s !"), *GetName());
+		return;
+	}
 } 
 
 void UAC_StateManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -67,7 +73,7 @@ void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
 
 void UAC_StateManager::CreateStates()
 {
-	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, OwnerController->GetTargetActor(), BehaviorDecisionComponent, this);
+	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, OwnerController->GetTargetActor(), EnemyTagDelegatesComponent, BehaviorDecisionComponent, this);
 
 	for (TSubclassOf<UStateBase> StateClass : StateClassArray)
 	{
@@ -146,34 +152,39 @@ void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 		return;
 	}
 
-	// Find the instance of the requested state
-	for (UStateBase* State : StateInstances)
+	if (bEnableDebug)
 	{
-		if (State && State->StateTag == StateTag)
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to enter"), *StateTag.ToString());
+	}
+
+	UStateBase* FindedState = GetStateWithTag(StateTag);
+	if (!FindedState) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is null!"));
+		return;
+	}
+
+	if (FindedState->EnterCondition())
+	{
+		if (CurrentState)
 		{
-			if (State->EnterCondition()) 
-			{
-				if (CurrentState)
-				{
-					CurrentState->OnExit();
-				}
-			
-				State->OnEnter();
-				CurrentState = State;
-				return;
-			}
-			else
-			{
-				if (bEnableDebug) 
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot enter"), *State->GetName());
-				}
-			}
+			CurrentState->OnExit();
+		}
+
+		FindedState->OnEnter();
+		CurrentState = FindedState;
+		return;
+	}
+	else
+	{
+		if (bEnableDebug)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot enter"), *FindedState->GetName());
 		}
 	}
 }
 
-void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag)
+void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason)
 {
 	if (!StateTag.IsValid() || !bActive)
 	{
@@ -182,7 +193,23 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 
 	if (bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to exit"), *StateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to exit, reason is: %s"), *StateTag.ToString(), *Reason);
+	}
+
+	UStateBase* FindedState = GetStateWithTag(StateTag);
+	if (!FindedState)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is null!"));
+		return;
+	}
+
+	if (!FindedState->ExitCondition()) 
+	{
+		if (bEnableDebug)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot exit"), *StateTag.ToString());
+		}
+		return;
 	}
 
 	// If request coming with trancastion tag we directly enter
@@ -237,6 +264,25 @@ FAttackData UAC_StateManager::SelectNewBestAttack()
 	FAttackData NewAttackData = BehaviorDecisionComponent->GetBestAttack();
 	LastSelectedAttackData = NewAttackData;
 	return NewAttackData;
+}
+
+UStateBase* UAC_StateManager::GetStateWithTag(const FGameplayTag& StateTag) const
+{
+	if (!StateTag.IsValid()) 
+	{
+		return nullptr;
+	}
+
+	// Find the instance of the requested state
+	for (UStateBase* State : StateInstances)
+	{
+		if (State && State->StateTag == StateTag)
+		{
+			return State;
+		}
+	}
+
+	return nullptr;
 }
 
 

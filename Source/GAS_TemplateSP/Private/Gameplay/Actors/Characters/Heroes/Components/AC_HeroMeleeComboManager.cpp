@@ -70,7 +70,7 @@ UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility
 	return ActivatedComboMeleeAttack;
 }
 
-void UAC_HeroMeleeComboManager::OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData)
+void UAC_HeroMeleeComboManager::OnOwnerAbilityEnd(const FAbilityEndedData& EndedData)
 {
 	// If it is another ability or if it is UGA_HeroHologram return. 
 	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>() || EndedData.AbilityThatEnded->IsA<UGA_HeroShadowAttack>())

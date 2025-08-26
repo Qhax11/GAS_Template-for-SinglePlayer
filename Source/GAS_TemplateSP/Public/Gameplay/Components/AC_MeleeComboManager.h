@@ -65,6 +65,9 @@ struct FActiveComboChainTracker
 	UPROPERTY()
 	bool bNextAttackAllowed = true;
 
+	UPROPERTY()
+	bool bIsActive = false;
+
 	bool IsCurrentComboValid() const
 	{
 		return ComboChain.ComboAbilities.IsValidIndex(CurrentIndex);
@@ -92,6 +95,7 @@ struct FActiveComboChainTracker
 		CurrentAbilityInstance = nullptr;
 		CurrentAbilitySpecHandle = FGameplayAbilitySpecHandle();
 		bNextAttackAllowed = true;
+		bIsActive = false;
 	}
 };
 
@@ -130,7 +134,7 @@ protected:
 	virtual void InitComboChainTracker();
 
 	UFUNCTION()
-	virtual void OnComboMeleeAttackAbilityEnd(const FAbilityEndedData& EndedData);
+	virtual void OnOwnerAbilityEnd(const FAbilityEndedData& EndedData);
 
 	FComboChainSearchResult GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
 

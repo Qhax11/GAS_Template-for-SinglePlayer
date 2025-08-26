@@ -43,7 +43,7 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 
 	Super::OnEventReceived(EventTag, EventData);
 
-	UE_LOG(LogTemp, Warning, TEXT("%s's %s ability OnEventReceived"), *GetAvatarActorFromActorInfo()->GetName(), *GetName());
+	UE_LOG(LogTemp, Warning, TEXT("StateManager: %s's %s ability OnEventReceived"), *GetAvatarActorFromActorInfo()->GetName(), *GetName());
 
 	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Attack_TraceStart)
 	{
@@ -69,8 +69,8 @@ void UGA_MeleeAttackBase::TraceTick()
 	TArray<FHitResult> OutHitResults;
 	if (TraceForHostileUnits(OutHitResults))
 	{
-		AttackLogic(OutHitResults);
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
+		AttackLogic(OutHitResults);
 	}
 }
 
@@ -128,7 +128,7 @@ void UGA_MeleeAttackBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
 	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

@@ -191,10 +191,10 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 	}
 
 	bool IsShadowAttack = EventPayload.ComingAttackTags.HasTagExact(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked);
-	if (IsShadowAttack && BestReaction->ReactionType == EComingAttackReaction::TakeDamage)
+	if (BestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
-		//TriggerIncomingAttackReaction(BestReaction, EventPayload);
-		//return;
+		TriggerIncomingAttackReaction(BestReaction, EventPayload);
+		return;
 	}
 
 	const float PreferredDelay = EventPayload.ComingAttackHitTime - BestReaction->PreferredTriggerTimeBeforeHit;

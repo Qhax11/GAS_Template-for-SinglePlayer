@@ -94,6 +94,9 @@ public:
 	bool IsOnCooldown(UAbilitySystemComponent* ASC);
 
 	bool bHasEnded = false;
+
+	void EndAbilityManually();
+
 protected:
 	/**
 	 * For "Instanced Per Actor" abilities:

@@ -25,7 +25,7 @@ void UMovementState::OnEnter_Implementation()
 	if (!SelectedAttack.AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No valid BestAttack selected."));
-		ExitRequest();
+		ExitRequest("SelectedAttack ability class is null");
 		return;
 	}
 
@@ -69,7 +69,7 @@ void UMovementState::TryEnterToAttackState()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("attack ability is in range, exit from movement state"));
 		MovementManagerComponent->StopMovementAbilities();
-		ExitRequest(GAS_Tags::TAG_AI_State_Attack);
+		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack);
 	}
 }
 
@@ -85,5 +85,5 @@ void UMovementState::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBa
 
 void UMovementState::OnMovementChainEnded()
 {
-	ExitRequest(GAS_Tags::TAG_AI_State_Movement);
+	ExitRequest("MovementChain is ended", GAS_Tags::TAG_AI_State_Movement);
 }

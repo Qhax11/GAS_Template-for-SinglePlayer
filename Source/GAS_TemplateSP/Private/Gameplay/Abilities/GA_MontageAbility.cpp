@@ -32,8 +32,6 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("%s' %s ability is start"), *GetAvatarActorFromActorInfo()->GetName(), *GetName());
-
 	CreatePlayMontageWaitForEvent();
 }
 
@@ -132,19 +130,19 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageBlendOut: AnimMontage is: %s"), *AnimMontage->GetName());
-	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageInterrupted: AnimMontage is: %s"), *AnimMontage->GetName());
-	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageCancelled: AnimMontage is: %s"), *AnimMontage->GetName());
-	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -166,7 +164,6 @@ void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventDa
 
 void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-
 	UE_LOG(LogTemp, Warning, TEXT("%s' %s ability is ended"), *GetAvatarActorFromActorInfo()->GetName(), *GetName());
 	if (PlayMontageWaitForEventTask)
 	{

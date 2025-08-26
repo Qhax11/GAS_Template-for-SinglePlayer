@@ -173,13 +173,10 @@ bool UGAS_Task_PlayMontageWaitForEvent::StopPlayingMontage() const
     UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
 
     // Direkt MontageToPlay’i force stop et
-    if (AnimInstance->Montage_IsPlaying(MontageToPlay))
-    {
-        AnimInstance->Montage_Stop(0.f, MontageToPlay);
-        return true;
-    }
+    UE_LOG(LogTemp, Warning, TEXT("STATEMANAGER: stop montaged from: %s"), *MontageToPlay->GetName());
+    AnimInstance->Montage_Stop(0.f, MontageToPlay);
 
-    return false;
+    return true;
 }
 
 void UGAS_Task_PlayMontageWaitForEvent::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) const

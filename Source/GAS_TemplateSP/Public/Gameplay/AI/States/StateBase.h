@@ -9,6 +9,7 @@
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
+
 USTRUCT()
 struct FStateInitParams
 {
@@ -28,6 +29,9 @@ public:
     AActor* HeroTarget = nullptr;
 
     UPROPERTY()
+    UAC_TagDelegates* EnemyTagDelegatesComp = nullptr;
+
+    UPROPERTY()
     UAC_BehaviorDecision* BehaviorDecisionComponent = nullptr;
 
     UPROPERTY()
@@ -38,6 +42,7 @@ public:
         AAIControllerBase* InEnemyController, 
         UGAS_AbilitySystemComponent* InEnemyASC,
         AActor* InHeroTarget,
+        UAC_TagDelegates* InEnemyTagDelegatesComp,
         UAC_BehaviorDecision* InBehaviorDecisionComponent,
         UAC_StateManager* InStateManager)
         :
@@ -45,6 +50,7 @@ public:
         EnemyController(InEnemyController),
         EnemyASC(InEnemyASC),
         HeroTarget(InHeroTarget),
+        EnemyTagDelegatesComp(InEnemyTagDelegatesComp),
         BehaviorDecisionComponent(InBehaviorDecisionComponent),
         StateManager(InStateManager)
     {}
@@ -70,6 +76,10 @@ public:
     virtual void OnEnter_Implementation();
 
     UFUNCTION(BlueprintNativeEvent, Category = "State")
+    bool ExitCondition();
+    virtual bool ExitCondition_Implementation() { return true; }
+
+    UFUNCTION(BlueprintNativeEvent, Category = "State")
     void OnExit();
     virtual void OnExit_Implementation();
 
@@ -82,7 +92,7 @@ public:
 
 protected:
     UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "TransactionTag"))
-    virtual void ExitRequest(const FGameplayTag& TransactionTag = FGameplayTag());
+    virtual void ExitRequest(FString Reason, const FGameplayTag& TransactionTag = FGameplayTag());
 
     bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
 
@@ -105,6 +115,9 @@ protected:
 
     UPROPERTY(BlueprintReadOnly)
     AActor* HeroTarget;
+
+    UPROPERTY(BlueprintReadOnly)
+    UAC_TagDelegates* EnemyTagDelegatesComp;
 
     UPROPERTY(BlueprintReadOnly)
     UAC_BehaviorDecision* BehaviorDecisionComponent;

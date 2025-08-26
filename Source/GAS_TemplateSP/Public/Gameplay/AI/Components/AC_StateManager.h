@@ -37,7 +37,7 @@ public:
 
 	void RequestStateTreeEnter(const FGameplayTag& StateTag);
 
-	void RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag);
+	void RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason);
 
 	float GetTargetDistance() const;
 
@@ -58,6 +58,9 @@ public:
 	UStateBase* CurrentState = nullptr;
 
 protected:
+	// Find the instance of the requested state
+	UStateBase* GetStateWithTag(const FGameplayTag& StateTag) const;
+
 	bool bActive = true;
 
 	UPROPERTY(EditDefaultsOnly, Category = "States")
@@ -75,6 +78,7 @@ protected:
 	class AAIControllerBase* OwnerController;
 	class AGAS_EnemyBase* OwnerEnemyBase;
 	class UAC_BehaviorDecision* BehaviorDecisionComponent;
+	class UAC_TagDelegates* EnemyTagDelegatesComponent;
 	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
 	class AGAS_HeroBase* HeroBase;
 };

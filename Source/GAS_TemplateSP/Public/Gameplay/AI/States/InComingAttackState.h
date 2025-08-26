@@ -6,6 +6,7 @@
 #include "InComingAttackState.generated.h"
 
 
+
 UCLASS()
 class GAS_TEMPLATESP_API UInComingAttackState : public UStateBase
 {
@@ -30,14 +31,9 @@ protected:
 	void OnTakeDamageFailsafeTimeout();
 	FTimerHandle TakeDamageFailsafeTimer;
 
-	UFUNCTION()
-	void OnTakeDamageAbilityActivated(UGameplayAbility* Ability);
-
 	// Exit of Take Damage.
 	UFUNCTION()
-	void OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
-
-	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility;
+	void OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	//********************* PARRY *********************/
 

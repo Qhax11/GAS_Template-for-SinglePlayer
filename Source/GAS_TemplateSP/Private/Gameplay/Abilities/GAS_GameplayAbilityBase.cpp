@@ -69,6 +69,11 @@ bool UGAS_GameplayAbilityBase::IsOnCooldown(UAbilitySystemComponent* ASC)
 	return CooldownTags && ASC->HasAnyMatchingGameplayTags(*CooldownTags);
 }
 
+void UGAS_GameplayAbilityBase::EndAbilityManually()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+}
+
 void UGAS_GameplayAbilityBase::IncreaseLevel(UAbilitySystemComponent* AbilitySystemComp)
 {
 	if (!AbilitySystemComp) 

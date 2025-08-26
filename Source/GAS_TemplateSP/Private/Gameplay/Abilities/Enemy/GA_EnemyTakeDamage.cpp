@@ -8,13 +8,19 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "AIController.h"
 
-void UGA_EnemyTakeDamage::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+UGA_EnemyTakeDamage::UGA_EnemyTakeDamage()
+{
+	CancelAbilitiesWithTag.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement);
+}
+
+void UGA_EnemyTakeDamage::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	UE_LOG(LogTemp, Warning, TEXT("StateManager: enemy take damage from: %s"), *TriggerEventData->Instigator->GetName());
 	SetRotationToInstigator(TriggerEventData->Instigator);
 }
 

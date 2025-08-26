@@ -5,9 +5,7 @@
 #include "Gameplay/Abilities/GA_TakeDamageBase.h"
 #include "GA_EnemyTakeDamage.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API UGA_EnemyTakeDamage : public UGA_TakeDamageBase
 {

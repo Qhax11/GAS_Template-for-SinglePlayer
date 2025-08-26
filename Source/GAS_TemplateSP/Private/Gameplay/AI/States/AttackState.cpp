@@ -31,7 +31,6 @@ void UAttackState::OnExit_Implementation()
 		}
 	}
 	
-
 	if (LastUsedShadowAttack)
 	{
 		if (LastUsedShadowAttack->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAttackState::OnShadowAttackAbilityEnded))

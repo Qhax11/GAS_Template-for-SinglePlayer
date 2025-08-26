@@ -35,6 +35,6 @@ protected:
 	
 private:
 	class AAIControllerBase* AIController;
-
+	class UAC_TagDelegates* EnemyTagDelegatesComp;
 	bool bOnTakeDamageState;
 };

@@ -21,15 +21,13 @@ void UAC_EnemyMeleeComboManager::BeginPlay()
 		return;
 	}
 
-	UAC_TagDelegates* CharacterTagDelegatesComp = CharacterBase->GetTagDelegatesComponent();
-	if (!CharacterTagDelegatesComp)
+	EnemyTagDelegatesComp = CharacterBase->GetTagDelegatesComponent();
+	if (!EnemyTagDelegatesComp)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
 		return;
 	}
 
-	CharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnAdded).BindDynamic(this, &UAC_EnemyMeleeComboManager::OnTakeDamageTagAdded);
-	CharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved);
 }
 
 void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass, FName MontageSection)
@@ -95,37 +93,32 @@ void UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved(const UAbilitySystemComp
 {
 	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnTakeDamageTagRemovedFrom CombatManager: "));
 
+	// If combo was active and our take damage ability is finished, we need continue.
 	if (ActiveComboChainTracker.bIsActive) 
 	{
 		ActiveComboChainTracker.bNextAttackAllowed = true;
 		ActiveComboChainTracker.Advance();
 		ActivateComboMeleeAttackAbility();
 	}
+
+	EnemyTagDelegatesComp->UnregisterAllDelegatesForObject(this);
 }
 
 void UAC_EnemyMeleeComboManager::OnOwnerAbilityEnd(const FAbilityEndedData& EndedData)
 {
-	/*
 	if (EndedData.AbilitySpecHandle != ActiveComboChainTracker.CurrentAbilitySpecHandle)
 	{
 		return;
 	}
-	*/
-	if (!EndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>())
-	{
-		return;
-	}
-
-	// It is mean combo ability ended with take damage
+	
+	// It is mean combo ability ended with take damage, we need listen end of it.
 	bool OnTakeDamage = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 	if (OnTakeDamage) 
 	{
+		EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved);
 		return;
 	}
 
-	// buraya take damage dinle ve ona göre iþ yap. 
-	// 
-	// 
 	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
 	ActiveComboChainTracker.bNextAttackAllowed = true;
 	ActiveComboChainTracker.Advance();

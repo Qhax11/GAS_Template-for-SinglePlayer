@@ -35,7 +35,6 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		{
 			FDamageData DamageData = FDamageData(Params, bParrySucces);
 			DamageSubsystem->OnDamageDealt.Broadcast(DamageData);
-			UE_LOG(LogTemp, Warning, TEXT("Broadcast yapýldý!"));
 		}
 	}
 
@@ -56,7 +55,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	// Trigger events based on the damage dealt
 	if (DamageDealt > 0)
 	{
-		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, DamageDealt);
+		//TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, DamageDealt);
 	}
 
 	if (MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())

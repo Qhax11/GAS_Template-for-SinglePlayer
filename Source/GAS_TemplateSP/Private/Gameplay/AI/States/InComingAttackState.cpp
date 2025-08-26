@@ -10,18 +10,19 @@
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReaction_Dodge.h"
 #include "Gameplay/Abilities/GA_TakeDamageBase.h"
 #include "Gameplay/AI/Components/IntendHandler/AC_IntendHandlerBase.h"
+#include <Gameplay/StaticDelegates/S_DamageDelegates.h>
 
 
 void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 {
 	Super::StateInitalize(StateInitParams);
+	DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>();
 }
 
 void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
-	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
 	SelectAndMakeInComingAttackReaction();
 }
 
@@ -43,7 +44,13 @@ void UInComingAttackState::OnExit_Implementation()
 		LastUsedDodgeAbility = nullptr;
 	}
 
-	EnemyTagDelegatesComp->UnregisterAllDelegatesForObject(this);
+	if (DamageSubsystem)
+	{
+		if (DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
+		{
+			DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UInComingAttackState::OnDamageDealt);
+		}
+	}
 }
 
 void UInComingAttackState::SelectAndMakeInComingAttackReaction()
@@ -76,27 +83,63 @@ void UInComingAttackState::SelectAndMakeInComingAttackReaction()
 
 void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
 {
+	if (DamageSubsystem)
+	{
+		if (!DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
+		{
+			DamageSubsystem->OnDamageDealt.AddDynamic(this, &UInComingAttackState::OnDamageDealt);
+		}
+	}
+
 	// Komboyu/movement'i durdurma buraya da ekleyebilirsin ama zaten TriggerIncomingReaction içinde var.
+	//EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
 
 // Eğer ability aktif edilirse dinlenecek zaten
 // Şimdi failsafe başlat — eğer ability 0.2 saniye içinde aktive edilmezse çık
-
+	/*
 	Enemy->GetWorldTimerManager().SetTimer(TakeDamageFailsafeTimer, this,
 		&UInComingAttackState::OnTakeDamageFailsafeTimeout,
 		0.2f, false);
 
 	UE_LOG(LogTemp, Warning, TEXT("TakeDamage failsafe timer started."));
+	*/
+}
+
+void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
+{
+	// Prepare payload
+	FGameplayEventData Payload;
+	Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage;
+	Payload.Instigator = DamageData.ExecCalculationParameters.SourceActor;
+	Payload.Target = DamageData.ExecCalculationParameters.TargetActor;
+	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
+	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
+
+	UGAS_GameplayAbilityBase* TakeDamage = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamage, Payload);
+	if (TakeDamage)
+	{
+		if (!TakeDamage->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+		{
+			TakeDamage->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+		}
+	}
+}
+
+void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+{
+	ExitRequest("OnTakeDamageAbilityEnded");
 }
 
 void UInComingAttackState::OnTakeDamageFailsafeTimeout()
 {
+	if (!EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Tag already removed at bind time. Forcing exit."));
+		ExitRequest("OnTakeDamageFailsafeTimeout");
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Failsafe triggered: TakeDamage ability not activated in time."));
 	//ExitRequest();
-}
-
-void UInComingAttackState::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	ExitRequest("TakeDamageTagRemoved");
 }
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
@@ -211,6 +254,7 @@ void UInComingAttackState::ActivateDodgeAbility(const UBDS_ComingAttackReactionB
 		LastUsedDodgeAbility = ActivatedAbility;
 	}
 }
+
 void UInComingAttackState::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
 	ExitRequest("OnDodgeAbilityEnded");

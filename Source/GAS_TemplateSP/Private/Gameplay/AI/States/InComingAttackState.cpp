@@ -104,19 +104,19 @@ void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* B
 	//EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
 
 // Eğer ability aktif edilirse dinlenecek zaten
-// Şimdi failsafe başlat — eğer ability 0.2 saniye içinde aktive edilmezse çık
+// Şimdi failsafe başlat — eğer ability 0.3 saniye içinde aktive edilmezse çık
 	Enemy->GetWorldTimerManager().SetTimer(TakeDamageFailsafeTimer, this,
 		&UInComingAttackState::OnTakeDamageFailsafeTimeout,
-		0.2f, false);
+		0.3f, false);
 
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamage failsafe timer started."));
 }
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
-	if (DamageData.ExecCalculationParameters.SourceActor != Enemy) 
+	if (DamageData.ExecCalculationParameters.TargetActor != Enemy) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt SourceActor is not Enemy."));
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt TargetActor is Enemy."));
 		return;
 	}
 

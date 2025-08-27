@@ -19,14 +19,13 @@ void UAC_MeleeComboManager::BeginPlay()
 		return;
 	}
 
-	CharacterBaseASC = CharacterBase->GetAbilitySystemComponent();
+	CharacterBaseASC = Cast<UGAS_AbilitySystemComponent>(CharacterBase->GetAbilitySystemComponent());
 	if (!CharacterBaseASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBaseASC is null in %s, cannot initialize HeroControl."), *GetName());
 		return;
 	}
 
-	CharacterBaseASC->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnOwnerAbilityEnd);
 	InitComboChainTracker();
 }
 
@@ -49,11 +48,6 @@ void UAC_MeleeComboManager::InitComboChainTracker()
 
 UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
-	if (!CharacterBaseASC) 
-	{
-		return nullptr;
-	}
-
 	/*
 	if (!ActiveComboChainTracker.bNextAttackAllowed)
 	{
@@ -61,35 +55,75 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	}
 	*/
 
-	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
-	if (ComboAbilityData && ComboAbilityData->ComboAbilityClass)
+	if (!CharacterBaseASC)
 	{
-		if (FGameplayAbilitySpec* AbilitySpec = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityData->ComboAbilityClass))
-		{
-			AbilitySpec->DynamicAbilityTags.AddTag(AdditionalTag);
-			ActiveComboChainTracker.CurrentAbilitySpecHandle = AbilitySpec->Handle;
-			ActiveComboChainTracker.CurrentAbilityInstance = AbilitySpec->GetPrimaryInstance();
-			if (UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Cast<UGA_ComboMeleeAttack>(AbilitySpec->GetPrimaryInstance()))
-			{
-				ActivatedComboMeleeAttack->SectionName = MontageSection;
-				if (CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityData->ComboAbilityClass))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[StateManager]: TryActivateAbilityByClass: %s"), *ComboAbilityData->ComboAbilityClass->GetName());
-
-					AbilitySpec->DynamicAbilityTags.RemoveTag(AdditionalTag); 
-					ActiveComboChainTracker.bNextAttackAllowed = false;
-					return ActivatedComboMeleeAttack;
-				}
-			}
-		}
+		return nullptr;
 	}
 
-	return nullptr;
+	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
+	if (!ComboAbilityData || !ComboAbilityData->ComboAbilityClass)
+	{
+		return nullptr;
+	}
+
+	// Get ability spec
+	FGameplayAbilitySpec* AbilitySpec = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityData->ComboAbilityClass);
+	if (!AbilitySpec)
+	{
+		return nullptr;
+	}
+
+	// Add temp tag to help with activation filters
+	AbilitySpec->DynamicAbilityTags.AddTag(AdditionalTag);
+
+	// For PerActor instancing, set SectionName on PrimaryInstance BEFORE activation
+	if (UGA_ComboMeleeAttack* PrimaryInstance = Cast<UGA_ComboMeleeAttack>(AbilitySpec->GetPrimaryInstance()))
+	{
+		PrimaryInstance->SectionName = MontageSection;
+	}
+
+	// Try activate ability and get its instance
+	UGA_ComboMeleeAttack* ActivatedAbility = Cast<UGA_ComboMeleeAttack>(
+		CharacterBaseASC->TryActivateAbilityByClassAndReturnInstance(ComboAbilityData->ComboAbilityClass)
+	);
+
+	// Remove the tag AFTER activation attempt
+	AbilitySpec->DynamicAbilityTags.RemoveTag(AdditionalTag);
+
+	if (!ActivatedAbility)
+	{
+		return nullptr;
+	}
+
+	// Save handle and instance
+	ActiveComboChainTracker.CurrentAbilitySpecHandle = AbilitySpec->Handle;
+	ActiveComboChainTracker.CurrentAbilityInstance = ActivatedAbility;
+
+	// Bind end event safely
+	if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_MeleeComboManager::OnComboAbilityEnd))
+	{
+		ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: Activated Combo Ability: %s"), *ComboAbilityData->ComboAbilityClass->GetName());
+
+	ActiveComboChainTracker.bNextAttackAllowed = false;
+	LastActivatedCombo = ActivatedAbility;
+
+	return ActivatedAbility;
 }
 
-void UAC_MeleeComboManager::OnOwnerAbilityEnd(const FAbilityEndedData& EndedData)
+void UAC_MeleeComboManager::OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData)
 {
-	// Implementation will be in subclasses.
+	if (!LastActivatedCombo) 
+	{
+		return;
+	}
+
+	if (LastActivatedCombo->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_MeleeComboManager::OnComboAbilityEnd))
+	{
+		LastActivatedCombo->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
+	}
 }
 
 FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)

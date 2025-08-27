@@ -1,9 +1,18 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 #pragma once
 
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "GA_MontageAbility.generated.h"
+
+UENUM(BlueprintType)
+enum EMontageEndPolicy : uint8
+{
+	Completed,    // The ability will end when the montage has fully completed
+	BlendOut,     // The ability will end when the montage starts blending out
+	Interrupted,  // The ability will end if the montage is interrupted by something else
+	Any           // The ability will end on any of the above events
+};
 
 
 UCLASS()
@@ -22,22 +31,15 @@ public:
 
 	void CreatePlayMontageWaitForEvent();
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
-	bool bEnableMotionWarping = false;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	FName MotionWarpingName = NAME_None;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	float MotionWarpingForce = 0.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"), meta = (Categories = "AI.Direction.Resolved"))
-	FGameplayTag DirectionTag;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	bool bDebugMotionWarping = false;
-
 	class UGAS_Task_PlayMontageWaitForEvent* PlayMontageWaitForEventTask;
+
+	// Determines from which montage events the ability should end.
+    // Completed → End when the montage reaches the end
+    // BlendOut → End when the montage starts blending out
+    // Interrupted → End if the montage is interrupted
+    // Any → End on any of the above events
+	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
+	TEnumAsByte<EMontageEndPolicy> MontageEndPolicy = EMontageEndPolicy::Any;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	TObjectPtr<UAnimMontage> AnimMontage;
@@ -60,6 +62,21 @@ public:
 	/** If we want that montage doesen't stop after ability end */
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	bool bStopWhenAbilityEnds = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
+	bool bEnableMotionWarping = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	FName MotionWarpingName = NAME_None;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	float MotionWarpingForce = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"), meta = (Categories = "AI.Direction.Resolved"))
+	FGameplayTag DirectionTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	bool bDebugMotionWarping = false;
 
 protected:
 	UFUNCTION()

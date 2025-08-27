@@ -134,7 +134,7 @@ protected:
 	virtual void InitComboChainTracker();
 
 	UFUNCTION()
-	virtual void OnOwnerAbilityEnd(const FAbilityEndedData& EndedData);
+	virtual void OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData);
 
 	FComboChainSearchResult GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
 
@@ -146,6 +146,7 @@ protected:
 	// Can be set from UI in the future to allow different combo styles.
 	int32 SelectedComboIndex = 0;
 	AGAS_CharacterBase* CharacterBase;
-	UAbilitySystemComponent* CharacterBaseASC;
+	UGAS_AbilitySystemComponent* CharacterBaseASC;
 	FActiveComboChainTracker ActiveComboChainTracker;
+	UGAS_GameplayAbilityBase* LastActivatedCombo;
 };

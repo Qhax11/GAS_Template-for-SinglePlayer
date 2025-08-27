@@ -59,12 +59,29 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
  
 UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
-	float ComboAbilityMaxRange = ActiveComboChainTracker.GetCurrentCombo()->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>()->MaxRange;
+	const FComboAbilityData* CurrentCombo = ActiveComboChainTracker.GetCurrentCombo();
+	if (!CurrentCombo || !CurrentCombo->ComboAbilityClass)
+	{
+		StopCombo();
+		return nullptr;
+	}
+
+	// Get default object safely
+	UGA_ComboMeleeAttack* DefaultAbilityCDO = CurrentCombo->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>();
+	if (!DefaultAbilityCDO)
+	{
+		StopCombo();
+		return nullptr;
+	}
+
+	// Now safe to read MaxRange
+	float ComboAbilityMaxRange = DefaultAbilityCDO->MaxRange;
+
+	// Check distance
 	if (AIController->GetTargetHeroDistance() < ComboAbilityMaxRange)
 	{
 		return Super::ActivateComboMeleeAttackAbility(MontageSection);
 	}
-	// If target out of combo attack's range end combo
 	else
 	{
 		StopCombo();
@@ -104,13 +121,15 @@ void UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved(const UAbilitySystemComp
 	EnemyTagDelegatesComp->UnregisterAllDelegatesForObject(this);
 }
 
-void UAC_EnemyMeleeComboManager::OnOwnerAbilityEnd(const FAbilityEndedData& EndedData)
+void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData)
 {
+	Super::OnComboAbilityEnd(ComboAbilityEndedData);
+	/*
 	if (EndedData.AbilitySpecHandle != ActiveComboChainTracker.CurrentAbilitySpecHandle)
 	{
 		return;
 	}
-	
+	*/
 	// It is mean combo ability ended with take damage, we need listen end of it.
 	bool OnTakeDamage = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 	if (OnTakeDamage) 
@@ -123,14 +142,14 @@ void UAC_EnemyMeleeComboManager::OnOwnerAbilityEnd(const FAbilityEndedData& Ende
 	ActiveComboChainTracker.bNextAttackAllowed = true;
 	ActiveComboChainTracker.Advance();
 
-	if (ActiveComboChainTracker.IsChainFinished() || EndedData.bWasCancelled)
+	if (ActiveComboChainTracker.IsChainFinished() || ComboAbilityEndedData.bWasCancelled)
 	{
 		OnComboEnded.Broadcast();
 		ActiveComboChainTracker.Reset();
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnOwnerAbilityEnd: %s"), *EndedData.AbilitySpecHandle.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnOwnerAbilityEnd: %s"), *ComboAbilityEndedData.AbilityThatEnded->GetName());
 	ActivateComboMeleeAttackAbility();
 }
 

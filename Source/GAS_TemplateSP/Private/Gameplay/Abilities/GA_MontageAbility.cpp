@@ -104,15 +104,34 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	// Eğer önceki task varsa onu temizle (montage da kesinlikle durmalı)
 	if (PlayMontageWaitForEventTask)
 	{
-		PlayMontageWaitForEventTask->OnBlendOut.RemoveDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
-		PlayMontageWaitForEventTask->OnCompleted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-		PlayMontageWaitForEventTask->OnInterrupted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
-		PlayMontageWaitForEventTask->OnCancelled.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-		PlayMontageWaitForEventTask->EventReceived.RemoveDynamic(this, &UGA_MontageAbility::OnEventReceived);
+		if (PlayMontageWaitForEventTask->OnBlendOut.IsBound()) 
+		{
+			PlayMontageWaitForEventTask->OnBlendOut.RemoveDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
+		}
+
+		if (PlayMontageWaitForEventTask->OnCompleted.IsBound())
+		{
+			PlayMontageWaitForEventTask->OnCompleted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+		}
+
+		if (PlayMontageWaitForEventTask->OnInterrupted.IsBound())
+		{
+			PlayMontageWaitForEventTask->OnInterrupted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
+		}
+
+		if (PlayMontageWaitForEventTask->OnCancelled.IsBound())
+		{
+			PlayMontageWaitForEventTask->OnCancelled.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+		}
+
+		if (PlayMontageWaitForEventTask->EventReceived.IsBound())
+		{
+			PlayMontageWaitForEventTask->EventReceived.RemoveDynamic(this, &UGA_MontageAbility::OnEventReceived);
+		}
 
 		PlayMontageWaitForEventTask->StopPlayingMontage();
 		PlayMontageWaitForEventTask->EndTask();
-		PlayMontageWaitForEventTask = nullptr;
+		PlayMontageWaitForEventTask->MarkAsGarbage();
 	}
 
 	// Yeni task oluştur
@@ -130,25 +149,40 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageBlendOut: AnimMontage is: %s"), *AnimMontage->GetName());
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::BlendOut)
+	{
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	}
 }
 
 void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageInterrupted: AnimMontage is: %s"), *AnimMontage->GetName());
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Interrupted)
+	{
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	}
 }
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	/*
+	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::BlendOut)
+	{
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageCancelled: AnimMontage is: %s"), *AnimMontage->GetName());
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+	*/
 }
 
 void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	// TO DO: COMBO MANAGER İLE TAKE DAMAGE VE COMBOYU DİNLE BAŞKA HİÇBİR CALLBACK GEREK YOK. GEREKTİĞİNDE MANUEL CANCEL OLSUN
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Completed)
+	{
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	}
 }
 
 void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)

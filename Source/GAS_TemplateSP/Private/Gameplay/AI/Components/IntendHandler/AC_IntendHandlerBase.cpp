@@ -216,7 +216,6 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload)
 {
 	OwnerStateManager->ComingAttackPayload = Payload;
-	//OwnerStateManager->SelectedReactionData = Reaction;
 	OwnerStateManager->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack);
 }
 

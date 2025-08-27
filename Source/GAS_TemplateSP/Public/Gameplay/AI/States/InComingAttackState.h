@@ -40,9 +40,12 @@ protected:
 	UFUNCTION()
 	void OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
-	void OnTakeDamageFailsafeTimeout();
-	FTimerHandle TakeDamageFailsafeTimer;
 	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility;
+
+	UFUNCTION()
+	void OnComingAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+
+	UGAS_GameplayAbilityBase* LastComingAttackAbility;
 
 	//********************* PARRY *********************/
 

@@ -60,6 +60,7 @@ void UInComingAttackState::OnExit_Implementation()
 		}
 		LastUsedTakeDamageAbility = nullptr;
 	}
+
 }
 
 void UInComingAttackState::SelectAndMakeInComingAttackReaction()
@@ -100,16 +101,16 @@ void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* B
 		}
 	}
 
-	// Komboyu/movement'i durdurma buraya da ekleyebilirsin ama zaten TriggerIncomingReaction içinde var.
-	//EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnTakeDamageTagRemoved);
+	UGAS_GameplayAbilityBase* ComingAttack = StateManager->ComingAttackPayload.ComingAttack;
+	if (ComingAttack)
+	{
+		if (!ComingAttack->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnComingAttackAbilityEnded))
+		{
+			ComingAttack->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnComingAttackAbilityEnded);
+		}
+	}
 
-// Eğer ability aktif edilirse dinlenecek zaten
-// Şimdi failsafe başlat — eğer ability 0.3 saniye içinde aktive edilmezse çık
-	Enemy->GetWorldTimerManager().SetTimer(TakeDamageFailsafeTimer, this,
-		&UInComingAttackState::OnTakeDamageFailsafeTimeout,
-		0.3f, false);
-
-	UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamage failsafe timer started."));
+	LastComingAttackAbility = ComingAttack;
 }
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
@@ -137,9 +138,16 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageFailsafeTimer clear."));
-	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
 	LastUsedTakeDamageAbility = TakeDamageAbility;
+
+	if (LastComingAttackAbility)
+	{
+		if (LastComingAttackAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnComingAttackAbilityEnded))
+		{
+			LastComingAttackAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnComingAttackAbilityEnded);
+		}
+		LastComingAttackAbility = nullptr;
+	}
 }
 
 void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
@@ -147,9 +155,9 @@ void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& D
 	ExitRequest("OnTakeDamageAbilityEnded");
 }
 
-void UInComingAttackState::OnTakeDamageFailsafeTimeout()
+void UInComingAttackState::OnComingAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest("OnTakeDamageFailsafeTimeout");
+	ExitRequest("OnComingAttackAbilityEnded");
 }
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)

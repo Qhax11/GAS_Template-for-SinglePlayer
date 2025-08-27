@@ -30,7 +30,8 @@ enum ETraceDirectionType : uint8
 };
 
 #define ECC_DEAD ECC_GameTraceChannel1
-#define ECC_DAMAGE ECC_GameTraceChannel2
+#define ECC_ENEMY ECC_GameTraceChannel2
+#define ECC_HERO ECC_GameTraceChannel3
 
 USTRUCT(BlueprintType)
 struct FTraceRequest
@@ -74,7 +75,7 @@ public:
 	bool bIgnoreSelf = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
-	TEnumAsByte<ECollisionChannel> TraceChannel = ECollisionChannel::ECC_DAMAGE;
+	TEnumAsByte<ECollisionChannel> TraceChannel = ECollisionChannel::ECC_ENEMY;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TraceParams", meta = (ExposeOnSpawn = true))
 	float TraceDistance = .0f;

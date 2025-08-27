@@ -56,7 +56,9 @@ void UAttackState::SelectAndMakeAttack()
 
 	if (SelectedAttackClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
 	{
-		MakeComboAttack();
+		MakeAttack();
+
+		//MakeComboAttack();
 	}
 	else if (SelectedAttackClass->IsChildOf(UGA_BossShadowAttack::StaticClass()))
 	{

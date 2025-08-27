@@ -124,12 +124,7 @@ void UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved(const UAbilitySystemComp
 void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData)
 {
 	Super::OnComboAbilityEnd(ComboAbilityEndedData);
-	/*
-	if (EndedData.AbilitySpecHandle != ActiveComboChainTracker.CurrentAbilitySpecHandle)
-	{
-		return;
-	}
-	*/
+
 	// It is mean combo ability ended with take damage, we need listen end of it.
 	bool OnTakeDamage = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 	if (OnTakeDamage) 

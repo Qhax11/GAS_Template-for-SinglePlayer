@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
+#include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
 
 void UBDS_GetBestAttack::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {
@@ -45,7 +46,9 @@ FAttackData UBDS_GetBestAttack::GetBestAttack()
 
         float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(Attack, EnemyController->GetTargetHeroDistance());
 
-        float TotalScore = Attack.ScoreBias + DistanceScore;
+        float ComboScore = CalculateComboScore(Attack);
+
+        float TotalScore = Attack.ScoreBias + DistanceScore + ComboScore;
 
         if (TotalScore > BestScore)
         {
@@ -61,10 +64,9 @@ FAttackData UBDS_GetBestAttack::GetBestAttack()
             FString::Printf(TEXT(">> Selected Attack: %s | DistanceScore: %.1f"),
                 *BestAttack.AbilityClass->GetName(), BestAttackDistanceScore));
     }
-
-    LastSelectedAttackAbilityData = BestAttack;
     */
 
+    LastSelectedAttackAbilityData = BestAttack;
     return BestAttack;
 }
 
@@ -90,5 +92,31 @@ float UBDS_GetBestAttack::CalculateAttackAbilityScoreBasedOnTargetDistance(FAtta
     }
 
     return Score;
+}
+
+float UBDS_GetBestAttack::CalculateComboScore(FAttackData AttackData)
+{
+    // If there is no valid last attack or it wasn't part of a combo chain
+    if (!LastSelectedAttackAbilityData.AbilityClass || !LastSelectedAttackAbilityData.bIsComboAttack)
+    {
+        return 0.0f;
+    }
+
+    // If the current candidate isn't a combo attack, skip
+    if (!AttackData.bIsComboAttack)
+    {
+        return 0.0f;
+    }
+
+    // Expected combo index is always the next step after the last selected
+    int32 ExpectedNextIndex = LastSelectedAttackAbilityData.ComboIndex + 1;
+
+    // If this attack matches the expected combo step, give it a strong score
+    if (AttackData.ComboIndex == ExpectedNextIndex)
+    {
+        return 100.0f;
+    }
+
+    return 0.0f;
 }
 

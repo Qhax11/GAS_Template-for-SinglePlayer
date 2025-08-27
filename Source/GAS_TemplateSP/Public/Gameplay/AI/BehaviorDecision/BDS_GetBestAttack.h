@@ -18,6 +18,12 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Whether this attack is part of a combo chain"))
+    bool bIsComboAttack;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Combo index used for ordering within a combo chain "), meta = (EditCondition = "bIsComboAttack"))
+    int32 ComboIndex = 0;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Base score bias applied to AI decision-making"))
     float ScoreBias = 0.f;
 };
@@ -45,6 +51,10 @@ public:
 protected:
     float CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);
 
+    float CalculateComboScore(FAttackData AttackData);
+
     UPROPERTY()
     UAttackAbilityAsset* AttackAbilityAsset;
+
+    FAttackData LastSelectedAttackAbilityData;
 };

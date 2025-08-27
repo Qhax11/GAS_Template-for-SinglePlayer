@@ -105,13 +105,11 @@ void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* B
 
 // Eğer ability aktif edilirse dinlenecek zaten
 // Şimdi failsafe başlat — eğer ability 0.2 saniye içinde aktive edilmezse çık
-	/*
 	Enemy->GetWorldTimerManager().SetTimer(TakeDamageFailsafeTimer, this,
 		&UInComingAttackState::OnTakeDamageFailsafeTimeout,
 		0.2f, false);
 
 	UE_LOG(LogTemp, Warning, TEXT("TakeDamage failsafe timer started."));
-	*/
 }
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
@@ -133,6 +131,7 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 		}
 	}
 
+	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
 	LastUsedTakeDamageAbility = TakeDamageAbility;
 }
 
@@ -143,14 +142,7 @@ void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& D
 
 void UInComingAttackState::OnTakeDamageFailsafeTimeout()
 {
-	if (!EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Tag already removed at bind time. Forcing exit."));
-		ExitRequest("OnTakeDamageFailsafeTimeout");
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Failsafe triggered: TakeDamage ability not activated in time."));
-	//ExitRequest();
+	ExitRequest("OnTakeDamageFailsafeTimeout");
 }
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)

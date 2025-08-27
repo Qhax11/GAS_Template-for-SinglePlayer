@@ -104,27 +104,27 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	// Eğer önceki task varsa onu temizle (montage da kesinlikle durmalı)
 	if (PlayMontageWaitForEventTask)
 	{
-		if (PlayMontageWaitForEventTask->OnBlendOut.IsBound()) 
+		if (PlayMontageWaitForEventTask->OnBlendOut.IsAlreadyBound(this, &UGA_MontageAbility::OnMontageBlendOut))
 		{
 			PlayMontageWaitForEventTask->OnBlendOut.RemoveDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
 		}
 
-		if (PlayMontageWaitForEventTask->OnCompleted.IsBound())
+		if (PlayMontageWaitForEventTask->OnCompleted.IsAlreadyBound(this, &UGA_MontageAbility::OnMontageCompleted))
 		{
 			PlayMontageWaitForEventTask->OnCompleted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
 		}
 
-		if (PlayMontageWaitForEventTask->OnInterrupted.IsBound())
+		if (PlayMontageWaitForEventTask->OnInterrupted.IsAlreadyBound(this, &UGA_MontageAbility::OnMontageInterrupted))
 		{
 			PlayMontageWaitForEventTask->OnInterrupted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
 		}
 
-		if (PlayMontageWaitForEventTask->OnCancelled.IsBound())
+		if (PlayMontageWaitForEventTask->OnCancelled.IsAlreadyBound(this, &UGA_MontageAbility::OnMontageCancelled))
 		{
 			PlayMontageWaitForEventTask->OnCancelled.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
 		}
 
-		if (PlayMontageWaitForEventTask->EventReceived.IsBound())
+		if (PlayMontageWaitForEventTask->EventReceived.IsAlreadyBound(this, &UGA_MontageAbility::OnEventReceived))
 		{
 			PlayMontageWaitForEventTask->EventReceived.RemoveDynamic(this, &UGA_MontageAbility::OnEventReceived);
 		}

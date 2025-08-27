@@ -131,7 +131,6 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 
 		PlayMontageWaitForEventTask->StopPlayingMontage();
 		PlayMontageWaitForEventTask->EndTask();
-		PlayMontageWaitForEventTask->MarkAsGarbage();
 	}
 
 	// Yeni task oluştur

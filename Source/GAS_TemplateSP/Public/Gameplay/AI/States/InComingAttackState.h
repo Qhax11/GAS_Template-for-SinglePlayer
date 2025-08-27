@@ -42,7 +42,7 @@ protected:
 
 	void OnTakeDamageFailsafeTimeout();
 	FTimerHandle TakeDamageFailsafeTimer;
-
+	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility;
 
 	//********************* PARRY *********************/
 

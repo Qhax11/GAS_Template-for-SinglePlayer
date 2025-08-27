@@ -51,6 +51,15 @@ void UInComingAttackState::OnExit_Implementation()
 			DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UInComingAttackState::OnDamageDealt);
 		}
 	}
+
+	if (LastUsedTakeDamageAbility)
+	{
+		if (LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+		{
+			LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+		}
+		LastUsedTakeDamageAbility = nullptr;
+	}
 }
 
 void UInComingAttackState::SelectAndMakeInComingAttackReaction()
@@ -115,14 +124,16 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
 	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
 
-	UGAS_GameplayAbilityBase* TakeDamage = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamage, Payload);
-	if (TakeDamage)
+	UGAS_GameplayAbilityBase* TakeDamageAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamage, Payload);
+	if (TakeDamageAbility)
 	{
-		if (!TakeDamage->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+		if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
 		{
-			TakeDamage->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+			TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
 		}
 	}
+
+	LastUsedTakeDamageAbility = TakeDamageAbility;
 }
 
 void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)

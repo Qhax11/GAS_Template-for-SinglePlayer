@@ -109,11 +109,17 @@ void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* B
 		&UInComingAttackState::OnTakeDamageFailsafeTimeout,
 		0.2f, false);
 
-	UE_LOG(LogTemp, Warning, TEXT("TakeDamage failsafe timer started."));
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamage failsafe timer started."));
 }
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
+	if (DamageData.ExecCalculationParameters.SourceActor != Enemy) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt SourceActor is not Enemy."));
+		return;
+	}
+
 	// Prepare payload
 	FGameplayEventData Payload;
 	Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage;
@@ -131,6 +137,7 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 		}
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageFailsafeTimer clear."));
 	Enemy->GetWorldTimerManager().ClearTimer(TakeDamageFailsafeTimer);
 	LastUsedTakeDamageAbility = TakeDamageAbility;
 }

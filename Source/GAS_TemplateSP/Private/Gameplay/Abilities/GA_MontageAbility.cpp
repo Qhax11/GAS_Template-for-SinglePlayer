@@ -102,32 +102,14 @@ void UGA_MontageAbility::CleanupMotionWarping()
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
 	// Eğer önceki task varsa onu temizle (montage da kesinlikle durmalı)
-	if (PlayMontageWaitForEventTask)
+	if (PlayMontageWaitForEventTask && !PlayMontageWaitForEventTask->IsPendingKillEnabled())
 	{
-		if (PlayMontageWaitForEventTask->OnBlendOut.IsAlreadyBound(this, &UGA_MontageAbility::OnMontageBlendOut))
-		{
-			PlayMontageWaitForEventTask->OnBlendOut.RemoveDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
-		}
-
-		if (PlayMontageWaitForEventTask->OnCompleted.IsAlreadyBound(this, &UGA_MontageAbility::OnMontageCompleted))
-		{
-			PlayMontageWaitForEventTask->OnCompleted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-		}
-
-		if (PlayMontageWaitForEventTask->OnInterrupted.IsAlreadyBound(this, &UGA_MontageAbility::OnMontageInterrupted))
-		{
-			PlayMontageWaitForEventTask->OnInterrupted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
-		}
-
-		if (PlayMontageWaitForEventTask->OnCancelled.IsAlreadyBound(this, &UGA_MontageAbility::OnMontageCancelled))
-		{
-			PlayMontageWaitForEventTask->OnCancelled.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-		}
-
-		if (PlayMontageWaitForEventTask->EventReceived.IsAlreadyBound(this, &UGA_MontageAbility::OnEventReceived))
-		{
-			PlayMontageWaitForEventTask->EventReceived.RemoveDynamic(this, &UGA_MontageAbility::OnEventReceived);
-		}
+		// All delegates related to 'this' object will be removed safely
+		PlayMontageWaitForEventTask->OnBlendOut.RemoveAll(this);
+		PlayMontageWaitForEventTask->OnCompleted.RemoveAll(this);
+		PlayMontageWaitForEventTask->OnInterrupted.RemoveAll(this);
+		PlayMontageWaitForEventTask->OnCancelled.RemoveAll(this);
+		PlayMontageWaitForEventTask->EventReceived.RemoveAll(this);
 
 		PlayMontageWaitForEventTask->StopPlayingMontage();
 		PlayMontageWaitForEventTask->EndTask();
@@ -137,11 +119,13 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
 		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
 
+	// Delegates ekle
 	PlayMontageWaitForEventTask->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
 	PlayMontageWaitForEventTask->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
 	PlayMontageWaitForEventTask->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
 	PlayMontageWaitForEventTask->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
 	PlayMontageWaitForEventTask->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
+
 	PlayMontageWaitForEventTask->ReadyForActivation();
 }
 

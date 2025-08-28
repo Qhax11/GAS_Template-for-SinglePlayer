@@ -25,7 +25,7 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	if (!AnimMontage)
+	if (!AnimMontage && !IsValid(AnimMontage))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AnimMontage is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);

@@ -165,7 +165,7 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 	BDS_Parry = Cast<UBDS_ComingAttackReaction_Parry>(BestComingAttackReaction);
 	if (!BDS_Parry)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BDS_Parry is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: BDS_Parry is null in: %s"), *GetName());
 		return;
 	}
 
@@ -184,14 +184,14 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 	TagDelegates->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagAdded);
 	TagDelegates->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagRemoved);
 
-	UE_LOG(LogTemp, Warning, TEXT("MakeParryAbility executed."));
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility executed."));
 }
 
 void UInComingAttackState::OnParryTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	if (bParryKnockbackHappened)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Parry ended but knockback already triggered. Ignoring."));
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: Parry ended but knockback already triggered. Ignoring."));
 		return;
 	}
 
@@ -206,7 +206,7 @@ void UInComingAttackState::OnParryTagRemoved(const UAbilitySystemComponent* Abil
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Parry ended, but knockback happened after. Exit handled elsewhere."));
+				UE_LOG(LogTemp, Warning, TEXT("State Manager: Parry ended, but knockback happened after. Exit handled elsewhere."));
 			}
 		}, 0.1f, false); // 0.05–0.1s delay is usually safe for reaction window
 }
@@ -220,7 +220,7 @@ void UInComingAttackState::OnParryKnocbackTagAdded(const UAbilitySystemComponent
 		FTimerHandle DelayHandle;
 		Enemy->GetWorldTimerManager().SetTimer(DelayHandle, [this]()
 			{
-				ExitRequest("ParryKnockbackTimer");
+				ExitRequest("State Manager: ParryKnockbackTimer");
 			}, 0.1f, false); 
 	}
 }

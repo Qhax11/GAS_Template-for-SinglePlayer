@@ -4,14 +4,16 @@
 #include "Gameplay/AI/States/InComingAttackState.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
-#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
-#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReaction_Parry.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReaction_Dodge.h"
 #include "Gameplay/Abilities/GA_TakeDamageBase.h"
 #include "Gameplay/AI/Components/IntendHandler/AC_IntendHandlerBase.h"
 #include <Gameplay/StaticDelegates/S_DamageDelegates.h>
 
+
+UInComingAttackState::UInComingAttackState()
+{
+	StateTag = GAS_Tags::TAG_AI_State_InComingAttack;
+}
 
 void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -35,15 +37,6 @@ void UInComingAttackState::OnExit_Implementation()
 		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 	}
 
-	if (LastUsedDodgeAbility)
-	{
-		if (LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnDodgeAbilityEnded))
-		{
-			LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnDodgeAbilityEnded);
-		}
-		LastUsedDodgeAbility = nullptr;
-	}
-
 	if (DamageSubsystem)
 	{
 		if (DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
@@ -63,32 +56,27 @@ void UInComingAttackState::OnExit_Implementation()
 
 }
 
-void UInComingAttackState::SelectAndMakeInComingAttackReaction()
+bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 {
 	UBDS_ComingAttackReactionBase* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
 	if (!SelectedBestReaction) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectedBestReaction is null in: %s"), *GetName());
-		return;
+		return false;
 	}
 
-	switch (SelectedBestReaction->ReactionType)
+	if (SelectedBestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
-	case EComingAttackReaction::Parry:
-		MakeParryAbility(SelectedBestReaction);
-		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeParryAbility"));
-		break;
-
-	case EComingAttackReaction::Dodge:
-		ActivateDodgeAbility(SelectedBestReaction);
-		UE_LOG(LogTemp, Warning, TEXT("Triggered ActivateDodgeAbility"));
-		break;
-
-	case EComingAttackReaction::TakeDamage:
 		MakeTakeDamage(SelectedBestReaction);
-		UE_LOG(LogTemp, Warning, TEXT("Triggered MakeTakeDamage"));
-		break;
+		return true;
 	}
+	else if(SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
+	{
+		MakeParryAbility(SelectedBestReaction);
+		return true;
+	}
+
+	return false;
 }
 
 void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
@@ -228,54 +216,6 @@ void UInComingAttackState::OnParryKnocbackTagAdded(const UAbilitySystemComponent
 void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	ExitRequest("OnParryKnocbackTagRemoved");
-}
-
-void UInComingAttackState::ActivateDodgeAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
-{
-	const UBDS_ComingAttackReaction_Dodge* BDS_Dodge = Cast<UBDS_ComingAttackReaction_Dodge>(BestComingAttackReaction);
-	if (!BDS_Dodge)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("BDS_Dodge is null in: %s"), *GetName());
-		return;
-	}
-
-	if (Enemy && HeroTarget)
-	{
-		FVector StartLocation = Enemy->GetActorLocation();
-		FVector TargetLocation = HeroTarget->GetActorLocation();
-
-		// Yalnızca yaw (yatay) rotasyonu hesapla, pitch ve roll sabit kalsın
-		FRotator LookAtRotation = (TargetLocation - StartLocation).Rotation();
-		LookAtRotation.Pitch = 0.f;
-		LookAtRotation.Roll = 0.f;
-
-		Enemy->SetActorRotation(LookAtRotation);
-	}
-
-	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
-
-	FGameplayEventData GameplayEventData = FGameplayEventData();
-	GameplayEventData.InstigatorTags.AddTag(BDS_Dodge->DodgeMovementAbilityData.ResolvedDirectionTag);
-	GameplayEventData.EventTag = BDS_Dodge->DodgeMovementAbilityData.AbilityTriggerTag;
-	GameplayEventData.EventMagnitude = BDS_Dodge->DodgeMovementAbilityData.AbilityEventMagnitude;
-
-	UGAS_GameplayAbilityBase* ActivatedAbility =
-	EnemyASC->TryActivateAbilityByClassWithEventData(BDS_Dodge->DodgeMovementAbilityData.MovementAbilityClass, GameplayEventData);
-	if (ActivatedAbility)
-	{
-		if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnDodgeAbilityEnded))
-		{
-			ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnDodgeAbilityEnded);
-		}
-
-		LastUsedDodgeAbility = ActivatedAbility;
-	}
-}
-
-void UInComingAttackState::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
-{
-	ExitRequest("OnDodgeAbilityEnded");
 }
 
 

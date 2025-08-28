@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "Gameplay/AI/States/AttackStateBase.h"
-#include "CrowdEnemy_State_Attack.generated.h"
+#include "Gameplay/AI/States/InComingAttackState.h"
+#include "CrowdEnemy_State_IncomingAttack.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UCrowdEnemy_State_Attack : public UAttackStateBase
+class GAS_TEMPLATESP_API UCrowdEnemy_State_IncomingAttack : public UInComingAttackState
 {
 	GENERATED_BODY()
 	
@@ -18,6 +18,4 @@ public:
 
 	virtual void OnExit_Implementation() override;
 
-protected:
-	class US_AICrowdEventManager* AICrowdEventManager;
 };

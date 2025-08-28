@@ -2,11 +2,9 @@
 
 
 #include "Gameplay/AI/Components/AC_StateManager.h"
-#include "Gameplay/AI/States/AttackState.h"
-#include "Gameplay/AI/States/MovementState.h"
-#include "Gameplay/AI/States/InComingAttackState.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 
 
 UAC_StateManager::UAC_StateManager()
@@ -250,7 +248,6 @@ bool UAC_StateManager::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBas
 	}
 
 	UGAS_GameplayAbilityBase* AbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-
 	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())
 	{
 		return true;

@@ -4,6 +4,8 @@
 
 #include "Gameplay/AI/States/StateBase.h"
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "InComingAttackState.generated.h"
 
 struct FDamageData;
@@ -14,6 +16,8 @@ class GAS_TEMPLATESP_API UInComingAttackState : public UStateBase
 	GENERATED_BODY()
 
 public:
+	UInComingAttackState();
+
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
 	virtual void OnEnter_Implementation() override;
@@ -28,7 +32,7 @@ protected:
 
 	FTimerHandle DelayedReactionTimerHandle;
 
-	void SelectAndMakeInComingAttackReaction();
+	virtual bool SelectAndMakeInComingAttackReaction();
 
 	//********************* TAKE DAMAGE *********************/
 
@@ -62,17 +66,5 @@ protected:
 
 	const class UBDS_ComingAttackReaction_Parry* BDS_Parry;
 	bool bParryKnockbackHappened = false;
-
-	//********************* DODGE *********************/
-
-	void ActivateDodgeAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
-
-	// Exit of Dodge.
-	UFUNCTION()
-	void OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
-
-	UGAS_GameplayAbilityBase* LastUsedDodgeAbility;
-
-
 
 };

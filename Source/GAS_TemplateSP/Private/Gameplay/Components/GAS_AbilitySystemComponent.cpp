@@ -2,6 +2,7 @@
 
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 
 
 void UGAS_AbilitySystemComponent::BeginPlay()

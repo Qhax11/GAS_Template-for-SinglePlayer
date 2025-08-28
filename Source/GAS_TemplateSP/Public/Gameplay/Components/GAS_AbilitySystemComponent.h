@@ -6,7 +6,6 @@
 #include "GameplayTagContainer.h"
 #include "Templates/SubclassOf.h"
 #include "Engine/DataAsset.h"
-#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "GAS_AbilitySystemComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityGiven, UAbilitySystemComponent*, ASC, FGameplayAbilitySpec&, AbilitySpec);
@@ -60,6 +59,8 @@ public:
 
 // Delegate to broadcast when an ability with a specific tag ends
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameplayAbilityEnded_BP, FGameplayTag, AbilityTag);
+
+class UGAS_GameplayAbilityBase;
 
 UCLASS()
 class GAS_TEMPLATESP_API UGAS_AbilitySystemComponent : public UAbilitySystemComponent

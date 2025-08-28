@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Attributes/AS_Base.h"
 #include "Abilities/GameplayAbilityTypes.h"
+#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "GAS_GameplayAbilityBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityLevelChanged, UGameplayAbility*, Ability, int32, NewLevel);
@@ -47,6 +48,12 @@ UCLASS(BlueprintType)
 class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
 {
 	GENERATED_BODY()
+
+public:
+	FORCEINLINE UGAS_AbilitySystemComponent* GetASC() const
+	{
+		return CastChecked<UGAS_AbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get());
+	}
 
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);

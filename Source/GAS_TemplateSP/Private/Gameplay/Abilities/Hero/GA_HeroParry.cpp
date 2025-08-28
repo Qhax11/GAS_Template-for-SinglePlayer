@@ -2,11 +2,9 @@
 
 
 #include "Gameplay/Abilities/Hero/GA_HeroParry.h"
-#include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
-#include "GameFramework/RootMotionSource.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "Gameplay/Abilities/Tasks/GAS_Task_PlayMontageWaitForEvent.h"
+#include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
 
 bool UGA_HeroParry::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
@@ -55,53 +53,9 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty, EListenMode::OnAdded).BindDynamic(this, &UGA_HeroParry::OnPostureEmptyTagAdded);
 }
 
-void UGA_HeroParry::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGA_HeroParry::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	// Overridden so that when the knockback montage is played/interrupted, 
-	// the ability does NOT end. Prevents automatic ending of the ability on interruption.
-}
-
-void UGA_HeroParry::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	// Overridden so that when the knockback montage is played/interrupted, 
-    // the ability does NOT end. Prevents automatic ending of the ability on interruption.
-}
-
-void UGA_HeroParry::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	// Overridden so that when the knockback montage is played/interrupted, 
-	// the ability does NOT end. Prevents automatic ending of the ability on interruption.
-}
-
-void UGA_HeroParry::OnKnocbackMontageMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	CreatePlayMontageWaitForEvent();
-}
-
-void UGA_HeroParry::OnKnocbackMontageMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	CreatePlayMontageWaitForEvent();
-}
-
-void UGA_HeroParry::OnKnocbackMontageMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	CreatePlayMontageWaitForEvent();
-}
-
-void UGA_HeroParry::OnKnocbackMontageMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	CreatePlayMontageWaitForEvent();
-}
-
-void UGA_HeroParry::OnKnocbackMontageMontageEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_MotionWarping)
-	{
-		if (bEnableMotionWarping)
-		{
-			ActivateMotionWarping();
-		}
-	}
+	GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(GetClass());
 }
 
 void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
@@ -111,25 +65,24 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 		return;
 	}
 
-	PlayMontageKnocback = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, KnocbackMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
-	PlayMontageKnocback->OnBlendOut.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageBlendOut);
-	PlayMontageKnocback->OnCompleted.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageCompleted);
-	PlayMontageKnocback->OnInterrupted.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageInterrupted);
-	PlayMontageKnocback->OnCancelled.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageCancelled);
-	PlayMontageKnocback->EventReceived.AddDynamic(this, &UGA_HeroParry::OnKnocbackMontageMontageEventReceived);
-	PlayMontageKnocback->ReadyForActivation();
-	
-	if (!ParryKnockbackEffect)
-	{
-		return;
-	}
+	FGameplayEventData Payload;
+	Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback;
+	Payload.Instigator = DamageData.ExecCalculationParameters.SourceActor;
+	Payload.Target = DamageData.ExecCalculationParameters.TargetActor;
+	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
+	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
 
-	FGameplayEffectSpecHandle EffectSpecHandle = GetAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(ParryKnockbackEffect, 1.0f, DamageData.ExecCalculationParameters.GetSpec().GetContext());
-	if (!EffectSpecHandle.IsValid())
+	if (UGAS_AbilitySystemComponent* HeroASC = GetASC())
 	{
-		return;
+		UGAS_GameplayAbilityBase* ActivatedAbility = HeroASC->TryActivateAbilityByClassWithEventData(ParryKnockbackAbilityClass, Payload);
+		if (ActivatedAbility)
+		{
+			if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded))
+			{
+				ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded);
+			}
+		}
 	}
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
 }
 
 void UGA_HeroParry::OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -145,11 +98,6 @@ void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	if (US_DamageDelegates* DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>())
 	{
 		DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UGA_HeroParry::OnDamageDealt);
-	}
-
-	if (PlayMontageKnocback && PlayMontageKnocback->IsValidLowLevelFast())
-	{
-		PlayMontageKnocback->EndTask();
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

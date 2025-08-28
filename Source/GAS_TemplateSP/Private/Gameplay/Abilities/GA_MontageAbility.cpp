@@ -102,7 +102,7 @@ void UGA_MontageAbility::CleanupMotionWarping()
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
 	// Eğer önceki task varsa onu temizle (montage da kesinlikle durmalı)
-	if (PlayMontageWaitForEventTask && PlayMontageWaitForEventTask->IsValidLowLevelFast())
+	if (PlayMontageWaitForEventTask && IsValid(PlayMontageWaitForEventTask))
 	{
 		// All delegates related to 'this' object will be removed safely
 		PlayMontageWaitForEventTask->OnBlendOut.RemoveAll(this);

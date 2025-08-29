@@ -5,7 +5,7 @@
 #include "Gameplay/Components/AC_GameplayData.h"
 #include "Gameplay/Data/DA_ActorSounds.h"
 #include "Kismet/GameplayStatics.h"
-#include "Sound/SoundCue.h"
+#include "Sound/SoundBase.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
 
@@ -23,8 +23,8 @@ void AGCN_SoundBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayC
 		{
 			if (SoundsData->TagToSoundMap.Contains(GameplayCueTag))
 			{
-				USoundCue* AbilitySoundCue = SoundsData->TagToSoundMap[GameplayCueTag];
-				UGameplayStatics::PlaySoundAtLocation(GetWorld(), AbilitySoundCue, Target->GetActorLocation());
+				USoundBase* AbilitySound = SoundsData->TagToSoundMap[GameplayCueTag];
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), AbilitySound, Target->GetActorLocation());
 			}
 			else
 			{

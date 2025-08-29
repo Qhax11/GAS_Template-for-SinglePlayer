@@ -226,7 +226,6 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 	{
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 	}
-
 }
 
 float UAC_StateManager::GetTargetDistance() const

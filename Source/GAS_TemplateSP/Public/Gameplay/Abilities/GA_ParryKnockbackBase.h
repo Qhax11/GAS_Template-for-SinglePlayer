@@ -56,6 +56,12 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* OwnerInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+    /**
+    * Retrieves the attack type tag from the incoming melee attack.
+    * Each melee attack ability contains its own AttackType tag (Light, Heavy, etc.).
+    */
+    FGameplayTag GetAttackTypeTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack);
+
 	UPROPERTY(EditDefaultsOnly, Category = "ParryKnockback")
 	TSubclassOf<UGameplayEffect> ParryKnockbackEffect;
 

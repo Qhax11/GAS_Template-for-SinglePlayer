@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
+#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "AbilitySystemGlobals.h"
 
 UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
@@ -26,8 +27,6 @@ void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	Super::ActivateAbility(Handle, OwnerInfo, ActivationInfo, TriggerEventData);
-
 	if (!TriggerEventData || !TriggerEventData->Instigator)
 	{
 		return;
@@ -46,4 +45,31 @@ void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 	}
 
 	InstigatorASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+
+	const UGA_MeleeAttackBase* MeleeAttack = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility());
+	if (!MeleeAttack)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MeleeAttackBase is null in: %s"), *GetName());
+		return;
+	}
+
+	FGameplayTag AttackType = GetAttackTypeTagFromMeleeAttack(MeleeAttack);
+
+	MotionWarpingForce = KnockbackDataAsset->FindKnockbackForce(AttackType);
+	Super::ActivateAbility(Handle, OwnerInfo, ActivationInfo, TriggerEventData);
+}
+
+FGameplayTag UGA_ParryKnockbackBase::GetAttackTypeTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack)
+{
+	FGameplayTag AttackDirectionTag;
+	for (const FGameplayTag& Tag : MeleeAttack->AbilityTags)
+	{
+		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_Attack_Type))
+		{
+			AttackDirectionTag = Tag;
+			break;
+		}
+	}
+
+	return AttackDirectionTag;
 }

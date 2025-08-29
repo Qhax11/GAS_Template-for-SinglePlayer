@@ -98,14 +98,6 @@ FGameplayTag UGA_TakeDamageBase::GetAdjustedAttackDirectionTag(FGameplayTag InCo
 		{
 			InComingAttackDirection = GAS_Tags::TAG_AI_Direction_Resolved_Forward;
 		}
-		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_TopToBottom)
-		{
-			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_BottomToTop;
-		}
-		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_BottomToTop)
-		{
-			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_TopToBottom;
-		}
 	}
 
 	return InComingAttackDirection;

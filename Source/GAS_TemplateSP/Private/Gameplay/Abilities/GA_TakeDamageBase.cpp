@@ -57,7 +57,7 @@ FGameplayTag UGA_TakeDamageBase::GetDirectionTagFromMeleeAttack(const UGA_MeleeA
 	FGameplayTag AttackDirectionTag;
 	for (const FGameplayTag& Tag : MeleeAttack->AbilityTags)
 	{
-		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_AttackDirection))
+		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_Attack_Direction))
 		{
 			AttackDirectionTag = Tag;
 			break;
@@ -82,21 +82,21 @@ FGameplayTag UGA_TakeDamageBase::GetAdjustedAttackDirectionTag(FGameplayTag InCo
 	// Character is facing away(backward)
 	if (Dot < 0.f) 
 	{
-		if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_LeftToRight) 
+		if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_Attack_Direction_LeftToRight) 
 		{
-			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_RightToLeft;
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_Attack_Direction_RightToLeft;
 		}
-		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_RightToLeft)
+		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_Attack_Direction_RightToLeft)
 		{
-			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_LeftToRight;
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_Attack_Direction_LeftToRight;
 		}
-		else if (InComingAttackDirection == GAS_Tags::TAG_AI_Direction_Resolved_Forward)
+		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_Attack_Direction_Forward)
 		{
-			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_Backward;
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_Attack_Direction_Backward;
 		}
-		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_Backward)
+		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_Attack_Direction_Backward)
 		{
-			InComingAttackDirection = GAS_Tags::TAG_AI_Direction_Resolved_Forward;
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_Attack_Direction_Forward;
 		}
 	}
 

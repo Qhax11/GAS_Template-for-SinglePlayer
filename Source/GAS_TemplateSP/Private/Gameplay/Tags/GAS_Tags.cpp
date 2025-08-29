@@ -104,13 +104,17 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash, "Gameplay.Ability.Movement.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash_Cooldown, "Gameplay.Ability.Movement.Dash.Cooldown");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection, "Gameplay.Ability.AttackDirection");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_RightToLeft, "Gameplay.Ability.AttackDirection.RightToLeft");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_LeftToRight, "Gameplay.Ability.AttackDirection.LeftToRight");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_BottomToTop, "Gameplay.Ability.AttackDirection.BottomToTop");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_TopToBottom, "Gameplay.Ability.AttackDirection.TopToBottom");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_Forward, "Gameplay.Ability.AttackDirection.Forward");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_Backward, "Gameplay.Ability.AttackDirection.Backward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction, "Gameplay.Ability.Attack.Direction");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_RightToLeft, "Gameplay.Ability.Attack.Direction.RightToLeft");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_LeftToRight, "Gameplay.Ability.Attack.Direction.LeftToRight");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_BottomToTop, "Gameplay.Ability.Attack.Direction.BottomToTop");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_TopToBottom, "Gameplay.Ability.Attack.Direction.TopToBottom");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_Forward, "Gameplay.Ability.Attack.Direction.Forward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_Backward, "Gameplay.Ability.Attack.Direction.Backward");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type, "Gameplay.Ability.Attack.Type");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type_Light, "Gameplay.Ability.Attack.Type.Light");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type_Heavy, "Gameplay.Ability.Attack.Type.Heavy");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_Dash, "Gameplay.Tutorial.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_MeleeCombo, "Gameplay.Tutorial.MeleeCombo");

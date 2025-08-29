@@ -53,6 +53,17 @@ void UBoss_State_Attack::MakeShadowAttack()
 	}
 }
 
+void UBoss_State_Attack::ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData)
+{
+	/*
+	if (ShadowActorData.AbilityClass)
+	{
+		EnemyASC->TryActivateAbilityByClass(ShadowActorData.AbilityClass);
+
+	}
+	*/
+}
+
 void UBoss_State_Attack::OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData)
 {
 	// If it dosen't cancelled it's mean executed and we keep listening from executed side
@@ -60,22 +71,6 @@ void UBoss_State_Attack::OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& S
 	{
 		ExitRequest("OnShadowAttackAbilityEnded");
 	}
-}
-
-void UBoss_State_Attack::ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData)
-{
-	/*
-	if (ShadowActorData.AbilityClass && ShadowActorData.AbilityClass->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
-	{
-		TSubclassOf<UGA_ComboMeleeAttack> ComboClass = TSubclassOf<UGA_ComboMeleeAttack>(ShadowActorData.AbilityClass);
-		Enemy->GetEnemyMeleeComboManagerComponent()->StartComboChainWithClass(ComboClass, FName("Section2"));
-
-		if (!Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.IsAlreadyBound(this, &UAttackState::OnComboChaindEnded))
-		{
-			Enemy->GetEnemyMeleeComboManagerComponent()->OnComboEnded.AddDynamic(this, &UAttackState::OnComboChaindEnded);
-		}
-	}
-	*/
 }
 
 void UBoss_State_Attack::OnExit_Implementation()

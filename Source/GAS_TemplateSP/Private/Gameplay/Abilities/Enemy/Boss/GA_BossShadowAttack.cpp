@@ -92,7 +92,9 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 		{
 			EnemyMovementManagerComp->StopMovementAbilities();
 		}
+
 		OnBossShadowAttackCompleted.Broadcast(TargetActorData);
+
 		Super::OnTargetActorConfirm(TargetActorData);
 		return;
 	}

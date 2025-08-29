@@ -72,11 +72,12 @@ protected:
 
     float CalculateTagScore(const FComingAttackPayload ComingAttackPayload) const;
 
+    bool PassesFinalChanceRoll() const;
+
     bool PassesChanceRoll() const;
 
     bool PassesChanceRollBasedOnPosture() const;
 
-    bool PassesFinalChanceRoll() const;
 
     UPROPERTY()
     UComingAttackReactionAsset* ComingAttackReactionAsset;

@@ -60,6 +60,23 @@ float UBDS_ComingAttackReactionBase::CalculateTagScore(const FComingAttackPayloa
 	return Score;
 }
 
+bool UBDS_ComingAttackReactionBase::PassesFinalChanceRoll() const
+{
+    if (ReactionType == EComingAttackReaction::Dodge)
+    {
+        return PassesChanceRoll();
+    }
+    else if (ReactionType == EComingAttackReaction::Parry)
+    {
+        return PassesChanceRollBasedOnPosture();
+    }
+    // ReactionType == EComingAttackReaction::TakeDamage
+    else 
+    {
+        return true;
+    }
+}
+
 bool UBDS_ComingAttackReactionBase::PassesChanceRoll() const
 {
     const float Roll = FMath::FRandRange(0.f, 1.f);  
@@ -94,21 +111,5 @@ bool UBDS_ComingAttackReactionBase::PassesChanceRollBasedOnPosture() const
         bPassed ? TEXT("PASS") : TEXT("FAIL"));
 
     return bPassed;
-}
-
-bool UBDS_ComingAttackReactionBase::PassesFinalChanceRoll() const
-{
-    if (ReactionType == EComingAttackReaction::Parry)
-    {
-        return PassesChanceRollBasedOnPosture();
-    }
-    else if(ReactionType == EComingAttackReaction::Dodge)
-    {
-        return PassesChanceRoll();
-    }
-    else
-    {
-        return true;
-    }
 }
 

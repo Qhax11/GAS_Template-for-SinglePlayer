@@ -114,6 +114,7 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type, "Gameplay.Ability.Attack.Type");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type_Light, "Gameplay.Ability.Attack.Type.Light");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type_Mid, "Gameplay.Ability.Attack.Type.Mid");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type_Heavy, "Gameplay.Ability.Attack.Type.Heavy");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_Dash, "Gameplay.Tutorial.Dash");

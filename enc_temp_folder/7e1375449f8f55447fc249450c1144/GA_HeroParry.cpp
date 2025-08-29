@@ -5,7 +5,6 @@
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
-#include "Abilities/Tasks/AbilityTask_WaitInputRelease.h"
 
 bool UGA_HeroParry::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
@@ -52,17 +51,6 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 
 	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty, EListenMode::OnAdded).BindDynamic(this, &UGA_HeroParry::OnPostureEmptyTagAdded);
-
-	if (UAbilityTask_WaitInputRelease* WaitRelease = UAbilityTask_WaitInputRelease::WaitInputRelease(this, true))
-	{
-		WaitRelease->OnRelease.AddDynamic(this, &UGA_HeroParry::OnInputReleased);
-		WaitRelease->ReadyForActivation();
-	}
-}
-
-void UGA_HeroParry::OnInputReleased(float TimeHeld)
-{
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, true);
 }
 
 void UGA_HeroParry::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)

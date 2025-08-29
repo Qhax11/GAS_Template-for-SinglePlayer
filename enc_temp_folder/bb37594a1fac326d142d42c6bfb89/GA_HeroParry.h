@@ -17,9 +17,6 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	UFUNCTION()
-	void OnInputReleased(float TimeHeld);
-
 	UPROPERTY(EditDefaultsOnly, Category = "ParryKnocback")
 	TSubclassOf<class UGA_ParryKnockbackBase> ParryKnockbackAbilityClass;
 

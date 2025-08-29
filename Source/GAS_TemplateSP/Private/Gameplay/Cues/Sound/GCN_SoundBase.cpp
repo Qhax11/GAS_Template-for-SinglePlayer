@@ -11,25 +11,55 @@
 
 void AGCN_SoundBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
 {
-	if (!Target) 
+	if (!Source || !Target)
 	{
 		return;
 	}
 
-	if (UAC_GameplayData* DataComponent = Target->GetComponentByClass<UAC_GameplayData>())
+	// Diyelim GameplayCueTag sadece bir tane
+	bool bIsSourceTag = GameplayCueTag.MatchesTag(GAS_Tags::TAG_GameplayCue_Sound_PlayOnSource);
+	bool bIsTargetTag = GameplayCueTag.MatchesTag(GAS_Tags::TAG_GameplayCue_Sound_PlayOnTarget);
+
+	if (bIsSourceTag)
 	{
-		UDA_ActorSounds* SoundsData = DataComponent->GetActorSoundsData();
-		if (SoundsData)
+		if (UAC_GameplayData* DataComponent = Source->GetComponentByClass<UAC_GameplayData>())
 		{
-			if (SoundsData->TagToSoundMap.Contains(GameplayCueTag))
+			UDA_ActorSounds* SoundsData = DataComponent->GetActorSoundsData();
+			if (SoundsData)
 			{
-				USoundBase* AbilitySound = SoundsData->TagToSoundMap[GameplayCueTag];
-				UGameplayStatics::PlaySoundAtLocation(GetWorld(), AbilitySound, Target->GetActorLocation());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("No sound found for GameplayCueTag: %s"), *GameplayCueTag.ToString());
+				if (SoundsData->TagToSoundMap.Contains(GameplayCueTag))
+				{
+					USoundBase* AbilitySound = SoundsData->TagToSoundMap[GameplayCueTag];
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), AbilitySound, Target->GetActorLocation());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("No sound found for GameplayCueTag: %s"), *GameplayCueTag.ToString());
+				}
 			}
 		}
 	}
+	else if (bIsTargetTag)
+	{
+		if (UAC_GameplayData* DataComponent = Target->GetComponentByClass<UAC_GameplayData>())
+		{
+			UDA_ActorSounds* SoundsData = DataComponent->GetActorSoundsData();
+			if (SoundsData)
+			{
+				if (SoundsData->TagToSoundMap.Contains(GameplayCueTag))
+				{
+					USoundBase* AbilitySound = SoundsData->TagToSoundMap[GameplayCueTag];
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), AbilitySound, Target->GetActorLocation());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("No sound found for GameplayCueTag: %s"), *GameplayCueTag.ToString());
+				}
+			}
+		}
+	}
+
+
+
+
 }

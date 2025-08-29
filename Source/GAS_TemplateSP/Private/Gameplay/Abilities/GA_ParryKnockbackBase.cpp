@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
+#include "AbilitySystemGlobals.h"
 
 UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
 {
@@ -27,16 +28,22 @@ void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 {
 	Super::ActivateAbility(Handle, OwnerInfo, ActivationInfo, TriggerEventData);
 
-	if (!ParryKnockbackEffect)
+	if (!TriggerEventData || !TriggerEventData->Instigator)
 	{
 		return;
 	}
 
-	FGameplayEffectSpecHandle EffectSpecHandle = GetAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(ParryKnockbackEffect, 1.0f, TriggerEventData->ContextHandle);
+	UAbilitySystemComponent* InstigatorASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TriggerEventData->Instigator);
+	if (!InstigatorASC)
+	{
+		return;
+	}
+
+	FGameplayEffectSpecHandle EffectSpecHandle = InstigatorASC->MakeOutgoingSpec(ParryKnockbackEffect, 1.0f, TriggerEventData->ContextHandle);
 	if (!EffectSpecHandle.IsValid())
 	{
 		return;
 	}
 
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+	InstigatorASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
 }

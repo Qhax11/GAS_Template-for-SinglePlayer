@@ -104,6 +104,14 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash, "Gameplay.Ability.Movement.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash_Cooldown, "Gameplay.Ability.Movement.Dash.Cooldown");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection, "Gameplay.Ability.AttackDirection");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_RightToLeft, "Gameplay.Ability.AttackDirection.RightToLeft");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_LeftToRight, "Gameplay.Ability.AttackDirection.LeftToRight");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_BottomToTop, "Gameplay.Ability.AttackDirection.BottomToTop");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_TopToBottom, "Gameplay.Ability.AttackDirection.TopToBottom");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_Forward, "Gameplay.Ability.AttackDirection.Forward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_AttackDirection_Backward, "Gameplay.Ability.AttackDirection.Backward");
+
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_Dash, "Gameplay.Tutorial.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_MeleeCombo, "Gameplay.Tutorial.MeleeCombo");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_TargetLock, "Gameplay.Tutorial.TargetLock");

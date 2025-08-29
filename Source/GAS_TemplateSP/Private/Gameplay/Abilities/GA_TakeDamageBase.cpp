@@ -11,13 +11,14 @@ UGA_TakeDamageBase::UGA_TakeDamageBase()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerExecution;
 
+	// Set the ability to trigger on TakeDamage gameplay event
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
-
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
 	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage;
 	AbilityTriggers.Add(TriggerData);
 
+	// Block activation if the character is dead or unstoppable
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
@@ -37,22 +38,87 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	if (const UGA_MeleeAttackBase* MeleeAttackBase = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility()))
+	const UGA_MeleeAttackBase* MeleeAttack = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility());
+	if (!MeleeAttack)
 	{
-		AnimMontage = GetHitMontage(MeleeAttackBase->AnimMontage);
+		UE_LOG(LogTemp, Warning, TEXT("MeleeAttackBase is null in: %s"), *GetName());
+		return;
 	}
+
+	FGameplayTag AttackDirectionTag = GetDirectionTagFromMeleeAttack(MeleeAttack);
+	FGameplayTag AdjustedTag = GetAdjustedAttackDirectionTag(AttackDirectionTag, TriggerEventData->Instigator);
+	AnimMontage = GetHitMontage(AdjustedTag);
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-UAnimMontage* UGA_TakeDamageBase::GetHitMontage(UAnimMontage* AttackMontage)
+FGameplayTag UGA_TakeDamageBase::GetDirectionTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack)
+{
+	FGameplayTag AttackDirectionTag;
+	for (const FGameplayTag& Tag : MeleeAttack->AbilityTags)
+	{
+		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_AttackDirection))
+		{
+			AttackDirectionTag = Tag;
+			break;
+		}
+	}
+
+	return AttackDirectionTag;
+}
+
+FGameplayTag UGA_TakeDamageBase::GetAdjustedAttackDirectionTag(FGameplayTag InComingAttackDirection, const AActor* Instigator)
+{
+	if (!InComingAttackDirection.IsValid() || !Instigator)
+	{
+		return FGameplayTag();
+	}
+
+	// Compute vector from character to attack instigator
+	FVector AttackDir = (Instigator->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).GetSafeNormal();
+	FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	float Dot = FVector::DotProduct(Forward, AttackDir);
+
+	// Character is facing away(backward)
+	if (Dot < 0.f) 
+	{
+		if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_LeftToRight) 
+		{
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_RightToLeft;
+		}
+		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_RightToLeft)
+		{
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_LeftToRight;
+		}
+		else if (InComingAttackDirection == GAS_Tags::TAG_AI_Direction_Resolved_Forward)
+		{
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_Backward;
+		}
+		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_Backward)
+		{
+			InComingAttackDirection = GAS_Tags::TAG_AI_Direction_Resolved_Forward;
+		}
+		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_TopToBottom)
+		{
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_BottomToTop;
+		}
+		else if (InComingAttackDirection == GAS_Tags::TAG_Gameplay_Ability_AttackDirection_BottomToTop)
+		{
+			InComingAttackDirection = GAS_Tags::TAG_Gameplay_Ability_AttackDirection_TopToBottom;
+		}
+	}
+
+	return InComingAttackDirection;
+}
+
+UAnimMontage* UGA_TakeDamageBase::GetHitMontage(FGameplayTag InComingAttackDirectionTag)
 {
 	if (!ReactionDataAsset) 
 	{
 		return nullptr;
 	}
 
-	return ReactionDataAsset->FindHitMontage(AttackMontage);
+	return ReactionDataAsset->FindHitMontage(InComingAttackDirectionTag);
 }
 
 

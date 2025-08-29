@@ -16,7 +16,6 @@ void AGCN_SoundBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayC
 		return;
 	}
 
-	// Diyelim GameplayCueTag sadece bir tane
 	bool bIsSourceTag = GameplayCueTag.MatchesTag(GAS_Tags::TAG_GameplayCue_Sound_PlayOnSource);
 	bool bIsTargetTag = GameplayCueTag.MatchesTag(GAS_Tags::TAG_GameplayCue_Sound_PlayOnTarget);
 

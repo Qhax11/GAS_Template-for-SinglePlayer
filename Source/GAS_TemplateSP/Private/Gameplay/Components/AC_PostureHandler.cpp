@@ -6,6 +6,7 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
+#include "Gameplay/Attributes/AS_Base.h"
 
 
 UAC_PostureHandler::UAC_PostureHandler()
@@ -52,16 +53,6 @@ void UAC_PostureHandler::OnAbilitySetGiven(const AActor* OwnerActor)
 		{
 			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full);
 		}
-	}
-}
-
-void UAC_PostureHandler::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	if (PostureRegenTimerHandle.IsValid() && GetWorld())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(PostureRegenTimerHandle);
 	}
 }
 
@@ -159,6 +150,13 @@ void UAC_PostureHandler::TriggerPostureRegenEffect()
 	OwnerASC->ApplyGameplayEffectSpecToSelf(PostureRegenSpec);
 }
 
+void UAC_PostureHandler::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
 
-
+	if (PostureRegenTimerHandle.IsValid() && GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(PostureRegenTimerHandle);
+	}
+}
 

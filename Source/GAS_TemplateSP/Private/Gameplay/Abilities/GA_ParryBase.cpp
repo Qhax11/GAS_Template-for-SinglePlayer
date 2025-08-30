@@ -6,7 +6,7 @@
 UGA_ParryBase::UGA_ParryBase()
 {
 	FGameplayTagContainer AbiltiyTags;
-	AbiltiyTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Parry);
+	AbiltiyTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Parry);
 	SetAssetTags(AbiltiyTags);
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);

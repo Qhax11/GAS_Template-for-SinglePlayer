@@ -165,7 +165,7 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 	}
 
 	// 2. Eðer ShadowLinked tag'i varsa Section2 offsetini çýkar
-	if (AbilityTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked))
+	if (AbilityTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeCombo_ShadowLinked))
 	{
 		const FName SectionName = FName("Section2");
 		const int32 SectionIndex = Montage->GetSectionIndex(SectionName);
@@ -190,7 +190,7 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 		return;
 	}
 
-	bool IsShadowAttack = EventPayload.ComingAttackTags.HasTagExact(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked);
+	bool IsShadowAttack = EventPayload.ComingAttackTags.HasTagExact(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeCombo_ShadowLinked);
 	if (BestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		TriggerIncomingAttackReaction(BestReaction, EventPayload);

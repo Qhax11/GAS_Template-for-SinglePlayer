@@ -8,7 +8,7 @@ UGA_ComboMeleeAttack::UGA_ComboMeleeAttack()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
 	FGameplayTagContainer AssetTags;
-	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo);
+	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeCombo);
 	SetAssetTags(AssetTags);
 }
 

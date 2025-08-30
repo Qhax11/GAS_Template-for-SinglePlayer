@@ -12,7 +12,7 @@ struct FAttackTypeKnockbackPair
     GENERATED_BODY()
 
     // The type tag of the incoming attack (e.g., Light, Heavy, Special)
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = "Gameplay.Ability.Attack.Type"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = "Gameplay.Ability.Combat.Attack.Type"))
     FGameplayTag InComingAttackTypeTag;
 
     // Knockback force magnitude applied when this type is parried

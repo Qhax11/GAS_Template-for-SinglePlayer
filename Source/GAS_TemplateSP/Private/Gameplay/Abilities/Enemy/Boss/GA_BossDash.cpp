@@ -45,10 +45,10 @@ void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 
 	FGameplayTagContainer CancelAbilityTags;
-	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Attack);
-	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Knocback);
-	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Parry);
-	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_TakeDamage);
+	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack);
+	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Knocback);
+	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Parry);
+	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_TakeDamage);
 	GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
 	
 	// Set the final velocity after root motion ends to match the dash direction and magnitude.

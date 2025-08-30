@@ -169,7 +169,7 @@ void UAC_MeleeComboManager::CancelComboAbilities()
 	}
 
 	FGameplayTagContainer CancelTags;
-	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Attack_MeleeCombo);
+	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeCombo);
 
 	CharacterBaseASC->CancelAbilities(&CancelTags);
 }

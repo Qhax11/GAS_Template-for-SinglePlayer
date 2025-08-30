@@ -8,7 +8,7 @@
 UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
 {
 	FGameplayTagContainer AssetTags;
-	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Knocback);
+	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Knocback);
 	SetAssetTags(AssetTags);
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback);
@@ -64,7 +64,7 @@ FGameplayTag UGA_ParryKnockbackBase::GetAttackTypeTagFromMeleeAttack(const UGA_M
 	FGameplayTag AttackDirectionTag;
 	for (const FGameplayTag& Tag : MeleeAttack->AbilityTags)
 	{
-		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_Attack_Type))
+		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type))
 		{
 			AttackDirectionTag = Tag;
 			break;

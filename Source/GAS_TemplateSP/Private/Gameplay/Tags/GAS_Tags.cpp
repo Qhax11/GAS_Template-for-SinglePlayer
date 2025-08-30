@@ -89,33 +89,37 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility2, "Gameplay.Hero.Ability2");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility3, "Gameplay.Hero.Ability3");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability, "Gameplay.Ability");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_TakeDamage, "Gameplay.Ability.TakeDamage");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Parry, "Gameplay.Ability.Parry");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Knocback, "Gameplay.Ability.Knocback");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack, "Gameplay.Ability.Attack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Shadow, "Gameplay.Ability.Attack.Shadow");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Shadow_Cooldown, "Gameplay.Ability.Attack.Shadow.Cooldown");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_MeleeCombo, "Gameplay.Ability.Attack.MeleeCombo");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_MeleeCombo_ShadowLinked, "Gameplay.Ability.Attack.MeleeCombo.ShadowLinked");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat, "Gameplay.Ability.Combat");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_TakeDamage, "Gameplay.Ability.Combat.TakeDamage");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Parry, "Gameplay.Ability.Combat.Parry");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Knocback, "Gameplay.Ability.Combat.Knocback");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack, "Gameplay.Ability.Combat.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Shadow, "Gameplay.Ability.Combat.Attack.Shadow");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Shadow_Cooldown, "Gameplay.Ability.Combat.Attack.Shadow.Cooldown");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_MeleeCombo, "Gameplay.Ability.Combat.Attack.MeleeCombo");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_MeleeCombo_ShadowLinked, "Gameplay.Ability.Combat.Attack.MeleeCombo.ShadowLinked");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Skill, "Gameplay.Ability.Combat.Attack.Skill");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Skill_BladeStep, "Gameplay.Ability.Combat.Attack.Skill.BladeStep");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Skill_BladeStep_Cooldown, "Gameplay.Ability.Combat.Attack.Skill.BladeStep.Cooldown");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Direction, "Gameplay.Ability.Combat.Attack.Direction");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Direction_RightToLeft, "Gameplay.Ability.Combat.Attack.Direction.RightToLeft");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Direction_LeftToRight, "Gameplay.Ability.Combat.Attack.Direction.LeftToRight");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Direction_BottomToTop, "Gameplay.Ability.Combat.Attack.Direction.BottomToTop");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Direction_TopToBottom, "Gameplay.Ability.Combat.Attack.Direction.TopToBottom");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Direction_Forward, "Gameplay.Ability.Combat.Attack.Direction.Forward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Direction_Backward, "Gameplay.Ability.Combat.Attack.Direction.Backward");
+
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type, "Gameplay.Ability.Combat.Attack.Type");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Light, "Gameplay.Ability.Combat.Attack.Type.Light");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Mid, "Gameplay.Ability.Combat.Attack.Type.Mid");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Heavy, "Gameplay.Ability.Combat.Attack.Type.Heavy");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement, "Gameplay.Ability.Movement");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Strafing, "Gameplay.Ability.Movement.Strafing");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash, "Gameplay.Ability.Movement.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash_Cooldown, "Gameplay.Ability.Movement.Dash.Cooldown");
-
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction, "Gameplay.Ability.Attack.Direction");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_RightToLeft, "Gameplay.Ability.Attack.Direction.RightToLeft");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_LeftToRight, "Gameplay.Ability.Attack.Direction.LeftToRight");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_BottomToTop, "Gameplay.Ability.Attack.Direction.BottomToTop");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_TopToBottom, "Gameplay.Ability.Attack.Direction.TopToBottom");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_Forward, "Gameplay.Ability.Attack.Direction.Forward");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Direction_Backward, "Gameplay.Ability.Attack.Direction.Backward");
-
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type, "Gameplay.Ability.Attack.Type");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type_Light, "Gameplay.Ability.Attack.Type.Light");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type_Mid, "Gameplay.Ability.Attack.Type.Mid");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Attack_Type_Heavy, "Gameplay.Ability.Attack.Type.Heavy");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_Dash, "Gameplay.Tutorial.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Tutorial_MeleeCombo, "Gameplay.Tutorial.MeleeCombo");

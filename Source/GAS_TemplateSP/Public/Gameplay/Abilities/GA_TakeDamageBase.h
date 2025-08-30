@@ -14,7 +14,7 @@ struct FAttackDirectionHitMontagePair
     // The direction tag of the incoming attack
     // Each ability will carry its own AttackDirection tag
     // This is used to find the appropriate hit montage for the character
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = "Gameplay.Ability.Attack.Direction"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = "Gameplay.Ability.Combat.Attack.Direction"))
     FGameplayTag InComingAttackDirectionTag;
 
     // Reaction montage we want to play

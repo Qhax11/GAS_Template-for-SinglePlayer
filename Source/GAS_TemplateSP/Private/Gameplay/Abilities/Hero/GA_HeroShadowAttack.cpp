@@ -11,7 +11,7 @@
 
 UGA_HeroShadowAttack::UGA_HeroShadowAttack()
 {
-    AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Attack_Shadow);
+    AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Shadow);
     ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
 }

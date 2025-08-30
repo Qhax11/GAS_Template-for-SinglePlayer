@@ -127,7 +127,7 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 
 void UAC_PostureHandler::TriggerPostureRegenEffect()
 {
-	if (!OwnerASC || OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable))
+	if (!OwnerASC)
 	{
 		return;
 	}

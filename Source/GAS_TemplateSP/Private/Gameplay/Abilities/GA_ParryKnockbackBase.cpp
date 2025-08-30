@@ -4,6 +4,7 @@
 #include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "AbilitySystemGlobals.h"
+#include <Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h>
 
 UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
 {
@@ -22,6 +23,24 @@ UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
 	AbilityTriggers.Add(TriggerData);
 }
 
+bool UGA_ParryKnockbackBase::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	const UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!ASC) return false;
+
+	if (UAS_Base* BaseAttributes = const_cast<UAS_Base*>(ASC->GetSet<UAS_Base>()))
+	{
+		return BaseAttributes->GetPosture() > 0.f;
+	}
+
+	return false;
+}
+
 void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* OwnerInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
@@ -38,14 +57,17 @@ void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		return;
 	}
 
-	FGameplayEffectSpecHandle EffectSpecHandle = InstigatorASC->MakeOutgoingSpec(ParryKnockbackEffect, 1.0f, TriggerEventData->ContextHandle);
-	if (!EffectSpecHandle.IsValid())
+	FGameplayEffectSpecHandle ParryKnockbackSpecHandle = InstigatorASC->MakeOutgoingSpec(ParryKnockbackClass, 1.0f, TriggerEventData->ContextHandle);
+	if (!ParryKnockbackSpecHandle.IsValid())
 	{
 		return;
 	}
 
-	InstigatorASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+	InstigatorASC->ApplyGameplayEffectSpecToTarget(*ParryKnockbackSpecHandle.Data, GetAbilitySystemComponentFromActorInfo());
 
+	UGameplayEffect* GE_ParryKnockback = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(ParryKnockbackCostClass);
+	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_ParryKnockback, 1, FGameplayEffectContextHandle());
+		
 	const UGA_MeleeAttackBase* MeleeAttack = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility());
 	if (!MeleeAttack)
 	{

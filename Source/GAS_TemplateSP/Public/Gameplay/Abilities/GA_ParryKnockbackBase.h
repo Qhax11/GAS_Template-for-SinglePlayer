@@ -45,6 +45,8 @@ public:
         return 0.f;
     }
 };
+ 
+class UGA_MeleeAttackBase;
 
 UCLASS()
 class GAS_TEMPLATESP_API UGA_ParryKnockbackBase : public UGA_MontageAbility
@@ -53,6 +55,8 @@ class GAS_TEMPLATESP_API UGA_ParryKnockbackBase : public UGA_MontageAbility
 
 public:
 	UGA_ParryKnockbackBase();
+
+    virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* OwnerInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
@@ -63,7 +67,10 @@ public:
     FGameplayTag GetAttackTypeTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack);
 
 	UPROPERTY(EditDefaultsOnly, Category = "ParryKnockback")
-	TSubclassOf<UGameplayEffect> ParryKnockbackEffect;
+	TSubclassOf<UGameplayEffect> ParryKnockbackClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "ParryKnockback")
+    TSubclassOf<UGameplayEffect> ParryKnockbackCostClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "ParryKnockback")
     UAttackTypeToKnockbackAsset* KnockbackDataAsset;

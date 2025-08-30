@@ -45,26 +45,11 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	FGameplayTag AttackDirectionTag = GetDirectionTagFromMeleeAttack(MeleeAttack);
+	FGameplayTag AttackDirectionTag = MeleeAttack->GetAttackDirectionTagFromAbilityTags();
 	FGameplayTag AdjustedTag = GetAdjustedAttackDirectionTag(AttackDirectionTag, TriggerEventData->Instigator);
 	AnimMontage = GetHitMontage(AdjustedTag);
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-}
-
-FGameplayTag UGA_TakeDamageBase::GetDirectionTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack)
-{
-	FGameplayTag AttackDirectionTag;
-	for (const FGameplayTag& Tag : MeleeAttack->AbilityTags)
-	{
-		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Direction))
-		{
-			AttackDirectionTag = Tag;
-			break;
-		}
-	}
-
-	return AttackDirectionTag;
 }
 
 FGameplayTag UGA_TakeDamageBase::GetAdjustedAttackDirectionTag(FGameplayTag InComingAttackDirection, const AActor* Instigator)

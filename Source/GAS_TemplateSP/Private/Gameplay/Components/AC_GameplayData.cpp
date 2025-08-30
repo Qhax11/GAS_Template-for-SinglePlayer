@@ -2,7 +2,6 @@
 
 
 #include "Gameplay/Components/AC_GameplayData.h"
-#include "Gameplay/Data/DA_ActorSounds.h"
 
 
 UAC_GameplayData::UAC_GameplayData()
@@ -19,6 +18,17 @@ UDA_ActorSounds* UAC_GameplayData::GetActorSoundsData()
 	}
 
 	return DA_ActorSounds;
+}
+
+UDA_AttackTypeToCameraShake* UAC_GameplayData::GetAttackTypeToCameraShakeData()
+{
+	if (!DA_AttackTypeToCameraShake)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttackTypeToCameraShake is null in: %s."), *GetName());
+		return nullptr;
+	}
+
+	return DA_AttackTypeToCameraShake;
 }
 
 

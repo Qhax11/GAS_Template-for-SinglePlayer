@@ -28,6 +28,16 @@ public:
 
 	void AttackLogic(TArray<FHitResult>& OutHitResults);
 
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	FGameplayTag GetAttackTypeTagFromAbilityTags() const;
+
+	/**
+    * Retrieves the attack direction tag from the incoming melee attack.
+    * Each melee attack ability contains its own AttackDirection tag (LeftToRight, RightToLeft, etc.).
+    */
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	FGameplayTag GetAttackDirectionTagFromAbilityTags() const;
+
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 	class AGAS_CharacterBase* CharacterBase;

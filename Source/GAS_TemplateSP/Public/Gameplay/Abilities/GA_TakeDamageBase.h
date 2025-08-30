@@ -62,12 +62,6 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
     /**
-    * Retrieves the attack direction tag from the incoming melee attack.
-    * Each melee attack ability contains its own AttackDirection tag (LeftToRight, RightToLeft, etc.).
-    */
-    FGameplayTag GetDirectionTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack);
-
-    /**
     * Adjusts the incoming attack direction tag based on the character's orientation.
     * If the character is facing away from the attack (back turned), LeftToRight becomes RightToLeft and vice versa.
     * This ensures the selected hit montage still visually corresponds to the attack direction.

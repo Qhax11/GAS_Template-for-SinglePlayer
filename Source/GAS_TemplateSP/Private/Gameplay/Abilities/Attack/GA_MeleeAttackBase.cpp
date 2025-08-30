@@ -122,6 +122,32 @@ void UGA_MeleeAttackBase::AttackLogic(TArray<FHitResult>& OutHitResults)
 	}
 }
 
+FGameplayTag UGA_MeleeAttackBase::GetAttackTypeTagFromAbilityTags() const
+{
+	for (const FGameplayTag& Tag : AbilityTags)
+	{
+		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type))
+		{
+			return Tag;
+		}
+	}
+
+	return FGameplayTag(); 
+}
+
+FGameplayTag UGA_MeleeAttackBase::GetAttackDirectionTagFromAbilityTags() const
+{
+	for (const FGameplayTag& Tag : AbilityTags)
+	{
+		if (Tag.MatchesTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Direction))
+		{
+			return Tag;
+		}
+	}
+
+	return FGameplayTag();
+}
+
 void UGA_MeleeAttackBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo,

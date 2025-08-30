@@ -63,4 +63,9 @@ protected:
 	TSubclassOf<UGA_ParryBase> EnemyParryAbilityClass;
 
 	UGAS_GameplayAbilityBase* LastUsedParryAbility;
+	
+	UFUNCTION()
+	void OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+
 };

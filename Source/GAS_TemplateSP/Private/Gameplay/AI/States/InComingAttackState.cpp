@@ -143,16 +143,35 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 	}
 
 	LastUsedParryAbility = ActivatedParryAbility;
+
 }
 
 void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest("OnParryAbilityEnded");
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback, now we listen knocback removed"));
+		EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagRemoved);
+	}
+	else
+	{
+		ExitRequest("Parry Ability Ended without knocback.");
+	}
+}
+
+void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	ExitRequest("OnParryKnocbackTagRemoved");
 }
 
 void UInComingAttackState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
+
+	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())
+	{
+		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
+	}
 
 	if (DamageSubsystem)
 	{

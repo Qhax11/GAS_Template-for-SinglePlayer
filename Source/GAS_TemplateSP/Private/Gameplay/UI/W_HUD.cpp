@@ -24,7 +24,7 @@ void UW_HUD::NativeConstruct()
 
 void UW_HUD::OnAbilitySetGiven(const AActor* OwnerActor)
 {
-	HealthBar->InitializePropertyBar(GetOwningPlayerPawn());
-	ManaBar->InitializePropertyBar(GetOwningPlayerPawn());
+	//HealthBar->InitializePropertyBar(GetOwningPlayerPawn());
+	//ManaBar->InitializePropertyBar(GetOwningPlayerPawn());
 	PropertyBarsContainer->InitalizePropertyBarsContainer(GetOwningPlayerPawn());
 }

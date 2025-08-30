@@ -150,7 +150,7 @@ void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeA
 {
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback, now we listen knocback removed"));
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback, now we listen knocback removed for exit"));
 		EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagRemoved);
 	}
 	else

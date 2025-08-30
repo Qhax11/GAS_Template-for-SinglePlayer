@@ -11,7 +11,8 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (UAbilityTask_WaitInputRelease* WaitRelease = UAbilityTask_WaitInputRelease::WaitInputRelease(this, true))
+	WaitRelease = UAbilityTask_WaitInputRelease::WaitInputRelease(this, true);
+	if (WaitRelease)
 	{
 		WaitRelease->OnRelease.AddDynamic(this, &UGA_HeroParry::OnInputReleased);
 		WaitRelease->ReadyForActivation();
@@ -28,10 +29,16 @@ void UGA_HeroParry::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& Dodge
 	GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(GetClass());
 }
 
+
 void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (WaitRelease && IsValid(WaitRelease)) 
+	{
+		WaitRelease->EndTask();
+	}
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

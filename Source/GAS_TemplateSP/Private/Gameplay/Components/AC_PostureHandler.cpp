@@ -152,7 +152,7 @@ void UAC_PostureHandler::TriggerPostureRegenEffect()
 
 	if (!bIsPostureRegenSpecValid)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DamageSpec is null in %s, cannot damage apply"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("PostureRegenSpec is null in %s, cannot damage apply"), *GetName());
 		return;
 	}
 

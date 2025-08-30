@@ -29,7 +29,7 @@ public:
 	virtual void OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
 	UFUNCTION()
-	void OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	virtual void OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 };

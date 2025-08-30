@@ -25,35 +25,12 @@ void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
+	if (LastUsedParryAbility) 
+	{
+		LastUsedParryAbility->EndAbilityManually();
+	}
+
 	SelectAndMakeInComingAttackReaction();
-}
-
-void UInComingAttackState::OnExit_Implementation()
-{
-	Super::OnExit_Implementation();
-
-	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())
-	{
-		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
-	}
-
-	if (DamageSubsystem)
-	{
-		if (DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
-		{
-			DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UInComingAttackState::OnDamageDealt);
-		}
-	}
-
-	if (LastUsedTakeDamageAbility)
-	{
-		if (LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
-		{
-			LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
-		}
-		LastUsedTakeDamageAbility = nullptr;
-	}
-
 }
 
 bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
@@ -117,7 +94,7 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
 	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
 
-	UGAS_GameplayAbilityBase* TakeDamageAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamage, Payload);
+	UGAS_GameplayAbilityBase* TakeDamageAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamageAbilityClass, Payload);
 	if (TakeDamageAbility)
 	{
 		if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
@@ -150,73 +127,61 @@ void UInComingAttackState::OnComingAttackAbilityEnded(const FAbilityEndedDataBP&
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
 {
-	BDS_Parry = Cast<UBDS_ComingAttackReaction_Parry>(BestComingAttackReaction);
-	if (!BDS_Parry)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: BDS_Parry is null in: %s"), *GetName());
-		return;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility function entered."));
 
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
-	// Activate the parry ability
-	EnemyASC->TryActivateAbilityByClassAndReturnInstance(BDS_Parry->ParryAbilityClass);
-
-	// Clear state flags before binding
-	bParryKnockbackHappened = false;
-
-	// Register tag listeners
-	UAC_TagDelegates* TagDelegates = Enemy->GetTagDelegatesComponent();
-	TagDelegates->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryTagRemoved);
-	TagDelegates->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnAdded).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagAdded);
-	TagDelegates->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagRemoved);
-
-	UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility executed."));
-}
-
-void UInComingAttackState::OnParryTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	if (bParryKnockbackHappened)
+	UGAS_GameplayAbilityBase* ActivatedParryAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(EnemyParryAbilityClass);
+	if (ActivatedParryAbility)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: Parry ended but knockback already triggered. Ignoring."));
-		return;
-	}
-
-	// Delay-exit if knockback never happens
-	FTimerHandle DelayHandle;
-	Enemy->GetWorldTimerManager().SetTimer(DelayHandle, [this]()
+		if (!ActivatedParryAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryAbilityEnded))
 		{
-			if (!bParryKnockbackHappened)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Parry ended, no knockback happened. Exiting."));
-				ExitRequest("bParryKnockbackHappened");
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("State Manager: Parry ended, but knockback happened after. Exit handled elsewhere."));
-			}
-		}, 0.1f, false); // 0.05–0.1s delay is usually safe for reaction window
-}
-
-void UInComingAttackState::OnParryKnocbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	bParryKnockbackHappened = true;
-
-	if (BDS_Parry->bCounterImmediatelyAfterParry)
-	{
-		FTimerHandle DelayHandle;
-		Enemy->GetWorldTimerManager().SetTimer(DelayHandle, [this]()
-			{
-				ExitRequest("State Manager: ParryKnockbackTimer");
-			}, 0.1f, false); 
+			ActivatedParryAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnParryAbilityEnded);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility executed."));
 	}
+
+	LastUsedParryAbility = ActivatedParryAbility;
 }
 
-void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest("OnParryKnocbackTagRemoved");
+	ExitRequest("OnParryAbilityEnded");
 }
 
+void UInComingAttackState::OnExit_Implementation()
+{
+	Super::OnExit_Implementation();
+
+	if (DamageSubsystem)
+	{
+		if (DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
+		{
+			DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UInComingAttackState::OnDamageDealt);
+		}
+	}
+
+	if (LastUsedTakeDamageAbility)
+	{
+		if (LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+		{
+			LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedTakeDamageAbility->GetName());
+		}
+		LastUsedTakeDamageAbility = nullptr;
+	}
+
+	if (LastUsedParryAbility)
+	{
+		if (LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryAbilityEnded))
+		{
+			LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnParryAbilityEnded);
+			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedParryAbility->GetName());
+		}
+		LastUsedParryAbility = nullptr;
+	}
+
+}
 
 

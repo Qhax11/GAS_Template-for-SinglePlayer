@@ -101,6 +101,8 @@ void UGA_MontageAbility::CleanupMotionWarping()
 
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: %s is will play."), *AnimMontage->GetName());
+
 	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
 		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
 
@@ -145,7 +147,6 @@ void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEven
 
 void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	// TO DO: COMBO MANAGER İLE TAKE DAMAGE VE COMBOYU DİNLE BAŞKA HİÇBİR CALLBACK GEREK YOK. GEREKTİĞİNDE MANUEL CANCEL OLSUN
 	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Completed)
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
@@ -165,8 +166,8 @@ void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventDa
 
 void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s' %s ability is ended"), *GetAvatarActorFromActorInfo()->GetName(), *GetName());
-	if (PlayMontageWaitForEventTask)
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: %s' %s ability is ended"), *GetAvatarActorFromActorInfo()->GetName(), *GetName());
+	if (PlayMontageWaitForEventTask && IsValid(PlayMontageWaitForEventTask))
 	{
 		PlayMontageWaitForEventTask->EndTask();
 	}

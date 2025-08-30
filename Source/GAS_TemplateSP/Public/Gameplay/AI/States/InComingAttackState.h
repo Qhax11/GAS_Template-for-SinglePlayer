@@ -4,6 +4,7 @@
 
 #include "Gameplay/AI/States/StateBase.h"
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
+#include "Gameplay/Abilities/GA_ParryBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "InComingAttackState.generated.h"
@@ -27,9 +28,6 @@ public:
 protected:
 	class US_DamageDelegates* DamageSubsystem;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGA_EnemyTakeDamage> EnemyTakeDamage;
-
 	FTimerHandle DelayedReactionTimerHandle;
 
 	virtual bool SelectAndMakeInComingAttackReaction();
@@ -44,6 +42,9 @@ protected:
 	UFUNCTION()
 	void OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGA_EnemyTakeDamage> EnemyTakeDamageAbilityClass;
+
 	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility;
 
 	UFUNCTION()
@@ -56,15 +57,10 @@ protected:
 	void MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
 
 	UFUNCTION()
-	void OnParryTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
-	UFUNCTION()
-	void OnParryKnocbackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGA_ParryBase> EnemyParryAbilityClass;
 
-	UFUNCTION()
-	void OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	const class UBDS_ComingAttackReaction_Parry* BDS_Parry;
-	bool bParryKnockbackHappened = false;
-
+	UGAS_GameplayAbilityBase* LastUsedParryAbility;
 };

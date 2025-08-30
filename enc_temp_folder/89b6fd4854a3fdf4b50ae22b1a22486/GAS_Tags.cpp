@@ -200,8 +200,6 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash, "AI.Ability.PhantomDash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash_Cooldown, "AI.Ability.PhantomDash.Cooldown");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_TwinSlashUp, "AI.Ability.TwinSlashUp");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_TwinSlashUp_Cooldown, "AI.Ability.TwinSlashUp.Cooldown");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_LineBreaker, "AI.Ability.LineBreaker");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_LineBreaker_Cooldown, "AI.Ability.LineBreaker.Cooldown");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_ShadowAttack, "AI.Ability.ShadowAttack");

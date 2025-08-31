@@ -8,11 +8,11 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 
 
-void AGCN_SoundBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
+bool AGCN_SoundBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
 {
 	if (!Source || !Target)
 	{
-		return;
+		return false;
 	}
 
 	if (GameplayCueTag.MatchesTag(GAS_Tags::TAG_GameplayCue_Sound_PlayOnSource))
@@ -23,6 +23,8 @@ void AGCN_SoundBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayC
 	{
 		PlaySoundForActor(Target);
 	}
+
+	return true;
 }
 
 void AGCN_SoundBase::PlaySoundForActor(AActor* Actor)

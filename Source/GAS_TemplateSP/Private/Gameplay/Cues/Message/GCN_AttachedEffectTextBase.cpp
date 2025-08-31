@@ -12,18 +12,18 @@ AGCN_AttachedEffectTextBase::AGCN_AttachedEffectTextBase()
 	WC_AttachedEffectText = CreateDefaultSubobject<UWC_AttachedEffectTextHandle>(TEXT("WC_AttachedEffectTextHandle"));
 }
 
-void AGCN_AttachedEffectTextBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
+bool AGCN_AttachedEffectTextBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
 {
 	Super::OnExecuted(Source, Target, Parameters);
 
 	if (!Source || !Target)
 	{
-		return;
+		return false;
 	}
 
 	if (CheckAndExecuteGameplay(Target, Parameters))
 	{
-		return;
+		return false;
 	}
 
 	PrepareText(Parameters.RawMagnitude);
@@ -34,6 +34,7 @@ void AGCN_AttachedEffectTextBase::OnExecuted(AActor* Source, AActor* Target, con
 	}
 
 	BP_TriggerWidget(WidgetMessageData);
+	return true;
 }
 
 bool AGCN_AttachedEffectTextBase::CheckAndExecuteGameplay(AActor* Target, FGameplayCueParameters Parameters)

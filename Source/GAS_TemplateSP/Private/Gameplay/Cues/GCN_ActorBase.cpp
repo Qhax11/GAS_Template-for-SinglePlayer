@@ -39,9 +39,10 @@ bool AGCN_ActorBase::OnRemove_Implementation(AActor* MyTarget, const FGameplayCu
 	return true;
 }
 
-void AGCN_ActorBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
+bool AGCN_ActorBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
 {
 	// Logic will be implemented in subclasses.
+	return true;
 }
 
 void AGCN_ActorBase::OnActivated(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)

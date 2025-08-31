@@ -14,7 +14,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
-
 AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer
         .SetDefaultSubobjectClass<UAC_HeroAttributesListener>(TEXT("AttributesListenerBase")) 

@@ -15,11 +15,12 @@ class GAS_TEMPLATESP_API AGCN_CombatBase : public AGCN_ActorBase
 	GENERATED_BODY()
 	
 public:
-	virtual void OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters) override;
+	virtual bool OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters) override;
 
 protected:
 	const UGA_MeleeAttackBase* SourceMeleeAttack;
 	FGameplayTag SourceMeleeAttackType;
 	UAC_GameplayData* SourceDataComponent;
-
+	UAbilitySystemComponent* SourceASC;
+	UAbilitySystemComponent* TargetASC;
 };

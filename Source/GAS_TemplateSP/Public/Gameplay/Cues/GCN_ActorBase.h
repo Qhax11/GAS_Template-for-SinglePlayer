@@ -23,7 +23,7 @@ public:
 
 protected:
 	// Custom functions with flexibility for further modification
-	virtual void OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters);
+	virtual bool OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters);
 
 	virtual void OnActivated(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters);
 

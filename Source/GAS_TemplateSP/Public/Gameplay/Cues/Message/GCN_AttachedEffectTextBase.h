@@ -17,7 +17,7 @@ public:
 	AGCN_AttachedEffectTextBase();
 
 	// For instant or periodic effects 
-	virtual void OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters) override;
+	virtual bool OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters) override;
 
 	/**
      * This function checks if a Critical hit occurred within the Damage GameplayCue.

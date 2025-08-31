@@ -11,7 +11,7 @@ UAC_GameplayData::UAC_GameplayData()
 
 UDA_ActorSounds* UAC_GameplayData::GetActorSoundsData()
 {
-	if (!DA_ActorSounds) 
+	if (!IsValid(DA_ActorSounds) || !DA_ActorSounds)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ActorSounds is null in: %s."), *GetName());
 		return nullptr;
@@ -22,7 +22,7 @@ UDA_ActorSounds* UAC_GameplayData::GetActorSoundsData()
 
 UDA_AttackTypeToCameraShake* UAC_GameplayData::GetAttackTypeToCameraShakeData()
 {
-	if (!DA_AttackTypeToCameraShake)
+	if (!IsValid(DA_AttackTypeToCameraShake) || !DA_AttackTypeToCameraShake)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AttackTypeToCameraShake is null in: %s."), *GetName());
 		return nullptr;

@@ -18,10 +18,6 @@ class GAS_TEMPLATESP_API AGCN_CameraShakeBase : public AGCN_GameplayCameraBase
 public:
 	AGCN_CameraShakeBase();
 
-    virtual void OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters) override;
-
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "CameraShakeBase")
-	TSubclassOf<class UCameraShakeBase> CameraShakeClass;
+    virtual bool OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters) override;
 
 };

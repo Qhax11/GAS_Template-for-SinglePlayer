@@ -4,12 +4,13 @@
 #include "Gameplay/Cues/Message/GCN_HeroMessageHUD.h"
 
 
-void AGCN_HeroMessageHUD::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
+bool AGCN_HeroMessageHUD::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
 {
 	Super::OnExecuted(Source, Target, Parameters);
 
 	WidgetMessageData.MessageString = HeroMessage;
 	BP_TriggerWidget(WidgetMessageData);
+	return true;
 }
 
 void AGCN_HeroMessageHUD::OnActivated(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)

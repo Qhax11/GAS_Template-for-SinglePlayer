@@ -31,6 +31,17 @@ UDA_AttackTypeToCameraShake* UAC_GameplayData::GetAttackTypeToCameraShakeData()
 	return DA_AttackTypeToCameraShake;
 }
 
+UDA_AttackTypeToCameraZoom* UAC_GameplayData::GetAttackTypeToCameraZoomData()
+{
+	if (!IsValid(DA_AttackTypeToCameraZoom) || !DA_AttackTypeToCameraZoom)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttackTypeToCameraShake is null in: %s."), *GetName());
+		return nullptr;
+	}
+
+	return DA_AttackTypeToCameraZoom;
+}
+
 
 
 

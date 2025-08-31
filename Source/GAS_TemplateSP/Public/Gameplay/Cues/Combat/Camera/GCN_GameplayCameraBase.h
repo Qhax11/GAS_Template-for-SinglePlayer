@@ -16,6 +16,8 @@ public:
 	virtual bool OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters) override;
 
 protected:
+	void ExecuteCameraEffect(AActor* HeroActor);
+
 	UAC_HeroGameplayCamera* HeroGameplayCameraComponent;
 
 };

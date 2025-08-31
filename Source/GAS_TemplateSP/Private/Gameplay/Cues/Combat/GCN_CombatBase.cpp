@@ -13,7 +13,7 @@ bool AGCN_CombatBase::OnExecuted(AActor* Source, AActor* Target, const FGameplay
 	}
 
 	SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Source);
-	TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Source);
+	TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
 	if (!SourceASC || !TargetASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: SourceASC or TargetASC is null!"));

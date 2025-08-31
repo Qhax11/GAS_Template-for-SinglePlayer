@@ -37,7 +37,7 @@ struct FAttackTypeCameraShakePair
  * Each character defines the camera shake forces that should be applied for their different attack types.
  * This allows data-driven tuning of shake intensity per attack per character.
  *
- * Camera shakes are triggered via a GameplayCue and are applied based on the actor executing the effect (the source).
+ * Camera shakes are triggered via a HeroGameplayCamera with cue and are applied based on the actor executing the effect (the source).
  */
 UCLASS(BlueprintType)
 class GAS_TEMPLATESP_API UDA_AttackTypeToCameraShake : public UDataAsset
@@ -64,6 +64,64 @@ public:
     }
 };
 
+USTRUCT(BlueprintType)
+struct FAttackTypeCameraZoomPair
+{
+    GENERATED_BODY()
+
+    // The type tag of the attack performed by the source (e.g., Light, Heavy, Special)
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = "Gameplay.Ability.Combat.Attack.Type"))
+    FGameplayTag AttackTypeTag;
+
+    // Zoom amount or FOV change applied for this attack type
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    float ZoomAmount = 0.f;
+
+    // Optional: zoom duration
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    float ZoomDuration = 0.25f;
+};
+
+/**
+ * Each character defines the camera zoom amounts that should be applied for their different attack types.
+ * This allows data-driven tuning of zoom intensity and duration per attack per character.
+ *
+ * Camera zooms are triggered via a HeroGameplayCamera with cue and are applied based on the actor executing the effect (the source).
+ */
+UCLASS(BlueprintType)
+class GAS_TEMPLATESP_API UDA_AttackTypeToCameraZoom : public UDataAsset
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CameraZoom")
+    TArray<FAttackTypeCameraZoomPair> AttackTypeCameraZoomMappings;
+
+    float FindZoomAmount(FGameplayTag AttackTypeTag) const
+    {
+        for (const FAttackTypeCameraZoomPair& Pair : AttackTypeCameraZoomMappings)
+        {
+            if (Pair.AttackTypeTag == AttackTypeTag)
+            {
+                return Pair.ZoomAmount;
+            }
+        }
+        return 0.f;
+    }
+
+    float FindZoomDuration(FGameplayTag AttackTypeTag) const
+    {
+        for (const FAttackTypeCameraZoomPair& Pair : AttackTypeCameraZoomMappings)
+        {
+            if (Pair.AttackTypeTag == AttackTypeTag)
+            {
+                return Pair.ZoomDuration;
+            }
+        }
+        return 0.25f;
+    }
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class GAS_TEMPLATESP_API UAC_GameplayData : public UActorComponent
 {
@@ -77,12 +135,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UDA_AttackTypeToCameraShake* GetAttackTypeToCameraShakeData();
+
+    UFUNCTION(BlueprintCallable)
+    UDA_AttackTypeToCameraZoom* GetAttackTypeToCameraZoomData();
 	
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "ActorSounds")
+	UPROPERTY(EditDefaultsOnly, Category = "DataAsset")
 	TObjectPtr<UDA_ActorSounds> DA_ActorSounds;
 
-	UPROPERTY(EditDefaultsOnly, Category = "AttackTypeToCameraShake")
+	UPROPERTY(EditDefaultsOnly, Category = "DataAsset")
 	TObjectPtr<UDA_AttackTypeToCameraShake> DA_AttackTypeToCameraShake;
+
+    UPROPERTY(EditDefaultsOnly, Category = "DataAsset")
+    TObjectPtr<UDA_AttackTypeToCameraZoom> DA_AttackTypeToCameraZoom;
 
 };

@@ -14,18 +14,56 @@ bool AGCN_GameplayCameraBase::OnExecuted(AActor* Source, AActor* Target, const F
 	// Check Source
 	if(SourceASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Hero))
 	{
-		AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(Source);
-		HeroGameplayCameraComponent = Hero->GetHeroGameplayCameraComponent();
+		ExecuteCameraEffect(Source);
 		return true;
 	}
 
 	// Check Target
 	if (TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Hero))
 	{
-		AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(Target);
-		HeroGameplayCameraComponent = Hero->GetHeroGameplayCameraComponent();
+		ExecuteCameraEffect(Target);
 		return true;
 	}
 
 	return false;
 }
+
+void AGCN_GameplayCameraBase::ExecuteCameraEffect(AActor* HeroActor)
+{
+	AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(HeroActor);
+	if (!Hero) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hero is null in: %s"), *GetName());
+		return;
+	}
+
+	HeroGameplayCameraComponent = Hero->GetHeroGameplayCameraComponent();
+
+	if (GameplayCueTag == GAS_Tags::TAG_GameplayCue_Combat_Camera_Shake)
+	{
+		float CameraShakeForce = 1.0f;
+		UDA_AttackTypeToCameraShake* AttackTypeToCameraShakeData = SourceDataComponent->GetAttackTypeToCameraShakeData();
+		if (AttackTypeToCameraShakeData)
+		{
+			CameraShakeForce = AttackTypeToCameraShakeData->FindCameraShakeForce(SourceMeleeAttackType);
+		}
+		HeroGameplayCameraComponent->ShakeCamera(CameraShakeForce);
+	}
+
+	else if (GameplayCueTag == GAS_Tags::TAG_GameplayCue_Combat_Camera_ZoomIn)
+	{
+		float ZoomAmount = 100.0f;
+		float ZoomDuracion = 0.2f;
+		UDA_AttackTypeToCameraZoom* AttackTypeToCameraZoomData = SourceDataComponent->GetAttackTypeToCameraZoomData();
+		if (AttackTypeToCameraZoomData)
+		{
+			ZoomAmount = AttackTypeToCameraZoomData->FindZoomAmount(SourceMeleeAttackType);
+			ZoomDuracion = AttackTypeToCameraZoomData->FindZoomDuration(SourceMeleeAttackType);
+			HeroGameplayCameraComponent->CameraZoomIn(ZoomAmount, ZoomDuracion);
+		}
+	}
+}
+
+
+
+

@@ -16,16 +16,36 @@ public:
 
 	void ShakeCamera(float Force);
 
+	UFUNCTION(BlueprintCallable)
+	void CameraZoomIn(float Distance, float Speed);
+
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 	UFUNCTION(BlueprintImplementableEvent)
-	void CameraShake();
+	void BP_CameraZoomIn(float Distance, float Speed);
 		
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Shake")
 	TSubclassOf<class UCameraShakeBase> CameraShakeClass;
 
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class AGAS_HeroBase* OwnerHero;
+
+	UPROPERTY()
+	class USpringArmComponent* CameraBoom;
+
+	UPROPERTY()
 	class APlayerController* OwnerHeroPS;
+
+	bool bZooming = false;
+	float ZoomDuration = 0.f;
+	float ZoomElapsed = 0.f;
+	float StartArmLength = 0.f;
+	float TargetArm = 0.f;
+
+	UPROPERTY(EditDefaultsOnly);
+	UCurveFloat* ZoomCurve = nullptr;
 };

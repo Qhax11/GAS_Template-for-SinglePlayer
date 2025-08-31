@@ -36,8 +36,9 @@ public:
 
 	FORCEINLINE class UAC_HeroMovementListener* GetMovementListenerComponent() const { return HeroMovementListenerComponent; }
 
-	FORCEINLINE class APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }
+	FORCEINLINE class UAC_HeroGameplayCamera* GetHeroGameplayCameraComponent() const { return HeroGameplayCameraComponent; }
 
+	FORCEINLINE class APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }
 
 protected:
 	//* Components *//
@@ -64,6 +65,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_HeroMovementListener* HeroMovementListenerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
+	class UAC_HeroGameplayCamera* HeroGameplayCameraComponent;
 
 private:
 	class UAC_AbilityInputBinding* AbilityInputBindingComponent;

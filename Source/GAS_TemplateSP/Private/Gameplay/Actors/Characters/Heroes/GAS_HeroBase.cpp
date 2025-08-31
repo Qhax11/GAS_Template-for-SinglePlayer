@@ -10,6 +10,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroShadowController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroGameplayCamera.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
@@ -31,16 +32,12 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer)
     FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
     HeroControlComponent = CreateDefaultSubobject<UAC_HeroControl>(TEXT("HeroControlComponent"));
-
     HeroInteractionComponent = CreateDefaultSubobject<UAC_HeroInteraction>(TEXT("HeroInteractionComponent"));
-
     AbilityInputBindingComponent = CreateDefaultSubobject<UAC_AbilityInputBinding>(TEXT("AbilityInputBindingComponent"));
-
     TargetLockSystemComponent = CreateDefaultSubobject<UAC_TargetLockSystem>(TEXT("TargetLockSystemComponent"));
-
     HeroMeleeComboManagerComponent = CreateDefaultSubobject<UAC_HeroMeleeComboManager>(TEXT("HeroMeleeComboManagerComponent"));
-
     HeroMovementListenerComponent = CreateDefaultSubobject<UAC_HeroMovementListener>(TEXT("HeroMovementListenerComponent"));
+    HeroGameplayCameraComponent = CreateDefaultSubobject<UAC_HeroGameplayCamera>(TEXT("HeroGameplayCameraComponent"));
 
     HeroShadowControllerComponent = CreateDefaultSubobject<USC_HeroShadowController>(TEXT("HeroShadowControllerComponent"));
     HeroShadowControllerComponent->SetupAttachment(RootComponent);

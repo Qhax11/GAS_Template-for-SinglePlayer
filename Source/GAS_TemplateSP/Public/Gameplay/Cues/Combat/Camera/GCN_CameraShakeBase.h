@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Cues/GCN_ActorBase.h"
+#include "Gameplay/Cues/Combat/Camera/GCN_GameplayCameraBase.h"
 #include "GCN_CameraShakeBase.generated.h"
 
 /**
@@ -11,7 +11,7 @@
  */
 
 UCLASS()
-class GAS_TEMPLATESP_API AGCN_CameraShakeBase : public AGCN_ActorBase
+class GAS_TEMPLATESP_API AGCN_CameraShakeBase : public AGCN_GameplayCameraBase
 {
 	GENERATED_BODY()
 

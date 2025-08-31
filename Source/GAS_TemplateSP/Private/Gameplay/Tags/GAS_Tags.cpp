@@ -178,9 +178,9 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_Death, "GameplayCue.Sound.PlayOnSource.Death");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_LevelUp, "GameplayCue.Sound.PlayOnSource.LevelUp");
 
-
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_Camera_Shake, "GameplayCue.Combat.Camera.Shake");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_Camera_ZoomIn, "GameplayCue.Combat.Camera.ZoomIn");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_HitPasue, "GameplayCue.Combat.HitPause");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_CameraShake, "GameplayCue.Combat.CameraShake");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_HologramSlowMo, "GameplayCue.Combat.HologramSlowMo");
 
 	/************************************************

@@ -64,7 +64,7 @@ public:
     }
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class GAS_TEMPLATESP_API UAC_GameplayData : public UActorComponent
 {
 	GENERATED_BODY()

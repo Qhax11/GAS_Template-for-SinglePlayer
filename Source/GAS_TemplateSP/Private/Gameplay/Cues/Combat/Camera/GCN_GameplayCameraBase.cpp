@@ -59,7 +59,7 @@ void AGCN_GameplayCameraBase::ExecuteCameraEffect(AActor* HeroActor)
 		{
 			ZoomAmount = AttackTypeToCameraZoomData->FindZoomAmount(SourceMeleeAttackType);
 			ZoomDuracion = AttackTypeToCameraZoomData->FindZoomDuration(SourceMeleeAttackType);
-			HeroGameplayCameraComponent->CameraZoomIn(ZoomAmount, ZoomDuracion);
+			HeroGameplayCameraComponent->StartCameraZoomIn();
 		}
 	}
 }

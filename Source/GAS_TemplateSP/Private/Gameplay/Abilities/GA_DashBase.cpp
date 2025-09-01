@@ -6,9 +6,16 @@
 
 UGA_DashBase::UGA_DashBase()
 {
-	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dash);
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dash);
+
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Debuff_Stun);
+
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 }
 
 void UGA_DashBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

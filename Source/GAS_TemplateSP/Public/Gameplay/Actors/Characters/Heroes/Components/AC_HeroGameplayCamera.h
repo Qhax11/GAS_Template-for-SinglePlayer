@@ -17,16 +17,15 @@ public:
 	void ShakeCamera(float Force);
 
 	UFUNCTION(BlueprintCallable)
-	void CameraZoomIn(float Distance, float Speed);
+	void StartCameraZoomIn();
 
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void BP_CameraZoomIn(float Distance, float Speed);
-		
+	void CameraZoomIn(float DeltaTime);
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Shake")
 	TSubclassOf<class UCameraShakeBase> CameraShakeClass;

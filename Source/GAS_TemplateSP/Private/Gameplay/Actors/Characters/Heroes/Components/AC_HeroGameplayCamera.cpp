@@ -37,11 +37,33 @@ void UAC_HeroGameplayCamera::BeginPlay()
 	}
 }
 
+void UAC_HeroGameplayCamera::StartCameraZoomIn()
+{
+	if (!CameraBoom)
+	{
+		return;
+	}
+
+	bZooming = true;
+	ZoomElapsed = 0.f;
+	StartArmLength = CameraBoom->TargetArmLength;
+	TargetArm = 400;
+	bZooming = true;
+}
+
 void UAC_HeroGameplayCamera::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!bZooming || !CameraBoom) return;
+	//CameraZoomIn(DeltaTime);
+}
+
+void UAC_HeroGameplayCamera::CameraZoomIn(float DeltaTime)
+{
+	if (!bZooming || !CameraBoom)
+	{
+		return;
+	}
 
 	ZoomElapsed += DeltaTime;
 	float Alpha = FMath::Clamp(ZoomElapsed / ZoomDuration, 0.f, 1.f);
@@ -62,6 +84,8 @@ void UAC_HeroGameplayCamera::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
+
+
 void UAC_HeroGameplayCamera::ShakeCamera(float Force)
 {
 	if (!OwnerHeroPS)
@@ -73,14 +97,3 @@ void UAC_HeroGameplayCamera::ShakeCamera(float Force)
 	OwnerHeroPS->ClientStartCameraShake(CameraShakeClass, Force);
 }
 
-void UAC_HeroGameplayCamera::CameraZoomIn(float Distance, float Speed)
-{
-	if (!CameraBoom) return;
-
-	bZooming = true;
-	ZoomElapsed = 0.f;
-	StartArmLength = CameraBoom->TargetArmLength;
-	TargetArm = 400;
-	bZooming = true;
-	BP_CameraZoomIn(Distance, Speed);
-}

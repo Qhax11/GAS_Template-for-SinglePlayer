@@ -54,7 +54,6 @@ class GAS_TEMPLATESP_API UGAS_TraceBase : public UObject
 	GENERATED_BODY()
 	
 protected:
-
 	const AActor* OwnerActor = nullptr;
 
 public:

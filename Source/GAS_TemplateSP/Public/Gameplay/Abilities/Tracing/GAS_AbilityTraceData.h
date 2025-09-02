@@ -12,7 +12,6 @@ class GAS_TEMPLATESP_API UGAS_AbilityTraceData : public UDataAsset
 	GENERATED_BODY()
 
 public:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability Targeting")
 	TObjectPtr<UGAS_TraceBase> Trace;
 

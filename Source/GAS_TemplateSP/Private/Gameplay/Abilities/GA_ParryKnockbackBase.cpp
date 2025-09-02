@@ -77,7 +77,7 @@ void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 
 	FGameplayTag AttackType = GetAttackTypeTagFromMeleeAttack(MeleeAttack);
 
-	MotionWarpingForce = KnockbackDataAsset->FindKnockbackForce(AttackType);
+	MotionWarpingDistance = KnockbackDataAsset->FindKnockbackForce(AttackType);
 	Super::ActivateAbility(Handle, OwnerInfo, ActivationInfo, TriggerEventData);
 }
 

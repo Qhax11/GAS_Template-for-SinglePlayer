@@ -4,7 +4,8 @@
 #include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "Gameplay/Abilities/Tasks/GAS_Task_PlayMontageWaitForEvent.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
-
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
 
 UGA_MontageAbility::UGA_MontageAbility()
 {
@@ -44,40 +45,83 @@ void UGA_MontageAbility::ActivateMotionWarping()
 		return;
 	}
 
-	if (UMotionWarpingComponent* CharacterMotionWarpingComp = CharacterBase->GetMotionWarpingComponent())
+	UMotionWarpingComponent* CharacterMotionWarpingComp = CharacterBase->GetMotionWarpingComponent();
+	if (!CharacterMotionWarpingComp)
 	{
-		FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
-		FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
-		FVector TargetLocation = StartLocation;
+		UE_LOG(LogTemp, Warning, TEXT("CharacterMotionWarpingComp is null in: %s, ability cannot motion warping"), *GetName());
+		return;
+	}
 
-		// Determine direction
-		if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Forward)
-		{
-			// Move forward
-			TargetLocation += Forward * MotionWarpingForce;
-		}
-		else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Backward)
-		{
-			// Move backward
-			TargetLocation -= Forward * MotionWarpingForce;
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Unknown DirectionTag in: %s, defaulting to forward motion"), *GetName());
-			TargetLocation += Forward * MotionWarpingForce;
-		}
-
-		if (bDebugMotionWarping)
-		{
-			DrawDebugPoint(GetWorld(), TargetLocation, 10.0f, FColor::Red, false, 3);
-		}
-
-		CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
+	FVector TargetLocation;
+	if (bUseDestinationReachForDistance) 
+	{
+		TargetLocation = CalculateDestinationReachLocation();
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterMotionWarpingComp is null in: %s, ability cannot motion warping"), *GetName());
+		TargetLocation = CalculateMotionWarpingLocation();
 	}
+
+	if (bDebugPointMotionWarping)
+	{
+		DrawDebugPoint(GetWorld(), TargetLocation, 10.0f, FColor::Red, false, 3);
+	}
+
+	CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
+}
+
+FVector UGA_MontageAbility::CalculateDestinationReachLocation() const
+{
+	FVector OwnerLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+	AGAS_EnemyBase* Enemy = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
+	if (!Enemy) 
+	{
+		return OwnerLocation;
+	} 
+
+	AAIControllerBase* EnemyController = Enemy->GetEnemyController();
+	if (!EnemyController)
+	{
+		return OwnerLocation;
+	}
+
+	AActor* TargetHero = EnemyController->GetTargetActor();
+	if (!TargetHero)
+	{
+		return OwnerLocation;
+	}
+
+	FVector ToTarget = TargetHero->GetActorLocation() - OwnerLocation;
+	float Distance = ToTarget.Size();
+	if (Distance > DestinationReachDistance)
+	{
+		return TargetHero->GetActorLocation() - ToTarget.GetSafeNormal() * DestinationReachDistance;
+	}
+
+	return OwnerLocation;
+}
+
+FVector UGA_MontageAbility::CalculateMotionWarpingLocation() const
+{
+	FVector OwnerLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+	FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	FVector TargetLocation = OwnerLocation;
+
+	if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Forward)
+	{
+		TargetLocation += Forward * MotionWarpingDistance;
+	}
+	else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Backward)
+	{
+		TargetLocation -= Forward * MotionWarpingDistance;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Unknown DirectionTag in: %s, defaulting to forward motion"), *GetName());
+		TargetLocation += Forward * MotionWarpingDistance;
+	}
+
+	return TargetLocation;
 }
 
 void UGA_MontageAbility::CleanupMotionWarping()

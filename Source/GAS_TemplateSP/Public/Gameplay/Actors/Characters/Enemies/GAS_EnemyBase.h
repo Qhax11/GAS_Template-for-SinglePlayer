@@ -19,6 +19,9 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class AAIControllerBase* GetEnemyController() const { return EnemyController; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE USceneComponent* GetFinisherPointComponent() const { return FinisherPointComponent; }
 
 	UFUNCTION(BlueprintCallable)

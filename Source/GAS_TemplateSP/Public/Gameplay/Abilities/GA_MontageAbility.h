@@ -27,6 +27,10 @@ public:
 
 	void ActivateMotionWarping();
 
+	FVector CalculateDestinationReachLocation() const;
+
+	FVector CalculateMotionWarpingLocation() const;
+
 	void CleanupMotionWarping();
 
 	void CreatePlayMontageWaitForEvent();
@@ -63,20 +67,34 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	bool bStopWhenAbilityEnds = true;
 
+	// ****************************** MOTION WARPING ****************************** //
+
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
 	bool bEnableMotionWarping = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
 	FName MotionWarpingName = NAME_None;
 
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping && !bUseDestinationReachForDistance"))
+	float MotionWarpingDistance = 0.0f;
+
+	/**
+    * If true, the ability will calculate a motion warp target based on the distance to the destination.
+    * This is generally used for AI characters to stop a fixed distance away from their target
+    * rather than moving a fixed forward/backward distance.
+    * Essentially, it allows AI to “approach but not overshoot” the target.
+    */
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	float MotionWarpingForce = 0.0f;
+	bool bUseDestinationReachForDistance = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping && bUseDestinationReachForDistance"))
+	float DestinationReachDistance = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"), meta = (Categories = "AI.Direction.Resolved"))
 	FGameplayTag DirectionTag;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	bool bDebugMotionWarping = false;
+	bool bDebugPointMotionWarping = false;
 
 protected:
 	UFUNCTION()

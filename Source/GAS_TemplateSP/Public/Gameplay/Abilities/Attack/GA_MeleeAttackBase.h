@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_MontageAbility.h"
+#include "Gameplay/Abilities/GA_TracePefromerOnMontage.h"
 #include "GA_MeleeAttackBase.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_MontageAbility
+class GAS_TEMPLATESP_API UGA_MeleeAttackBase : public UGA_TracePefromerOnMontage
 {
 	GENERATED_BODY()
 
@@ -18,15 +18,9 @@ public:
 
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
-	void TraceTick();
-	FTimerHandle TimerHandle_TraceTick;
+	virtual void OnTraceHitResults(const TArray<FHitResult>& HitResults) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Parameters")
-	float TraceTickValue = 0.01f;
-
-	bool TraceForHostileUnits(TArray<FHitResult>& OutHitResults);
-
-	void AttackLogic(TArray<FHitResult>& OutHitResults);
+	void AttackLogic(const TArray<FHitResult>& OutHitResults);
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	FGameplayTag GetAttackTypeTagFromAbilityTags() const;

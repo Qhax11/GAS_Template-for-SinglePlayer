@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_MontageAbility.h"
+#include "Gameplay/Abilities/GA_TracePefromerOnMontage.h"
 #include "Gameplay/StaticDelegates/S_DamageDelegates.h"
 #include "GA_ParryBase.generated.h"
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_ParryBase : public UGA_MontageAbility
+class GAS_TEMPLATESP_API UGA_ParryBase : public UGA_TracePefromerOnMontage
 {
 	GENERATED_BODY()
 	

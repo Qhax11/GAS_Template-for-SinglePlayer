@@ -25,5 +25,8 @@ void UGAS_TraceCapsule::DrawDebugShape(const UWorld* World, const FTraceRequest&
 		0,
 		2.0f
 	);
+
+	DrawDebugPoint(World, TraceRequest.StartLocation, 10.0f, DrawColor, false, 0, 2.0f);
+	DrawDebugPoint(World, TraceRequest.EndLocation, 10.0f, DrawColor, false, 0, 2.0f);
 }
 #endif // WITH_EDITOR

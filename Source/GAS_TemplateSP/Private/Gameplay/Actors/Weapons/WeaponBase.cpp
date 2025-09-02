@@ -46,3 +46,8 @@ FVector AWeaponBase::GetTraceEnd() const
 {
 	return TraceEnd ? TraceEnd->GetComponentLocation() : FVector::ZeroVector;
 }
+
+FRotator AWeaponBase::GetTraceEndRotation() const
+{
+	return TraceEnd ? TraceEnd->GetComponentRotation() : FRotator::ZeroRotator;
+}

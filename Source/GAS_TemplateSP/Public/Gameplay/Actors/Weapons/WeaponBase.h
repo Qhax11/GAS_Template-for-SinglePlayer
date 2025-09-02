@@ -22,6 +22,7 @@ public:
 	FVector GetTraceStart() const;
 	FVector GetTraceMid() const;
 	FVector GetTraceEnd() const;
+	FRotator GetTraceEndRotation() const;
 
 protected:
 

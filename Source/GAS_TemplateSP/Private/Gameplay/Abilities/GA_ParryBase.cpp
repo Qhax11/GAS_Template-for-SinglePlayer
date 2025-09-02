@@ -23,7 +23,10 @@ bool UGA_ParryBase::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	}
 
 	const UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
-	if (!ASC) return false;
+	if (!ASC)
+	{
+		return false;
+	}
 
 	if (UAS_Base* BaseAttributes = const_cast<UAS_Base*>(ASC->GetSet<UAS_Base>()))
 	{
@@ -52,7 +55,6 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		DamageSubsystem->OnDamageDealt.AddDynamic(this, &UGA_ParryBase::OnDamageDealt);
 	}
 
-	AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
 	if (!CharacterBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, can not initialize"), *GetName());

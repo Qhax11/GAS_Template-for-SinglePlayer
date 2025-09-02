@@ -22,6 +22,8 @@ public:
 
 	virtual void OnTraceHitResults(const TArray<FHitResult>& HitResults);
 
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "TracePefromerOnMontage")
 	float TraceTickValue = 0.01f;
 

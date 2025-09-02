@@ -72,6 +72,15 @@ bool UGA_TracePefromerOnMontage::TraceForHostileUnits(TArray<FHitResult>& OutHit
 
 void UGA_TracePefromerOnMontage::OnTraceHitResults(const TArray<FHitResult>& HitResults)
 {
-	// Base implementation boþ olabilir
-   // Çocuk sýnýflar override ederek kullanýr
+	// Implementation will be in subclasses
 }
+
+void UGA_TracePefromerOnMontage::EndAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	bool bReplicateEndAbility, bool bWasCancelled)
+{
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+

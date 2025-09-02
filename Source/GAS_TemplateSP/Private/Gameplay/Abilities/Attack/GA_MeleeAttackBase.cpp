@@ -114,7 +114,6 @@ void UGA_MeleeAttackBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
 	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
-	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

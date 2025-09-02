@@ -62,7 +62,7 @@ bool UGA_TracePefromerOnMontage::TraceForHostileUnits(TArray<FHitResult>& OutHit
 	}
 
 	FTraceRequest TraceRequest;
-	TraceRequest.StartLocation = CharacterWeapon->GetTraceStart();
+	TraceRequest.StartLocation = CharacterWeapon->GetTraceMid();
 	TraceRequest.EndLocation = CharacterWeapon->GetTraceEnd();
 	TraceRequest.Direction = CharacterWeapon->GetTraceEndRotation();
 	TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutHitResults, TraceRequest);

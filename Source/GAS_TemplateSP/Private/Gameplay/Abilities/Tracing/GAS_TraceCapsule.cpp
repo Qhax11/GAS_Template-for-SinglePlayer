@@ -13,20 +13,25 @@ FCollisionShape UGAS_TraceCapsule::GetCollisionShape() const
 #if WITH_EDITOR
 void UGAS_TraceCapsule::DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const
 {
-	DrawDebugCapsule(
-		World,
-		TraceRequest.StartLocation + TraceRequest.Direction.Vector().GetSafeNormal() * TraceDistance,
-		HalfHeight,
-		Radius,
-		TraceRequest.Direction.Quaternion(),
-		DrawColor,
-		false,
-		DebugShapeDrawDuration,
-		0,
-		2.0f
-	);
+    FVector TraceVector = TraceRequest.EndLocation - TraceRequest.StartLocation;
+    FVector CapsuleCenter = (TraceRequest.StartLocation + TraceRequest.EndLocation) * 0.5f;
+    float CapsuleHalfHeight = TraceVector.Size() * 0.5f;
+    FQuat CapsuleQuat = FRotationMatrix::MakeFromZ(TraceVector).ToQuat();
 
-	DrawDebugPoint(World, TraceRequest.StartLocation, 10.0f, DrawColor, false, 0, 2.0f);
-	DrawDebugPoint(World, TraceRequest.EndLocation, 10.0f, DrawColor, false, 0, 2.0f);
+    DrawDebugCapsule(
+        World,
+        CapsuleCenter,
+        CapsuleHalfHeight,
+        Radius,
+        CapsuleQuat,
+        DrawColor,
+        false,
+        DebugShapeDrawDuration,
+        0,
+        2.0f
+    );
+
+	DrawDebugPoint(World, TraceRequest.StartLocation, 20.0f, FColor::Black, false, 0, 2.0f);
+	DrawDebugPoint(World, TraceRequest.EndLocation, 20.0f, FColor::Black, false, 0, 2.0f);
 }
 #endif // WITH_EDITOR

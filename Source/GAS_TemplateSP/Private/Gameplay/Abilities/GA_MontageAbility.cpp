@@ -195,14 +195,7 @@ void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEv
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	/*
-	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::BlendOut)
-	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-	}
-	//UE_LOG(LogTemp, Warning, TEXT("OnMontageCancelled: AnimMontage is: %s"), *AnimMontage->GetName());
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-	*/
 }
 
 void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)

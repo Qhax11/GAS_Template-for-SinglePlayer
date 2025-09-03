@@ -26,6 +26,9 @@ protected:
 
 	void CameraZoomIn(float DeltaTime);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_CameraZoomIn();
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Shake")
 	TSubclassOf<class UCameraShakeBase> CameraShakeClass;

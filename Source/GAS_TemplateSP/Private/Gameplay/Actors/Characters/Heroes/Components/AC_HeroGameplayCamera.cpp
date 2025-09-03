@@ -39,6 +39,9 @@ void UAC_HeroGameplayCamera::BeginPlay()
 
 void UAC_HeroGameplayCamera::StartCameraZoomIn()
 {
+	BP_CameraZoomIn();
+
+	/*
 	if (!CameraBoom)
 	{
 		return;
@@ -49,6 +52,7 @@ void UAC_HeroGameplayCamera::StartCameraZoomIn()
 	StartArmLength = CameraBoom->TargetArmLength;
 	TargetArm = 400;
 	bZooming = true;
+	*/
 }
 
 void UAC_HeroGameplayCamera::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

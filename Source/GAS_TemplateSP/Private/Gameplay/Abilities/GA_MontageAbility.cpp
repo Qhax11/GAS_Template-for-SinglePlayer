@@ -62,12 +62,10 @@ void UGA_MontageAbility::ActivateMotionWarping()
 		TargetLocation = CalculateMotionWarpingLocation();
 	}
 
-#if WITH_EDITOR
 	if (bDebugPointMotionWarping)
 	{
 		DrawDebugPoint(GetWorld(), TargetLocation, 10.0f, FColor::Red, false, 3);
 	}
-#endif
 
 	CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
 }

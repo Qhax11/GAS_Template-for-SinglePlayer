@@ -3,8 +3,27 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "AC_HeroGameplayCamera.generated.h"
 
+USTRUCT(BlueprintType)
+struct FCameraZoomParams
+{
+	GENERATED_BODY()
+
+	// Target arm length for this zoom
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TargetArmLength = 400.f;
+
+	// How long the zoom should take
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Duration = 0.3f;
+
+	// Optional curve for Behavior of arm lenght change speed (can be null)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurveFloat* Curve = nullptr;
+};
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class GAS_TEMPLATESP_API UAC_HeroGameplayCamera : public UActorComponent
@@ -16,38 +35,55 @@ public:
 
 	void ShakeCamera(float Force);
 
-	UFUNCTION(BlueprintCallable)
+	// Example public calls
 	void StartCameraZoomIn();
+	void StartCameraZoomOut();
+
+	// Generic zoom starter
+	void StartZoom(const FCameraZoomParams& Params);
 
 protected:
 	virtual void BeginPlay() override;
-
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void CameraZoomIn(float DeltaTime);
+	// Handles the zoom logic
+	void TickZoom(float DeltaTime);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BP_CameraZoomIn();
 
-private:
+protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Shake")
 	TSubclassOf<class UCameraShakeBase> CameraShakeClass;
 
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class AGAS_HeroBase* OwnerHero;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	AGAS_HeroBase* OwnerHero;
 
-	UPROPERTY()
-	class USpringArmComponent* CameraBoom;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USpringArmComponent* CameraBoom;
 
 	UPROPERTY()
 	class APlayerController* OwnerHeroPS;
 
+	// Active zoom data
 	bool bZooming = false;
-	float ZoomDuration = 0.f;
 	float ZoomElapsed = 0.f;
 	float StartArmLength = 0.f;
-	float TargetArm = 0.f;
+	float TargetArmLength = 0.f;
 
-	UPROPERTY(EditDefaultsOnly);
-	UCurveFloat* ZoomCurve = nullptr;
+	FCameraZoomParams ActiveZoomParams;
+
+	// Configurable zoom presets
+	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
+	FCameraZoomParams ZoomInParams;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
+	FCameraZoomParams ZoomOutParams;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
+	FCameraZoomParams AfterZoomInOutParams;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
+	FCameraZoomParams AfterZoomOutInParams;
+
 };

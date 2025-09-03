@@ -49,7 +49,6 @@ void AGCN_GameplayCameraBase::ExecuteCameraEffect(AActor* HeroActor)
 		}
 		HeroGameplayCameraComponent->ShakeCamera(CameraShakeForce);
 	}
-
 	else if (GameplayCueTag == GAS_Tags::TAG_GameplayCue_Combat_Camera_ZoomIn)
 	{
 		float ZoomAmount = 100.0f;
@@ -60,6 +59,18 @@ void AGCN_GameplayCameraBase::ExecuteCameraEffect(AActor* HeroActor)
 			ZoomAmount = AttackTypeToCameraZoomData->FindZoomAmount(SourceMeleeAttackType);
 			ZoomDuracion = AttackTypeToCameraZoomData->FindZoomDuration(SourceMeleeAttackType);
 			HeroGameplayCameraComponent->StartCameraZoomIn();
+		}
+	}
+	else if (GameplayCueTag == GAS_Tags::TAG_GameplayCue_Combat_Camera_ZoomOut)
+	{
+		float ZoomAmount = 100.0f;
+		float ZoomDuracion = 0.2f;
+		UDA_AttackTypeToCameraZoom* AttackTypeToCameraZoomData = SourceDataComponent->GetAttackTypeToCameraZoomData();
+		if (AttackTypeToCameraZoomData)
+		{
+			ZoomAmount = AttackTypeToCameraZoomData->FindZoomAmount(SourceMeleeAttackType);
+			ZoomDuracion = AttackTypeToCameraZoomData->FindZoomDuration(SourceMeleeAttackType);
+			HeroGameplayCameraComponent->StartCameraZoomOut();
 		}
 	}
 }

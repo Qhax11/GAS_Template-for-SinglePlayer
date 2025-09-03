@@ -1,9 +1,7 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroGameplayCamera.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "GameFramework/SpringArmComponent.h"
 #include <Kismet/GameplayStatics.h>
 
 UAC_HeroGameplayCamera::UAC_HeroGameplayCamera()
@@ -39,56 +37,62 @@ void UAC_HeroGameplayCamera::BeginPlay()
 
 void UAC_HeroGameplayCamera::StartCameraZoomIn()
 {
-	BP_CameraZoomIn();
+	StartZoom(ZoomInParams);
+}
 
-	/*
-	if (!CameraBoom)
-	{
-		return;
-	}
+void UAC_HeroGameplayCamera::StartCameraZoomOut()
+{
+	StartZoom(ZoomOutParams);
+}
 
-	bZooming = true;
+void UAC_HeroGameplayCamera::StartZoom(const FCameraZoomParams& Params)
+{
+	if (!CameraBoom) return;
+
+	ActiveZoomParams = Params;
 	ZoomElapsed = 0.f;
 	StartArmLength = CameraBoom->TargetArmLength;
-	TargetArm = 400;
+	TargetArmLength = Params.TargetArmLength;
 	bZooming = true;
-	*/
 }
 
 void UAC_HeroGameplayCamera::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//CameraZoomIn(DeltaTime);
+	TickZoom(DeltaTime);
 }
 
-void UAC_HeroGameplayCamera::CameraZoomIn(float DeltaTime)
+void UAC_HeroGameplayCamera::TickZoom(float DeltaTime)
 {
-	if (!bZooming || !CameraBoom)
-	{
-		return;
-	}
+	if (!bZooming || !CameraBoom) return;
 
 	ZoomElapsed += DeltaTime;
-	float Alpha = FMath::Clamp(ZoomElapsed / ZoomDuration, 0.f, 1.f);
+	float Alpha = FMath::Clamp(ZoomElapsed / ActiveZoomParams.Duration, 0.f, 1.f);
 
-	// Curve varsa curve de�eri al, yoksa lineer
-	if (ZoomCurve)
-	{
-		Alpha = ZoomCurve->GetFloatValue(Alpha);
-	}
+	// Use curve if defined, otherwise linear
+	float CurveValue = ActiveZoomParams.Curve ? ActiveZoomParams.Curve->GetFloatValue(Alpha) : Alpha;
 
-	// SpringArm target length interpolasyonu
-	CameraBoom->TargetArmLength = FMath::Lerp(StartArmLength, TargetArm, Alpha);
+	CameraBoom->TargetArmLength = FMath::Lerp(StartArmLength, TargetArmLength, CurveValue);
 
-	if (ZoomElapsed >= ZoomDuration)
+	if (Alpha >= 1.f)
 	{
 		bZooming = false;
-		CameraBoom->TargetArmLength = TargetArm; // biti� de�erini set et
+		CameraBoom->TargetArmLength = TargetArmLength;
+
+		// 🔥 Auto chaining
+		if (ActiveZoomParams.TargetArmLength == ZoomInParams.TargetArmLength)
+		{
+			// Zoom In bitti → otomatik Zoom Out başlat
+			StartZoom(AfterZoomInOutParams);
+		}
+		else if (ActiveZoomParams.TargetArmLength == ZoomOutParams.TargetArmLength)
+		{
+			// Zoom Out bitti → otomatik Zoom In başlat
+			StartZoom(AfterZoomOutInParams);
+		}
 	}
 }
-
-
 
 void UAC_HeroGameplayCamera::ShakeCamera(float Force)
 {

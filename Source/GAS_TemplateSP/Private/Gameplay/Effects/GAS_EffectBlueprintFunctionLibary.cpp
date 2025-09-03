@@ -152,19 +152,31 @@ void UGAS_EffectBlueprintFunctionLibary::AddTagsToEffectSpecWithContain(FGamepla
 	Spec.AppendDynamicAssetTags(TagContainer);
 }
 
-bool UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(UAbilitySystemComponent* OwnerASC, UAbilitySystemComponent* TargetASC, TArray<TSubclassOf<UGameplayEffect>> EffectClasses)
+bool UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(UAbilitySystemComponent* SourceASC, const UGameplayAbility* SourceAbility, UAbilitySystemComponent* TargetASC, TArray<TSubclassOf<UGameplayEffect>> EffectClasses)
 {
-	if (!OwnerASC || !TargetASC || EffectClasses.IsEmpty())
+	if (!SourceASC || !TargetASC || EffectClasses.IsEmpty())
 	{
 		return false;
 	}
 
 	for (TSubclassOf<UGameplayEffect> GameplayEffect : EffectClasses)
 	{
-		if (GameplayEffect.Get()->IsValidLowLevelFast()) 
+	
+		FGameplayEffectContextHandle EffectContext = SourceASC->MakeEffectContext();
+		EffectContext.SetAbility(SourceAbility);
+		FGameplayEffectSpecHandle NewHandle = SourceASC->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
+
+		FGameplayEffectSpec* EffectSpec = nullptr;
+		if (NewHandle.IsValid())
 		{
-			OwnerASC->ApplyGameplayEffectToTarget(CreateEffectWithTSubclass(GameplayEffect), TargetASC);
+			EffectSpec = NewHandle.Data.Get();
 		}
+
+		if (EffectSpec)
+		{
+			SourceASC->ApplyGameplayEffectSpecToTarget(*EffectSpec, TargetASC);
+		}
+
 	}
 
 	return true;

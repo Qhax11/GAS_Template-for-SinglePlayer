@@ -28,11 +28,6 @@ bool AGCN_CombatBase::OnExecuted(AActor* Source, AActor* Target, const FGameplay
 	}
 
 	SourceMeleeAttackType = SourceMeleeAttack->GetAttackTypeTagFromAbilityTags();
-	if (!SourceMeleeAttackType.IsValid()) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: SourceMeleeAttackType is null!"));
-		return false;
-	}
 
 	SourceDataComponent = Source->GetComponentByClass<UAC_GameplayData>();
 	if (!SourceDataComponent)

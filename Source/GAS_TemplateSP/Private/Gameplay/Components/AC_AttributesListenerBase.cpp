@@ -71,19 +71,19 @@ void UAC_AttributesListenerBase::HealthChanged(const FAttributeChangeCallbackDat
 			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Health_Full, 100);
 		}
 	}
-/*
-	if ((Data.CurrentValue/Data.MaxValue) < (VulnerableHealthPercentage/100)) 
+
+	if (Data.CurrentValue <= 0)
 	{
-		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_Vulnerable);
+		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
 	}
 	else
 	{
-		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Vulnerable))
+		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable))
 		{
-			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_Vulnerable, 100);
+			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable, 100);
 		}
 	}
-	*/
+
 }
 
 void UAC_AttributesListenerBase::MovementSpeedChanged(const FAttributeChangeCallbackData& Data)

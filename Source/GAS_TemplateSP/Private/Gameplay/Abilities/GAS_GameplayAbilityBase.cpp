@@ -27,7 +27,7 @@ void UGAS_GameplayAbilityBase::StartupEffects()
 
 void UGAS_GameplayAbilityBase::ApplyGameplayEffectToSelf(TArray<TSubclassOf<UGameplayEffect>> Effects)
 {
-	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), GetAbilitySystemComponentFromActorInfo(), Effects);
+	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), this, GetAbilitySystemComponentFromActorInfo(), Effects);
 }
 
 float UGAS_GameplayAbilityBase::GetCost(int32 AbilityLevel) const

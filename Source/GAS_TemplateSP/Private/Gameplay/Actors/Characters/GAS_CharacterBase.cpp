@@ -89,13 +89,13 @@ void AGAS_CharacterBase::DisableCollision()
 	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent()) 
 	{
 		GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}
 
 	if (USkeletalMeshComponent* CharacterMesh = GetMesh()) 
 	{
 		GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}
 }
 
@@ -104,13 +104,13 @@ void AGAS_CharacterBase::EnableCollision()
 	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
 	{
 		GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
 
 	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
 	{
 		GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
 }
 

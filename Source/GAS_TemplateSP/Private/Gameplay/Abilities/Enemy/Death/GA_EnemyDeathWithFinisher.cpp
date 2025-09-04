@@ -20,7 +20,7 @@ void UGA_EnemyDeathWithFinisher::ActivateAbility(const FGameplayAbilitySpecHandl
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	//DisableOwnerCollision();
+	DisableOwnerCollision();
 }
 
 void UGA_EnemyDeathWithFinisher::EndAbility(const FGameplayAbilitySpecHandle Handle, 
@@ -30,6 +30,4 @@ void UGA_EnemyDeathWithFinisher::EndAbility(const FGameplayAbilitySpecHandle Han
 	bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	DisableOwnerCollision();
 }

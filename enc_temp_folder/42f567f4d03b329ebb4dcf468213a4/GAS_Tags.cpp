@@ -172,7 +172,6 @@ namespace GAS_Tags
 	
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget, "GameplayCue.Sound.PlayOnTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget_TakeDamage, "GameplayCue.Sound.PlayOnTarget.TakeDamage");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget_Finisher, "GameplayCue.Sound.PlayOnTarget.Finisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource, "GameplayCue.Sound.PlayOnSource");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_ParryKnockback, "GameplayCue.Sound.PlayOnSource.ParryKnockback");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_AttackSwing, "GameplayCue.Sound.PlayOnSource.AttackSwing");

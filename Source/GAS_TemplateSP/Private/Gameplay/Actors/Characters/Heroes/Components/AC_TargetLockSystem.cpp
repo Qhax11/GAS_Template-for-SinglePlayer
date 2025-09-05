@@ -98,7 +98,7 @@ void UAC_TargetLockSystem::ActivateTargetLock(const FInputActionValue& Value)
 
 void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 {
- 	if (!TracingData)
+ 	if (!TracingData || HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TracingData is null in: %s, cannot initialize TargetLockSystem."), *GetName());
 		return;
@@ -175,7 +175,7 @@ void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSp
 
 void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)
 {
-	if (!bLocked || HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting))
+	if (!bLocked || HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting) || HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher))
 	{
 		return;
 	}

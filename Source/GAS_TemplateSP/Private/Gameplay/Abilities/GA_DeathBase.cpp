@@ -25,11 +25,11 @@ void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 	
 	CachedInstigator = Cast<AGAS_CharacterBase>(TriggerEventData->Instigator);
-	SetupBrodcastDeSpawn(EDeSpawnPhase::DeathStarted);
+	BrodcastDeSpawn(EDeSpawnPhase::DeathStarted);
 	RemoveTags();
 }
 
-void UGA_DeathBase::SetupBrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase)
+void UGA_DeathBase::BrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase)
 {
 	AGAS_CharacterBase* OwnerCharacter = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
 	UAbilitySystemComponent* OwnerASC = GetAbilitySystemComponentFromActorInfo();
@@ -78,14 +78,14 @@ void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	SetupBrodcastDeSpawn(EDeSpawnPhase::DeathFinished);
-
 	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
 	{
 		CharacterBase->DisableMovement();
 		CharacterBase->DisableMesh();
 		CharacterBase->DisableCollision(ECollisionEnabled::NoCollision);
 	}
+
+	BrodcastDeSpawn(EDeSpawnPhase::DeathFinished);
 }
 
 

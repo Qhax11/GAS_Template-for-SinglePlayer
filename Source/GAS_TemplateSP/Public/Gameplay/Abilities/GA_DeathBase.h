@@ -21,9 +21,9 @@ protected:
 
 	virtual void BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData);
 
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+	void DisableOwnerCollision(ECollisionEnabled::Type NewType);
 
-	void DisableOwnerCollision();
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 	UPROPERTY(EditDefaultsOnly, Category = "DeathBase")
 	FGameplayTagContainer TagsToRemove;

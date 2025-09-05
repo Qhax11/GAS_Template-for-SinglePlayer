@@ -76,7 +76,7 @@ public:
 
 	void EnableMovement();
 
-	void DisableCollision();
+	void DisableCollision(ECollisionEnabled::Type NewType);
 
 	void EnableCollision();
 

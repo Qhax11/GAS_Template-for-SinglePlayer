@@ -21,5 +21,5 @@ void UGA_EnemyBasicDeath::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	DisableOwnerCollision();
+	DisableOwnerCollision(ECollisionEnabled::NoCollision);
 }

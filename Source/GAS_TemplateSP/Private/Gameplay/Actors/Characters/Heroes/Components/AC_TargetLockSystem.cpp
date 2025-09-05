@@ -118,6 +118,12 @@ void UAC_TargetLockSystem::StartTargetLock()
 		return;
 	}
 
+	if (TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetASC has dead tag: %s."), *GetName());
+		return;
+	}
+
 	TargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 	CurrentTargetASC = TargetASC;
 	CurrentTarget = OutResultActors[0];

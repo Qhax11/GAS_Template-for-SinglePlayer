@@ -66,9 +66,17 @@ void UGA_DeathBase::BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData)
 	// Logic will be implemented in subclasses.
 }
 
-void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle, 
-	const FGameplayAbilityActorInfo* ActorInfo, 
-	const FGameplayAbilityActivationInfo ActivationInfo, 
+void UGA_DeathBase::DisableOwnerCollision(ECollisionEnabled::Type NewType)
+{
+	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
+	{
+		CharacterBase->DisableCollision(NewType);
+	}
+}
+
+void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
@@ -77,18 +85,9 @@ void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		CharacterBase->DisableMovement();
 		CharacterBase->DisableMesh();
+		CharacterBase->DisableCollision(ECollisionEnabled::NoCollision);
 	}
 }
-
-void UGA_DeathBase::DisableOwnerCollision()
-{
-	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
-	{
-		CharacterBase->DisableCollision();
-	}
-}
-
-
 
 
 

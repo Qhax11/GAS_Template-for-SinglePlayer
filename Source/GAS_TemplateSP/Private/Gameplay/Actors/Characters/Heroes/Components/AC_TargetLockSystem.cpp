@@ -143,7 +143,6 @@ void UAC_TargetLockSystem::EndTargetLock()
 
 	HeroASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
-	CurrentTarget = nullptr;
 	bLocked = false;
 
 	OnEndTargetLock.Broadcast();
@@ -153,22 +152,18 @@ void UAC_TargetLockSystem::EndTargetLock()
 
 void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnData)
 {
-	if (EnemyDeSpawnData.DeSpawnPhase != EDeSpawnPhase::DeathFinished)
+	if (EnemyDeSpawnData.Character != CurrentTarget)
 	{
 		return;
 	}
 
-	if (EnemyDeSpawnData.Character == CurrentTarget)
+	if (EnemyDeSpawnData.DeSpawnPhase == EDeSpawnPhase::DeathStarted)
 	{
-		if (bLockNextTargetOnCurrentTargetDeath)
-		{
-			EndTargetLock();
-			StartTargetLock(TracingDataCheckClosestTarget);
-		}
-		else
-		{
-			EndTargetLock();
-		}
+		EndTargetLock();
+	}
+	else if(EnemyDeSpawnData.DeSpawnPhase == EDeSpawnPhase::DeathFinished)
+	{
+		StartTargetLock(TracingDataCheckClosestTarget);
 	}
 
 }

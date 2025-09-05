@@ -32,7 +32,7 @@ private:
 	UPROPERTY()
 	const AGAS_CharacterBase* CachedInstigator = nullptr;
 
-	void SetupBrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase);
+	void BrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase);
 
 	void RemoveTags();
 };

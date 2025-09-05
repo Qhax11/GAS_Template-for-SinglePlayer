@@ -41,6 +41,7 @@ void UAC_TargetLockSystem::BeginPlay()
 		TracingDataStart->Trace->bDrawEnable = bEnableTraceDebug;
 		TracingDataTargetChange->Trace->bDrawEnable = bEnableTraceDebug;
 		TracingDataCheckForFrontActor->Trace->bDrawEnable = bEnableTraceDebug;
+		TracingDataCheckClosestTarget->Trace->bDrawEnable = bEnableTraceDebug;
 	}
 
 	if (!BindTargetLockSystemInputs()) 
@@ -87,7 +88,7 @@ void UAC_TargetLockSystem::ActivateTargetLock(const FInputActionValue& Value)
 {
 	if (!bLocked)
 	{
-		StartTargetLock();
+		StartTargetLock(TracingDataStart);
 	}
 	else
 	{
@@ -95,23 +96,23 @@ void UAC_TargetLockSystem::ActivateTargetLock(const FInputActionValue& Value)
 	}
 }
 
-void UAC_TargetLockSystem::StartTargetLock()
+void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 {
- 	if (!TracingDataStart)
+ 	if (!TracingData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetingData is null in: %s, cannot initialize TargetLockSystem."), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TracingData is null in: %s, cannot initialize TargetLockSystem."), *GetName());
 		return;
 	}
 
 	TArray<AActor*> OutResultActors;
-	TracingDataStart->Trace->CreateTraceWithTeamFilter(GetWorld(), HeroBase, ETeamAttitude::Hostile, OutResultActors);
-
-	if (!OutResultActors.IsValidIndex(0))
+	TracingData->Trace->CreateTraceWithTeamFilter(GetWorld(), HeroBase, ETeamAttitude::Hostile, OutResultActors);
+	if (OutResultActors.IsEmpty())
 	{
 		return;
 	}
+	AActor* ClosestTarget = FindNearestActor(HeroBase, OutResultActors);
 
-	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OutResultActors[0]);
+	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(ClosestTarget);
 	if (!TargetASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TargetASC is null in %s, cannot initialize TargetLockSystem."), *GetName());
@@ -124,9 +125,7 @@ void UAC_TargetLockSystem::StartTargetLock()
 		return;
 	}
 
-	TargetASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
-	CurrentTargetASC = TargetASC;
-	CurrentTarget = OutResultActors[0];
+	ChangeTarget(ClosestTarget);
 
 	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	bLocked = true;
@@ -164,8 +163,7 @@ void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSp
 		if (bLockNextTargetOnCurrentTargetDeath)
 		{
 			EndTargetLock();
-			// trace based yapýp daha geniþ bi trace data seçmek
-			StartTargetLock();
+			StartTargetLock(TracingDataCheckClosestTarget);
 		}
 		else
 		{

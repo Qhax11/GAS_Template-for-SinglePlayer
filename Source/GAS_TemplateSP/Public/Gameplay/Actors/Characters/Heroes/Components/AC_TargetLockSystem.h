@@ -36,7 +36,7 @@ protected:
 
 	void LookMouse(const FInputActionValue& Value);
 
-	void StartTargetLock();
+	void StartTargetLock(class UGAS_AbilityTraceData* TracingData);
 
 	void EndTargetLock();
 
@@ -65,11 +65,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
 	class UGAS_AbilityTraceData* TracingDataStart;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate|TargetChange")
 	class UGAS_AbilityTraceData* TracingDataTargetChange;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate|TargetChange")
 	class UGAS_AbilityTraceData* TracingDataCheckForFrontActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
+	class UGAS_AbilityTraceData* TracingDataCheckClosestTarget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
 	bool bEnableTraceDebug = false;

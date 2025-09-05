@@ -35,8 +35,6 @@ public:
 
 	void CreatePlayMontageWaitForEvent();
 
-	void UnbindTaskDelegates();
-
 	class UGAS_Task_PlayMontageWaitForEvent* PlayMontageWaitForEventTask;
 
 	// Determines from which montage events the ability should end.

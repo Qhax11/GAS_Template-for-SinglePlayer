@@ -91,7 +91,7 @@ void UAC_PostureHandler::OnHealthChanged(const FAttributeChangeCallbackData& Dat
 
 void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Data)
 {
-	if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic) || OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher))
+	if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
 	{
 		return;
 	}
@@ -110,8 +110,15 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 
 	if (Data.CurrentValue <= 0)
 	{
-		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty);
-		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
+		if (!OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty))
+		{
+			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty);
+		}
+
+		if (!OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable))
+		{
+			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
+		}
 	}
 	else
 	{

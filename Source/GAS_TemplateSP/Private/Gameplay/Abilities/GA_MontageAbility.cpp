@@ -161,20 +161,6 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	PlayMontageWaitForEventTask->ReadyForActivation();
 }
 
-void UGA_MontageAbility::UnbindTaskDelegates()
-{
-	if (!IsValid(PlayMontageWaitForEventTask))
-	{
-		return;
-	}
-
-	PlayMontageWaitForEventTask->OnBlendOut.RemoveDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
-	PlayMontageWaitForEventTask->OnCompleted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-	PlayMontageWaitForEventTask->OnInterrupted.RemoveDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
-	PlayMontageWaitForEventTask->OnCancelled.RemoveDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-	PlayMontageWaitForEventTask->EventReceived.RemoveDynamic(this, &UGA_MontageAbility::OnEventReceived);
-}
-
 void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageBlendOut: AnimMontage is: %s"), *AnimMontage->GetName());
@@ -221,7 +207,6 @@ void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 {
 	if (PlayMontageWaitForEventTask && IsValid(PlayMontageWaitForEventTask))
 	{
-		UnbindTaskDelegates();
 		PlayMontageWaitForEventTask->EndTask();
 	}
 

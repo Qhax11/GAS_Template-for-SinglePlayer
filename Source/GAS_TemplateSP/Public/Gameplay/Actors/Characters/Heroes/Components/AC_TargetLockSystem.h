@@ -61,7 +61,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnEndTargetLock OnEndTargetLock;
 
-public:
+protected:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|TraceDate")
 	class UGAS_AbilityTraceData* TracingDataStart;
 
@@ -86,7 +86,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem", meta = (ToolTip = "Time interval within which each direction can trigger the action only once."))
 	float TryToFindNewTargetExecutionCooldown = 1.0f;
 
-public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void RotateCameraToTarget(float DeltaTime);
@@ -114,6 +113,9 @@ public:
 	float CameraLookLocationOffsetZ = 100.0f;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem")
+	bool bLockNextTargetOnCurrentTargetDeath = true;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bLocked = false;
 

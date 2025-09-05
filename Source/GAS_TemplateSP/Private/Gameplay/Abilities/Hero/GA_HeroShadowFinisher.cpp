@@ -34,6 +34,31 @@ bool UGA_HeroShadowFinisher::CanActivateAbility(const FGameplayAbilitySpecHandle
     return true;
 }
 
+void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
+{
+    // Adjust the rotation towards the target enemy before spawning the target actor.
+    if (AGAS_HeroBase* OwnerHero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
+    {
+        if (UAC_TargetLockSystem* TargetLockSystemComponent = OwnerHero->GetTargetLockSystemComponent())
+        {
+            if (AActor* CurrentTarget = TargetLockSystemComponent->CurrentTarget)
+            {
+                FRotator LookAtToTargetRotation = UKismetMathLibrary::FindLookAtRotation(Location, CurrentTarget->GetActorLocation());
+                Super::SpawnAndSetupTargetActor(LookAtToTargetRotation, Location);
+                return;
+            }
+        }
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("Couldn't set rotation correctly for Finisher Shadow in: %s"), *GetName());
+    Super::SpawnAndSetupTargetActor(Rotation, Location);
+}
+
+void UGA_HeroShadowFinisher::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
+{
+    Super::OnTargetActorSpawnLocationQueryFinished(Result);
+}
+
 void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
     AHeroShadowTargetActor* HeroShadowTargetActor = Cast<AHeroShadowTargetActor>(TargetActorData.TargetActor);
@@ -65,31 +90,6 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     {
         Super::OnTargetActorConfirm(TargetActorData);
     }
-}
-
-void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
-{ 
-    // Adjust the rotation towards the target enemy before spawning the target actor.
-    if (AGAS_HeroBase* OwnerHero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
-    {
-        if (UAC_TargetLockSystem* TargetLockSystemComponent = OwnerHero->GetTargetLockSystemComponent())
-        {
-            if (AActor* CurrentTarget = TargetLockSystemComponent->CurrentTarget) 
-            {
-                FRotator LookAtToTargetRotation = UKismetMathLibrary::FindLookAtRotation(Location, CurrentTarget->GetActorLocation());
-                Super::SpawnAndSetupTargetActor(LookAtToTargetRotation, Location);
-                return;
-            }
-        }
-    }
-
-    UE_LOG(LogTemp, Warning, TEXT("Couldn't set rotation correctly for Finisher Shadow in: %s"), *GetName());
-    Super::SpawnAndSetupTargetActor(Rotation, Location);
-}
-
-void UGA_HeroShadowFinisher::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
-{
-    Super::OnTargetActorSpawnLocationQueryFinished(Result);
 }
 
 void UGA_HeroShadowFinisher::CancelAbilityFromInput()

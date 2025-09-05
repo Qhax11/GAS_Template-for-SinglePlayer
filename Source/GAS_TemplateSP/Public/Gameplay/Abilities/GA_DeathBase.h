@@ -29,7 +29,10 @@ protected:
 	FGameplayTagContainer TagsToRemove;
 
 private:
-	void SetupBrodcastDeSpawn(const AActor* Instigator);
+	UPROPERTY()
+	const AGAS_CharacterBase* CachedInstigator = nullptr;
+
+	void SetupBrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase);
 
 	void RemoveTags();
 };

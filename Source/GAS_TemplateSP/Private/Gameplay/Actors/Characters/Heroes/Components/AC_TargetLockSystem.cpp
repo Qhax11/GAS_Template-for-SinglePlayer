@@ -154,10 +154,25 @@ void UAC_TargetLockSystem::EndTargetLock()
 
 void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnData)
 {
+	if (EnemyDeSpawnData.DeSpawnPhase != EDeSpawnPhase::DeathFinished)
+	{
+		return;
+	}
+
 	if (EnemyDeSpawnData.Character == CurrentTarget)
 	{
-		EndTargetLock();
+		if (bLockNextTargetOnCurrentTargetDeath)
+		{
+			EndTargetLock();
+			// trace based yapýp daha geniþ bi trace data seçmek
+			StartTargetLock();
+		}
+		else
+		{
+			EndTargetLock();
+		}
 	}
+
 }
 
 void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)

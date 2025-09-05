@@ -24,11 +24,11 @@ protected:
 		FGameplayTagContainer* OptionalRelevantTags = nullptr
 	) const override;
 
-	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
-
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
 	virtual void OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result) override;
+
+	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UGA_MeleeAttackBase> FinisherAbilityClass;

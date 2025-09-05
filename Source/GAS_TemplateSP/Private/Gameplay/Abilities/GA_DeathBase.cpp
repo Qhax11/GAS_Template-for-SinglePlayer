@@ -23,29 +23,26 @@ void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
-
-	SetupBrodcastDeSpawn(TriggerEventData->Instigator);
+	
+	CachedInstigator = Cast<AGAS_CharacterBase>(TriggerEventData->Instigator);
+	SetupBrodcastDeSpawn(EDeSpawnPhase::DeathStarted);
 	RemoveTags();
 }
 
-void UGA_DeathBase::SetupBrodcastDeSpawn(const AActor* Instigator)
+void UGA_DeathBase::SetupBrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase)
 {
 	AGAS_CharacterBase* OwnerCharacter = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
 	UAbilitySystemComponent* OwnerASC = GetAbilitySystemComponentFromActorInfo();
 
-	if (!OwnerCharacter || !OwnerASC)
+	if (!OwnerCharacter || !OwnerASC || !CachedInstigator)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OwnerCharacter or OwnerASC is null in: %s"), *GetName());
 		return;
 	}
 
-	// Try casting the instigator without const_cast
-	const AGAS_CharacterBase* InstigatorCharacterConst = Cast<AGAS_CharacterBase>(Instigator);
-	AGAS_CharacterBase* InstigatorCharacter = const_cast<AGAS_CharacterBase*>(InstigatorCharacterConst); 
+	UAbilitySystemComponent* InstigatorASC = CachedInstigator ? CachedInstigator->GetAbilitySystemComponent() : nullptr;
 
-	UAbilitySystemComponent* InstigatorASC = InstigatorCharacter ? InstigatorCharacter->GetAbilitySystemComponent() : nullptr;
-
-	FCharacterDeSpawnData CharacterDeSpawnData(OwnerCharacter, OwnerASC, InstigatorCharacter, InstigatorASC);
+	FCharacterDeSpawnData CharacterDeSpawnData(DeSpawnPhase, OwnerCharacter, OwnerASC, CachedInstigator, InstigatorASC);
 	BroadcastDeSpawn(CharacterDeSpawnData);
 }
 
@@ -80,6 +77,8 @@ void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	SetupBrodcastDeSpawn(EDeSpawnPhase::DeathFinished);
 
 	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
 	{

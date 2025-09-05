@@ -50,12 +50,22 @@ public:
 	{}
 };
 
+UENUM(BlueprintType)
+enum class EDeSpawnPhase : uint8
+{
+	DeathStarted UMETA(DisplayName = "Death Started"),
+	DeathFinished UMETA(DisplayName = "Death Finished")
+};
+
 USTRUCT(BlueprintType)
 struct FCharacterDeSpawnData
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadOnly)
+	EDeSpawnPhase DeSpawnPhase = EDeSpawnPhase::DeathStarted;
+
 	UPROPERTY(BlueprintReadOnly)
 	AGAS_CharacterBase* Character = nullptr;
 
@@ -65,16 +75,16 @@ public:
 	// The character responsible for this character's death.
     // Typically the attacker who dealt the final blow.
 	UPROPERTY(BlueprintReadOnly)
-	AGAS_CharacterBase* InstigatorCharacter = nullptr;
+	const AGAS_CharacterBase* InstigatorCharacter = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)
 	UAbilitySystemComponent* InstigatorASC = nullptr;
 
 	FCharacterDeSpawnData() {}
 
-	FCharacterDeSpawnData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC,
-		AGAS_CharacterBase* InInstigatorCharacter, UAbilitySystemComponent* InInstigatorASC)
-		: Character(InCharacter), ASC(InASC), InstigatorCharacter(InInstigatorCharacter), InstigatorASC(InInstigatorASC)
+	FCharacterDeSpawnData(EDeSpawnPhase InDeSpawnPhase, AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC,
+		const AGAS_CharacterBase* InInstigatorCharacter, UAbilitySystemComponent* InInstigatorASC)
+		: DeSpawnPhase(InDeSpawnPhase), Character(InCharacter), ASC(InASC), InstigatorCharacter(InInstigatorCharacter), InstigatorASC(InInstigatorASC)
 	{}
 };
 

@@ -60,6 +60,11 @@ bool UAC_AttributesListenerBase::Initialize(const AActor* OwnerActor)
 
 void UAC_AttributesListenerBase::HealthChanged(const FAttributeChangeCallbackData& Data)
 {
+	if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
+	{
+		return;
+	}
+
 	if (Data.CurrentValue >= Data.MaxValue)
 	{
 		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Health_Full);
@@ -74,7 +79,10 @@ void UAC_AttributesListenerBase::HealthChanged(const FAttributeChangeCallbackDat
 
 	if ((Data.CurrentValue / Data.MaxValue) < (VulnerableHealthPercentage / 100)) 
 	{
-		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
+		if (!OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable))
+		{
+			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
+		}
 	}
 	
 }

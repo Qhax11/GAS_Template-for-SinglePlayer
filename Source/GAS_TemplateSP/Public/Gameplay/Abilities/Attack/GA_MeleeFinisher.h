@@ -13,5 +13,6 @@ class GAS_TEMPLATESP_API UGA_MeleeFinisher : public UGA_MeleeAttackBase
 public:
 	UGA_MeleeFinisher();
 
-    virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+	UFUNCTION(BlueprintCallable)
+	FGameplayTag GetFinisherTypeTagFromAbilityTags() const;
 };

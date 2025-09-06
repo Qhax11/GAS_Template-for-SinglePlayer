@@ -10,7 +10,7 @@ void UGAS_AbilitySystemComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UGAS_AbilitySystemComponent::TryActivateAbilityByTagWithEventData(const FGameplayEventData& EventData)
+void UGAS_AbilitySystemComponent::TryActivateAbilityByEventData(const FGameplayEventData& EventData)
 {
 	if (!EventData.EventTag.IsValid()) 
 	{
@@ -33,7 +33,7 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 	{
 		if (Spec.Ability == InAbilityCDO)
 		{
-			TryActivateAbilityByTagWithEventData(EventData);
+			TryActivateAbilityByEventData(EventData);
 			UGameplayAbility* Instance = Spec.GetPrimaryInstance();
 			if (Instance) 
 			{

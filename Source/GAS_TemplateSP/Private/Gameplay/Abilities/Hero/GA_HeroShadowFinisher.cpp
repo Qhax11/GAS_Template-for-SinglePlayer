@@ -7,6 +7,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "AbilitySystemGlobals.h"
 
 UGA_HeroShadowFinisher::UGA_HeroShadowFinisher()
 {
@@ -110,24 +111,52 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
         Super::OnTargetActorConfirm(TargetActorData);
     }
 
+    TSubclassOf<UGA_MeleeAttackBase> MeleeFinisherClass = HeroShadowTargetActor->GetSelectedAttackAbilityClass();
+    if (!MeleeFinisherClass)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MeleeFinisherClass is null in %s, cannot initialize melee finisher."), *GetName());
+        Super::OnTargetActorConfirm(TargetActorData);
+        return;
+    }
+
+    UAbilitySystemComponent* TargetEnemyASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(HeroShadowTargetActor->GetCurrentTarget());
+    UGAS_AbilitySystemComponent* EnemyASC = CastChecked<UGAS_AbilitySystemComponent>(TargetEnemyASC);
+    if (!EnemyASC)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("TargetEnemyASC is null in %s, cannot initialize melee finisher."), *GetName());
+        Super::OnTargetActorConfirm(TargetActorData);
+        return;
+    }
+
     BP_OnTargetActorConfirm(TargetActorData);
 
     GetAvatarActorFromActorInfo()->SetActorLocation(HeroShadowTargetActor->GetActorLocation());
     GetAvatarActorFromActorInfo()->SetActorRotation(HeroShadowTargetActor->GetActorRotation());
-
-    if (!HeroShadowTargetActor->GetSelectedAttackAbilityClass() || !HeroShadowTargetActor->GetCurrentTarget())
-    {
-        Super::OnTargetActorConfirm(TargetActorData);
-        return;
-    }
 
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher))
     {
         GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
     }
 
-    // TO DO USW WÝTH DATA AND PASS TAG. AND ÝN DEATH FÝNÝSHER USE THAT TAG WÝTH MAPÝNG ÝN DATA ASSET.
-    GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(HeroShadowTargetActor->GetSelectedAttackAbilityClass());
+    UGA_MeleeFinisher* ActivatedMeleeFinisher = Cast<UGA_MeleeFinisher>(GetASC()->TryActivateAbilityByClassAndReturnInstance(MeleeFinisherClass));
+    if (!ActivatedMeleeFinisher) 
+    {
+        UE_LOG(LogTemp, Warning, TEXT("ActivatedMeleeFinisher is null in %s, cannot initialize melee finisher."), *GetName());
+        Super::OnTargetActorConfirm(TargetActorData);
+        return;
+    }
+
+    FGameplayEffectContextHandle GE_ContextHandleForDeathFinisher = GetAbilitySystemComponentFromActorInfo()->MakeEffectContext();
+    GE_ContextHandleForDeathFinisher.SetAbility(ActivatedMeleeFinisher);
+
+    FGameplayEventData EnemyDeathFinisher;
+    EnemyDeathFinisher.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Finisher;
+    EnemyDeathFinisher.InstigatorTags = ActivatedMeleeFinisher->AbilityTags;
+    EnemyDeathFinisher.OptionalObject = ActivatedMeleeFinisher;
+    EnemyDeathFinisher.ContextHandle = GE_ContextHandleForDeathFinisher;
+
+    // DEATH FÝNÝSHERDA HÝÇBÝR EVENT DATA GÖZÜKMÜYOR
+    EnemyASC->TryActivateAbilityByEventData(EnemyDeathFinisher);
 
     Super::OnTargetActorConfirm(TargetActorData);
 }

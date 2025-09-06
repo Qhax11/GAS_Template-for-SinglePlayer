@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Death/GA_EnemyDeathWithFinisher.h"
+#include "Gameplay/Abilities/Attack/GA_MeleeFinisher.h"
 
 UGA_EnemyDeathWithFinisher::UGA_EnemyDeathWithFinisher()
 {
@@ -19,7 +20,31 @@ void UGA_EnemyDeathWithFinisher::ActivateAbility(const FGameplayAbilitySpecHandl
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
+	if (!TriggerEventData) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s"), *GetName());
+		return;
+	}
+
+	// Retrieve the instigator ability from OptionalObject
+	const UGA_MeleeFinisher* MeleeFinisher = Cast<UGA_MeleeFinisher>(TriggerEventData->OptionalObject);
+	if (!MeleeFinisher)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MeleeFinisher is null in: %s"), *GetName());
+		return;
+	}
+
+	FGameplayTag FinisherTypeTag = MeleeFinisher->GetFinisherTypeTagFromAbilityTags();
+	UAnimMontage* FinisherHitMontage = FinisherHitData->FindMontageByTag(FinisherTypeTag);
+	if (!FinisherHitMontage) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("FinisherHitMontage is null in: %s"), *GetName());
+		return;
+	}
+
+	AnimMontage = FinisherHitMontage;
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
 	DisableOwnerCollision(ECollisionEnabled::QueryOnly);
 }
 

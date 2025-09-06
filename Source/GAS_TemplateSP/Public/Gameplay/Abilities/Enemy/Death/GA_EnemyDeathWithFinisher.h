@@ -25,6 +25,20 @@ class UFinisherHitDataAsset : public UDataAsset
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<FMeleeFinisherHitPair> FinisherPairs;
+
+    // Returns the montage associated with the given FinisherTag
+    UFUNCTION(BlueprintCallable, Category = "Finisher")
+    UAnimMontage* FindMontageByTag(FGameplayTag FinisherTag) const
+    {
+        for (const FMeleeFinisherHitPair& Pair : FinisherPairs)
+        {
+            if (Pair.FinisherTag == FinisherTag)
+            {
+                return Pair.FinisherHitMontage; // sadece montage dönüyoruz
+            }
+        }
+        return nullptr;
+    }
 };
 
 UCLASS()

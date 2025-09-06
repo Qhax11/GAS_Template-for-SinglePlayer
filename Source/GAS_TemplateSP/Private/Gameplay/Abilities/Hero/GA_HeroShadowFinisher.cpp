@@ -123,6 +123,15 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
 
 void UGA_HeroShadowFinisher::OnEnemyTargetVulnerableTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-    CancelAbilityFromInput();
+    if (TargetActor->IsValidLowLevel())
+    {
+        TargetActor->Cancel();
+    }
+}
+
+void UGA_HeroShadowFinisher::CancelAbilityFromInput()
+{
+    // We don't call Super:CancelAbilityFromInput(); 
+    // This ability should cancel on only OnEnemyTargetVulnerableTagRemoved
 }
 

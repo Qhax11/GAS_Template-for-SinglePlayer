@@ -26,6 +26,8 @@ protected:
 	UFUNCTION()
 	void OnEnemyTargetVulnerableTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
+	virtual void CancelAbilityFromInput() override;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UGA_MeleeAttackBase> FinisherAbilityClass;
 

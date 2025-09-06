@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemGlobals.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
@@ -35,6 +36,15 @@ void UAC_TargetLockSystem::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in %s, cannot initialize HeroControl."), *GetName());
 		return;
 	}
+	
+	HeroTagDelegatesComp = HeroBase->GetTagDelegatesComponent();
+	if (!HeroTagDelegatesComp) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroTagDelegatesComp is null in %s, cannot initialize HeroControl."), *GetName());
+		return;
+	}
+	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnAdded).BindDynamic(this, &UAC_TargetLockSystem::OnHeroFinisherTagAdded);
+	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnRemoved).BindDynamic(this, &UAC_TargetLockSystem::OnHeroFinisherTagRemoved);
 
 	if (ensure(TracingDataStart) && ensure(TracingDataTargetChange) && ensure(TracingDataCheckForFrontActor))
 	{
@@ -110,6 +120,8 @@ void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 	{
 		return;
 	}
+
+	FilterOutDeadActors(OutResultActors);
 	AActor* ClosestTarget = FindNearestActor(HeroBase, OutResultActors);
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(ClosestTarget);
@@ -119,18 +131,41 @@ void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 		return;
 	}
 
-	if (TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetASC has dead tag: %s."), *GetName());
-		return;
-	}
-
 	ChangeTarget(ClosestTarget);
 
 	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	bLocked = true;
 	SetComponentTickEnabled(true);
 	OnStartTargetLock.Broadcast();
+}
+
+void UAC_TargetLockSystem::FilterOutDeadActors(TArray<AActor*>& Actors)
+{
+	// We'll build a new array of only alive actors
+	TArray<AActor*> FilteredActors;
+
+	for (AActor* Actor : Actors)
+	{
+		if (!Actor)
+		{
+			continue;
+		}
+
+		UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor);
+		if (!ASC)
+		{
+			continue;
+		}
+
+		if (!ASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
+		{
+			// Only keep alive actors
+			FilteredActors.Add(Actor);
+		}
+	}
+
+	// Replace old array with filtered version
+	Actors = MoveTemp(FilteredActors);
 }
 
 void UAC_TargetLockSystem::EndTargetLock()
@@ -152,6 +187,7 @@ void UAC_TargetLockSystem::EndTargetLock()
 
 void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnData)
 {
+	/*
 	if (EnemyDeSpawnData.Character != CurrentTarget)
 	{
 		return;
@@ -165,7 +201,17 @@ void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSp
 	{
 		StartTargetLock(TracingDataCheckClosestTarget);
 	}
+	*/
+}
 
+void UAC_TargetLockSystem::OnHeroFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	EndTargetLock();
+}
+
+void UAC_TargetLockSystem::OnHeroFinisherTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	StartTargetLock(TracingDataCheckClosestTarget);
 }
 
 void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)

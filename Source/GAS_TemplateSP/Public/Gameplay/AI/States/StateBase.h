@@ -26,13 +26,16 @@ public:
     UGAS_AbilitySystemComponent* EnemyASC = nullptr;
 
     UPROPERTY()
-    AActor* HeroTarget = nullptr;
-
-    UPROPERTY()
     UAC_TagDelegates* EnemyTagDelegatesComp = nullptr;
 
     UPROPERTY()
     UAC_BehaviorDecision* BehaviorDecisionComponent = nullptr;
+
+    UPROPERTY()
+    AActor* HeroTarget = nullptr;
+
+    UPROPERTY()
+    UGAS_AbilitySystemComponent* HeroTargetASC = nullptr;
 
     UPROPERTY()
     UAC_StateManager* StateManager = nullptr;
@@ -41,17 +44,19 @@ public:
         AGAS_EnemyBase* InEnemy,
         AAIControllerBase* InEnemyController, 
         UGAS_AbilitySystemComponent* InEnemyASC,
-        AActor* InHeroTarget,
         UAC_TagDelegates* InEnemyTagDelegatesComp,
         UAC_BehaviorDecision* InBehaviorDecisionComponent,
+        AActor* InHeroTarget,
+        UGAS_AbilitySystemComponent* InHeroTargetASC,
         UAC_StateManager* InStateManager)
         :
         Enemy(InEnemy),
         EnemyController(InEnemyController),
         EnemyASC(InEnemyASC),
-        HeroTarget(InHeroTarget),
         EnemyTagDelegatesComp(InEnemyTagDelegatesComp),
         BehaviorDecisionComponent(InBehaviorDecisionComponent),
+        HeroTarget(InHeroTarget),
+        HeroTargetASC(InHeroTargetASC),
         StateManager(InStateManager)
     {}
 
@@ -114,13 +119,16 @@ protected:
     UGAS_AbilitySystemComponent* EnemyASC;
 
     UPROPERTY(BlueprintReadOnly)
-    AActor* HeroTarget;
-
-    UPROPERTY(BlueprintReadOnly)
     UAC_TagDelegates* EnemyTagDelegatesComp;
 
     UPROPERTY(BlueprintReadOnly)
     UAC_BehaviorDecision* BehaviorDecisionComponent;
+
+    UPROPERTY(BlueprintReadOnly)
+    AActor* HeroTarget;
+
+    UPROPERTY(BlueprintReadOnly)
+    UGAS_AbilitySystemComponent* HeroTargetASC;
 
     class UAC_StateManager* StateManager;
 };

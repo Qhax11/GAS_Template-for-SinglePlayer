@@ -11,4 +11,7 @@ class GAS_TEMPLATESP_API UGA_EnemyVulnerable : public UGA_VulnerableBase
 {
 	GENERATED_BODY()
 	
+public:
+	void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+
 };

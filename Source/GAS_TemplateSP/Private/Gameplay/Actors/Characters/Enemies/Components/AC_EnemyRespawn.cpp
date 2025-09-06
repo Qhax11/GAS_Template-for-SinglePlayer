@@ -33,7 +33,7 @@ void UAC_EnemyRespawn::BindCharacterDeSpawn()
 
 void UAC_EnemyRespawn::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnData)
 {
-    if (EnemyDeSpawnData.Character != OwnerCharacter)
+    if (EnemyDeSpawnData.Character != OwnerCharacter || EnemyDeSpawnData.DeSpawnPhase == EDeSpawnPhase::DeathStarted)
     {
         return;
     }
@@ -64,4 +64,14 @@ void UAC_EnemyRespawn::OnEnemyReSpawn(const FEnemySpawnData& EnemySpawnData)
     EnemyController->GetBrainComponent()->StartLogic();
     ApplyCharacterReSpawnEffect(EnemySpawnData.Character);
     OnCharacterReSpawn.Broadcast(EnemySpawnData.Character);
+}
+
+void UAC_EnemyRespawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+
+    if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
+    {
+        SpawnDelegatesSubsystem->OnEnemyDeSpawn.RemoveDynamic(this, &UAC_EnemyRespawn::OnEnemyDeSpawn);
+    }
 }

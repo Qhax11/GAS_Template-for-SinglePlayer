@@ -14,4 +14,19 @@ class GAS_TEMPLATESP_API UVulnerableState : public UStateBase
 public:
 	virtual void OnEnter_Implementation() override;
 	
+	virtual void OnExit_Implementation() override;
+
+	void ActivateVulnerableAbility();
+
+	UFUNCTION()
+	void OnVulnerableAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+
+	UFUNCTION()
+	void OnHeroShadowFinisherAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayAbility> VulnerableAbilityClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayAbility> HeroShadowFinisherAbilityClass;
 };

@@ -7,6 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 
 UGA_HeroShadowFinisher::UGA_HeroShadowFinisher()
 {
@@ -36,21 +37,49 @@ bool UGA_HeroShadowFinisher::CanActivateAbility(const FGameplayAbilitySpecHandle
 
 void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)
 {
-    // Adjust the rotation towards the target enemy before spawning the target actor.
-    if (AGAS_HeroBase* OwnerHero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo()))
+    AGAS_HeroBase* OwnerHero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
+    if (!OwnerHero)
     {
-        if (UAC_TargetLockSystem* TargetLockSystemComponent = OwnerHero->GetTargetLockSystemComponent())
-        {
-            if (AActor* CurrentTarget = TargetLockSystemComponent->CurrentTarget)
-            {
-                FRotator LookAtToTargetRotation = UKismetMathLibrary::FindLookAtRotation(Location, CurrentTarget->GetActorLocation());
-                Super::SpawnAndSetupTargetActor(LookAtToTargetRotation, Location);
-                return;
-            }
-        }
+        UE_LOG(LogTemp, Warning, TEXT("OwnerHero is null in: %s, cannot initalize the ability"), *GetName());
+        return;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("Couldn't set rotation correctly for Finisher Shadow in: %s"), *GetName());
+    UAC_TargetLockSystem* TargetLockSystemComponent = OwnerHero->GetTargetLockSystemComponent();
+    if (!TargetLockSystemComponent)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("TargetLockSystemComponent is null in: %s, cannot initalize the ability"), *GetName());
+        Super::SpawnAndSetupTargetActor(Rotation, Location);
+        return;
+    }
+
+    AGAS_CharacterBase* CurrentEnemyTargetCharacter = Cast<AGAS_CharacterBase>(TargetLockSystemComponent->CurrentTarget);
+    if (!CurrentEnemyTargetCharacter)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CurrentTarget is null in: %s, cannot initalize the ability"), *GetName());
+        Super::SpawnAndSetupTargetActor(Rotation, Location);
+        return;
+    }
+
+    UAC_TagDelegates* EnemyTargetTageDeleagtesComp = CurrentEnemyTargetCharacter->GetTagDelegatesComponent();
+    if (!EnemyTargetTageDeleagtesComp)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("TargetTageDeleagtesComp is null in: %s, cannot initalize the ability"), *GetName());
+        Super::SpawnAndSetupTargetActor(Rotation, Location);
+        return;
+    }
+
+    EnemyTargetTageDeleagtesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable, EListenMode::OnRemoved).BindDynamic(this, &UGA_HeroShadowFinisher::OnEnemyTargetVulnerableTagRemoved);
+
+    UAbilitySystemComponent* CurrentTargetASC = TargetLockSystemComponent->CurrentTargetASC;
+    if (!CurrentTargetASC)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CurrentTargetASC is null in: %s, cannot initalize the ability"), *GetName());
+        Super::SpawnAndSetupTargetActor(Rotation, Location);
+        return;
+    }
+
+    FRotator LookAtToTargetRotation = UKismetMathLibrary::FindLookAtRotation(Location, CurrentEnemyTargetCharacter->GetActorLocation());
+
     Super::SpawnAndSetupTargetActor(Rotation, Location);
 }
 
@@ -92,7 +121,8 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     }
 }
 
-void UGA_HeroShadowFinisher::CancelAbilityFromInput()
+void UGA_HeroShadowFinisher::OnEnemyTargetVulnerableTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-    
+    CancelAbilityFromInput();
 }
+

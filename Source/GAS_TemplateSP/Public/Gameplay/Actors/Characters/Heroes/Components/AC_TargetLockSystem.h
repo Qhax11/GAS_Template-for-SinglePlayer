@@ -38,10 +38,18 @@ protected:
 
 	void StartTargetLock(class UGAS_AbilityTraceData* TracingData);
 
+	void FilterOutDeadActors(TArray<AActor*>& Actors);
+
 	void EndTargetLock();
 
 	UFUNCTION()
 	void OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnData);
+
+	UFUNCTION()
+	void OnHeroFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnHeroFinisherTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	void TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection> TargetChangeDirection);
 
@@ -122,8 +130,14 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	bool bLocked = false;
 
+	UPROPERTY()
 	AGAS_HeroBase* HeroBase;
+
+	UPROPERTY()
 	UAbilitySystemComponent* HeroASC;
+
+	UPROPERTY()
+	class UAC_TagDelegates* HeroTagDelegatesComp;
 
 public:
 	UPROPERTY(BlueprintReadWrite)

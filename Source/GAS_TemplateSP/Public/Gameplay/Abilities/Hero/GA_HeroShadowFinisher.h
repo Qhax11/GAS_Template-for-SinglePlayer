@@ -5,7 +5,7 @@
 #include "Gameplay/Abilities/Hero/GA_HeroTargetBase.h"
 #include "GA_HeroShadowFinisher.generated.h"
 
-// The UGA_HeroShadowFinisher class is responsible for triggering the actual finisher class  
+// The UGA_HeroShadowFinisher class is responsible for spawning ShadowFinisher and triggering the actual finisher class  
 
 UCLASS()
 class GAS_TEMPLATESP_API UGA_HeroShadowFinisher : public UGA_HeroTargetBase
@@ -15,14 +15,7 @@ class GAS_TEMPLATESP_API UGA_HeroShadowFinisher : public UGA_HeroTargetBase
 protected:
 	UGA_HeroShadowFinisher();
 
-	/** Override this to control whether the ability can activate */
-	virtual bool CanActivateAbility(
-		const FGameplayAbilitySpecHandle Handle,
-		const FGameplayAbilityActorInfo* ActorInfo,
-		const FGameplayTagContainer* SourceTags = nullptr,
-		const FGameplayTagContainer* TargetTags = nullptr,
-		FGameplayTagContainer* OptionalRelevantTags = nullptr
-	) const override;
+	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
 
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
@@ -30,8 +23,10 @@ protected:
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
+	UFUNCTION()
+	void OnEnemyTargetVulnerableTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UGA_MeleeAttackBase> FinisherAbilityClass;
 
-	virtual void CancelAbilityFromInput() override;
 };

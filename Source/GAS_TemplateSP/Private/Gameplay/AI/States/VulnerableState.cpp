@@ -11,8 +11,46 @@ void UVulnerableState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
-	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
-	EnemyController->GetEnemyStateManagerComponent()->StopLogic();
+}
+
+void UVulnerableState::OnExit_Implementation()
+{
+	Super::OnExit_Implementation();
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UVulnerableState::ActivateVulnerableAbility, 0.3f, false);
+
+}
+
+void UVulnerableState::ActivateVulnerableAbility()
+{
+	UGAS_GameplayAbilityBase* ActivatedVulnerableAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(VulnerableAbilityClass);
+	if (ActivatedVulnerableAbility)
+	{
+		if (!ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnVulnerableAbilityEnded))
+		{
+			ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnVulnerableAbilityEnded);
+		}
+	}
+
+	UGAS_GameplayAbilityBase* ActivatedHeroShadowFinisher = HeroTargetASC->TryActivateAbilityByClassAndReturnInstance(HeroShadowFinisherAbilityClass);
+	if (ActivatedVulnerableAbility)
+	{
+		if (!ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded))
+		{
+			ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded);
+		}
+	}
+	
+}
+
+void UVulnerableState::OnVulnerableAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+{
+
+}
+
+void UVulnerableState::OnHeroShadowFinisherAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+{
+
 }

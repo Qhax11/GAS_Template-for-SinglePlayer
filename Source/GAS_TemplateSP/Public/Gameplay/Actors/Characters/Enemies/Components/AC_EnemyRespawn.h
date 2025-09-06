@@ -23,6 +23,8 @@ public:
 
 	virtual void OnEnemyReSpawn(const FEnemySpawnData& EnemySpawnData);
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 protected:
 	AAIControllerBase* EnemyController;
 	UST_Base* StateTree;

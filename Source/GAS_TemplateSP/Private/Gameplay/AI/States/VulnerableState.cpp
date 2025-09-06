@@ -51,7 +51,7 @@ void UVulnerableState::OnVulnerableAbilityEnded(const FAbilityEndedDataBP& Dodge
 {
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead)) 
 	{
-
+		return;
 	}
 	else
 	{

@@ -54,10 +54,10 @@ public:
 
 	AActor* GetCurrentTarget();
 
-	TSubclassOf<UGA_MeleeAttackBase> GetSelectedShadowAbilityClass();
+	TSubclassOf<UGA_MeleeAttackBase> GetSelectedAttackAbilityClass();
 
 protected:
-	TSubclassOf<UGA_MeleeAttackBase> SelectedShadowAbilityClass;
+	TSubclassOf<UGA_MeleeAttackBase> SelectedAttackAbilityClass;
 
 	UGA_MeleeAttackBase* SelectedShadowAbilityCDO;
 

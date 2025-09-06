@@ -63,12 +63,12 @@ void AShadowTargetActorBase::Tick(float DeltaSeconds)
 
 void AShadowTargetActorBase::Confirm()
 {
-    OnConfirm.Broadcast(FGAS_TargetActorData(SelectedShadowAbilityClass, SelectedShadowAbilityCDO, this));
+    OnConfirm.Broadcast(FGAS_TargetActorData(SelectedAttackAbilityClass, SelectedShadowAbilityCDO, this));
 }
 
 void AShadowTargetActorBase::Cancel()
 {
-    OnCancel.Broadcast(FGAS_TargetActorData(SelectedShadowAbilityClass, SelectedShadowAbilityCDO, this));
+    OnCancel.Broadcast(FGAS_TargetActorData(SelectedAttackAbilityClass, SelectedShadowAbilityCDO, this));
 }
 
 void AShadowTargetActorBase::RotateToTarget(AActor* TargetActor, float DeltaTime)
@@ -155,11 +155,11 @@ AActor* AShadowTargetActorBase::GetCurrentTarget()
     }
 }
 
-TSubclassOf<UGA_MeleeAttackBase> AShadowTargetActorBase::GetSelectedShadowAbilityClass()
+TSubclassOf<UGA_MeleeAttackBase> AShadowTargetActorBase::GetSelectedAttackAbilityClass()
 {
-    if (SelectedShadowAbilityClass)
+    if (SelectedAttackAbilityClass)
     {
-        return SelectedShadowAbilityClass;
+        return SelectedAttackAbilityClass;
     }
 
     return nullptr;
@@ -175,8 +175,8 @@ void AShadowTargetActorBase::UptadeAttackAbilityClassAndMontageFromRelativePosit
 {
     if (GetAttackAbilityFromRelativePositionToTarget())
     {
-        SelectedShadowAbilityClass = GetAttackAbilityFromRelativePositionToTarget();
-        if (UGA_MeleeAttackBase* NewMeleeAttack = Cast<UGA_MeleeAttackBase>(SelectedShadowAbilityClass->GetDefaultObject())) 
+        SelectedAttackAbilityClass = GetAttackAbilityFromRelativePositionToTarget();
+        if (UGA_MeleeAttackBase* NewMeleeAttack = Cast<UGA_MeleeAttackBase>(SelectedAttackAbilityClass->GetDefaultObject()))
         {
             SelectedShadowAbilityCDO = NewMeleeAttack;
             AttackMontage = NewMeleeAttack->AnimMontage;

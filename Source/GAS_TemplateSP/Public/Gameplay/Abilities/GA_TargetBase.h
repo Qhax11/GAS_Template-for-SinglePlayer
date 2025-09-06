@@ -58,7 +58,6 @@ protected:
 	void BP_OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData);
 
 protected:
-
 	/** The TargetActor that we spawned */
 	TObjectPtr<AGAS_TargetActorBase> TargetActor;
 

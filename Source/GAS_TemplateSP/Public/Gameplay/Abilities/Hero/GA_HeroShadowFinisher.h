@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Gameplay/Abilities/Hero/GA_HeroTargetBase.h"
+#include "Gameplay/Abilities/Hero/GA_HeroFinisher.h"
 #include "GA_HeroShadowFinisher.generated.h"
 
 // The UGA_HeroShadowFinisher class is responsible for spawning ShadowFinisher and triggering the actual finisher class  
@@ -17,6 +18,10 @@ protected:
 
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
 
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+
+	FGameplayTag GetRandomFinisherTag();
+
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
 	virtual void OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result) override;
@@ -28,7 +33,6 @@ protected:
 
 	virtual void CancelAbilityFromInput() override;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UGA_MeleeAttackBase> FinisherAbilityClass;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UDA_FinisherAttackMontage* DA_FinisherAttackMontage;
 };

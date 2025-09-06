@@ -8,14 +8,11 @@ UGA_MeleeFinisher::UGA_MeleeFinisher()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
 }
 
-UAnimMontage* UGA_MeleeFinisher::GetRandomHeroMontage(FGameplayTag& OutChosenTag)
+void UGA_MeleeFinisher::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	const FGameplayEventData* TriggerEventData)
 {
-    if (!FinisherAttackData || FinisherAttackData->FinisherAttackPairs.Num() == 0)
-        return nullptr;
-
-    int32 RandomIndex = FMath::RandRange(0, FinisherAttackData->FinisherAttackPairs.Num() - 1);
-    const FMeleeFinisherAttackPair& ChosenPair = FinisherAttackData->FinisherAttackPairs[RandomIndex];
-
-    OutChosenTag = ChosenPair.FinisherTag;
-    return ChosenPair.FinisherAttackMontage;
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
+

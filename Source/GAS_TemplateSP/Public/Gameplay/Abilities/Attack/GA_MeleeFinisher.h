@@ -20,13 +20,27 @@ struct FMeleeFinisherAttackPair
 };
 
 UCLASS(BlueprintType)
-class UFinisherAttackDataAsset : public UDataAsset
+class UDA_FinisherAttackMontage: public UDataAsset
 {
     GENERATED_BODY()
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<FMeleeFinisherAttackPair> FinisherAttackPairs;
+
+    // Returns the montage associated with the given FinisherTag
+    UFUNCTION(BlueprintCallable, Category = "Finisher")
+    UAnimMontage* FindMontageByTag(FGameplayTag FinisherTag) const
+    {
+        for (const FMeleeFinisherAttackPair& Pair : FinisherAttackPairs)
+        {
+            if (Pair.FinisherTag == FinisherTag)
+            {
+                return Pair.FinisherAttackMontage;
+            }
+        }
+        return nullptr;
+    }
 };
 
 UCLASS()
@@ -37,11 +51,10 @@ class GAS_TEMPLATESP_API UGA_MeleeFinisher : public UGA_MeleeAttackBase
 public:
 	UGA_MeleeFinisher();
 
+    virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+
     // Data asset referansý
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    UFinisherAttackDataAsset* FinisherAttackData;
+    UDA_FinisherAttackMontage* DA_FinisherAttackMontage;
 
-    // Hero montajý seçme ve oynatma fonksiyonu
-    UFUNCTION(BlueprintCallable)
-    UAnimMontage* GetRandomHeroMontage(FGameplayTag& OutChosenTag);
 };

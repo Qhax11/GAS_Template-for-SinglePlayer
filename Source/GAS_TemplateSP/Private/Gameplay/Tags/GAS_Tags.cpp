@@ -99,6 +99,10 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Shadow_Cooldown, "Gameplay.Ability.Combat.Attack.Shadow.Cooldown");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_MeleeCombo, "Gameplay.Ability.Combat.Attack.MeleeCombo");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_MeleeCombo_ShadowLinked, "Gameplay.Ability.Combat.Attack.MeleeCombo.ShadowLinked");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_MeleeFinisher, "Gameplay.Ability.Combat.Attack.MeleeFinisher");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_MeleeFinisher_1, "Gameplay.Ability.Combat.Attack.MeleeFinisher.1");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_MeleeFinisher_2, "Gameplay.Ability.Combat.Attack.MeleeFinisher.2");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_MeleeFinisher_3, "Gameplay.Ability.Combat.Attack.MeleeFinisher.3");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Skill, "Gameplay.Ability.Combat.Attack.Skill");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Skill_BladeStep, "Gameplay.Ability.Combat.Attack.Skill.BladeStep");

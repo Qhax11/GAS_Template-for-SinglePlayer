@@ -11,20 +11,32 @@ void UVulnerableState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
+	UGAS_GameplayAbilityBase* ActivatedHeroShadowFinisher = HeroTargetASC->TryActivateAbilityByClassAndReturnInstance(HeroShadowFinisherAbilityClass);
+	if (ActivatedHeroShadowFinisher)
+	{
+		if (!ActivatedHeroShadowFinisher->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded))
+		{
+			ActivatedHeroShadowFinisher->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded);
+		}
+	}
 
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UVulnerableState::ActivateVulnerableAbility, Delay, false);
 }
 
 void UVulnerableState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
-
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UVulnerableState::ActivateVulnerableAbility, 0.3f, false);
-
 }
 
 void UVulnerableState::ActivateVulnerableAbility()
 {
+	// If enemy before executed then timer we shouldn't activate vulnerable ability, because its interreptud dead ability.
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
+	{
+		return;
+	}
+
 	UGAS_GameplayAbilityBase* ActivatedVulnerableAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(VulnerableAbilityClass);
 	if (ActivatedVulnerableAbility)
 	{
@@ -33,21 +45,18 @@ void UVulnerableState::ActivateVulnerableAbility()
 			ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnVulnerableAbilityEnded);
 		}
 	}
-
-	UGAS_GameplayAbilityBase* ActivatedHeroShadowFinisher = HeroTargetASC->TryActivateAbilityByClassAndReturnInstance(HeroShadowFinisherAbilityClass);
-	if (ActivatedVulnerableAbility)
-	{
-		if (!ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded))
-		{
-			ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded);
-		}
-	}
-	
 }
 
 void UVulnerableState::OnVulnerableAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead)) 
+	{
 
+	}
+	else
+	{
+		ExitRequest("OnVulnerableAbilityEnded");
+	}
 }
 
 void UVulnerableState::OnHeroShadowFinisherAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)

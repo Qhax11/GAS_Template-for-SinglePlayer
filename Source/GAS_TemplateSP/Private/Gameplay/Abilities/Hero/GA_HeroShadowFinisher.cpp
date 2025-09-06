@@ -41,29 +41,11 @@ void UGA_HeroShadowFinisher::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 {
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-    FGameplayTag SelectedFinisherTag = GetRandomFinisherTag();
-    UAnimMontage* SelectedFinisherMontage = DA_FinisherAttackMontage->FindMontageByTag(SelectedFinisherTag);
-
     AHeroShadowTargetActor* HeroShadowTargetActor = Cast<AHeroShadowTargetActor>(TargetActor);
     if (!HeroShadowTargetActor) 
     {
         UE_LOG(LogTemp, Warning, TEXT("HeroShadowTargetActor is null!"));
         return;
-    }
-}
-
-FGameplayTag UGA_HeroShadowFinisher::GetRandomFinisherTag()
-{
-    int32 RandomIndex = FMath::RandRange(0, 2);
-
-    switch (RandomIndex)
-    {
-    case 0:
-        return GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeFinisher_1;
-    case 1:
-        return GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeFinisher_2;
-    default:
-        return GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeFinisher_3;
     }
 }
 
@@ -144,6 +126,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
         GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
     }
 
+    // TO DO USW WÝTH DATA AND PASS TAG. AND ÝN DEATH FÝNÝSHER USE THAT TAG WÝTH MAPÝNG ÝN DATA ASSET.
     GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(HeroShadowTargetActor->GetSelectedAttackAbilityClass());
 
     Super::OnTargetActorConfirm(TargetActorData);

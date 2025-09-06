@@ -20,8 +20,6 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	FGameplayTag GetRandomFinisherTag();
-
 	virtual void SpawnAndSetupTargetActor(FRotator Rotation = FRotator::ZeroRotator, FVector Location = FVector::ZeroVector);
 
 	virtual void OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result) override;
@@ -32,7 +30,4 @@ protected:
 	void OnEnemyTargetVulnerableTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	virtual void CancelAbilityFromInput() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UDA_FinisherAttackMontage* DA_FinisherAttackMontage;
 };

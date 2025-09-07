@@ -24,11 +24,6 @@ void UVulnerableState::OnEnter_Implementation()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UVulnerableState::ActivateVulnerableAbility, Delay, false);
 }
 
-void UVulnerableState::OnExit_Implementation()
-{
-	Super::OnExit_Implementation();
-}
-
 void UVulnerableState::ActivateVulnerableAbility()
 {
 	// If enemy before executed then timer we shouldn't activate vulnerable ability, because its interreptud dead ability.
@@ -44,6 +39,8 @@ void UVulnerableState::ActivateVulnerableAbility()
 		{
 			ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnVulnerableAbilityEnded);
 		}
+
+		LastUsedActivatedVulnerableAbility = ActivatedVulnerableAbility;
 	}
 }
 
@@ -62,4 +59,18 @@ void UVulnerableState::OnVulnerableAbilityEnded(const FAbilityEndedDataBP& Dodge
 void UVulnerableState::OnHeroShadowFinisherAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
 
+}
+
+void UVulnerableState::OnExit_Implementation()
+{
+	Super::OnExit_Implementation();
+
+	if (LastUsedActivatedVulnerableAbility)
+	{
+		if (LastUsedActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnVulnerableAbilityEnded))
+		{
+			LastUsedActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UVulnerableState::OnVulnerableAbilityEnded);
+		}
+		LastUsedActivatedVulnerableAbility = nullptr;
+	}
 }

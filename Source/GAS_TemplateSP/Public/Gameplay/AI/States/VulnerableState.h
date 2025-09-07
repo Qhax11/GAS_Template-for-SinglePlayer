@@ -14,8 +14,6 @@ class GAS_TEMPLATESP_API UVulnerableState : public UStateBase
 public:
 	virtual void OnEnter_Implementation() override;
 	
-	virtual void OnExit_Implementation() override;
-
 	void ActivateVulnerableAbility();
 
 	UFUNCTION()
@@ -23,6 +21,8 @@ public:
 
 	UFUNCTION()
 	void OnHeroShadowFinisherAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+
+	virtual void OnExit_Implementation() override;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayAbility> VulnerableAbilityClass;
@@ -32,4 +32,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float Delay = 0.3f;
+
+	UPROPERTY()
+	UGAS_GameplayAbilityBase* LastUsedActivatedVulnerableAbility;
 };

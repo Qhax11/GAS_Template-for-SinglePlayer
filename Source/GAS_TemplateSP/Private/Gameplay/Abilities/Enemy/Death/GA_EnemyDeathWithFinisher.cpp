@@ -27,7 +27,7 @@ void UGA_EnemyDeathWithFinisher::ActivateAbility(const FGameplayAbilitySpecHandl
 	}
 
 	// Retrieve the instigator ability from OptionalObject
-	const UGA_MeleeFinisher* MeleeFinisher = Cast<UGA_MeleeFinisher>(TriggerEventData->OptionalObject);
+	const UGA_MeleeFinisher* MeleeFinisher = Cast<UGA_MeleeFinisher>(TriggerEventData->ContextHandle.GetAbility());
 	if (!MeleeFinisher)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MeleeFinisher is null in: %s"), *GetName());

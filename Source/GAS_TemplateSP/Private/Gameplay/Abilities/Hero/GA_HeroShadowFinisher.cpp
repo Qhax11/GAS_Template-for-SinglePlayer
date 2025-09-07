@@ -108,13 +108,15 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     AHeroShadowTargetActor* HeroShadowTargetActor = Cast<AHeroShadowTargetActor>(TargetActorData.TargetActor);
     if (!HeroShadowTargetActor)
     {
+        UE_LOG(LogTemp, Warning, TEXT("HeroShadowTargetActor is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
+        return;
     }
 
     TSubclassOf<UGA_MeleeAttackBase> MeleeFinisherClass = HeroShadowTargetActor->GetSelectedAttackAbilityClass();
     if (!MeleeFinisherClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("MeleeFinisherClass is null in %s, cannot initialize melee finisher."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("MeleeFinisherClass is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
@@ -123,7 +125,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     UGAS_AbilitySystemComponent* EnemyASC = CastChecked<UGAS_AbilitySystemComponent>(TargetEnemyASC);
     if (!EnemyASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("TargetEnemyASC is null in %s, cannot initialize melee finisher."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("TargetEnemyASC is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
@@ -141,21 +143,18 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     UGA_MeleeFinisher* ActivatedMeleeFinisher = Cast<UGA_MeleeFinisher>(GetASC()->TryActivateAbilityByClassAndReturnInstance(MeleeFinisherClass));
     if (!ActivatedMeleeFinisher) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("ActivatedMeleeFinisher is null in %s, cannot initialize melee finisher."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("ActivatedMeleeFinisher is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
 
-    FGameplayEffectContextHandle GE_ContextHandleForDeathFinisher = GetAbilitySystemComponentFromActorInfo()->MakeEffectContext();
-    GE_ContextHandleForDeathFinisher.SetAbility(ActivatedMeleeFinisher);
-
     FGameplayEventData EnemyDeathFinisher;
     EnemyDeathFinisher.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Finisher;
-    EnemyDeathFinisher.InstigatorTags = ActivatedMeleeFinisher->AbilityTags;
-    EnemyDeathFinisher.OptionalObject = ActivatedMeleeFinisher;
+    FGameplayEffectContextHandle GE_ContextHandleForDeathFinisher = GetAbilitySystemComponentFromActorInfo()->MakeEffectContext();
+    GE_ContextHandleForDeathFinisher.SetAbility(ActivatedMeleeFinisher);
     EnemyDeathFinisher.ContextHandle = GE_ContextHandleForDeathFinisher;
+    EnemyDeathFinisher.Instigator = GetAvatarActorFromActorInfo();
 
-    // DEATH FÝNÝSHERDA HÝÇBÝR EVENT DATA GÖZÜKMÜYOR
     EnemyASC->TryActivateAbilityByEventData(EnemyDeathFinisher);
 
     Super::OnTargetActorConfirm(TargetActorData);

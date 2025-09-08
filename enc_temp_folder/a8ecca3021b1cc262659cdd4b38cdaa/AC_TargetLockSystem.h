@@ -112,13 +112,13 @@ protected:
 	float MaxPitchA = 25.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate", Meta = (ToolTip = "Minimum limit for looking down from above"))
-	float MinPitchB = 340.0f;
+	float MinPitchB = 320.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate", Meta = (ToolTip = "Maximum limit for looking down from above"))
 	float MaxPitchB = 360.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
-	float RotateInterpSpeed = 10.0f;
+	float RotateInterpSpeed = 5.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TargetLockSystem|Rotate")
 	float CameraLookLocationOffsetZ = 100.0f;

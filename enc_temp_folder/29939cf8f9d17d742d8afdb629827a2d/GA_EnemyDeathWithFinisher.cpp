@@ -23,7 +23,6 @@ void UGA_EnemyDeathWithFinisher::ActivateAbility(const FGameplayAbilitySpecHandl
 	if (!TriggerEventData) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s"), *GetName());
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
@@ -32,24 +31,14 @@ void UGA_EnemyDeathWithFinisher::ActivateAbility(const FGameplayAbilitySpecHandl
 	if (!MeleeFinisher)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MeleeFinisher is null in: %s"), *GetName());
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
 	FGameplayTag FinisherTypeTag = MeleeFinisher->GetFinisherTypeTagFromAbilityTags();
-
-	if (!FinisherHitData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("FinisherHitData is null in: %s"), *GetName());
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
-	}
-
 	UAnimMontage* FinisherHitMontage = FinisherHitData->FindMontageByTag(FinisherTypeTag);
 	if (!FinisherHitMontage) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("FinisherHitMontage is null in: %s"), *GetName());
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 

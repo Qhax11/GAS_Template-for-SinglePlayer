@@ -27,7 +27,7 @@ void UGA_EnemyDeathWithFinisher::ActivateAbility(const FGameplayAbilitySpecHandl
 		return;
 	}
 
-	// Retrieve the instigator ability from OptionalObject
+	// Retrieve the instigator ability from OptionalObject, called from shadowfinisher
 	const UGA_MeleeFinisher* MeleeFinisher = Cast<UGA_MeleeFinisher>(TriggerEventData->ContextHandle.GetAbility());
 	if (!MeleeFinisher)
 	{

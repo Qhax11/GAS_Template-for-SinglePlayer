@@ -132,6 +132,14 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
+	if (LastUsedParryAbility) 
+	{
+		if (LastUsedParryAbility->IsActive())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("State Manager: LastUsedParryAbility is active."));
+		}
+	}
+
 	UGAS_GameplayAbilityBase* ActivatedParryAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(EnemyParryAbilityClass);
 	if (ActivatedParryAbility)
 	{
@@ -151,7 +159,7 @@ void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeA
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback, now we listen knocback removed for exit"));
-		EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagRemoved);
+		EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagRemoved);
 	}
 	else
 	{
@@ -188,7 +196,6 @@ void UInComingAttackState::OnExit_Implementation()
 			LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedTakeDamageAbility->GetName());
 		}
-		LastUsedTakeDamageAbility = nullptr;
 	}
 
 	if (LastUsedParryAbility)
@@ -198,9 +205,7 @@ void UInComingAttackState::OnExit_Implementation()
 			LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnParryAbilityEnded);
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedParryAbility->GetName());
 		}
-		LastUsedParryAbility = nullptr;
 	}
-
 }
 
 

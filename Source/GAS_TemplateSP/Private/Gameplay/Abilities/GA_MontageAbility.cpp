@@ -208,6 +208,7 @@ void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 	if (PlayMontageWaitForEventTask && IsValid(PlayMontageWaitForEventTask))
 	{
 		PlayMontageWaitForEventTask->EndTask();
+		PlayMontageWaitForEventTask = nullptr;
 	}
 
 	CleanupMotionWarping();

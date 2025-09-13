@@ -25,10 +25,7 @@ void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
-	if (LastUsedParryAbility) 
-	{
-		LastUsedParryAbility->EndAbilityManually();
-	}
+
 
 	SelectAndMakeInComingAttackReaction();
 }
@@ -137,6 +134,10 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 		if (LastUsedParryAbility->IsActive())
 		{
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: LastUsedParryAbility is active."));
+			if (LastUsedParryAbility)
+			{
+				LastUsedParryAbility->EndAbilityManually();
+			}
 		}
 	}
 

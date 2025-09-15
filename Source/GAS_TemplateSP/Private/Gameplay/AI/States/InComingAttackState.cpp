@@ -170,7 +170,13 @@ void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeA
 
 void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	ExitRequest("OnParryKnocbackTagRemoved");
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimerForNextTick([this]()
+			{
+				ExitRequest("OnParryKnocbackTagRemoved");
+			});
+	}
 }
 
 void UInComingAttackState::OnExit_Implementation()

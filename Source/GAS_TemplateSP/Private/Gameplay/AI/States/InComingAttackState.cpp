@@ -181,6 +181,18 @@ void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemCompone
 
 void UInComingAttackState::OnExit_Implementation()
 {
+	if (!IsInGameThread())
+	{
+		AsyncTask(ENamedThreads::GameThread, [WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
+			{
+				if (UInComingAttackState* Self = WeakThis.Get())
+				{
+					Self->OnExit_Implementation();
+				}
+			});
+		return;
+	}
+
 	Super::OnExit_Implementation();
 
 	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())

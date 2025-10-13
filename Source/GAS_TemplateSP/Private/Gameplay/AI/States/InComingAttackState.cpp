@@ -25,7 +25,17 @@ void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();
 
-
+	// Always bind to DamageSubsystem here so that the state can respond to any incoming damage
+    // regardless of the reaction type (take damage, parry, dodge). This ensures the state
+    // can exit correctly if the AI takes damage during any reaction.
+	if (DamageSubsystem)
+	{
+		if (!DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
+		{
+			DamageSubsystem->OnDamageDealt.AddDynamic(this, &UInComingAttackState::OnDamageDealt);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: DamageSubsystem binded."));
+	}
 
 	SelectAndMakeInComingAttackReaction();
 }
@@ -41,11 +51,13 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 
 	if (SelectedBestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeTakeDamage entered."));
 		MakeTakeDamage(SelectedBestReaction);
 		return true;
 	}
 	else if(SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
 		MakeParryAbility(SelectedBestReaction);
 		return true;
 	}
@@ -55,14 +67,6 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 
 void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
 {
-	if (DamageSubsystem)
-	{
-		if (!DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
-		{
-			DamageSubsystem->OnDamageDealt.AddDynamic(this, &UInComingAttackState::OnDamageDealt);
-		}
-	}
-
 	UGAS_GameplayAbilityBase* ComingAttack = StateManager->ComingAttackPayload.ComingAttack;
 	if (ComingAttack)
 	{
@@ -77,6 +81,8 @@ void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* B
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered."));
+
 	if (DamageData.ExecCalculationParameters.TargetActor != Enemy) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt TargetActor is Enemy."));
@@ -92,12 +98,13 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
 
 	UGAS_GameplayAbilityBase* TakeDamageAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamageAbilityClass, Payload);
-	if (TakeDamageAbility)
+	if (TakeDamageAbility && TakeDamageAbility->IsActive())
 	{
 		if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
 		{
 			TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
 		}
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageAbility executed."));
 	}
 
 	LastUsedTakeDamageAbility = TakeDamageAbility;
@@ -124,8 +131,6 @@ void UInComingAttackState::OnComingAttackAbilityEnded(const FAbilityEndedDataBP&
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
 {
-	UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility function entered."));
-
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
@@ -142,7 +147,7 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 	}
 
 	UGAS_GameplayAbilityBase* ActivatedParryAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(EnemyParryAbilityClass);
-	if (ActivatedParryAbility)
+	if (ActivatedParryAbility && ActivatedParryAbility->IsActive())
 	{
 		if (!ActivatedParryAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryAbilityEnded))
 		{
@@ -152,7 +157,6 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 	}
 
 	LastUsedParryAbility = ActivatedParryAbility;
-
 }
 
 void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
@@ -192,6 +196,7 @@ void UInComingAttackState::OnExit_Implementation()
 			});
 		return;
 	}
+
 
 	Super::OnExit_Implementation();
 

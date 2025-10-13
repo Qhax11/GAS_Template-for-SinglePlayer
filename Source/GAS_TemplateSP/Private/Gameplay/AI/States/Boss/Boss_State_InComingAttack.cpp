@@ -30,6 +30,7 @@ bool UBoss_State_InComingAttack::SelectAndMakeInComingAttackReaction()
 
 	if (SelectedBestReaction->ReactionType == EComingAttackReaction::Dodge) 
 	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: ActivateDodgeAbility entered."));
 		ActivateDodgeAbility(SelectedBestReaction);
 		return true;
 	}
@@ -43,6 +44,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 	if (!BDS_Dodge)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BDS_Dodge is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: BDS_Dodge entered."));
 		return;
 	}
 
@@ -67,20 +69,22 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 	GameplayEventData.EventTag = BDS_Dodge->DodgeMovementAbilityData.AbilityTriggerTag;
 	GameplayEventData.EventMagnitude = BDS_Dodge->DodgeMovementAbilityData.AbilityEventMagnitude;
 
-	UGAS_GameplayAbilityBase* ActivatedAbility =
+	UGAS_GameplayAbilityBase* ActivatedDodgeAbility =
 		EnemyASC->TryActivateAbilityByClassWithEventData(BDS_Dodge->DodgeMovementAbilityData.MovementAbilityClass, GameplayEventData);
-	if (ActivatedAbility)
+	if (ActivatedDodgeAbility && ActivatedDodgeAbility->IsActive())
 	{
-		if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded))
+		if (!ActivatedDodgeAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded))
 		{
-			ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded);
+			ActivatedDodgeAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded);
 		}
-		LastUsedDodgeAbility = ActivatedAbility;
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: ActivatedDodgeAbility entered."));
+		LastUsedDodgeAbility = ActivatedDodgeAbility;
 	}
 }
 
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDodgeAbilityEnded entered."));
 	ExitRequest("OnDodgeAbilityEnded");
 }
 

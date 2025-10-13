@@ -20,7 +20,7 @@ public:
 
 protected:
 
-	virtual FCollisionShape GetCollisionShape() const override;
+	virtual FCollisionShape GetCollisionShape(const FTraceRequest& TraceRequest) const override;
 
 protected:
 

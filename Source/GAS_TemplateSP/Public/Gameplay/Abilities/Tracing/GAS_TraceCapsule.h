@@ -22,7 +22,7 @@ public:
 	float HalfHeight = 400.0f;
 
 protected:
-	FCollisionShape GetCollisionShape() const override;
+	FCollisionShape GetCollisionShape(const FTraceRequest& TraceRequest) const override;
 
 #if WITH_EDITOR
 	virtual void DrawDebugShape(const UWorld* World, const FTraceRequest& TraceRequest) const override;

@@ -14,7 +14,6 @@ class GAS_TEMPLATESP_API UGAS_TraceLine : public UGAS_TraceBase
 	GENERATED_BODY()
 	
 protected:
-
 	virtual void TraceLogic(const UWorld* World, const FTraceRequest& TraceRequest, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults) override;
 
 #if WITH_EDITOR

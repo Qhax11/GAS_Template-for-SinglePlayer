@@ -5,9 +5,11 @@
 #include "KismetTraceUtils.h"
 
 
-FCollisionShape UGAS_TraceCapsule::GetCollisionShape() const
+FCollisionShape UGAS_TraceCapsule::GetCollisionShape(const FTraceRequest& TraceRequest) const
 {
-    return FCollisionShape::MakeCapsule(Radius, HalfHeight);
+    FVector TraceVector = TraceRequest.EndLocation - TraceRequest.StartLocation;
+    float CapsuleHalfHeight = TraceVector.Size() * 0.5f;
+    return FCollisionShape::MakeCapsule(Radius, CapsuleHalfHeight);
 }
 
 #if WITH_EDITOR

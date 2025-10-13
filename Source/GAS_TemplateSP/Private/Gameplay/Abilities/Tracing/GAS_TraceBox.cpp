@@ -3,7 +3,7 @@
 
 #include "Gameplay/Abilities/Tracing/GAS_TraceBox.h"
 
-FCollisionShape UGAS_TraceBox::GetCollisionShape() const
+FCollisionShape UGAS_TraceBox::GetCollisionShape(const FTraceRequest& TraceRequest) const
 {
     return FCollisionShape::MakeBox(FVector(HalfLength, HalfWidth, HalfHeight));
 }

@@ -309,12 +309,12 @@ void UGAS_TraceBase::TraceLogic(const UWorld* World, const FTraceRequest& TraceR
 		TraceRequest.EndLocation,
 		TraceRequest.Direction.Quaternion(),
 		TraceChannel,
-		GetCollisionShape(),
+		GetCollisionShape(TraceRequest),
 		QueryParams
 	);
 }
 
-FCollisionShape UGAS_TraceBase::GetCollisionShape() const
+FCollisionShape UGAS_TraceBase::GetCollisionShape(const FTraceRequest& TraceRequest) const
 {
     return FCollisionShape();
 }

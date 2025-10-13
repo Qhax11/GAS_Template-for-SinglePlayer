@@ -3,7 +3,7 @@
 
 #include "Gameplay/Abilities/Tracing/GAS_TraceSphere.h"
 
-FCollisionShape UGAS_TraceSphere::GetCollisionShape() const
+FCollisionShape UGAS_TraceSphere::GetCollisionShape(const FTraceRequest& TraceRequest) const
 {
     return FCollisionShape::MakeSphere(Radius);
 }

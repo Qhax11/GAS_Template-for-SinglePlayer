@@ -118,7 +118,7 @@ protected:
 
 	virtual void TraceLogic(const UWorld* World, const FTraceRequest& TraceRequest, const FCollisionQueryParams& QueryParams, const FCollisionResponseParams& ResponseParams, TArray<FHitResult>& OutHitResults);
 
-	virtual FCollisionShape GetCollisionShape() const;
+	virtual FCollisionShape GetCollisionShape(const FTraceRequest& TraceRequest) const;
 
 #if WITH_EDITOR
 protected:

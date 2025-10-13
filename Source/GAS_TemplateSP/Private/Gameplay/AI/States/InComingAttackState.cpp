@@ -27,7 +27,7 @@ void UInComingAttackState::OnEnter_Implementation()
 
 	// Always bind to DamageSubsystem here so that the state can respond to any incoming damage
     // regardless of the reaction type (take damage, parry, dodge). This ensures the state
-    // can exit correctly if the AI takes damage during any reaction.
+    // can exit correctly if the AI takes damage during any reaction.  
 	if (DamageSubsystem)
 	{
 		if (!DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))

@@ -85,7 +85,8 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 
 	if (DamageData.ExecCalculationParameters.TargetActor != Enemy) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt TargetActor is Enemy."));
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt TargetActor is not Enemy."));
+		ExitRequest("State Manager: OnDamageDealt->TargetActor is not Enemy");
 		return;
 	}
 

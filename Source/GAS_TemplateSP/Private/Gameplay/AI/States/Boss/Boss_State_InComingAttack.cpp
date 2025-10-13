@@ -80,6 +80,10 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: ActivatedDodgeAbility entered."));
 		LastUsedDodgeAbility = ActivatedDodgeAbility;
 	}
+	else
+	{
+		ExitRequest("Dodge Ability Cannot Executed");
+	}
 }
 
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)

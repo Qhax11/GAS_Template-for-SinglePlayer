@@ -134,6 +134,7 @@ void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 	ChangeTarget(ClosestTarget);
 
 	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
+	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
 	bLocked = true;
 	SetComponentTickEnabled(true);
 	OnStartTargetLock.Broadcast();
@@ -176,7 +177,8 @@ void UAC_TargetLockSystem::EndTargetLock()
 		return;
 	}
 
-	HeroASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
+	HeroASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, 100);
+	HeroASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget, 100);
 	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 	bLocked = false;
 
@@ -446,6 +448,11 @@ void UAC_TargetLockSystem::RotateHeroToTarget(float DeltaTime)
 	if (!HeroBase || !CurrentTarget)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase or CurrentTarget null in: %s"), *GetName());
+		return;
+	}
+
+	if (!HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget))
+	{
 		return;
 	}
 

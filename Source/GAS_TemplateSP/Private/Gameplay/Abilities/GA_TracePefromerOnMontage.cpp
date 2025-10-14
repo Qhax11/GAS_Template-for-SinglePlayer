@@ -32,11 +32,11 @@ void UGA_TracePefromerOnMontage::OnEventReceived(FGameplayTag EventTag, FGamepla
 {
 	Super::OnEventReceived(EventTag, EventData);
 
-	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Attack_TraceStart)
+	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart)
 	{
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle_TraceTick, this, &UGA_TracePefromerOnMontage::TraceTick, TraceTickValue, true, 0);
 	}
-	else if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Attack_TraceEnd)
+	else if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceEnd)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
 	}

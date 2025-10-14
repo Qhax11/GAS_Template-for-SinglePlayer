@@ -26,13 +26,13 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture_Empty, "Gameplay.Attribute.Posture.Empty");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Posture_Regen, "Gameplay.Attribute.Posture.Regen");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Attack, "Gameplay.AnimNotify.Event.Attack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Attack_TraceStart, "Gameplay.AnimNotify.Event.Attack.TraceStart");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Attack_TraceEnd, "Gameplay.AnimNotify.Event.Attack.TraceEnd");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Attack_CanActivateNextAttack, "Gameplay.AnimNotify.Event.Attack.CanActivateNextAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_MotionWarping, "Gameplay.AnimNotify.Event.MotionWarping");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_LockRotationTowardsTarget, "Gameplay.AnimNotify.Event.LockRotationTowardsTarget");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_UnLockRotationTowardsTarget, "Gameplay.AnimNotify.Event.UnLockRotationTowardsTarget");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack, "Gameplay.Event.AnimNotify.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_TraceStart, "Gameplay.Event.AnimNotify.Attack.TraceStart");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_TraceEnd, "Gameplay.Event.AnimNotify.Attack.TraceEnd");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_CanActivateNextAttack, "Gameplay.Event.AnimNotify.Attack.CanActivateNextAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_MotionWarping, "Gameplay.Event.AnimNotify.MotionWarping");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_LockRotationTowardsTarget, "Gameplay.Event.AnimNotify.LockRotationTowardsTarget");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_UnLockRotationTowardsTarget, "Gameplay.Event.AnimNotify.UnLockRotationTowardsTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Weapon_StorePreviousLocation, "Gameplay.Event.AnimNotify.Weapon.StorePreviousLocation");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_TakeDamage, "Gameplay.AbilityTriggerEvent.TakeDamage");

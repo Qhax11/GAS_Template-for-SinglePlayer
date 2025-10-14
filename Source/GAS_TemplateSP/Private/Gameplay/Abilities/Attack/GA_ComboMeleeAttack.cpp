@@ -24,7 +24,7 @@ void UGA_ComboMeleeAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEvent
 {
 	Super::OnEventReceived(EventTag, EventData);
 
-	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Attack_CanActivateNextAttack) 
+	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_CanActivateNextAttack) 
 	{
 		OnCanExecuteNextAttack.Broadcast();
 	}

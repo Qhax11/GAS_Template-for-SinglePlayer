@@ -198,7 +198,6 @@ void UInComingAttackState::OnExit_Implementation()
 		return;
 	}
 
-
 	Super::OnExit_Implementation();
 
 	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())

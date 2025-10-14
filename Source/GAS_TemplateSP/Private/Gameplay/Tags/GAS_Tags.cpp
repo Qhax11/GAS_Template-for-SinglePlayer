@@ -11,6 +11,8 @@ namespace GAS_Tags
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay, "Gameplay");
 
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageImmune, "Gameplay.DamageImmune");
+
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Health, "Gameplay.Attribute.Health");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Health_Full, "Gameplay.Attribute.Health.Full");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Attribute_Health_Regen, "Gameplay.Attribute.Health.Regen");
@@ -31,8 +33,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_MotionWarping, "Gameplay.AnimNotify.Event.MotionWarping");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_LockRotationTowardsTarget, "Gameplay.AnimNotify.Event.LockRotationTowardsTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_UnLockRotationTowardsTarget, "Gameplay.AnimNotify.Event.UnLockRotationTowardsTarget");
-
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_DamageImmune, "Gameplay.DamageImmune");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Weapon_PreviousLocation, "Gameplay.AnimNotify.Event.Weapon.PreviousLocation");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_TakeDamage, "Gameplay.AbilityTriggerEvent.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Death_Basic, "Gameplay.AbilityTriggerEvent.Death.Basic");

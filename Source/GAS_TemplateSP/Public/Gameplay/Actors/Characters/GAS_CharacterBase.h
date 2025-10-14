@@ -28,6 +28,7 @@ public:
 
 	FORCEINLINE class UAC_TagDelegates* GetTagDelegatesComponent() const { return TagDelegatesComponent; }
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class AWeaponBase* GetWeapon() const { return Cast<AWeaponBase>(WeaponChildComponent->GetChildActor()); }
 
 	FORCEINLINE UMotionWarpingComponent* GetMotionWarpingComponent() const { return MotionWarpingComp; }

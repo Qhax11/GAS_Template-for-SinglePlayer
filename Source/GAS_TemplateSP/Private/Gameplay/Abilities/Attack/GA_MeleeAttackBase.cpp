@@ -3,6 +3,8 @@
 
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/Actors/Weapons/WeaponBase.h"
 #include <AbilitySystemGlobals.h>
 
 UGA_MeleeAttackBase::UGA_MeleeAttackBase()
@@ -42,6 +44,15 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 	else if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_UnLockRotationTowardsTarget)
 	{
 		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget, 100);
+	}
+
+	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Weapon_PreviousLocation)
+	{
+		AWeaponBase* CharacterWeapon = CharacterBase->GetWeapon();
+		if (CharacterWeapon)
+		{
+			CharacterWeapon->UpdatePreviousLocation();
+		}
 	}
 }
 

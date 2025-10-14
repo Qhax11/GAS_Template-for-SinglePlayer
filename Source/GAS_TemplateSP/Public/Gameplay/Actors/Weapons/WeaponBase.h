@@ -24,6 +24,11 @@ public:
 	FVector GetTraceEnd() const;
 	FRotator GetTraceEndRotation() const;
 
+	void UpdatePreviousLocation();
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector PreviousLocation;
+
 protected:
 
 	// Weapon mesh

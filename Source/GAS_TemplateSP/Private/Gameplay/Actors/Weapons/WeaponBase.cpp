@@ -51,3 +51,8 @@ FRotator AWeaponBase::GetTraceEndRotation() const
 {
 	return TraceEnd ? TraceEnd->GetComponentRotation() : FRotator::ZeroRotator;
 }
+
+void AWeaponBase::UpdatePreviousLocation()
+{
+	PreviousLocation = GetActorLocation();
+}

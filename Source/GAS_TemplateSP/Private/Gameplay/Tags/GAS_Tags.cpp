@@ -33,7 +33,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_MotionWarping, "Gameplay.AnimNotify.Event.MotionWarping");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_LockRotationTowardsTarget, "Gameplay.AnimNotify.Event.LockRotationTowardsTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_UnLockRotationTowardsTarget, "Gameplay.AnimNotify.Event.UnLockRotationTowardsTarget");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AnimNotify_Event_Weapon_PreviousLocation, "Gameplay.AnimNotify.Event.Weapon.PreviousLocation");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Weapon_StorePreviousLocation, "Gameplay.Event.AnimNotify.Weapon.StorePreviousLocation");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_TakeDamage, "Gameplay.AbilityTriggerEvent.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Death_Basic, "Gameplay.AbilityTriggerEvent.Death.Basic");

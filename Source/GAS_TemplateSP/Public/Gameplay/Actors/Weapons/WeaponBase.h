@@ -24,13 +24,15 @@ public:
 	FVector GetTraceEnd() const;
 	FRotator GetTraceEndRotation() const;
 
+	// Called from melee attack animation notify to capture the weapon's position each frame for momentum calculations.
 	void UpdatePreviousLocation();
 
+	// Stores the weapon's world-space location from the previous frame for calculating swing direction or momentum.
+	// Currently used for determining FX spawn direction during hit or slash effects.
 	UPROPERTY(BlueprintReadOnly)
 	FVector PreviousLocation;
 
 protected:
-
 	// Weapon mesh
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	UStaticMeshComponent* WeaponMesh;

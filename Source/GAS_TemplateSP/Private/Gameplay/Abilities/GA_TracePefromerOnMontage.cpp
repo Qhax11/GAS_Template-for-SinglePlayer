@@ -11,6 +11,8 @@ void UGA_TracePefromerOnMontage::ActivateAbility(const FGameplayAbilitySpecHandl
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
 	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
 	if (!CharacterBase)
 	{
@@ -18,7 +20,12 @@ void UGA_TracePefromerOnMontage::ActivateAbility(const FGameplayAbilitySpecHandl
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	CharacterWeapon = CharacterBase->GetWeapon();
+	if (!CharacterWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterWeapon is null in: %s"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+	}
 }
 
 void UGA_TracePefromerOnMontage::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -51,13 +58,6 @@ bool UGA_TracePefromerOnMontage::TraceForHostileUnits(TArray<FHitResult>& OutHit
 	if (!TraceData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TraceData is null in: %s"), *GetName());
-		return false;
-	}
-
-	AWeaponBase* CharacterWeapon = CharacterBase->GetWeapon();
-	if (!CharacterWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterWeapon is null in: %s"), *GetName());
 		return false;
 	}
 

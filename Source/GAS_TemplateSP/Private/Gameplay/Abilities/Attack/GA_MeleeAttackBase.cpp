@@ -3,8 +3,6 @@
 
 #include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
-#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
-#include "Gameplay/Actors/Weapons/WeaponBase.h"
 #include <AbilitySystemGlobals.h>
 
 UGA_MeleeAttackBase::UGA_MeleeAttackBase()
@@ -23,14 +21,20 @@ void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
 	if (!CharacterBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	CharacterWeapon = CharacterBase->GetWeapon();
+	if (!CharacterWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterWeapon is null in: %s"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+	}
 }
 
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -46,13 +50,9 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget, 100);
 	}
 
-	if (EventTag == GAS_Tags::TAG_Gameplay_AnimNotify_Event_Weapon_PreviousLocation)
+	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Weapon_StorePreviousLocation)
 	{
-		AWeaponBase* CharacterWeapon = CharacterBase->GetWeapon();
-		if (CharacterWeapon)
-		{
-			CharacterWeapon->UpdatePreviousLocation();
-		}
+		CharacterWeapon->UpdatePreviousLocation();
 	}
 }
 

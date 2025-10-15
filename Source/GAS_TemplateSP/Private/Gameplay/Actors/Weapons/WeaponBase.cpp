@@ -4,6 +4,7 @@
 #include "Gameplay/Actors/Weapons/WeaponBase.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
+#include "DrawDebugHelpers.h"
 
 AWeaponBase::AWeaponBase()
 {
@@ -54,5 +55,15 @@ FRotator AWeaponBase::GetTraceEndRotation() const
 
 void AWeaponBase::UpdatePreviousLocation()
 {
-	PreviousLocation = GetActorLocation();
+	PreviousLocation = GetTraceMid();
+	/*
+	DrawDebugPoint(
+		GetWorld(),
+		PreviousLocation, // World location
+		10.f,                     // Point size
+		FColor::Blue,              // Color
+		false,                    // Persistent lines (true = stays until cleared)
+		12.f                       // Life time (seconds)
+	);
+	*/
 }

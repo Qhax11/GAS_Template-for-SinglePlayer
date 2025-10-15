@@ -19,9 +19,15 @@ protected:
 
 public:
 	// Trace start and end getters
+	UFUNCTION(BlueprintCallable)
 	FVector GetTraceStart() const;
+
+	UFUNCTION(BlueprintCallable)
 	FVector GetTraceMid() const;
+
+	UFUNCTION(BlueprintCallable)
 	FVector GetTraceEnd() const;
+
 	FRotator GetTraceEndRotation() const;
 
 	// Called from melee attack animation notify to capture the weapon's position each frame for momentum calculations.

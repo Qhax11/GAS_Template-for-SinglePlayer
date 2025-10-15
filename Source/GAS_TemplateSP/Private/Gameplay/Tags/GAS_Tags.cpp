@@ -168,6 +168,10 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_HeroMessageHUD_Tutorial_TutorialCompleted, "GameplayCue.HeroMessageHUD.Tutorial.TutorialCompleted");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood, "GameplayCue.VFX.Blood");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Slash, "GameplayCue.VFX.Blood.Slash");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splash, "GameplayCue.VFX.Blood.Splash");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splatter, "GameplayCue.VFX.Blood.Splatter");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Stab, "GameplayCue.VFX.Blood.Stab");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Parry, "GameplayCue.VFX.Parry");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Heal, "GameplayCue.VFX.Heal");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Hero_Ghost, "GameplayCue.VFX.Hero.Ghost");

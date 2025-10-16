@@ -30,9 +30,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayAbility> HeroShadowFinisherAbilityClass;
 
-	UPROPERTY(EditDefaultsOnly)
-	float Delay = 0.3f;
-
 	UPROPERTY()
 	UGAS_GameplayAbilityBase* LastUsedActivatedVulnerableAbility;
 };

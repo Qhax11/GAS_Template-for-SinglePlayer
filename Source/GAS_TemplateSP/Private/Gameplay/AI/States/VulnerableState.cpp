@@ -20,27 +20,31 @@ void UVulnerableState::OnEnter_Implementation()
 		}
 	}
 
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UVulnerableState::ActivateVulnerableAbility, Delay, false);
+	ActivateVulnerableAbility();
 }
 
 void UVulnerableState::ActivateVulnerableAbility()
 {
+	/*
 	// If enemy before executed then timer we shouldn't activate vulnerable ability, because its interreptud dead ability.
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
 	{
 		return;
 	}
+	*/
 
 	UGAS_GameplayAbilityBase* ActivatedVulnerableAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(VulnerableAbilityClass);
-	if (ActivatedVulnerableAbility)
+	if (ActivatedVulnerableAbility && ActivatedVulnerableAbility->IsActive())
 	{
 		if (!ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnVulnerableAbilityEnded))
 		{
 			ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnVulnerableAbilityEnded);
 		}
-
 		LastUsedActivatedVulnerableAbility = ActivatedVulnerableAbility;
+	}
+	else
+	{
+		ExitRequest("Vulnerable ability couldn't executed");
 	}
 }
 

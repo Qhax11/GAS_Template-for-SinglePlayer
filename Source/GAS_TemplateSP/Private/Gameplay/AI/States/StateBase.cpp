@@ -87,3 +87,34 @@ FAttackData UStateBase::SelectNewAttackAbility() const
 	return StateManager->SelectNewBestAttack();
 }
 
+bool UStateBase::CheckThreadAndExitSafe(const FString& ExitReason)
+{
+	// The reason why this check is crucial is due to asynchronous tasks (Root Motion, Montage)
+	// potentially calling delegates from Worker Threads.
+
+	if (!IsInGameThread())
+	{
+		TWeakObjectPtr<UStateBase> WeakThis(this);
+		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
+			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, ExitReason]() // (capture)
+				{
+					if (UStateBase* Self = WeakThis.Get())
+					{
+						// Now running safely on the Game Thread.
+						UE_LOG(LogTemp, Warning, TEXT("State Manager: Deferred ExitRequest(%s) executed on Game Thread."), *ExitReason);
+						Self->ExitRequest(ExitReason);
+					}
+				}),
+			TStatId(),
+			nullptr,
+			ENamedThreads::GameThread
+		);
+		return false;
+	}
+
+	// Zaten Game Thread'deyiz.
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: ExitRequest(%s) called directly on Game Thread."), *ExitReason);
+	ExitRequest(ExitReason);
+	return true; // Ýþlem hemen çaðrýldý.
+}
+

@@ -109,6 +109,16 @@ protected:
 
     FAttackData SelectNewAttackAbility() const;
 
+    /**
+     * @brief Checks if the call is on the Game Thread. If not, it defers ExitRequest
+     * to the Game Thread to prevent data races and crashes.
+     * @param ExitReason The string reason passed to ExitRequest.
+     * @return True if ExitRequest was called immediately on the Game Thread,
+     * False if the request was deferred to the Game Thread.
+     */
+    bool CheckThreadAndExitSafe(const FString& ExitReason);
+
+protected:
     UPROPERTY(BlueprintReadOnly)
     AGAS_EnemyBase* Enemy;
 

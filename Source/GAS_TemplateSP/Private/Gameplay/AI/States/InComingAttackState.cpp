@@ -162,6 +162,35 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 
 void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
+	// The delegate can be triggered from a Worker Thread (e.g., via animation tasks).
+	// Critical state changes (State Manager/UObject changes) MUST be on the Game Thread.
+
+	if (!IsInGameThread())
+	{
+		// KENDİ FONKSİYONUMUZU Game Thread'e ertelemek.
+		TWeakObjectPtr<UInComingAttackState> WeakThis(this);
+		FAbilityEndedDataBP LocalData = DodgeAbilityEndedData; // Veriyi Worker Thread'den kopyala
+
+		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
+			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, LocalData]()
+				{
+					if (UInComingAttackState* Self = WeakThis.Get())
+					{
+						// FONKSİYONUN KENDİSİNİ Game Thread'de tekrar çağır.
+						// (Recursion değil, basitçe Game Thread'e geçiş)
+						UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded deferred to Game Thread."));
+						Self->OnParryAbilityEnded(LocalData);
+					}
+				}),
+			TStatId(),
+			nullptr,
+			ENamedThreads::GameThread
+		);
+		return; // Worker Thread'den hemen çık.
+	}
+
+	// ----------- BU NOKTADAN İTİBAREN HER ZAMAN GAME THREAD'DEYİZ -----------
+
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback, now we listen knocback removed for exit"));
@@ -186,17 +215,28 @@ void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemCompone
 
 void UInComingAttackState::OnExit_Implementation()
 {
+	// İş parçacığı kontrolünü daha güvenli hale getirelim:
 	if (!IsInGameThread())
 	{
-		AsyncTask(ENamedThreads::GameThread, [WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
-			{
-				if (UInComingAttackState* Self = WeakThis.Get())
+		TWeakObjectPtr<UInComingAttackState> WeakThis(this);
+		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
+			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis]()
 				{
-					Self->OnExit_Implementation();
-				}
-			});
-		return;
+					if (UInComingAttackState* Self = WeakThis.Get())
+					{
+						// Game Thread'de OnExit'i güvenle tekrar çağır.
+						UE_LOG(LogTemp, Warning, TEXT("State Manager: OnExit deferred to Game Thread."));
+						Self->OnExit_Implementation();
+					}
+				}),
+			TStatId(),
+			nullptr,
+			ENamedThreads::GameThread
+		);
+		return; // Worker Thread'den hemen çık.
 	}
+
+	// ----------- BURADAN SONRA SADECE GAME THREAD'DEYİZ -----------
 
 	Super::OnExit_Implementation();
 

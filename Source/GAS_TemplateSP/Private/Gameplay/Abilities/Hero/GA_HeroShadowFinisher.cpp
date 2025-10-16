@@ -95,7 +95,7 @@ void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector
 
     FRotator LookAtToTargetRotation = UKismetMathLibrary::FindLookAtRotation(Location, CurrentEnemyTargetCharacter->GetActorLocation());
 
-    Super::SpawnAndSetupTargetActor(Rotation, Location);
+    Super::SpawnAndSetupTargetActor(LookAtToTargetRotation, Location);
 }
 
 void UGA_HeroShadowFinisher::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)

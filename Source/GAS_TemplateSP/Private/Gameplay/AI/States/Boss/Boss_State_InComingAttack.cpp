@@ -88,6 +88,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
+	/*
 	// The delegate can be triggered from a Worker Thread (e.g., via animation tasks).
 // Critical state changes (State Manager/UObject changes) MUST be on the Game Thread.
 
@@ -116,7 +117,7 @@ void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FAbilityEndedDataBP& 
 	}
 
 	// ----------- BU NOKTADAN ÝTÝBAREN HER ZAMAN GAME THREAD'DEYÝZ -----------
-
+	*/
 	ExitRequest("OnDodgeAbilityEnded");
 
 	// Execution path if the function was already called on the Game Thread.
@@ -126,6 +127,7 @@ void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FAbilityEndedDataBP& 
 
 void UBoss_State_InComingAttack::OnExit_Implementation()
 {
+	/*
 	// Ýþ parçacýðý kontrolünü daha güvenli hale getirelim:
 	if (!IsInGameThread())
 	{
@@ -148,7 +150,7 @@ void UBoss_State_InComingAttack::OnExit_Implementation()
 	}
 
 	// ----------- BURADAN SONRA SADECE GAME THREAD'DEYÝZ -----------
-
+	*/
 	Super::OnExit_Implementation();
 
 	if (LastUsedDodgeAbility)

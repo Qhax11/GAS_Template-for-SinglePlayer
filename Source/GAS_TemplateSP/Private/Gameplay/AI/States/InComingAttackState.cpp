@@ -162,6 +162,7 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 
 void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
+	/*
 	// The delegate can be triggered from a Worker Thread (e.g., via animation tasks).
 	// Critical state changes (State Manager/UObject changes) MUST be on the Game Thread.
 
@@ -190,7 +191,7 @@ void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeA
 	}
 
 	// ----------- BU NOKTADAN İTİBAREN HER ZAMAN GAME THREAD'DEYİZ -----------
-
+	*/
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback, now we listen knocback removed for exit"));
@@ -215,6 +216,7 @@ void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemCompone
 
 void UInComingAttackState::OnExit_Implementation()
 {
+	/*
 	// İş parçacığı kontrolünü daha güvenli hale getirelim:
 	if (!IsInGameThread())
 	{
@@ -237,7 +239,7 @@ void UInComingAttackState::OnExit_Implementation()
 	}
 
 	// ----------- BURADAN SONRA SADECE GAME THREAD'DEYİZ -----------
-
+	*/
 	Super::OnExit_Implementation();
 
 	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())

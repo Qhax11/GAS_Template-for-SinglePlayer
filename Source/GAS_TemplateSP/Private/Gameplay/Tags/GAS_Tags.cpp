@@ -34,6 +34,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_LockRotationTowardsTarget, "Gameplay.Event.AnimNotify.LockRotationTowardsTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_UnLockRotationTowardsTarget, "Gameplay.Event.AnimNotify.UnLockRotationTowardsTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Weapon_StorePreviousLocation, "Gameplay.Event.AnimNotify.Weapon.StorePreviousLocation");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Footstep, "Gameplay.Event.AnimNotify.Footstep");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_TakeDamage, "Gameplay.AbilityTriggerEvent.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_Death_Basic, "Gameplay.AbilityTriggerEvent.Death.Basic");
@@ -196,6 +197,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget_TakeDamage, "GameplayCue.Sound.PlayOnTarget.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget_Finisher, "GameplayCue.Sound.PlayOnTarget.Finisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource, "GameplayCue.Sound.PlayOnSource");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_Footstep, "GameplayCue.Sound.PlayOnSource.Footstep");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_ParryKnockback, "GameplayCue.Sound.PlayOnSource.ParryKnockback");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_AttackSwing, "GameplayCue.Sound.PlayOnSource.AttackSwing");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_Death, "GameplayCue.Sound.PlayOnSource.Death");

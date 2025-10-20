@@ -10,6 +10,7 @@
 #include "Gameplay/Components/GameplayTag/AC_TagListenerBase.h"
 #include "Gameplay/Components/AC_GameplayData.h"
 #include "Gameplay/Components/AC_PostureHandler.h"
+#include "Gameplay/Components/AC_FootstepBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -35,6 +36,8 @@ AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectIni
 	PostureHandlerComponent = CreateDefaultSubobject<UAC_PostureHandler>(TEXT("PostureHandlerComponent"));
 
 	WeaponChildComponent = CreateDefaultSubobject<UChildActorComponent>(TEXT("WeaponChildComponent"));
+
+	FootstepComp = CreateDefaultSubobject<UAC_FootstepBase>(TEXT("FootstepComp"));
 
 	MotionWarpingComp = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComp"));
 }

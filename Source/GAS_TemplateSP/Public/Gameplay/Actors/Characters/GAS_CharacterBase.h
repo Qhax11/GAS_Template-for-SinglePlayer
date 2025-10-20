@@ -65,6 +65,9 @@ protected:
 	class UChildActorComponent* WeaponChildComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase|Components")
+	class UAC_FootstepBase* FootstepComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase|Components")
 	UMotionWarpingComponent* MotionWarpingComp;
 
 public:

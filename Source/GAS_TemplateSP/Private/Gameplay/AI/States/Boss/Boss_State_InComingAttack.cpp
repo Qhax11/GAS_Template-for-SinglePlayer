@@ -82,7 +82,11 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 	}
 	else
 	{
-		ExitRequest("Dodge Ability Cannot Executed");
+		bool bExitRequestSucces = ExitRequest("Dodge Ability Cannot Executed");
+		if (!bExitRequestSucces)
+		{
+			BindTargetComingAttackEnd();
+		}
 	}
 }
 

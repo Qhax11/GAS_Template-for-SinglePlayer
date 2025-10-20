@@ -97,7 +97,7 @@ public:
 
 protected:
     UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "TransactionTag"))
-    virtual void ExitRequest(FString Reason, const FGameplayTag& TransactionTag = FGameplayTag());
+    virtual bool ExitRequest(FString Reason, const FGameplayTag& TransactionTag = FGameplayTag());
 
     bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
 

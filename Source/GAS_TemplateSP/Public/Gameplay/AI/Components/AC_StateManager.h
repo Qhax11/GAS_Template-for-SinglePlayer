@@ -35,9 +35,9 @@ public:
 	// Its called from UAC_IntendHandlerBase
 	void OnTargetDetected();
 
-	void RequestStateTreeEnter(const FGameplayTag& StateTag);
+	bool RequestStateTreeEnter(const FGameplayTag& StateTag);
 
-	void RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason);
+	bool RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason);
 
 	bool IsCurrentState(const FGameplayTag& StateTag);
 

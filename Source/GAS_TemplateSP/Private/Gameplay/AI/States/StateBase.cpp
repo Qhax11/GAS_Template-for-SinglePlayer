@@ -44,15 +44,15 @@ void UStateBase::OnExit_Implementation()
 	}
 }
 
-void UStateBase::ExitRequest(FString Reason, const FGameplayTag& TransactionTag)
+bool UStateBase::ExitRequest(FString Reason, const FGameplayTag& TransactionTag)
 {
 	if (!StateManager)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
-		return;
+		return false; 
 	}
 
-	StateManager->RequestStateTreeExit(StateTag, TransactionTag, Reason);
+	return StateManager->RequestStateTreeExit(StateTag, TransactionTag, Reason);
 }
 
 bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)

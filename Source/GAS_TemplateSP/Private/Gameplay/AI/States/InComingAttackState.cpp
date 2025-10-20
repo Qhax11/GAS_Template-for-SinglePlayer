@@ -52,7 +52,7 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 	if (SelectedBestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeTakeDamage entered."));
-		BindTargetComingAttackEnd(SelectedBestReaction);
+		BindTargetComingAttackEnd();
 		return true;
 	}
 	else if(SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
@@ -65,7 +65,7 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 	return false;
 }
 
-void UInComingAttackState::BindTargetComingAttackEnd(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
+void UInComingAttackState::BindTargetComingAttackEnd()
 {
 	UGAS_GameplayAbilityBase* ComingAttack = StateManager->ComingAttackPayload.ComingAttack;
 	if (ComingAttack)
@@ -242,6 +242,7 @@ void UInComingAttackState::OnExit_Implementation()
 			LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedTakeDamageAbility->GetName());
 		}
+		LastUsedTakeDamageAbility = nullptr;
 	}
 
 	if (IsValid(LastUsedParryAbility))
@@ -251,6 +252,7 @@ void UInComingAttackState::OnExit_Implementation()
 			LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnParryAbilityEnded);
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedParryAbility->GetName());
 		}
+		LastUsedParryAbility = nullptr;
 	}
 
 	if (IsValid(LastUsedParryKnocbackAbility))
@@ -260,6 +262,7 @@ void UInComingAttackState::OnExit_Implementation()
 			LastUsedParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedParryKnocbackAbility->GetName());
 		}
+		LastUsedParryKnocbackAbility = nullptr;
 	}
 }
 

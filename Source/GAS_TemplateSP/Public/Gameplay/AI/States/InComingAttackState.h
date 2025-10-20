@@ -35,7 +35,7 @@ protected:
 
 	//********************* TAKE DAMAGE *********************/
 
-	void BindTargetComingAttackEnd(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
+	void BindTargetComingAttackEnd();
 
 	void UnBindTargetComingAttackEnd();
 

@@ -145,11 +145,11 @@ void UAC_StateManager::OnTargetDetected()
 	}
 }
 
-void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
+bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 {
 	if (!StateTag.IsValid() || !bActive)
 	{
-		return;
+		return false;
 	}
 
 	if (bEnableDebug)
@@ -161,7 +161,7 @@ void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 	if (!FindedState) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is null!"));
-		return;
+		return false;
 	}
 
 	if (FindedState->EnterCondition())
@@ -173,7 +173,7 @@ void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 
 		FindedState->OnEnter();
 		CurrentState = FindedState;
-		return;
+		return true;
 	}
 	else
 	{
@@ -181,14 +181,15 @@ void UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot enter"), *FindedState->GetName());
 		}
+		return false;
 	}
 }
 
-void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason)
+bool UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason)
 {
 	if (!StateTag.IsValid() || !bActive)
 	{
-		return;
+		return false;
 	}
 
 	if (bEnableDebug)
@@ -200,12 +201,12 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 	if (!FindedState)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: FindedState is null!"), *FindedState->GetName());
-		return;
+		return false;
 	}
 
 	if (!IsCurrentState(StateTag))
 	{
-		return;
+		return false;
 	}
 
 	if (!FindedState->ExitCondition()) 
@@ -214,14 +215,14 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot exit"), *StateTag.ToString());
 		}
-		return;
+		return false;
 	}
 
 	// If request coming with trancastion tag we directly enter
 	if (TransactionTag.IsValid()) 
 	{
 		RequestStateTreeEnter(TransactionTag);
-		return;
+		return true;
 	}
 
 	FAttackData NewSelectedAttack = SelectNewBestAttack();
@@ -233,6 +234,8 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 	{
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 	}
+
+	return true;
 }
 
 bool UAC_StateManager::IsCurrentState(const FGameplayTag& StateTag)

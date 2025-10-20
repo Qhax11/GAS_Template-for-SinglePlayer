@@ -163,15 +163,13 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
-	if (LastUsedParryAbility) 
+	if (LastUsedParryAbility && LastUsedParryAbility->IsActive())
 	{
-		if (LastUsedParryAbility->IsActive())
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: LastUsedParryAbility is active."));
+		if (LastUsedParryAbility)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("State Manager: LastUsedParryAbility is active."));
-			if (LastUsedParryAbility)
-			{
-				LastUsedParryAbility->EndAbilityManually();
-			}
+			EnemyASC->CancelAbilityHandle(LastUsedParryAbility->GetCurrentAbilitySpecHandle());
+			//LastUsedParryAbility->EndAbilityManually();
 		}
 	}
 
@@ -214,6 +212,8 @@ void UInComingAttackState::OnExit_Implementation()
 			{
 				if (UInComingAttackState* Self = WeakThis.Get())
 				{
+					// PROBLEM HERE: Recursive call could lead to an infinite loop 
+					// or stack overflow if not handled carefully, though unlikely here.
 					Self->OnExit_Implementation();
 				}
 			});

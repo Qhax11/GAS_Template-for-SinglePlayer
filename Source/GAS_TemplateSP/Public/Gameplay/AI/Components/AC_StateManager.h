@@ -39,6 +39,8 @@ public:
 
 	void RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason);
 
+	bool IsCurrentState(const FGameplayTag& StateTag);
+
 	float GetTargetDistance() const;
 
 	bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);

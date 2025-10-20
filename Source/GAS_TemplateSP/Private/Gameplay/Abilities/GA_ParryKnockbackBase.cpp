@@ -63,11 +63,6 @@ void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		return;
 	}
 
-	InstigatorASC->ApplyGameplayEffectSpecToTarget(*ParryKnockbackSpecHandle.Data, GetAbilitySystemComponentFromActorInfo());
-
-	UGameplayEffect* GE_ParryKnockback = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(ParryKnockbackCostClass);
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_ParryKnockback, 1, FGameplayEffectContextHandle());
-		
 	const UGA_MeleeAttackBase* MeleeAttack = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility());
 	if (!MeleeAttack)
 	{
@@ -79,6 +74,14 @@ void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 	MotionWarpingDistance = KnockbackDataAsset->FindKnockbackForce(AttackType);
 
 	Super::ActivateAbility(Handle, OwnerInfo, ActivationInfo, TriggerEventData);
+
+	// Apply the knockback effect *after* playing the montage.
+    // Applying it beforehand may trigger the vulnerable ability,
+    // which interrupts or cancels the vulnerable montage.
+	InstigatorASC->ApplyGameplayEffectSpecToTarget(*ParryKnockbackSpecHandle.Data, GetAbilitySystemComponentFromActorInfo());
+
+	UGameplayEffect* GE_ParryKnockback = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(ParryKnockbackCostClass);
+	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_ParryKnockback, 1, FGameplayEffectContextHandle());
 }
 
 FGameplayTag UGA_ParryKnockbackBase::GetAttackTypeTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack)

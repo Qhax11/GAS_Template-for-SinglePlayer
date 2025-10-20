@@ -199,7 +199,12 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 	UStateBase* FindedState = GetStateWithTag(StateTag);
 	if (!FindedState)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: FindedState is null!"), *FindedState->GetName());
+		return;
+	}
+
+	if (!IsCurrentState(StateTag))
+	{
 		return;
 	}
 
@@ -228,6 +233,24 @@ void UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 	{
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 	}
+}
+
+bool UAC_StateManager::IsCurrentState(const FGameplayTag& StateTag)
+{
+	UStateBase* FindedState = GetStateWithTag(StateTag);
+	if (!FindedState)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: FindedState is null!"), *FindedState->GetName());
+		return false;
+	}
+
+	if (FindedState != CurrentState)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is not current state!"), *FindedState->GetName());
+		return false;
+	}
+
+	return true;
 }
 
 float UAC_StateManager::GetTargetDistance() const

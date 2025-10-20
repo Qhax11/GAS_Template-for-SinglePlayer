@@ -16,6 +16,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	// If target has a DamageImmune Tag, we shouldn't be able to attack
 	if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Damage immune has exist!"));
 		return;
 	}
 

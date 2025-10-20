@@ -5,6 +5,7 @@
 #include "Gameplay/AI/States/StateBase.h"
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
 #include "Gameplay/Abilities/GA_ParryBase.h"
+#include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "InComingAttackState.generated.h"
@@ -34,7 +35,10 @@ protected:
 
 	//********************* TAKE DAMAGE *********************/
 
-	void MakeTakeDamage(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
+	void BindTargetComingAttackEnd(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
+
+	void UnBindTargetComingAttackEnd();
+
 
 	UFUNCTION()
 	void OnDamageDealt(const FDamageData& DamageData);
@@ -65,7 +69,10 @@ protected:
 	UGAS_GameplayAbilityBase* LastUsedParryAbility;
 	
 	UFUNCTION()
-	void OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGA_ParryKnockbackBase> EnemyParryKnocbackAbilityClass;
 
+	UGAS_GameplayAbilityBase* LastUsedParryKnocbackAbility;
 };

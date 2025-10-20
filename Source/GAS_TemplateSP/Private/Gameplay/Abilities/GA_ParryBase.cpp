@@ -43,18 +43,6 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	US_DamageDelegates* DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>();
-	if (!DamageSubsystem)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("DamageSubsystem is null in: %s, can not initialize"), *GetName());
-		return;
-	}
-
-	if (!DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UGA_ParryBase::OnDamageDealt))
-	{
-		DamageSubsystem->OnDamageDealt.AddDynamic(this, &UGA_ParryBase::OnDamageDealt);
-	}
-
 	if (!CharacterBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, can not initialize"), *GetName());
@@ -71,33 +59,6 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty, EListenMode::OnAdded).BindDynamic(this, &UGA_ParryBase::OnPostureEmptyTagAdded);
 }
 
-void UGA_ParryBase::OnDamageDealt(const FDamageData& DamageData)
-{
-	if (!DamageData.bParrySucces)
-	{
-		return;
-	}
-
-	FGameplayEventData Payload;
-	Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback;
-	Payload.Instigator = DamageData.ExecCalculationParameters.SourceActor;
-	Payload.Target = DamageData.ExecCalculationParameters.TargetActor;
-	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
-	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
-
-	if (UGAS_AbilitySystemComponent* HeroASC = GetASC())
-	{
-		UGAS_GameplayAbilityBase* ActivatedAbility = HeroASC->TryActivateAbilityByClassWithEventData(ParryKnockbackAbilityClass, Payload);
-		if (ActivatedAbility)
-		{
-			if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UGA_ParryBase::OnParryKnocbackAbilityEnded))
-			{
-				ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UGA_ParryBase::OnParryKnocbackAbilityEnded);
-			}
-		}
-	}
-}
-
 void UGA_ParryBase::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
 	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
@@ -110,11 +71,6 @@ void UGA_ParryBase::OnPostureEmptyTagAdded(const UAbilitySystemComponent* Abilit
 
 void UGA_ParryBase::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	if (US_DamageDelegates* DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>())
-	{
-		DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UGA_ParryBase::OnDamageDealt);
-	}
-
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

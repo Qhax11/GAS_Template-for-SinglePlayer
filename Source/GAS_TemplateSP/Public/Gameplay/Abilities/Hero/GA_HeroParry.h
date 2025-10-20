@@ -14,6 +14,13 @@ class GAS_TEMPLATESP_API UGA_HeroParry : public UGA_ParryBase
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	// TODO: U can make as AbilityTask so every ability can use easly and it will be blueprintable.
+	UFUNCTION()
+	void OnDamageDealt(const FDamageData& DamageData);
+
+	UPROPERTY(EditDefaultsOnly, Category = "ParryKnocback")
+	TSubclassOf<class UGA_ParryKnockbackBase> ParryKnockbackAbilityClass;
+
 	UFUNCTION()
 	void OnInputReleased(float TimeHeld);
 

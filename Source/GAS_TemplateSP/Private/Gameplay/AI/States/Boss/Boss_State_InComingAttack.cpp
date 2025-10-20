@@ -88,38 +88,6 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	/*
-	// The delegate can be triggered from a Worker Thread (e.g., via animation tasks).
-// Critical state changes (State Manager/UObject changes) MUST be on the Game Thread.
-
-	if (!IsInGameThread())
-	{
-		// KENDÝ FONKSÝYONUMUZU Game Thread'e ertelemek.
-		TWeakObjectPtr<UBoss_State_InComingAttack> WeakThis(this);
-		FAbilityEndedDataBP LocalData = DodgeAbilityEndedData; // Veriyi Worker Thread'den kopyala
-
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, LocalData]()
-				{
-					if (UBoss_State_InComingAttack* Self = WeakThis.Get())
-					{
-						// FONKSÝYONUN KENDÝSÝNÝ Game Thread'de tekrar çaðýr.
-						// (Recursion deðil, basitçe Game Thread'e geçiþ)
-						UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded deferred to Game Thread."));
-						Self->OnDodgeAbilityEnded(LocalData);
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return; // Worker Thread'den hemen çýk.
-	}
-
-	// ----------- BU NOKTADAN ÝTÝBAREN HER ZAMAN GAME THREAD'DEYÝZ -----------
-	*/
-	ExitRequest("OnDodgeAbilityEnded");
-
 	// Execution path if the function was already called on the Game Thread.
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDodgeAbilityEnded entered."));
 	ExitRequest("OnDodgeAbilityEnded");
@@ -151,6 +119,19 @@ void UBoss_State_InComingAttack::OnExit_Implementation()
 
 	// ----------- BURADAN SONRA SADECE GAME THREAD'DEYÝZ -----------
 	*/
+
+	if (!IsInGameThread())
+	{
+		AsyncTask(ENamedThreads::GameThread, [WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
+			{
+				if (UInComingAttackState* Self = WeakThis.Get())
+				{
+					Self->OnExit_Implementation();
+				}
+			});
+		return;
+	}
+
 	Super::OnExit_Implementation();
 
 	if (LastUsedDodgeAbility)

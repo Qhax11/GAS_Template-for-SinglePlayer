@@ -52,7 +52,7 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 	if (SelectedBestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeTakeDamage entered."));
-		MakeTakeDamage(SelectedBestReaction);
+		BindTargetComingAttackEnd(SelectedBestReaction);
 		return true;
 	}
 	else if(SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
@@ -65,7 +65,7 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 	return false;
 }
 
-void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
+void UInComingAttackState::BindTargetComingAttackEnd(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
 {
 	UGAS_GameplayAbilityBase* ComingAttack = StateManager->ComingAttackPayload.ComingAttack;
 	if (ComingAttack)
@@ -79,6 +79,18 @@ void UInComingAttackState::MakeTakeDamage(const UBDS_ComingAttackReactionBase* B
 	LastComingAttackAbility = ComingAttack;
 }
 
+void UInComingAttackState::UnBindTargetComingAttackEnd()
+{
+	if (LastComingAttackAbility)
+	{
+		if (LastComingAttackAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnComingAttackAbilityEnded))
+		{
+			LastComingAttackAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnComingAttackAbilityEnded);
+		}
+		LastComingAttackAbility = nullptr;
+	}
+}
+
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered."));
@@ -90,34 +102,50 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 		return;
 	}
 
-	// Prepare payload
-	FGameplayEventData Payload;
-	Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage;
-	Payload.Instigator = DamageData.ExecCalculationParameters.SourceActor;
-	Payload.Target = DamageData.ExecCalculationParameters.TargetActor;
-	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
-	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
+	UnBindTargetComingAttackEnd();
 
-	UGAS_GameplayAbilityBase* TakeDamageAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamageAbilityClass, Payload);
-	if (TakeDamageAbility && TakeDamageAbility->IsActive())
+	if (DamageData.bParrySucces) 
 	{
-		if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+		FGameplayEventData Payload;
+		Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback;
+		Payload.Instigator = DamageData.ExecCalculationParameters.SourceActor;
+		Payload.Target = DamageData.ExecCalculationParameters.TargetActor;
+		Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
+		Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
+
+		UGAS_GameplayAbilityBase* ParryKnocbackAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyParryKnocbackAbilityClass, Payload);
+		if (ParryKnocbackAbility && ParryKnocbackAbility->IsActive())
 		{
-			TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+			if (!ParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryKnocbackAbilityEnded))
+			{
+				ParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
+			}
+			UE_LOG(LogTemp, Warning, TEXT("State Manager: ParryKnocbackAbility executed."));
 		}
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageAbility executed."));
+		LastUsedParryKnocbackAbility = ParryKnocbackAbility;
+	}
+	else
+	{
+		// Prepare payload
+		FGameplayEventData Payload;
+		Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage;
+		Payload.Instigator = DamageData.ExecCalculationParameters.SourceActor;
+		Payload.Target = DamageData.ExecCalculationParameters.TargetActor;
+		Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
+		Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
+
+		UGAS_GameplayAbilityBase* TakeDamageAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamageAbilityClass, Payload);
+		if (TakeDamageAbility && TakeDamageAbility->IsActive())
+		{
+			if (!TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
+			{
+				TakeDamageAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+			}
+			UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageAbility executed."));
+		}
+		LastUsedTakeDamageAbility = TakeDamageAbility;
 	}
 
-	LastUsedTakeDamageAbility = TakeDamageAbility;
-
-	if (LastComingAttackAbility)
-	{
-		if (LastComingAttackAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnComingAttackAbilityEnded))
-		{
-			LastComingAttackAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnComingAttackAbilityEnded);
-		}
-		LastComingAttackAbility = nullptr;
-	}
 }
 
 void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
@@ -132,8 +160,8 @@ void UInComingAttackState::OnComingAttackAbilityEnded(const FAbilityEndedDataBP&
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
 {
-	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
+	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
+	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	if (LastUsedParryAbility) 
 	{
@@ -162,40 +190,10 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 
 void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	/*
-	// The delegate can be triggered from a Worker Thread (e.g., via animation tasks).
-	// Critical state changes (State Manager/UObject changes) MUST be on the Game Thread.
-
-	if (!IsInGameThread())
-	{
-		// KENDİ FONKSİYONUMUZU Game Thread'e ertelemek.
-		TWeakObjectPtr<UInComingAttackState> WeakThis(this);
-		FAbilityEndedDataBP LocalData = DodgeAbilityEndedData; // Veriyi Worker Thread'den kopyala
-
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, LocalData]()
-				{
-					if (UInComingAttackState* Self = WeakThis.Get())
-					{
-						// FONKSİYONUN KENDİSİNİ Game Thread'de tekrar çağır.
-						// (Recursion değil, basitçe Game Thread'e geçiş)
-						UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded deferred to Game Thread."));
-						Self->OnParryAbilityEnded(LocalData);
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return; // Worker Thread'den hemen çık.
-	}
-
-	// ----------- BU NOKTADAN İTİBAREN HER ZAMAN GAME THREAD'DEYİZ -----------
-	*/
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback, now we listen knocback removed for exit"));
-		EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback, EListenMode::OnRemoved).BindDynamic(this, &UInComingAttackState::OnParryKnocbackTagRemoved);
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback don't exit the state"));
+		return;
 	}
 	else
 	{
@@ -203,43 +201,25 @@ void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeA
 	}
 }
 
-void UInComingAttackState::OnParryKnocbackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void UInComingAttackState::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().SetTimerForNextTick([this]()
-			{
-				ExitRequest("OnParryKnocbackTagRemoved");
-			});
-	}
+	ExitRequest("OnParryKnocbackAbilityEnded");
 }
 
 void UInComingAttackState::OnExit_Implementation()
 {
-	/*
-	// İş parçacığı kontrolünü daha güvenli hale getirelim:
 	if (!IsInGameThread())
 	{
-		TWeakObjectPtr<UInComingAttackState> WeakThis(this);
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis]()
+		AsyncTask(ENamedThreads::GameThread, [WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
+			{
+				if (UInComingAttackState* Self = WeakThis.Get())
 				{
-					if (UInComingAttackState* Self = WeakThis.Get())
-					{
-						// Game Thread'de OnExit'i güvenle tekrar çağır.
-						UE_LOG(LogTemp, Warning, TEXT("State Manager: OnExit deferred to Game Thread."));
-						Self->OnExit_Implementation();
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return; // Worker Thread'den hemen çık.
+					Self->OnExit_Implementation();
+				}
+			});
+		return;
 	}
 
-	// ----------- BURADAN SONRA SADECE GAME THREAD'DEYİZ -----------
-	*/
 	Super::OnExit_Implementation();
 
 	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())
@@ -270,6 +250,15 @@ void UInComingAttackState::OnExit_Implementation()
 		{
 			LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnParryAbilityEnded);
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedParryAbility->GetName());
+		}
+	}
+
+	if (LastUsedParryKnocbackAbility)
+	{
+		if (LastUsedParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryKnocbackAbilityEnded))
+		{
+			LastUsedParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
+			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedParryKnocbackAbility->GetName());
 		}
 	}
 }

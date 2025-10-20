@@ -81,7 +81,7 @@ void UInComingAttackState::BindTargetComingAttackEnd(const UBDS_ComingAttackReac
 
 void UInComingAttackState::UnBindTargetComingAttackEnd()
 {
-	if (LastComingAttackAbility)
+	if (IsValid(LastComingAttackAbility))
 	{
 		if (LastComingAttackAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnComingAttackAbilityEnded))
 		{
@@ -227,7 +227,7 @@ void UInComingAttackState::OnExit_Implementation()
 		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 	}
 
-	if (DamageSubsystem)
+	if (IsValid(DamageSubsystem))
 	{
 		if (DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
 		{
@@ -235,7 +235,7 @@ void UInComingAttackState::OnExit_Implementation()
 		}
 	}
 
-	if (LastUsedTakeDamageAbility)
+	if (IsValid(LastUsedTakeDamageAbility))
 	{
 		if (LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
 		{
@@ -244,7 +244,7 @@ void UInComingAttackState::OnExit_Implementation()
 		}
 	}
 
-	if (LastUsedParryAbility)
+	if (IsValid(LastUsedParryAbility))
 	{
 		if (LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryAbilityEnded))
 		{
@@ -253,7 +253,7 @@ void UInComingAttackState::OnExit_Implementation()
 		}
 	}
 
-	if (LastUsedParryKnocbackAbility)
+	if (IsValid(LastUsedParryKnocbackAbility))
 	{
 		if (LastUsedParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryKnocbackAbilityEnded))
 		{

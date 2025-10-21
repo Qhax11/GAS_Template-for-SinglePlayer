@@ -20,7 +20,9 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		return;
 	}
 
-	bool bParrySucces = Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry) && CalculateParry(Params);
+	bool bIsUnparrayableAttack = Params.SourceASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnparryableAttack);
+	bool bTargetInParry = Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);
+	bool bParrySucces = !bIsUnparrayableAttack && bTargetInParry && CalculateParry(Params);
 
 	float MitigatedDamage = GetTotalDamage(Params);
 

@@ -48,12 +48,10 @@ void UAC_MeleeComboManager::InitComboChainTracker()
 
 UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
-	/*
 	if (!ActiveComboChainTracker.bNextAttackAllowed)
 	{
 		return nullptr;
 	}
-	*/
 
 	if (!CharacterBaseASC)
 	{

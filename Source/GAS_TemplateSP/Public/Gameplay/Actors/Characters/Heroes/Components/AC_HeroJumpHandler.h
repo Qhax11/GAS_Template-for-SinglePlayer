@@ -31,10 +31,6 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	// ============================================================
-	// ANA FONKSÝYONLAR
-	// ============================================================
-
 	bool BindJumpInput();
 
 	void ActivateJump();
@@ -59,10 +55,13 @@ public:
 	UAnimMontage* JumpLandedMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
-	float JumpHeight = 500.0f;
+	float JumpHeight = 250.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
-	int32 MaxJumpCount = 1; // 1 = tek zýplama, 2 = çift zýplama
+	float GroundJumpForwardStrength = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
+	int32 MaxJumpCount = 2; 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
 	bool bDebugPhases = false;

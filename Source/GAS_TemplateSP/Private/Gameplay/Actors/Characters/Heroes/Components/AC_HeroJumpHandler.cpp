@@ -142,34 +142,32 @@ void UAC_HeroJumpHandler::JumpLogic()
 
 	float JumpVelocityZ = FMath::Sqrt(2.0f * FMath::Abs(HeroMovement->GetGravityZ()) * JumpHeight);
 
-	if (JumpCount == 1) // Ýlk zýplama - yerden
+	if (JumpCount == 1) 
 	{
-		if (!InputDirection.IsNearlyZero())
-		{
-			const float GroundJumpForwardStrength = 400.0f;
-			FVector LaunchVelocity = InputDirection * GroundJumpForwardStrength + FVector(0, 0, JumpVelocityZ);
-			HeroBase->LaunchCharacter(LaunchVelocity, false, true);
-		}
-		else
+		if (InputDirection.IsNearlyZero())
 		{
 			HeroBase->LaunchCharacter(FVector(0, 0, JumpVelocityZ), false, true);
 		}
+		else
+		{
+			FVector LaunchVelocity = InputDirection * GroundJumpForwardStrength + FVector(0, 0, JumpVelocityZ);
+			HeroBase->LaunchCharacter(LaunchVelocity, false, true);
+		}
 	}
-	else if (JumpCount == 2) // Double jump - havada tam kontrol
+	else if (JumpCount == 2)
 	{
 		FVector NewVelocity;
 
-		if (!InputDirection.IsNearlyZero())
+		if (InputDirection.IsNearlyZero())
+		{
+			FVector CurrentVelocity = HeroMovement->Velocity;
+			NewVelocity = FVector(CurrentVelocity.X, CurrentVelocity.Y, JumpVelocityZ);
+		}
+		else
 		{
 			// Havada tamamen yeni yöne git - akrobatik kontrol
 			const float AirControlStrength = 600.0f; // Güçlü kontrol
 			NewVelocity = InputDirection * AirControlStrength + FVector(0, 0, JumpVelocityZ);
-		}
-		else
-		{
-			// Input yoksa mevcut yatay hýzý koru
-			FVector CurrentVelocity = HeroMovement->Velocity;
-			NewVelocity = FVector(CurrentVelocity.X, CurrentVelocity.Y, JumpVelocityZ);
 		}
 
 		HeroBase->LaunchCharacter(NewVelocity, false, true);

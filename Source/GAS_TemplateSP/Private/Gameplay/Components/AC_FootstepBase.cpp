@@ -2,7 +2,6 @@
 
 
 #include "Gameplay/Components/AC_FootstepBase.h"
-#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "GameplayTagContainer.h"

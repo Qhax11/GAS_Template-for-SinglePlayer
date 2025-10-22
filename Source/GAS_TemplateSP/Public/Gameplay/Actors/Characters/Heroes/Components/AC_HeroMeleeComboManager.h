@@ -38,4 +38,12 @@ public:
 	const UInputAction* IA_ActivateMeleeCombo;
 
 	AGAS_HeroBase* HeroBase;
+
+private:
+	UFUNCTION()
+	void OnInAirTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnInAirTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
 };

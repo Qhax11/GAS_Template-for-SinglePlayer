@@ -63,6 +63,8 @@ void AGAS_CharacterBase::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Weapon socket '%s' not found or WeaponChildComponent is null on %s"), *WeaponSocketName.ToString(), *GetName());
 	}
+
+	MovementModeChangedDelegate.AddDynamic(this, &AGAS_CharacterBase::OnMovementModeChanged);
 }
 
 UAbilitySystemComponent* AGAS_CharacterBase::GetAbilitySystemComponent() const
@@ -181,6 +183,18 @@ void AGAS_CharacterBase::RemoveGameplayTagsIfExist(FGameplayTagContainer& Gamepl
 	}
 
 	CharacterASC->RemoveLooseGameplayTags(GameplayTags);
+}
+
+void AGAS_CharacterBase::OnMovementModeChanged(ACharacter* Character, EMovementMode PrevMode, uint8 PreviousCustomMode)
+{
+	if (Character->GetCharacterMovement()->IsFalling())
+	{
+		AddGameplayTagIfNotExist(GAS_Tags::TAG_Gameplay_State_InAir);
+	}
+	else if (PrevMode == MOVE_Falling)
+	{
+		RemoveGameplayTagIfExist(GAS_Tags::TAG_Gameplay_State_InAir);
+	}
 }
 
 

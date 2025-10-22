@@ -70,6 +70,7 @@ void UAC_IntendHandlerBase::BeginPlay()
 void UAC_IntendHandlerBase::OnTargetDetected(AActor* DetectedTarget)
 {
 	OwnerStateManager->OnTargetDetected();
+	TargetHero->GetAbilitySystemComponent()->AbilityActivatedCallbacks.AddUObject(this, &UAC_IntendHandlerBase::OnTargetAbilityActivated);
 }
 
 void UAC_IntendHandlerBase::OnRequestEnemyBackupReaction()
@@ -96,7 +97,6 @@ bool UAC_IntendHandlerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
 		return false;
 	}
 
-	TargetCharacter->GetAbilitySystemComponent()->AbilityActivatedCallbacks.AddUObject(this, &UAC_IntendHandlerBase::OnTargetAbilityActivated);
 	ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &UAC_IntendHandlerBase::OnVulnerableTagAdded);
 	return false;
 }

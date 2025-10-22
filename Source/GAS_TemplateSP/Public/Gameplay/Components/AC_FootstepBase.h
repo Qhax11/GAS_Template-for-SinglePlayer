@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "GameplayTagContainer.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "AC_FootstepBase.generated.h"
 

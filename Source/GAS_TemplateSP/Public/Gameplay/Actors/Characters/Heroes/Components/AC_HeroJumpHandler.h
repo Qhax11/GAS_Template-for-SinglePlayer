@@ -55,10 +55,13 @@ public:
 	UAnimMontage* JumpLandedMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
-	float JumpHeight = 250.0f;
+	float JumpHeight = 200.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
-	float GroundJumpForwardStrength = 200.0f;
+	float GroundJumpForwardStrength = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
+	float AirControlStrength = 400.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
 	int32 MaxJumpCount = 2; 
@@ -74,9 +77,11 @@ public:
 	bool IsInAir() const;
 
 private:
-	void SetPhaseAndPlayWithDelay(EJumpPhase NewPhase, float Delay);
+	void SetPhaseAndPlayMontageWithDelay(EJumpPhase NewPhase, float Delay);
 
 	void SetPhaseAndPlayMontage(EJumpPhase NewPhase);
+
+	bool SetPhase(EJumpPhase NewPhase);
 
 	float PlayMontage(UAnimMontage* MontageToPlay);
 

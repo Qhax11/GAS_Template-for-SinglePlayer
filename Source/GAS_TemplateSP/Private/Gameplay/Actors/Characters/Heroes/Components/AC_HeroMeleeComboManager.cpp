@@ -3,6 +3,7 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Abilities/Hero/GA_HeroShadowAttack.h"
 
 void UAC_HeroMeleeComboManager::BeginPlay()
@@ -19,6 +20,15 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
 		return;
 	}
+
+	UAC_TagDelegates* HeroTagDelegatesComp = HeroBase->GetTagDelegatesComponent();
+	if (!HeroTagDelegatesComp)
+	{
+		return;
+	}
+
+	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagAdded);
+	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagRemoved);
 
 	InitComboChainTracker();
 }
@@ -114,6 +124,18 @@ void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbilityWithShadowAttack(
 {
 	ActiveComboChainTracker.CurrentIndex = ComboIndex;
 	ActivateComboMeleeAttackAbility(MontageSection, AdditionalTag);
+}
+
+void UAC_HeroMeleeComboManager::OnInAirTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	SelectedComboIndex = 1;
+	InitComboChainTracker();
+}
+
+void UAC_HeroMeleeComboManager::OnInAirTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	SelectedComboIndex = 0;
+	InitComboChainTracker();
 }
 
 

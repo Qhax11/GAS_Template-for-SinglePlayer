@@ -97,4 +97,9 @@ public:
 	void AddGameplayTagsIfNotExist(FGameplayTagContainer& GameplayTags);
 
 	void RemoveGameplayTagsIfExist(FGameplayTagContainer& GameplayTags);
+
+private:
+	UFUNCTION()
+	void OnMovementModeChanged(ACharacter* Character, EMovementMode PrevMode, uint8 PreviousCustomMode);
+	
 };

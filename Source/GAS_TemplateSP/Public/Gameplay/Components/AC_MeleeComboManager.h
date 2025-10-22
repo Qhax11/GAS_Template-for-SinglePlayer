@@ -11,6 +11,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboEnded);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeAbilityEnded, const bool, bWasCancelled);
 
+UENUM(BlueprintType)
+enum class EComboType : uint8
+{
+	InFloor,
+	InAir
+};
+
 USTRUCT(BlueprintType)
 struct FComboAbilityData
 {
@@ -27,6 +34,9 @@ struct FComboChainData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName ComboChainName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EComboType ComboType = EComboType::InFloor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FComboAbilityData> ComboAbilities;
@@ -145,6 +155,7 @@ protected:
 
 	// Can be set from UI in the future to allow different combo styles.
 	int32 SelectedComboIndex = 0;
+
 	AGAS_CharacterBase* CharacterBase;
 	UGAS_AbilitySystemComponent* CharacterBaseASC;
 	FActiveComboChainTracker ActiveComboChainTracker;

@@ -42,6 +42,8 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ComboMelee, "Gameplay.AbilityTriggerEvent.ComboMelee");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_AbilityTriggerEvent_ParryKnockback, "Gameplay.AbilityTriggerEvent.ParryKnockback");
 	
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InAir, "Gameplay.State.InAir");
+
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff, "Gameplay.State.Debuff");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Stun, "Gameplay.State.Debuff.Stun");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Slow, "Gameplay.State.Debuff.Slow");
@@ -54,6 +56,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Dash, "Gameplay.State.Moving.Dash");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat, "Gameplay.State.InCombat");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo, "Gameplay.State.InCombat.MeleeCombo");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo1, "Gameplay.State.InCombat.MeleeCombo1");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo2, "Gameplay.State.InCombat.MeleeCombo2");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo3, "Gameplay.State.InCombat.MeleeCombo3");

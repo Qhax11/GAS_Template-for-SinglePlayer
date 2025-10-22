@@ -5,6 +5,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
+#include "Gameplay/Tags/GAS_Tags.h"
 
 UAC_HeroJumpHandler::UAC_HeroJumpHandler()
 {
@@ -144,15 +145,18 @@ void UAC_HeroJumpHandler::JumpLogic()
 
 	if (JumpCount == 1) 
 	{
+		FVector NewVelocity;
+
 		if (InputDirection.IsNearlyZero())
 		{
-			HeroBase->LaunchCharacter(FVector(0, 0, JumpVelocityZ), false, true);
+			NewVelocity = FVector(0, 0, JumpVelocityZ);
 		}
 		else
 		{
-			FVector LaunchVelocity = InputDirection * GroundJumpForwardStrength + FVector(0, 0, JumpVelocityZ);
-			HeroBase->LaunchCharacter(LaunchVelocity, false, true);
+			NewVelocity = InputDirection * GroundJumpForwardStrength + FVector(0, 0, JumpVelocityZ);
 		}
+
+		HeroBase->LaunchCharacter(NewVelocity, false, true);
 	}
 	else if (JumpCount == 2)
 	{
@@ -165,12 +169,10 @@ void UAC_HeroJumpHandler::JumpLogic()
 		}
 		else
 		{
-			// Havada tamamen yeni yöne git - akrobatik kontrol
-			const float AirControlStrength = 600.0f; // Güçlü kontrol
 			NewVelocity = InputDirection * AirControlStrength + FVector(0, 0, JumpVelocityZ);
 		}
 
-		HeroBase->LaunchCharacter(NewVelocity, false, true);
+		HeroBase->LaunchCharacter(NewVelocity, true, true);
 	}
 }
 
@@ -179,7 +181,7 @@ bool UAC_HeroJumpHandler::IsInAir() const
 	return HeroMovement && HeroMovement->IsFalling();
 }
 
-void UAC_HeroJumpHandler::SetPhaseAndPlayWithDelay(EJumpPhase NewPhase, float Delay)
+void UAC_HeroJumpHandler::SetPhaseAndPlayMontageWithDelay(EJumpPhase NewPhase, float Delay)
 {
 	if (PhaseTransitionTimerHandle.IsValid())
 	{
@@ -194,17 +196,15 @@ void UAC_HeroJumpHandler::SetPhaseAndPlayWithDelay(EJumpPhase NewPhase, float De
 
 void UAC_HeroJumpHandler::SetPhaseAndPlayMontage(EJumpPhase NewPhase)
 {
-	if (CurrentPhase == NewPhase)
+	if (!SetPhase(NewPhase)) 
 	{
 		return;
 	}
 
-	CurrentPhase = NewPhase;
-
 	if (NewPhase == EJumpPhase::Start)
 	{
 		float JumpStartMontageLenght = PlayMontage(JumpStartMontage);
-		SetPhaseAndPlayWithDelay(EJumpPhase::InAir, JumpStartMontageLenght);
+		SetPhaseAndPlayMontageWithDelay(EJumpPhase::InAir, JumpStartMontageLenght);
 	}
 	else if (NewPhase == EJumpPhase::InAir)
 	{
@@ -214,7 +214,7 @@ void UAC_HeroJumpHandler::SetPhaseAndPlayMontage(EJumpPhase NewPhase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Double Jump Phase Activated"));
 		float DoubleJumpStartMontageLenght = PlayMontage(DoubleJumpStartMontage);
-		SetPhaseAndPlayWithDelay(EJumpPhase::InAir, DoubleJumpStartMontageLenght - 0.3f);
+		SetPhaseAndPlayMontageWithDelay(EJumpPhase::InAir, DoubleJumpStartMontageLenght - 0.3f);
 	}
 	else if (NewPhase == EJumpPhase::Landed)
 	{
@@ -222,9 +222,26 @@ void UAC_HeroJumpHandler::SetPhaseAndPlayMontage(EJumpPhase NewPhase)
 	}
 }
 
+bool UAC_HeroJumpHandler::SetPhase(EJumpPhase NewPhase)
+{
+	if (CurrentPhase == NewPhase)
+	{
+		return false;
+	}
+
+	CurrentPhase = NewPhase;
+
+	return true;
+}
+
 float UAC_HeroJumpHandler::PlayMontage(UAnimMontage* MontageToPlay)
 {
 	if (!HeroAnimInstance || !MontageToPlay) 
+	{
+		return 0.0f;
+	}
+
+	if(HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo))
 	{
 		return 0.0f;
 	}
@@ -235,8 +252,18 @@ float UAC_HeroJumpHandler::PlayMontage(UAnimMontage* MontageToPlay)
 void UAC_HeroJumpHandler::OnLanded(const FHitResult& Hit)
 {
 	JumpCount = 0;
-	SetPhaseAndPlayMontage(EJumpPhase::Landed);
-	SetPhaseAndPlayWithDelay(EJumpPhase::None, 0.3f);
+
+	if (HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Shadow))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnLandedwithshadow!"));
+		SetPhase(EJumpPhase::Landed);
+	}
+	else
+	{
+		SetPhaseAndPlayMontage(EJumpPhase::Landed);
+	}
+	
+	SetPhaseAndPlayMontageWithDelay(EJumpPhase::None, 0.3f);
 }
 
 void UAC_HeroJumpHandler::EndPlay(const EEndPlayReason::Type EndPlayReason)

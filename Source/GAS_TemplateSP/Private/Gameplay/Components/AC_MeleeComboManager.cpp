@@ -50,6 +50,7 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 {
 	if (!ActiveComboChainTracker.bNextAttackAllowed)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: bNextAttackAllowed is false"));
 		return nullptr;
 	}
 
@@ -61,6 +62,7 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
 	if (!ComboAbilityData || !ComboAbilityData->ComboAbilityClass)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: ComboAbilityData or ComboAbilityClass is null"));
 		return nullptr;
 	}
 
@@ -68,6 +70,7 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	FGameplayAbilitySpec* AbilitySpec = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityData->ComboAbilityClass);
 	if (!AbilitySpec)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: AbilitySpec is null"));
 		return nullptr;
 	}
 
@@ -90,6 +93,7 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 
 	if (!ActivatedAbility)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: ActivatedAbility is null"));
 		return nullptr;
 	}
 
@@ -171,3 +175,4 @@ void UAC_MeleeComboManager::CancelComboAbilities()
 
 	CharacterBaseASC->CancelAbilities(&CancelTags);
 }
+

@@ -110,7 +110,7 @@ void AAIControllerBase::UpdateRotationTowardsTarget(float DeltaTime)
 
 	FRotator CurrentRot = ControlledEnemy->GetActorRotation();
 	FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaTime, RotationSpeed);
-	ControlledEnemy->SetActorRotation(NewRot);
+	ControlledEnemy->SetActorRotation(FRotator(CurrentRot.Pitch, NewRot.Yaw, CurrentRot.Roll));
 }
 
 void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimulus)

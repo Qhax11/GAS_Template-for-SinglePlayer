@@ -78,8 +78,6 @@ private:
 
 	float PlayMontage(UAnimMontage* MontageToPlay);
 
-	void EndPlay(const EEndPlayReason::Type EndPlayReason);
-
 	UFUNCTION()
 	void OnLanded(const FHitResult& Hit);
 

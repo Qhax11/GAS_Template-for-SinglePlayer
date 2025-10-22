@@ -156,8 +156,3 @@ void UAC_HeroJumpHandler::OnLanded(const FHitResult& Hit)
 	SetPhaseAndPlayWithDelay(EJumpPhase::None, 0.3f);
 }
 
-void UAC_HeroJumpHandler::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-}

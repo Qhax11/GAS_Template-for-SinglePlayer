@@ -71,6 +71,11 @@ void UAC_HeroJumpHandler::ActivateJump()
 		return;
 	}
 
+	if (PhaseTransitionTimerHandle.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(PhaseTransitionTimerHandle);
+	}
+
 	JumpCount++;
 
 	if (JumpCount == 1) 
@@ -102,8 +107,12 @@ bool UAC_HeroJumpHandler::IsInAir() const
 
 void UAC_HeroJumpHandler::SetPhaseAndPlayWithDelay(EJumpPhase NewPhase, float Delay)
 {
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, NewPhase]()
+	if (PhaseTransitionTimerHandle.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(PhaseTransitionTimerHandle);
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(PhaseTransitionTimerHandle, [this, NewPhase]()
 		{
 			SetPhaseAndPlayMontage(NewPhase);
 		}, Delay, false);

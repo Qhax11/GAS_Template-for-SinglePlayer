@@ -94,4 +94,5 @@ private:
 
 	EJumpPhase CurrentPhase = EJumpPhase::None;
 	int32 JumpCount = 0;
+	FTimerHandle PhaseTransitionTimerHandle;
 };

@@ -2,7 +2,9 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroJumpHandler.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 
 UAC_HeroJumpHandler::UAC_HeroJumpHandler()
 {
@@ -17,6 +19,20 @@ void UAC_HeroJumpHandler::BeginPlay()
 	if (!HeroBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s)"), *GetName());
+		return;
+	}
+
+	HeroASC = HeroBase->GetAbilitySystemComponent();
+	if (!HeroASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in: %s)"), *GetName());
+		return;
+	}
+
+	HeroControl = HeroBase->GetHeroControlComponent();
+	if (!HeroControl)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeroControl is null in: %s)"), *GetName());
 		return;
 	}
 
@@ -60,7 +76,7 @@ void UAC_HeroJumpHandler::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UAC_HeroJumpHandler::ActivateJump()
 {
-	if (!HeroBase || !HeroMovement) 
+	if (!HeroBase || !HeroMovement || !HeroControl)
 	{
 		return;
 	}
@@ -96,8 +112,68 @@ void UAC_HeroJumpHandler::ActivateJump()
 
 void UAC_HeroJumpHandler::JumpLogic()
 {
-	float JumpVelocity = FMath::Sqrt(2.0f * FMath::Abs(HeroMovement->GetGravityZ()) * JumpHeight);
-	HeroBase->LaunchCharacter(FVector(0, 0, JumpVelocity), false, true);
+	if (!HeroBase || !HeroMovement || !HeroControl)
+	{
+		return;
+	}
+
+	UGameplayEffect* GE_Ghost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GhostEffect);
+	HeroASC->ApplyGameplayEffectToSelf(GE_Ghost, 1, FGameplayEffectContextHandle());
+
+	// Kamera yönünü al (Controller'ýn rotation'ý)
+	APlayerController* PC = Cast<APlayerController>(HeroBase->GetController());
+	if (!PC)
+	{
+		return;
+	}
+
+	FRotator ControlRotation = PC->GetControlRotation();
+
+	// Sadece yaw'ý kullan (pitch ve roll'u sýfýrla, yoksa yukarý/aþaðý bakarken garip olur)
+	FRotator YawRotation(0.0f, ControlRotation.Yaw, 0.0f);
+
+	// Kamera bazlý ileri ve sað vektörleri
+	FVector CameraForward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	FVector CameraRight = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	// Input'u kamera yönüne göre hesapla
+	FVector2D Input = HeroControl->LastMovementInput;
+	FVector InputDirection = (CameraForward * Input.Y + CameraRight * Input.X).GetSafeNormal();
+
+	float JumpVelocityZ = FMath::Sqrt(2.0f * FMath::Abs(HeroMovement->GetGravityZ()) * JumpHeight);
+
+	if (JumpCount == 1) // Ýlk zýplama - yerden
+	{
+		if (!InputDirection.IsNearlyZero())
+		{
+			const float GroundJumpForwardStrength = 400.0f;
+			FVector LaunchVelocity = InputDirection * GroundJumpForwardStrength + FVector(0, 0, JumpVelocityZ);
+			HeroBase->LaunchCharacter(LaunchVelocity, false, true);
+		}
+		else
+		{
+			HeroBase->LaunchCharacter(FVector(0, 0, JumpVelocityZ), false, true);
+		}
+	}
+	else if (JumpCount == 2) // Double jump - havada tam kontrol
+	{
+		FVector NewVelocity;
+
+		if (!InputDirection.IsNearlyZero())
+		{
+			// Havada tamamen yeni yöne git - akrobatik kontrol
+			const float AirControlStrength = 600.0f; // Güçlü kontrol
+			NewVelocity = InputDirection * AirControlStrength + FVector(0, 0, JumpVelocityZ);
+		}
+		else
+		{
+			// Input yoksa mevcut yatay hýzý koru
+			FVector CurrentVelocity = HeroMovement->Velocity;
+			NewVelocity = FVector(CurrentVelocity.X, CurrentVelocity.Y, JumpVelocityZ);
+		}
+
+		HeroBase->LaunchCharacter(NewVelocity, false, true);
+	}
 }
 
 bool UAC_HeroJumpHandler::IsInAir() const

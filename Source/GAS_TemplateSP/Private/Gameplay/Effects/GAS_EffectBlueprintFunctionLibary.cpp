@@ -138,7 +138,6 @@ UGameplayEffect* UGAS_EffectBlueprintFunctionLibary::CreateDurationEffectWithGra
 void UGAS_EffectBlueprintFunctionLibary::AddTagsToEffectSpecWithArray(FGameplayEffectSpec& Spec, TArray<FGameplayTag> TagsToAdd)
 {
 	FGameplayTagContainer Container = FGameplayTagContainer();
-
 	for (FGameplayTag GameplayTag : TagsToAdd)
 	{
 		Container.AddTag(GameplayTag);
@@ -161,7 +160,6 @@ bool UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(UAbilitySystem
 
 	for (TSubclassOf<UGameplayEffect> GameplayEffect : EffectClasses)
 	{
-	
 		FGameplayEffectContextHandle EffectContext = SourceASC->MakeEffectContext();
 		EffectContext.SetAbility(SourceAbility);
 		FGameplayEffectSpecHandle NewHandle = SourceASC->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
@@ -176,7 +174,6 @@ bool UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(UAbilitySystem
 		{
 			SourceASC->ApplyGameplayEffectSpecToTarget(*EffectSpec, TargetASC);
 		}
-
 	}
 
 	return true;

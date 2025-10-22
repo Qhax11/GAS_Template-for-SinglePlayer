@@ -67,6 +67,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Jump|Settings")
 	bool bDebugPhases = false;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Jump")
+	TSubclassOf<UGameplayEffect> GhostEffect;
+
 	EJumpPhase GetCurrentPhase() const { return CurrentPhase; }
 
 	bool IsInAir() const;
@@ -88,6 +91,12 @@ private:
 
 	UPROPERTY()
 	AGAS_HeroBase* HeroBase;
+
+	UPROPERTY()
+	UAbilitySystemComponent* HeroASC;
+
+	UPROPERTY()
+	class UAC_HeroControl* HeroControl;
 
 	UPROPERTY()
 	UCharacterMovementComponent* HeroMovement;

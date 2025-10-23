@@ -102,7 +102,7 @@ void UAC_HeroJumpHandler::ActivateJump()
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 			{
 				JumpLogic();
-			}, 0.1, false);
+			}, 0.05f, false);
 	}
 	else if (JumpCount == 2) 
 	{

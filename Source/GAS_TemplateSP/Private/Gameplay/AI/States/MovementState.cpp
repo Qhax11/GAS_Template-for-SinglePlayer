@@ -12,7 +12,7 @@ void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 	MovementManagerComponent = Enemy->GetEnemyMovementManagerComponent();
 	if (!MovementManagerComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MovementManagerComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: MovementManagerComponent is null in: %s"), *GetName());
 		return;
 	}
 }
@@ -24,7 +24,7 @@ void UMovementState::OnEnter_Implementation()
 	SelectedAttack = SelectNewAttackAbility();
 	if (!SelectedAttack.AbilityClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No valid BestAttack selected."));
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: No valid BestAttack selected."));
 		ExitRequest("SelectedAttack ability class is null");
 		return;
 	}
@@ -67,7 +67,7 @@ void UMovementState::TryEnterToAttackState()
 
 	if (IsAttackInRange(SelectedAttack.AbilityClass))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("attack ability is in range, exit from movement state"));
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: attack ability is in range, exit from movement state"));
 		MovementManagerComponent->StopMovementAbilities();
 		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack);
 	}

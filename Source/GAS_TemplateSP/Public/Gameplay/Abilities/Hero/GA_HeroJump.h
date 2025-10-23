@@ -14,4 +14,6 @@ class GAS_TEMPLATESP_API UGA_HeroJump : public UGA_MontageAbility
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> StunEffect;
 };

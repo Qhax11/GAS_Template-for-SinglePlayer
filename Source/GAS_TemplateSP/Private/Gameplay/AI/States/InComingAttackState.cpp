@@ -58,6 +58,7 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 	else if(SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
+		BindTargetComingAttackEnd();
 		MakeParryAbility(SelectedBestReaction);
 		return true;
 	}

@@ -11,11 +11,11 @@
 #include "Gameplay/Components/AC_GameplayData.h"
 #include "Gameplay/Components/AC_PostureHandler.h"
 #include "Gameplay/Components/AC_FootstepBase.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/Components/AC_CharacterMovementBase.h"
 #include "Components/CapsuleComponent.h"
 
-
-AGAS_CharacterBase::AGAS_CharacterBase(const class FObjectInitializer& ObjectInitializer)
+AGAS_CharacterBase::AGAS_CharacterBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UAC_CharacterMovementBase>(ACharacter::CharacterMovementComponentName))
 {
 	CharacterASC = CreateDefaultSubobject<UGAS_AbilitySystemComponent>(TEXT("CharacterASC"));
 

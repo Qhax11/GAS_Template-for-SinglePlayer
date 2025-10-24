@@ -53,15 +53,18 @@ FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, cons
         SlideDir = FMath::Lerp(SlideDir, Down, 0.5f).GetSafeNormal();
     }
 
+    FVector Result = SlideDir * SlideSpeedMultiplier;
+
+    SlideDir.Z -= Time * DownForce;
+
     // Debug çizimi
     FVector Start = ImpactPoint;
-    FVector End = Start + SlideDir * 50.f;
-    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f, 0, 2.f);
+    DrawDebugLine(GetWorld(), Start, Start + SlideDir * 50.f, FColor::Red, false, 2.f, 0, 2.f);
     DrawDebugPoint(GetWorld(), Start, 12.f, FColor::Yellow, false, 2.f);
-    DrawDebugLine(GetWorld(), Start, Start + Normal * 50.f, FColor::Blue, false, 2.f, 0, 1.f); // Normal
-    DrawDebugLine(GetWorld(), Start, Start + RadialDirection * 50.f, FColor::Green, false, 2.f, 0, 1.f); // Radyal
+    DrawDebugLine(GetWorld(), Start, Start + Normal * 50.f, FColor::Blue, false, 2.f, 0, 1.f);
+    DrawDebugLine(GetWorld(), Start, Start + RadialDirection * 50.f, FColor::Green, false, 2.f, 0, 1.f);
 
-    return SlideDir;
+    return Result;
 }
 
 bool UAC_CharacterMovementBase::ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const

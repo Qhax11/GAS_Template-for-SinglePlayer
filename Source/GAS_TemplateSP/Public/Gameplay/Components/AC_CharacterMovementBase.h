@@ -26,4 +26,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
 	float MinDownwardComponent = -0.3f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
+	float DownForce = 10;
+
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
+	float SlideSpeedMultiplier = 0.4f;
+
 };

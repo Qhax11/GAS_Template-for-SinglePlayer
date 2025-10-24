@@ -11,18 +11,6 @@
 
 float UAC_CharacterMovementBase::SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit, bool bHandleImpact)
 {
-    // Eğer character ile çarpışma varsa özel mantık
-    if (const AActor* OtherActor = Hit.GetActor())
-    {
-        if (OtherActor->IsA<ACharacter>())
-        {
-            // Yavaşlatılmış delta ile slide yap
-            FVector ModifiedDelta = Delta * CharacterSlideSpeedMultiplier;
-            return Super::SlideAlongSurface(ModifiedDelta, Time, Normal, Hit, bHandleImpact);
-        }
-    }
-
-    // Normal durumlarda standart davranış
     return Super::SlideAlongSurface(Delta, Time, Normal, Hit, bHandleImpact);
 }
 
@@ -59,7 +47,6 @@ FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, cons
     FVector SlideDir = FMath::Lerp(TangentSlide, RadialDirection, RadialWeight).GetSafeNormal();
 
     // **YENİ: Minimum aşağı yön garantisi**
-    float MinDownwardComponent = -0.3f; // Z bileşeni en az bu kadar aşağı olmalı
     if (SlideDir.Z > MinDownwardComponent)
     {
         // Aşağı yönü daha fazla karıştır

@@ -24,6 +24,6 @@ protected:
 		const FVector& VelocityAfter, const FHitResult* Hit = nullptr);
 
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
-	float CharacterSlideSpeedMultiplier = 0.5f;
+	float MinDownwardComponent = -0.3f;
 
 };

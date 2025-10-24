@@ -6,55 +6,24 @@
 #include "Gameplay/Tags/GAS_Tags.h"
 #include <AbilitySystemGlobals.h>
 #include "DrawDebugHelpers.h"
+#include "GameFramework/Character.h"
 
 
 float UAC_CharacterMovementBase::SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit, bool bHandleImpact)
 {
-    return Super::SlideAlongSurface(Delta, Time, Normal, Hit, bHandleImpact);
-
-    /*
+    // Eğer character ile çarpışma varsa özel mantık
     if (const AActor* OtherActor = Hit.GetActor())
     {
-        if (!OtherActor->IsA<ACharacter>())
+        if (OtherActor->IsA<ACharacter>())
         {
-            return Super::SlideAlongSurface(Delta, Time, Normal, Hit, bHandleImpact);
+            // Yavaşlatılmış delta ile slide yap
+            FVector ModifiedDelta = Delta * CharacterSlideSpeedMultiplier;
+            return Super::SlideAlongSurface(ModifiedDelta, Time, Normal, Hit, bHandleImpact);
         }
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("🟡 SlideAlongSurface - Character Hit"));
-
-    // Normal'in dikey bileşenini kontrol et
-    float NormalZ = Hit.Normal.Z;
-
-    // Kayma faktörü: ne kadar yataysa o kadar hızlı kayar
-    // NormalZ: -1.0 = taban (hızlı), 0.0 = yan duvar (orta), 1.0 = tavan (yavaş)
-    float SlideFactor = FMath::Clamp(1.0f - FMath::Abs(NormalZ), 0.3f, 1.0f);
-
-    // Slide direction hesapla
-    FVector SlideDirection = FVector::VectorPlaneProject(Delta, Hit.Normal);
-    SlideDirection.Normalize();
-
-    // Gravity assist ekle (hep aşağı çeker)
-    float GravityMagnitude = FMath::Abs(GetGravityZ());
-    SlideDirection.Z -= GravityMagnitude * Time * SlideFactor * 0.5f;
-
-    // Yeni velocity hesapla
-    float CurrentSpeed = Velocity.Size();
-    FVector NewVelocity = SlideDirection * CurrentSpeed * SlideFactor;
-
-    if (NewVelocity.Size() < MinSlideSpeed)
-    {
-        NewVelocity = SlideDirection * MinSlideSpeed;
-    }
-
-    Velocity = NewVelocity;
-
-    UE_LOG(LogTemp, Warning, TEXT("   Slide Factor: %.2f, New Vel: %s"),
-        SlideFactor, *Velocity.ToString());
-
-    // Super'i çağır ama bHandleImpact = false
-    return Super::SlideAlongSurface(Delta, Time, Hit.Normal, Hit, false);
-    */
+    // Normal durumlarda standart davranış
+    return Super::SlideAlongSurface(Delta, Time, Normal, Hit, bHandleImpact);
 }
 
 FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const
@@ -89,23 +58,23 @@ FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, cons
     float RadialWeight = NormalizedHeight * 0.3f; // Kubbenin üstünde biraz dışa doğru it
     FVector SlideDir = FMath::Lerp(TangentSlide, RadialDirection, RadialWeight).GetSafeNormal();
 
-    // Orijinal hızı koru ve kayma yönüne uygula
-    float DeltaMagnitude = Delta.Size();
-    FVector SlideVec = SlideDir * DeltaMagnitude;
-
-    // Yerçekimi etkisini ekle
-    float GravityFactor = FMath::Pow(1.f - NormalizedHeight, 2.f); // Aşağıda daha fazla yerçekimi
-    SlideVec.Z += GetGravityZ() * Time * GravityFactor;
+    // **YENİ: Minimum aşağı yön garantisi**
+    float MinDownwardComponent = -0.3f; // Z bileşeni en az bu kadar aşağı olmalı
+    if (SlideDir.Z > MinDownwardComponent)
+    {
+        // Aşağı yönü daha fazla karıştır
+        SlideDir = FMath::Lerp(SlideDir, Down, 0.5f).GetSafeNormal();
+    }
 
     // Debug çizimi
     FVector Start = ImpactPoint;
-    FVector End = Start + SlideVec * 50.f;
+    FVector End = Start + SlideDir * 50.f;
     DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f, 0, 2.f);
     DrawDebugPoint(GetWorld(), Start, 12.f, FColor::Yellow, false, 2.f);
     DrawDebugLine(GetWorld(), Start, Start + Normal * 50.f, FColor::Blue, false, 2.f, 0, 1.f); // Normal
     DrawDebugLine(GetWorld(), Start, Start + RadialDirection * 50.f, FColor::Green, false, 2.f, 0, 1.f); // Radyal
 
-    return SlideVec;
+    return SlideDir;
 }
 
 bool UAC_CharacterMovementBase::ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const

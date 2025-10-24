@@ -22,4 +22,8 @@ protected:
 
 	void DebugLogMovement(const FString& FunctionName, const FVector& VelocityBefore,
 		const FVector& VelocityAfter, const FHitResult* Hit = nullptr);
+
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
+	float MinSlideSpeed = 300.0f;
+
 };

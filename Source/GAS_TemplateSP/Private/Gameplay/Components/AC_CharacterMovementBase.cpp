@@ -5,10 +5,14 @@
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include <AbilitySystemGlobals.h>
+#include "DrawDebugHelpers.h"
 
 
 float UAC_CharacterMovementBase::SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit, bool bHandleImpact)
 {
+    return Super::SlideAlongSurface(Delta, Time, Normal, Hit, bHandleImpact);
+
+    /*
     if (const AActor* OtherActor = Hit.GetActor())
     {
         if (!OtherActor->IsA<ACharacter>())
@@ -38,8 +42,6 @@ float UAC_CharacterMovementBase::SlideAlongSurface(const FVector& Delta, float T
     float CurrentSpeed = Velocity.Size();
     FVector NewVelocity = SlideDirection * CurrentSpeed * SlideFactor;
 
-    // Minimum kayma hızı (çok yavaş kalmasın)
-    float MinSlideSpeed = 300.0f;
     if (NewVelocity.Size() < MinSlideSpeed)
     {
         NewVelocity = SlideDirection * MinSlideSpeed;
@@ -52,6 +54,7 @@ float UAC_CharacterMovementBase::SlideAlongSurface(const FVector& Delta, float T
 
     // Super'i çağır ama bHandleImpact = false
     return Super::SlideAlongSurface(Delta, Time, Hit.Normal, Hit, false);
+    */
 }
 
 FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const
@@ -87,6 +90,11 @@ FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, cons
 
     // Gravity ekle (kayma efekti)
     SlideVec.Z += GetGravityZ() * Time * SlopeFactor;
+
+    FVector Start = Hit.ImpactPoint;
+    FVector End = Start + SlideVec * 50.f; // 50, çizgiyi görünür yapmak için ölçek
+    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f, 0, 2.f);
+    DrawDebugPoint(GetWorld(), Start, 12.f, FColor::Yellow, false, 2.f);
 
     return SlideVec;
 }

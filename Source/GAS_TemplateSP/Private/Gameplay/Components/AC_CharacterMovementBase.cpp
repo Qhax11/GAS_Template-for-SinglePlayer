@@ -67,34 +67,43 @@ FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, cons
         }
     }
 
-    // Capsule oval yüzeyini rampa gibi hesapla
+    // Kapsülün merkezini ve çarpma noktasını al
+    FVector CapsuleCenter = Hit.GetActor()->GetActorLocation();
+    FVector ImpactPoint = Hit.ImpactPoint;
 
-    // Hit noktasının yüksekliğine göre eğim belirle
-    float HitHeight = Hit.ImpactPoint.Z - Hit.GetActor()->GetActorLocation().Z;
-    float CapsuleHalfHeight = 88.f; // Character capsule half height (ayarla!)
+    // Çarpma noktasından kapsül merkezine olan radyal yönü hesapla
+    FVector RadialDirection = (ImpactPoint - CapsuleCenter).GetSafeNormal();
 
-    // Normalize height (0 = en alt, 1 = en üst)
+    // Yükseklik faktörünü hesapla
+    float HitHeight = ImpactPoint.Z - CapsuleCenter.Z;
+    float CapsuleHalfHeight = 88.f;
     float NormalizedHeight = FMath::Clamp(HitHeight / CapsuleHalfHeight, 0.f, 1.f);
 
-    // Yükseklik ne kadar fazlaysa eğim o kadar az (daha yatay)
-    // 0 = dik duvar, 1 = düz zemin
-    float SlopeFactor = FMath::Pow(NormalizedHeight, 2.f); // Quadratic curve
+    // Teğetsel kayma yönünü hesapla (yüzey boyunca kayma)
+    // Normal'e dik olan ve aşağı yöne sahip vektör
+    FVector Down = FVector(0, 0, -1.f);
+    FVector TangentSlide = (Down - Normal * FVector::DotProduct(Down, Normal)).GetSafeNormal();
 
-    // Modified normal oluştur
-    FVector ModifiedNormal = Normal;
-    ModifiedNormal.Z = FMath::Lerp(Normal.Z, -1.f, SlopeFactor); // Üste doğru daha yatay
-    ModifiedNormal.Normalize();
+    // Radyal yön ile teğetsel kayma yönünü birleştir
+    // Yukarıda daha fazla radyal, aşağıda daha fazla teğetsel
+    float RadialWeight = NormalizedHeight * 0.3f; // Kubbenin üstünde biraz dışa doğru it
+    FVector SlideDir = FMath::Lerp(TangentSlide, RadialDirection, RadialWeight).GetSafeNormal();
 
-    // Slide vektörü hesapla
-    FVector SlideVec = FVector::VectorPlaneProject(Delta, ModifiedNormal);
+    // Orijinal hızı koru ve kayma yönüne uygula
+    float DeltaMagnitude = Delta.Size();
+    FVector SlideVec = SlideDir * DeltaMagnitude;
 
-    // Gravity ekle (kayma efekti)
-    SlideVec.Z += GetGravityZ() * Time * SlopeFactor;
+    // Yerçekimi etkisini ekle
+    float GravityFactor = FMath::Pow(1.f - NormalizedHeight, 2.f); // Aşağıda daha fazla yerçekimi
+    SlideVec.Z += GetGravityZ() * Time * GravityFactor;
 
-    FVector Start = Hit.ImpactPoint;
-    FVector End = Start + SlideVec * 50.f; // 50, çizgiyi görünür yapmak için ölçek
+    // Debug çizimi
+    FVector Start = ImpactPoint;
+    FVector End = Start + SlideVec * 50.f;
     DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f, 0, 2.f);
     DrawDebugPoint(GetWorld(), Start, 12.f, FColor::Yellow, false, 2.f);
+    DrawDebugLine(GetWorld(), Start, Start + Normal * 50.f, FColor::Blue, false, 2.f, 0, 1.f); // Normal
+    DrawDebugLine(GetWorld(), Start, Start + RadialDirection * 50.f, FColor::Green, false, 2.f, 0, 1.f); // Radyal
 
     return SlideVec;
 }

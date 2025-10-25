@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_MontageAbility.h"
+#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
 #include "GA_HeroAirKick.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_HeroAirKick : public UGA_MontageAbility
+class GAS_TEMPLATESP_API UGA_HeroAirKick : public UGA_MeleeAttackBase
 {
 	GENERATED_BODY()
 	

@@ -34,6 +34,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
 	float SlideSpeedMultiplier = 100;
 
-	
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
+	bool bEnableDebug = false;
 
 };

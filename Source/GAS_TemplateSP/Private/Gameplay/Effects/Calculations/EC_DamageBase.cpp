@@ -54,14 +54,14 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	}
 
 	// Trigger events based on the damage dealt. AI is trigger take damage ability in his incoming state
-	if (DamageDealt > 0 && Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Hero))
+	if (DamageDealt > 0 && Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
 	{
 		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, DamageDealt);
 	}
 
 	if (MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())
 	{
-		if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Hero))
+		if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
 		{
 			TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Basic);
 		}

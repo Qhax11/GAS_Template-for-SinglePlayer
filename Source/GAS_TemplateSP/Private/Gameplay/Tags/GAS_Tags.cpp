@@ -88,9 +88,11 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_EnableLifeSteal, "Gameplay.EffectData.EnableLifeSteal");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_EffectData_EnableCriticalDamage, "Gameplay.EffectData.EnableCriticalDamage");
 
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Entity_Hero, "Gameplay.Entity.Hero");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Entity_Enemy, "Gameplay.Entity.Enemy");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Entity_Boss, "Gameplay.Entity.Boss");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Entity_Character_Hero, "Gameplay.Entity.Character.Hero");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Entity_Character_Enemy, "Gameplay.Entity.Character.Enemy");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Entity_Character_Enemy_Training, "Gameplay.Entity.Character.Enemy.Training");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Entity_Character_Enemy_Crowd, "Gameplay.Entity.Character.Enemy.Crowd");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Entity_Character_Enemy_Boss, "Gameplay.Entity.Character.Enemy.Boss");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility0, "Gameplay.Hero.Ability0");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility1, "Gameplay.Hero.Ability1");

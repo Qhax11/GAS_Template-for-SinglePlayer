@@ -12,14 +12,14 @@ bool AGCN_GameplayCameraBase::OnExecuted(AActor* Source, AActor* Target, const F
 	}
 
 	// Check Source
-	if(SourceASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Hero))
+	if(SourceASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
 	{
 		ExecuteCameraEffect(Source);
 		return true;
 	}
 
 	// Check Target
-	if (TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Hero))
+	if (TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
 	{
 		ExecuteCameraEffect(Target);
 		return true;

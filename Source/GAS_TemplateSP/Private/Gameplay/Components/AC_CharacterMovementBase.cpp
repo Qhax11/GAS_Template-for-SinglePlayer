@@ -9,13 +9,44 @@
 #include "GameFramework/Character.h"
 
 
+void UAC_CharacterMovementBase::HandleImpact(const FHitResult& Hit, float TimeSlice, const FVector& MoveDelta)
+{
+    Super::HandleImpact(Hit, TimeSlice, MoveDelta);
+
+    /*
+    if (ACharacter* Other = Cast<ACharacter>(Hit.GetActor()))
+    {
+        // Çarpışma yönüne ters yöne kayma ekle
+        const FVector SlideDir = FVector::VectorPlaneProject(MoveDelta, Hit.Normal).GetSafeNormal();
+        const float SlideForce = 200.f;
+
+         Velocity += SlideDir * SlideForce;
+    }
+    */
+}
+
 float UAC_CharacterMovementBase::SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit, bool bHandleImpact)
 {
-    return Super::SlideAlongSurface(Delta, Time, Normal, Hit, bHandleImpact);
+
+    return 0;
 }
 
 FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const
 {
+     if (const AActor* OtherActor = Hit.GetActor())
+    {
+        if (OtherActor->IsA<ACharacter>())
+        {
+            FVector DefaultResult = Super::ComputeSlideVector(Delta, Time, Normal, Hit);
+            DrawDebugLine(GetWorld(), Hit.ImpactPoint, Hit.ImpactPoint + DefaultResult * 10.1f, FColor::Red, false, 2.f, 0, 2.f);
+            DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 12.f, FColor::Yellow, false, 2.f);
+            return DefaultResult;
+        }
+    }
+
+    return Super::ComputeSlideVector(Delta, Time, Normal, Hit);
+
+    /*
     if (const AActor* OtherActor = Hit.GetActor())
     {
         if (!OtherActor->IsA<ACharacter>())
@@ -24,47 +55,19 @@ FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, cons
         }
     }
 
-    // Kapsülün merkezini ve çarpma noktasını al
-    FVector CapsuleCenter = Hit.GetActor()->GetActorLocation();
-    FVector ImpactPoint = Hit.ImpactPoint;
+    FVector SlideDir = FVector(0, 0, -1.f); // sabit aşağı yön
 
-    // Çarpma noktasından kapsül merkezine olan radyal yönü hesapla
-    FVector RadialDirection = (ImpactPoint - CapsuleCenter).GetSafeNormal();
+    // Eğer biraz yana doğru bir eğim istiyorsan, sabit bir offset ekleyebilirsin:
+    SlideDir = (SlideDir + FVector(0.2f, 0.f, 0.f)).GetSafeNormal(); // X yönünde 0.2 eğim
 
-    // Yükseklik faktörünü hesapla
-    float HitHeight = ImpactPoint.Z - CapsuleCenter.Z;
-    float CapsuleHalfHeight = 88.f;
-    float NormalizedHeight = FMath::Clamp(HitHeight / CapsuleHalfHeight, 0.f, 1.f);
+    FVector Result = SlideDir * SlideSpeedMultiplier * Time; // zamanla ölçeklendir
 
-    // Teğetsel kayma yönünü hesapla (yüzey boyunca kayma)
-    // Normal'e dik olan ve aşağı yöne sahip vektör
-    FVector Down = FVector(0, 0, -1.f);
-    FVector TangentSlide = (Down - Normal * FVector::DotProduct(Down, Normal)).GetSafeNormal();
-
-    // Radyal yön ile teğetsel kayma yönünü birleştir
-    // Yukarıda daha fazla radyal, aşağıda daha fazla teğetsel
-    float RadialWeight = NormalizedHeight * 0.3f; // Kubbenin üstünde biraz dışa doğru it
-    FVector SlideDir = FMath::Lerp(TangentSlide, RadialDirection, RadialWeight).GetSafeNormal();
-
-    // **YENİ: Minimum aşağı yön garantisi**
-    if (SlideDir.Z > MinDownwardComponent)
-    {
-        // Aşağı yönü daha fazla karıştır
-        SlideDir = FMath::Lerp(SlideDir, Down, 0.5f).GetSafeNormal();
-    }
-
-    FVector Result = SlideDir * SlideSpeedMultiplier;
-
-    SlideDir.Z -= Time * DownForce;
-
-    // Debug çizimi
-    FVector Start = ImpactPoint;
-    DrawDebugLine(GetWorld(), Start, Start + SlideDir * 50.f, FColor::Red, false, 2.f, 0, 2.f);
-    DrawDebugPoint(GetWorld(), Start, 12.f, FColor::Yellow, false, 2.f);
-    DrawDebugLine(GetWorld(), Start, Start + Normal * 50.f, FColor::Blue, false, 2.f, 0, 1.f);
-    DrawDebugLine(GetWorld(), Start, Start + RadialDirection * 50.f, FColor::Green, false, 2.f, 0, 1.f);
+    // Debug
+    DrawDebugLine(GetWorld(), Hit.ImpactPoint, Hit.ImpactPoint + Result * 0.1f, FColor::Red, false, 2.f, 0, 2.f);
+    DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 12.f, FColor::Yellow, false, 2.f);
 
     return Result;
+    */
 }
 
 bool UAC_CharacterMovementBase::ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const

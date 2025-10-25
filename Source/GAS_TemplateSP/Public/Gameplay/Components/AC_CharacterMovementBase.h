@@ -12,6 +12,8 @@ class GAS_TEMPLATESP_API UAC_CharacterMovementBase : public UCharacterMovementCo
 	GENERATED_BODY()
 	
 protected:
+	virtual void HandleImpact(const FHitResult& Hit, float TimeSlice = 0.f, const FVector& MoveDelta = FVector::ZeroVector) override;
+
 	virtual float SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit, bool bHandleImpact) override;
 
     virtual FVector ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const override;
@@ -30,6 +32,8 @@ protected:
 	float DownForce = 10;
 
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
-	float SlideSpeedMultiplier = 0.4f;
+	float SlideSpeedMultiplier = 100;
+
+	
 
 };

@@ -16,6 +16,8 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	virtual void AttackLogic(const TArray<FHitResult>& OutHitResults) override;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> StunEffect;
 };

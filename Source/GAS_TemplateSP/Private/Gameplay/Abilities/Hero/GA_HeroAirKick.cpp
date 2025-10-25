@@ -45,3 +45,37 @@ void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToTarget(GE_Ghost, TargetASC);
 	*/
 }
+
+void UGA_HeroAirKick::AttackLogic(const TArray<FHitResult>& OutHitResults)
+{
+	Super::AttackLogic(OutHitResults);
+
+	if (!OutHitResults.IsValidIndex(0))
+	{
+		return;
+	}
+
+	const FHitResult& Hit = OutHitResults[0];
+	AActor* TargetActor = Hit.GetActor();
+	if (!TargetActor)
+	{
+		return;
+	}
+
+	ACharacter* TargetCharacter = Cast<ACharacter>(TargetActor);
+	if (!TargetCharacter)
+	{
+		return;
+	}
+
+	// Get knockback direction (opposite of impact normal)
+	FVector KnockbackDir = -Hit.ImpactNormal;
+	KnockbackDir.Z = 0.3f; // add slight upward force
+	KnockbackDir = KnockbackDir.GetSafeNormal();
+
+	// Scale strength
+	const float LaunchStrength = 600.0f;
+
+	// Apply launch
+	TargetCharacter->LaunchCharacter(KnockbackDir * LaunchStrength, true, true);
+}

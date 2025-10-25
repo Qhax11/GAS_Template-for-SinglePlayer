@@ -20,7 +20,7 @@ public:
 
 	virtual void OnTraceHitResults(const TArray<FHitResult>& HitResults) override;
 
-	void AttackLogic(const TArray<FHitResult>& OutHitResults);
+	virtual void AttackLogic(const TArray<FHitResult>& OutHitResults);
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	FGameplayTag GetAttackTypeTagFromAbilityTags() const;

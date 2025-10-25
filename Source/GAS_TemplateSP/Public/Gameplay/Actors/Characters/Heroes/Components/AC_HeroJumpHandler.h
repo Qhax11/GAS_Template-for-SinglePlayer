@@ -72,6 +72,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Jump")
 	TSubclassOf<UGameplayEffect> GhostEffect;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Jump")
+	FGameplayTagContainer JumpMontageBlockedTags;
+
 	EJumpPhase GetCurrentPhase() const { return CurrentPhase; }
 
 	bool IsInAir() const;

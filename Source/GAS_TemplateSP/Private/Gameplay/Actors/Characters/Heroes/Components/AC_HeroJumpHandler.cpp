@@ -10,6 +10,8 @@
 UAC_HeroJumpHandler::UAC_HeroJumpHandler()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	JumpMontageBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo);
+	JumpMontageBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_AirKick);
 }
 
 void UAC_HeroJumpHandler::BeginPlay()
@@ -240,8 +242,8 @@ float UAC_HeroJumpHandler::PlayMontage(UAnimMontage* MontageToPlay)
 	{
 		return 0.0f;
 	}
-
-	if(HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo))
+	
+	if(HeroASC->HasAnyMatchingGameplayTags(JumpMontageBlockedTags))
 	{
 		return 0.0f;
 	}

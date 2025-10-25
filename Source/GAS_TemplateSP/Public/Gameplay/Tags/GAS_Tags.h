@@ -49,6 +49,13 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityTriggerEvent_ComboMelee);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_AbilityTriggerEvent_ParryKnockback);
 
+	// ------------------------------------------------------------
+    // State Tags
+    // ------------------------------------------------------------
+    // These tags represent temporary gameplay states applied to the actor.
+    // They can be granted by either abilities or gameplay effects, and are
+    // typically added to the ASC’s owned tags during execution or effect
+    // application, then removed when the source ends or expires.
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InAir);
 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Debuff);
@@ -67,6 +74,7 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InCombat_MeleeCombo1);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InCombat_MeleeCombo2);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InCombat_MeleeCombo3);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InCombat_AirKick);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InCombat_UnparryableAttack);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InCombat_UnstoppableAttack);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_InCombat_TakeDamage);
@@ -84,6 +92,10 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_LockRotationTowardsTarget);
+	// ------------------------------------------------------------
+	// State Tags
+	// ------------------------------------------------------------
+
 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_EffectData_SetByCaller_DamageAmount);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_EffectData_SetByCaller_GainHealthAmount);
@@ -102,6 +114,14 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_HeroAbility2);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_HeroAbility3);
 
+	// ------------------------------------------------------------
+    // Ability Tags
+    // ------------------------------------------------------------
+    // These tags uniquely identify specific gameplay abilities.
+    // They are primarily used to classify, query, and activate abilities
+    // (e.g., attack, parry, take damage) through the Gameplay Ability System.
+    // Each ability owns a defining tag under the "Ability" category, which
+    // serves as a stable identifier rather than a temporary state indicator.
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Ability_Combat);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Ability_Combat_TakeDamage);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Ability_Combat_Parry);
@@ -136,6 +156,10 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Ability_Movement_Strafing);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Ability_Movement_Dash);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Ability_Movement_Dash_Cooldown);
+	// ------------------------------------------------------------
+	// Ability Tags
+	// ------------------------------------------------------------
+
 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Tutorial_Dash);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Tutorial_MeleeCombo);

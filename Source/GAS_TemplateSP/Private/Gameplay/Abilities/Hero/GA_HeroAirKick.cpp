@@ -10,6 +10,7 @@
 UGA_HeroAirKick::UGA_HeroAirKick()
 {
 	ActivationRequiredTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_AirKick);
 }
 
 void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

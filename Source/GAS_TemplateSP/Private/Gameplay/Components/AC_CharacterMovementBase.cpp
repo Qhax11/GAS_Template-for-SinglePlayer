@@ -25,11 +25,6 @@ void UAC_CharacterMovementBase::HandleImpact(const FHitResult& Hit, float TimeSl
     */
 }
 
-float UAC_CharacterMovementBase::SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit, bool bHandleImpact)
-{
-    return SlideAlongSurface(Delta, Time, Normal, Hit, bHandleImpact);
-}
-
 FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const
 {
      if (const AActor* OtherActor = Hit.GetActor())

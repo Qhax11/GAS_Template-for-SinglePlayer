@@ -20,4 +20,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> StunEffect;
+
+	UPROPERTY(EditDefaultsOnly)
+	float LaunchStrength = 600.0f;
 };

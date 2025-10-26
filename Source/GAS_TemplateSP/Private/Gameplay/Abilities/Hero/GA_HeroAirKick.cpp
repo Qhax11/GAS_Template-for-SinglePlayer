@@ -20,8 +20,7 @@ void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetAvatarActorFromActorInfo());
-	if (!OwnerCharacter)
+	if (!CharacterBase)
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
@@ -68,14 +67,12 @@ void UGA_HeroAirKick::AttackLogic(const TArray<FHitResult>& OutHitResults)
 		return;
 	}
 
-	// Get knockback direction (opposite of impact normal)
-	FVector KnockbackDir = -Hit.ImpactNormal;
-	KnockbackDir.Z = 0.3f; // add slight upward force
+	FVector KnockbackDir = Hit.ImpactNormal;
+	KnockbackDir.Z = 0.3f; 
 	KnockbackDir = KnockbackDir.GetSafeNormal();
 
-	// Scale strength
-	const float LaunchStrength = 600.0f;
+	CharacterBase->LaunchCharacter(KnockbackDir * LaunchStrength, true, true);
 
-	// Apply launch
-	TargetCharacter->LaunchCharacter(KnockbackDir * LaunchStrength, true, true);
+	DrawDebugLine(GetWorld(), Hit.ImpactPoint, Hit.ImpactPoint + KnockbackDir * LaunchStrength * 10.1f, FColor::Red, false, 2.f, 0, 2.f);
+	DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 12.f, FColor::Yellow, false, 2.f);
 }

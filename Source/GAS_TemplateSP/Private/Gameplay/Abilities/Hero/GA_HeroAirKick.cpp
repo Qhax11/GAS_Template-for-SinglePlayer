@@ -25,24 +25,6 @@ void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-	/*
-	TArray<FHitResult> HitResults;
-	FTraceRequest TraceRequest;
-	TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, HitResults, TraceRequest);
-
-	if (!HitResults.IsValidIndex(0)) 
-	{
-		return;
-	}
-
-	AActor* Target = HitResults[0].GetActor();
-	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Target);
-
-
-	UGameplayEffect* GE_Ghost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(StunEffect);
-
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToTarget(GE_Ghost, TargetASC);
-	*/
 }
 
 void UGA_HeroAirKick::AttackLogic(const TArray<FHitResult>& OutHitResults)
@@ -68,11 +50,17 @@ void UGA_HeroAirKick::AttackLogic(const TArray<FHitResult>& OutHitResults)
 	}
 
 	FVector KnockbackDir = Hit.ImpactNormal;
-	KnockbackDir.Z = 0.3f; 
 	KnockbackDir = KnockbackDir.GetSafeNormal();
+	KnockbackDir.Z = ZStrength;
 
 	CharacterBase->LaunchCharacter(KnockbackDir * LaunchStrength, true, true);
 
 	DrawDebugLine(GetWorld(), Hit.ImpactPoint, Hit.ImpactPoint + KnockbackDir * LaunchStrength * 10.1f, FColor::Red, false, 2.f, 0, 2.f);
 	DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 12.f, FColor::Yellow, false, 2.f);
+
+	UAnimInstance* AnimInstance = CharacterBase->GetMesh()->GetAnimInstance();
+	if (AnimInstance && ReverseJump)
+	{
+		AnimInstance->Montage_Play(ReverseJump, 1.0f);
+	}
 }

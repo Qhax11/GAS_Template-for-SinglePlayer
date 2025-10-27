@@ -19,8 +19,11 @@ public:
 	virtual void AttackLogic(const TArray<FHitResult>& OutHitResults) override;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGameplayEffect> StunEffect;
+	float LaunchStrength = 600.0f;
 
 	UPROPERTY(EditDefaultsOnly)
-	float LaunchStrength = 600.0f;
+	float ZStrength = 3.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* ReverseJump;
 };

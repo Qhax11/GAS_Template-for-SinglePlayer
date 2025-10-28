@@ -79,6 +79,11 @@ void UAC_HeroJumpHandler::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UAC_HeroJumpHandler::ActivateJump()
 {
+	if (HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage))
+	{
+		return;
+	}
+
 	if (!HeroBase || !HeroMovement || !HeroControl)
 	{
 		return;

@@ -400,9 +400,8 @@ void UAC_TargetLockSystem::RotateCameraToTarget(float DeltaTime)
 	// Get the current camera rotation and interpolate towards the target for smooth transition
 	FRotator CurrentCameraRotation = HeroBase->GetControlRotation();
 	FRotator NewCameraRotation = UKismetMathLibrary::RInterpTo(CurrentCameraRotation, LookAtTargetRotation, DeltaTime, RotateInterpSpeed);
-
 	NewCameraRotation.Pitch = RotateCameraToTargetClampPitch(NewCameraRotation.Pitch);
-
+	NewCameraRotation.Roll = 0;
 	HeroBase->GetController()->SetControlRotation(NewCameraRotation);
 }
 

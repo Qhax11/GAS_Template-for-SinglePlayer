@@ -209,12 +209,14 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget, "GameplayCue.Sound.PlayOnTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget_TakeDamage, "GameplayCue.Sound.PlayOnTarget.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget_Finisher, "GameplayCue.Sound.PlayOnTarget.Finisher");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnTarget_Kick, "GameplayCue.Sound.PlayOnTarget.Kick");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource, "GameplayCue.Sound.PlayOnSource");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_Footstep, "GameplayCue.Sound.PlayOnSource.Footstep");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_ParryKnockback, "GameplayCue.Sound.PlayOnSource.ParryKnockback");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_AttackSwing, "GameplayCue.Sound.PlayOnSource.AttackSwing");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_Death, "GameplayCue.Sound.PlayOnSource.Death");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_LevelUp, "GameplayCue.Sound.PlayOnSource.LevelUp");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Sound_PlayOnSource_Kick, "GameplayCue.Sound.PlayOnSource.Kick");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_Camera_Shake, "GameplayCue.Combat.Camera.Shake");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_Combat_Camera_ZoomIn, "GameplayCue.Combat.Camera.ZoomIn");

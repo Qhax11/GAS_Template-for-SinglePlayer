@@ -27,7 +27,7 @@ bool UInComingAttackState::EnterCondition_Implementation()
 	const bool bIsInRange = Distance < 350.f;
 
 	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
-	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInteraptUnstoppableAttack);
+	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
 
 	// Mantık:
 	// 1. Eğer düşman unstoppable ise ama kahraman interrupt edebiliyorsa => izin ver

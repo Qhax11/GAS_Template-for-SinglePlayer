@@ -12,14 +12,14 @@ UGA_HeroAirKick::UGA_HeroAirKick()
 	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Direction_TopToBottom);
 	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Unparryable);
 	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Undodgeable);
-	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_CanInteraptUnstoppable);
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_CanInterruptUnstoppable);
 
 	ActivationRequiredTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_AirKick);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnparryableAttack);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnDodgebleAttack);
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInteraptUnstoppableAttack);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
 }
 
 void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -64,12 +64,15 @@ void UGA_HeroAirKick::AttackLogic(const TArray<FHitResult>& OutHitResults)
 
 	CharacterBase->LaunchCharacter(KnockbackDir * LaunchStrength, true, true);
 
-	DrawDebugLine(GetWorld(), Hit.ImpactPoint, Hit.ImpactPoint + KnockbackDir * LaunchStrength * 10.1f, FColor::Red, false, 2.f, 0, 2.f);
-	DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 12.f, FColor::Yellow, false, 2.f);
-
 	UAnimInstance* AnimInstance = CharacterBase->GetMesh()->GetAnimInstance();
 	if (AnimInstance && ReverseJump)
 	{
 		AnimInstance->Montage_Play(ReverseJump, 1.0f);
+	}
+
+	if (bEnableDebug)
+	{
+		DrawDebugLine(GetWorld(), Hit.ImpactPoint, Hit.ImpactPoint + KnockbackDir * LaunchStrength * 10.1f, FColor::Red, false, 2.f, 0, 2.f);
+		DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 12.f, FColor::Yellow, false, 2.f);
 	}
 }

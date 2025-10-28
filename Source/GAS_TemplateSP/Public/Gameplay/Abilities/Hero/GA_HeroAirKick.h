@@ -26,4 +26,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* ReverseJump;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bEnableDebug;
 };

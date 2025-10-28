@@ -12,6 +12,8 @@ class GAS_TEMPLATESP_API UBDS_ComingAttackReaction_Parry : public UBDS_ComingAtt
 	GENERATED_BODY()
 	
 public:
+	virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<class UGAS_GameplayAbilityBase> ParryAbilityClass;
 

@@ -62,7 +62,9 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo3, "Gameplay.State.InCombat.MeleeCombo3");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_AirKick, "Gameplay.State.InCombat.AirKick");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnparryableAttack, "Gameplay.State.InCombat.UnparryableAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnDodgebleAttack, "Gameplay.State.InCombat.UnDodgebleAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnstoppableAttack, "Gameplay.State.InCombat.UnstoppableAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_CanInteraptUnstoppableAttack, "Gameplay.State.InCombat.CanInteraptUnstoppableAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_TakeDamage, "Gameplay.State.InCombat.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Parry, "Gameplay.State.InCombat.Parry");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_ParryKnockback, "Gameplay.State.InCombat.ParryKnockback");
@@ -129,6 +131,10 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Light, "Gameplay.Ability.Combat.Attack.Type.Light");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Mid, "Gameplay.Ability.Combat.Attack.Type.Mid");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Heavy, "Gameplay.Ability.Combat.Attack.Type.Heavy");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Unparryable, "Gameplay.Ability.Combat.Attack.Type.Unparryable");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Unstoppable, "Gameplay.Ability.Combat.Attack.Type.Unstoppable");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_Undodgeable, "Gameplay.Ability.Combat.Attack.Type.Undodgeable");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Attack_Type_CanInteraptUnstoppable, "Gameplay.Ability.Combat.Attack.Type.CanInteraptUnstoppable");
 
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement, "Gameplay.Ability.Movement");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Strafing, "Gameplay.Ability.Movement.Strafing");

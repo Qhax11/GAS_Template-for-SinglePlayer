@@ -9,8 +9,17 @@
 
 UGA_HeroAirKick::UGA_HeroAirKick()
 {
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Direction_TopToBottom);
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Unparryable);
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Undodgeable);
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_CanInteraptUnstoppable);
+
 	ActivationRequiredTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
+
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_AirKick);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnparryableAttack);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnDodgebleAttack);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInteraptUnstoppableAttack);
 }
 
 void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

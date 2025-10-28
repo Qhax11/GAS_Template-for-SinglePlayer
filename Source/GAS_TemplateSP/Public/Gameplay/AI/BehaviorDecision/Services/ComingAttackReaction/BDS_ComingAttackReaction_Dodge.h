@@ -14,6 +14,8 @@ class GAS_TEMPLATESP_API UBDS_ComingAttackReaction_Dodge : public UBDS_ComingAtt
 public:
 	virtual void InitializeAfterSelection() override;
 
+	virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMovementAbilityData DodgeMovementAbilityData;
 };

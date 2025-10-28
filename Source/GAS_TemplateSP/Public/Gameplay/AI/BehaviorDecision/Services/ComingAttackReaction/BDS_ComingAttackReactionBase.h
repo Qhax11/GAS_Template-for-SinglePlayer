@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
+#include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "BDS_ComingAttackReactionBase.generated.h"
 
 UENUM(BlueprintType)
@@ -31,9 +32,9 @@ class GAS_TEMPLATESP_API UBDS_ComingAttackReactionBase : public UBehaviorDecisio
 public:
     virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
 
-    virtual float CalculateComingAttackReactionScore(struct FComingAttackPayload ComingAttackPayload);
+    virtual float CalculateComingAttackReactionScore(FComingAttackPayload ComingAttackPayload);
 	
-    bool IsEnable(FComingAttackPayload ComingAttackPayload) const;
+    virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const;
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Coming Attack Reaction. Used for debugging or referencing in logic."))

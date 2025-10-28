@@ -21,6 +21,26 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 	DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>();
 }
 
+bool UInComingAttackState::EnterCondition_Implementation()
+{
+	const float Distance = HeroTarget->GetDistanceTo(Enemy);
+	const bool bIsInRange = Distance < 350.f;
+
+	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
+	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInteraptUnstoppableAttack);
+
+	// Mantık:
+	// 1. Eğer düşman unstoppable ise ama kahraman interrupt edebiliyorsa => izin ver
+	// 2. Eğer düşman unstoppable ve kahraman edemiyorsa => girme
+	// 3. Eğer düşman unstoppable değilse => normal şekilde distance'a göre değerlendir
+	if (bEnemyUnstoppable && !bHeroCanInterrupt)
+	{
+		return false;
+	}
+
+	return bIsInRange;
+}
+
 void UInComingAttackState::OnEnter_Implementation()
 {
 	Super::OnEnter_Implementation();

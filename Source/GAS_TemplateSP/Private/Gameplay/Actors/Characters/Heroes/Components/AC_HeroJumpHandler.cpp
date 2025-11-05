@@ -105,11 +105,14 @@ void UAC_HeroJumpHandler::ActivateJump()
 	if (JumpCount == 1) 
 	{
 		SetPhaseAndPlayMontage(EJumpPhase::Start);
+		JumpLogic();
+		/*
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 			{
 				JumpLogic();
 			}, 0.05f, false);
+			*/
 	}
 	else if (JumpCount == 2) 
 	{

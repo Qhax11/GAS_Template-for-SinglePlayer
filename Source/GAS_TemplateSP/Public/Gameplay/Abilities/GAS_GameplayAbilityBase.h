@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Attributes/AS_Base.h"
 #include "Abilities/GameplayAbilityTypes.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "GAS_GameplayAbilityBase.generated.h"
 
@@ -103,6 +104,9 @@ public:
 	void EndAbilityManually();
 
 protected:
+	UPROPERTY()
+	AGAS_CharacterBase* CharacterBase;
+
 	/**
 	 * For "Instanced Per Actor" abilities:
 	 * Normally, broadcasting delegates over the CDO is not required for proper functionality. 

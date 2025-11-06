@@ -38,7 +38,6 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 void UGA_MontageAbility::ActivateMotionWarping()
 {
-	AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
 	if (!CharacterBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, ability cannot motion warping"), *GetName());
@@ -133,9 +132,9 @@ void UGA_MontageAbility::CleanupMotionWarping()
 		return;
 	}
 
-	AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
 	if (!CharacterBase)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, ability cannot CleanupMotionWarping"), *GetName());
 		return;
 	}
 

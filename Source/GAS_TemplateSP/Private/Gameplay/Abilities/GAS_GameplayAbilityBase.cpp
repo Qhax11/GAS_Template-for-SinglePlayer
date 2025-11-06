@@ -17,6 +17,13 @@ void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle 
 		return;
 	}
 
+	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
+	if (!CharacterBase)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+	}
+
 	StartupEffects();
 }
 

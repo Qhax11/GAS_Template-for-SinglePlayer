@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "GA_HeroJump.generated.h"
 
 UCLASS()
@@ -11,6 +12,8 @@ class GAS_TEMPLATESP_API UGA_HeroJump : public UGAS_GameplayAbilityBase
 	GENERATED_BODY()
 	
 protected:
+	UGA_HeroJump();
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
@@ -47,9 +50,17 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Jump Settings")
 	float InitialImpulse = 100.0f;
 
-	/** InAir tag - Bu tag varsa jump aktif edilemez */
-	UPROPERTY(EditDefaultsOnly, Category = "Tags")
-	FGameplayTag InAirTag;
+	UPROPERTY()
+	AGAS_HeroBase* HeroBase;
+
+	UPROPERTY()
+	class UAC_HeroControl* HeroControl;
+
+	UPROPERTY()
+	class UCharacterMovementComponent* HeroMovement;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Jump Settings")
+	float GroundJumpForwardStrength = 1.0f;
 
 	// --- Runtime Variables ---
 

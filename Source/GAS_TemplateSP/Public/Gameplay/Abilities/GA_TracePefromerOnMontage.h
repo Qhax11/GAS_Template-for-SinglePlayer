@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
-#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Gameplay/Actors/Weapons/WeaponBase.h"
 #include "GA_TracePefromerOnMontage.generated.h"
 
@@ -30,9 +29,6 @@ public:
 	float TraceTickValue = 0.01f;
 
 	FTimerHandle TimerHandle_TraceTick;
-
-	UPROPERTY()
-	AGAS_CharacterBase* CharacterBase;
 
 	UPROPERTY()
 	AWeaponBase* CharacterWeapon;

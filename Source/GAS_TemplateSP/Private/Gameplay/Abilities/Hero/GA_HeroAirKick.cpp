@@ -22,6 +22,21 @@ UGA_HeroAirKick::UGA_HeroAirKick()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
 }
 
+bool UGA_HeroAirKick::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InAir))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo,

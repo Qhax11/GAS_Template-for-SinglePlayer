@@ -13,8 +13,7 @@ void UGA_TracePefromerOnMontage::ActivateAbility(const FGameplayAbilitySpecHandl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
-	if (!CharacterBase)
+	if (!CharacterBase) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);

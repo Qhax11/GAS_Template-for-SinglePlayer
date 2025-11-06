@@ -65,10 +65,13 @@ void UGA_DeathBase::BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData)
 
 void UGA_DeathBase::DisableOwnerCollision(ECollisionEnabled::Type NewType)
 {
-	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
+	if (!CharacterBase) 
 	{
-		CharacterBase->DisableCollision(NewType);
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		return;
 	}
+
+	CharacterBase->DisableCollision(NewType);
 }
 
 void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
@@ -78,12 +81,15 @@ void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	if (AGAS_CharacterBase* CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo()))
+	if (!CharacterBase)
 	{
-		CharacterBase->DisableMovement();
-		CharacterBase->DisableMesh();
-		CharacterBase->DisableCollision(ECollisionEnabled::NoCollision);
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		return;
 	}
+
+	CharacterBase->DisableMovement();
+	CharacterBase->DisableMesh();
+	CharacterBase->DisableCollision(ECollisionEnabled::NoCollision);
 
 	BrodcastDeSpawn(EDeSpawnPhase::DeathFinished);
 }

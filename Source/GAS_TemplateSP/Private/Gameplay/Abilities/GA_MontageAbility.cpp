@@ -163,6 +163,11 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageBlendOut: AnimMontage is: %s"), *AnimMontage->GetName());
+	if (MontageEndPolicy == EMontageEndPolicy::Never) 
+	{
+		return;
+	}
+
 	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::BlendOut)
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
@@ -171,6 +176,11 @@ void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEvent
 
 void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	if (MontageEndPolicy == EMontageEndPolicy::Never)
+	{
+		return;
+	}
+
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageInterrupted: AnimMontage is: %s"), *AnimMontage->GetName());
 	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Interrupted)
 	{
@@ -185,6 +195,11 @@ void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEven
 
 void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	if (MontageEndPolicy == EMontageEndPolicy::Never)
+	{
+		return;
+	}
+
 	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Completed)
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);

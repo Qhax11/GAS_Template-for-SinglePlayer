@@ -11,7 +11,8 @@ enum EMontageEndPolicy : uint8
 	Completed,    // The ability will end when the montage has fully completed
 	BlendOut,     // The ability will end when the montage starts blending out
 	Interrupted,  // The ability will end if the montage is interrupted by something else
-	Any           // The ability will end on any of the above events
+	Any,           // The ability will end on any of the above events
+	Never           // The ability will never end
 };
 
 

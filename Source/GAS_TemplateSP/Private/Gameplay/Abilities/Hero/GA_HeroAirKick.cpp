@@ -20,6 +20,8 @@ UGA_HeroAirKick::UGA_HeroAirKick()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnparryableAttack);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnDodgebleAttack);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
+
+	MontageEndPolicy = EMontageEndPolicy::Never;
 }
 
 void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -34,6 +36,8 @@ void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
+
+	CharacterBase->LandedDelegate.AddDynamic(this, &UGA_HeroAirKick::OnCharacterLanded);
 }
 
 void UGA_HeroAirKick::AttackLogic(const TArray<FHitResult>& OutHitResults)
@@ -75,4 +79,14 @@ void UGA_HeroAirKick::AttackLogic(const TArray<FHitResult>& OutHitResults)
 		DrawDebugLine(GetWorld(), Hit.ImpactPoint, Hit.ImpactPoint + KnockbackDir * LaunchStrength * 10.1f, FColor::Red, false, 2.f, 0, 2.f);
 		DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 12.f, FColor::Yellow, false, 2.f);
 	}
+}
+
+void UGA_HeroAirKick::OnCharacterLanded(const FHitResult& Hit)
+{
+	if (CharacterBase)
+	{
+		CharacterBase->LandedDelegate.RemoveDynamic(this, &UGA_HeroAirKick::OnCharacterLanded);
+	}
+	
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }

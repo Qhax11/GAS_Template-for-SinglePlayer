@@ -18,6 +18,9 @@ public:
 
 	virtual void AttackLogic(const TArray<FHitResult>& OutHitResults) override;
 
+	UFUNCTION()
+	void OnCharacterLanded(const FHitResult& Hit);
+
 	UPROPERTY(EditDefaultsOnly)
 	float LaunchStrength = 600.0f;
 

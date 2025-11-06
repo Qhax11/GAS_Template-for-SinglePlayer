@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_ParryBase.h"
+#include "Gameplay/Abilities/InCombat/GA_ParryBase.h"
 #include "GA_HeroParry.generated.h"
 
 

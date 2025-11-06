@@ -1,8 +1,8 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/GA_ParryBase.h"
-#include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
+#include "Gameplay/Abilities/InCombat/GA_ParryBase.h"
+#include "Gameplay/Abilities/InCombat/GA_ParryKnockbackBase.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 

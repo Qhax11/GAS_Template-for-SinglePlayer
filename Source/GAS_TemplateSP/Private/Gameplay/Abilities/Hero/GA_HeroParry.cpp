@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/Hero/GA_HeroParry.h"
 #include "Abilities/Tasks/AbilityTask_WaitInputRelease.h"
+#include "Gameplay/Abilities/InCombat/GA_ParryKnockbackBase.h"
 
 void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 

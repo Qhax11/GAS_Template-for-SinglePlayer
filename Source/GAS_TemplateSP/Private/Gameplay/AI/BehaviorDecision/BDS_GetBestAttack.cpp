@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
-#include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_ComboMeleeAttack.h"
 
 void UBDS_GetBestAttack::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {

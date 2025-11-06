@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Death/GA_EnemyDeathWithFinisher.h"
-#include "Gameplay/Abilities/Attack/GA_MeleeFinisher.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeFinisher.h"
 
 UGA_EnemyDeathWithFinisher::UGA_EnemyDeathWithFinisher()
 {

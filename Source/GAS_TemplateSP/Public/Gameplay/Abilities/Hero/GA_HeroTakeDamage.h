@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_TakeDamageBase.h"
+#include "Gameplay/Abilities/InCombat/GA_TakeDamageBase.h"
 #include "GA_HeroTakeDamage.generated.h"
 
 

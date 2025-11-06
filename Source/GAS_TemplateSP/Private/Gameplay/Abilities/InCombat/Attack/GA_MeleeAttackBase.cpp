@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include <AbilitySystemGlobals.h>
 

@@ -5,7 +5,7 @@
 #include "Gameplay/Attributes/AS_Hero.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Gameplay/Effects/GE_GainHealth.h"
-#include "Gameplay/Abilities/GA_ParryBase.h"
+#include "Gameplay/Abilities/InCombat/GA_ParryBase.h"
 #include "Gameplay/StaticDelegates/S_DamageDelegates.h"
 
 

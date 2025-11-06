@@ -4,8 +4,8 @@
 
 #include "Gameplay/AI/States/StateBase.h"
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
-#include "Gameplay/Abilities/GA_ParryBase.h"
-#include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
+#include "Gameplay/Abilities/InCombat/GA_ParryBase.h"
+#include "Gameplay/Abilities/InCombat/GA_ParryKnockbackBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "InComingAttackState.generated.h"

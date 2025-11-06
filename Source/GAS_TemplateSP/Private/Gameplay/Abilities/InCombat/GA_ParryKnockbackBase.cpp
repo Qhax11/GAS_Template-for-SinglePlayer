@@ -1,8 +1,8 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/GA_ParryKnockbackBase.h"
-#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/InCombat/GA_ParryKnockbackBase.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "AbilitySystemGlobals.h"
 #include <Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h>
 

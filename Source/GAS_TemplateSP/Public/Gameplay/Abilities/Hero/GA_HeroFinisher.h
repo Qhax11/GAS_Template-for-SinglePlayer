@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/Attack/GA_MeleeFinisher.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeFinisher.h"
 #include "GA_HeroFinisher.generated.h"
 
 

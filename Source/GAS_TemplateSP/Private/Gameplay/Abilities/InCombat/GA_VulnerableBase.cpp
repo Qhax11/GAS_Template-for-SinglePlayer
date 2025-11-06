@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/GA_VulnerableBase.h"
+#include "Gameplay/Abilities/InCombat/GA_VulnerableBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void UGA_VulnerableBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

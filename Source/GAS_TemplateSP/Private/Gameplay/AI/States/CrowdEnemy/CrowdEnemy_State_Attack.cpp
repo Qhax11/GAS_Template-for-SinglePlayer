@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/AI/States/CrowdEnemy/CrowdEnemy_State_Attack.h"
-#include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_ComboMeleeAttack.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/AI/Subsystems/S_AICrowdEventManager.h"
 

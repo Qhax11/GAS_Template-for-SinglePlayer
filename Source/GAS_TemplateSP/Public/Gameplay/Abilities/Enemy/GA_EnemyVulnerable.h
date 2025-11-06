@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_VulnerableBase.h"
+#include "Gameplay/Abilities/InCombat/GA_VulnerableBase.h"
 #include "GA_EnemyVulnerable.generated.h"
 
 

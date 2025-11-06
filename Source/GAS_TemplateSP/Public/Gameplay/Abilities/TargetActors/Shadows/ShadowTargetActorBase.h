@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
-#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "AbilitySystemGlobals.h"
 #include "ShadowTargetActorBase.generated.h"
 

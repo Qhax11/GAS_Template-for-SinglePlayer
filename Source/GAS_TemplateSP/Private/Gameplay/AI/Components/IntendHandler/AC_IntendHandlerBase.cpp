@@ -6,7 +6,7 @@
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Animation/AN_SendTag.h"
 #include <Kismet/GameplayStatics.h>
 

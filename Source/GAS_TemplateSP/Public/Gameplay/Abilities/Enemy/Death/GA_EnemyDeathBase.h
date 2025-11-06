@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_DeathBase.h"
+#include "Gameplay/Abilities/InCombat/GA_DeathBase.h"
 #include "GA_EnemyDeathBase.generated.h"
 
 

@@ -3,7 +3,7 @@
 
 #include "Gameplay/AI/States/AttackStateBase.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
-#include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_ComboMeleeAttack.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 

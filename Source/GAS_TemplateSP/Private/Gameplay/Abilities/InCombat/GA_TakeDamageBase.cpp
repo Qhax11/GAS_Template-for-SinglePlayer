@@ -1,8 +1,8 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/GA_TakeDamageBase.h"
-#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/InCombat/GA_TakeDamageBase.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "AIController.h"

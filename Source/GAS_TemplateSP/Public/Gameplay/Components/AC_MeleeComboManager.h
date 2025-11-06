@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Gameplay/Abilities/Attack/GA_ComboMeleeAttack.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_ComboMeleeAttack.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "AC_MeleeComboManager.generated.h"
 

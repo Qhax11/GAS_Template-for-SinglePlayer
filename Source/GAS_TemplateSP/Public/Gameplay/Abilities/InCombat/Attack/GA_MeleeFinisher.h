@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "GA_MeleeFinisher.generated.h"
 
 UCLASS()

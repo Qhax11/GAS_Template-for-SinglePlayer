@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/GA_DeathBase.h"
+#include "Gameplay/Abilities/InCombat/GA_DeathBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 
 UGA_DeathBase::UGA_DeathBase()

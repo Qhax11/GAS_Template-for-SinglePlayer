@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Gameplay/Cues/GCN_ActorBase.h"
-#include "Gameplay/Abilities/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/Components/AC_GameplayData.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "GCN_CombatBase.generated.h"

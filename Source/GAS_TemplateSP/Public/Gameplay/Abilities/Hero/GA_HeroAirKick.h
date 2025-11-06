@@ -14,9 +14,6 @@ class GAS_TEMPLATESP_API UGA_HeroAirKick : public UGA_MeleeAttackBase
 public:
 	UGA_HeroAirKick();
 
-	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-		const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
-
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	virtual void AttackLogic(const TArray<FHitResult>& OutHitResults) override;

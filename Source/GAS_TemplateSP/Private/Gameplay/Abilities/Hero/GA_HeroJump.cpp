@@ -10,23 +10,8 @@
 UGA_HeroJump::UGA_HeroJump()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-}
 
-bool UGA_HeroJump::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags,
-	const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
-{
-	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
-	{
-		return false;
-	}
-
-	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InAir))
-	{
-		return false;
-	}
-
-	return true;
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 }
 
 void UGA_HeroJump::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

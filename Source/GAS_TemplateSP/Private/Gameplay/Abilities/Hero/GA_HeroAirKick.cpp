@@ -40,6 +40,16 @@ void UGA_HeroAirKick::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	CharacterBase->LandedDelegate.AddDynamic(this, &UGA_HeroAirKick::OnCharacterLanded);
 }
 
+void UGA_HeroAirKick::GetTracePoints(FVector& OutStart, FVector& OutEnd, FRotator& OutRot)
+{
+	const USkeletalMeshComponent* Mesh = CharacterBase->GetMesh();
+	OutStart = Mesh->GetBoneLocation(TEXT("calf_l"));      // ya da "calf_r"
+	OutEnd = Mesh->GetBoneLocation(TEXT("foot_l"));      // ya da "foot_r"
+
+	// Foot bone normalde ayaðýn forward yönünü doðru verir
+	OutRot = Mesh->GetBoneQuaternion(TEXT("foot_l")).Rotator();
+}
+
 void UGA_HeroAirKick::AttackLogic(const TArray<FHitResult>& OutHitResults)
 {
 	Super::AttackLogic(OutHitResults);

@@ -19,6 +19,14 @@ public:
 
 	void TraceTick();
 
+	/**
+    * Provides the start/end/rotation data for the trace.
+    * Default implementation uses weapon-based trace points.
+    * Abilities that require custom trace origins (e.g., kicks, punches, bone-based attacks)
+    * should override this and supply their own socket or bone data.
+    */
+	virtual void GetTracePoints(FVector& OutStart, FVector& OutEnd, FRotator& OutRot);
+
 	bool TraceForHostileUnits(TArray<FHitResult>& OutHitResults);
 
 	virtual void OnTraceHitResults(const TArray<FHitResult>& HitResults);

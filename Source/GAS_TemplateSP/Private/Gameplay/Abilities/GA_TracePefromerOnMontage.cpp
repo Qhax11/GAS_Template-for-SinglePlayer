@@ -52,6 +52,16 @@ void UGA_TracePefromerOnMontage::TraceTick()
 	}
 }
 
+void UGA_TracePefromerOnMontage::GetTracePoints(FVector& OutStart, FVector& OutEnd, FRotator& OutRot)
+{
+	if (CharacterWeapon)
+	{
+		OutStart = CharacterWeapon->GetTraceStart();
+		OutEnd = CharacterWeapon->GetTraceEnd();
+		OutRot = CharacterWeapon->GetTraceEndRotation();
+	}
+}
+
 bool UGA_TracePefromerOnMontage::TraceForHostileUnits(TArray<FHitResult>& OutHitResults)
 {
 	if (!TraceData)
@@ -60,10 +70,17 @@ bool UGA_TracePefromerOnMontage::TraceForHostileUnits(TArray<FHitResult>& OutHit
 		return false;
 	}
 
+	FVector Start;
+	FVector End;
+	FRotator Rot;
+
+	GetTracePoints(Start, End, Rot);
+
 	FTraceRequest TraceRequest;
-	TraceRequest.StartLocation = CharacterWeapon->GetTraceStart();
-	TraceRequest.EndLocation = CharacterWeapon->GetTraceEnd();
-	TraceRequest.Direction = CharacterWeapon->GetTraceEndRotation();
+	TraceRequest.StartLocation = Start;
+	TraceRequest.EndLocation = End;
+	TraceRequest.Direction = Rot;
+
 	TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutHitResults, TraceRequest);
 
 	return OutHitResults.IsValidIndex(0);

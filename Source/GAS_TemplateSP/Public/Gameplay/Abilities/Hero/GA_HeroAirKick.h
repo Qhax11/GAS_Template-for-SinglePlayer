@@ -16,6 +16,8 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	virtual void GetTracePoints(FVector& OutStart, FVector& OutEnd, FRotator& OutRot) override;
+
 	virtual void AttackLogic(const TArray<FHitResult>& OutHitResults) override;
 
 	UFUNCTION()

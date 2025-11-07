@@ -29,7 +29,6 @@ void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 
-	CharacterWeapon = CharacterBase->GetWeapon();
 	if (!CharacterWeapon)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterWeapon is null in: %s"), *GetName());

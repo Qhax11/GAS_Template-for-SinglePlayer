@@ -107,7 +107,7 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 		ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: Activated Combo Ability: %s"), *ComboAbilityData->ComboAbilityClass->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: Activated Combo Ability: %s"), *ComboAbilityData->ComboAbilityClass->GetName());
 
 	ActiveComboChainTracker.bNextAttackAllowed = false;
 	LastActivatedCombo = ActivatedAbility;

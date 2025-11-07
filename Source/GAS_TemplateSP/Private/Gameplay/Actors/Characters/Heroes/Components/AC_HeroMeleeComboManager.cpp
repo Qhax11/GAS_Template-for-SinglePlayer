@@ -128,12 +128,14 @@ void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbilityWithShadowAttack(
 
 void UAC_HeroMeleeComboManager::OnInAirTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	// SelectedComboIndex = 1 means inair attack combo
 	SelectedComboIndex = 1;
 	InitComboChainTracker();
 }
 
 void UAC_HeroMeleeComboManager::OnInAirTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	// SelectedComboIndex = 0 means land attack combo
 	SelectedComboIndex = 0;
 	InitComboChainTracker();
 }

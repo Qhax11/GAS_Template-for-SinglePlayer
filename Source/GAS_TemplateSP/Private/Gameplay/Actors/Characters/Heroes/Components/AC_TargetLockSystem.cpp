@@ -181,6 +181,8 @@ void UAC_TargetLockSystem::EndTargetLock()
 	HeroASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget, 100);
 	CurrentTargetASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 	bLocked = false;
+	CurrentTargetASC = nullptr;
+	CurrentTarget = nullptr;
 
 	OnEndTargetLock.Broadcast();
 

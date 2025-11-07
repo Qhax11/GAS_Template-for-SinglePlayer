@@ -9,8 +9,6 @@
 
 UGA_HeroJump::UGA_HeroJump()
 {
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 }
 
@@ -40,8 +38,21 @@ void UGA_HeroJump::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
+	FGameplayTagContainer CancelAbilityTags;
+	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack);
+	GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
+
 	HeroMovement = HeroBase->GetCharacterMovement();
 
+	float JumpStartAnimLenght = AnimMontage->GetPlayLength();
+	GetWorld()->GetTimerManager().SetTimer(JumpTimerHandle, [this]()
+		{
+			JumpLogic();
+		}, JumpStartAnimLenght - 0.2f, false);
+}
+
+void UGA_HeroJump::JumpLogic() 
+{
 	// Kamera yönünü al (Controller'ýn rotation'ý)
 	APlayerController* PC = Cast<APlayerController>(HeroBase->GetController());
 	if (!PC)
@@ -76,105 +87,7 @@ void UGA_HeroJump::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	HeroBase->LaunchCharacter(NewVelocity, false, true);
 
-	EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
-	/*
-	// Curve kontrolü
-	if (!JumpCurve)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GA_HeroJump: JumpCurve is not set! Using default jump."));
-		//CharacterMovement->DoJump(false);
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
-		return;
-	}
-
-	// Initialize jump
-	JumpElapsedTime = 0.0f;
-	OriginalGravityScale = CharacterMovement->GravityScale;
-	CharacterMovement->GravityScale = JumpGravityScale;
-
-	// Initial impulse
-	FVector LaunchVelocity = FVector::UpVector * CalculateInitialVelocity();
-	CharacterMovement->Velocity.Z = LaunchVelocity.Z + InitialImpulse;
-
-	// Launch character
-	CharacterMovement->SetMovementMode(MOVE_Falling);
-
-	// Start curve-based jump timer
-	GetWorld()->GetTimerManager().SetTimer(
-		JumpTimerHandle,
-		this,
-		&UGA_HeroJump::TickJumpCurve,
-		0.016f, // ~60fps tick rate
-		true
-	);
-	*/
-}
-
-void UGA_HeroJump::TickJumpCurve()
-{
-	if (!CharacterMovement || !OwnerCharacter)
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
-	}
-
-	JumpElapsedTime += 0.016f;
-
-	// Jump süresi doldu mu?
-	if (JumpElapsedTime >= JumpDuration)
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-		return;
-	}
-
-	// Yere deðdi mi? (erken bitir)
-	if (CharacterMovement->IsMovingOnGround())
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-		return;
-	}
-
-	// Apply curve-based velocity
-	ApplyJumpVelocity(0.016f);
-}
-
-void UGA_HeroJump::ApplyJumpVelocity(float DeltaTime)
-{
-	if (!JumpCurve || !CharacterMovement)
-		return;
-
-	// Normalize time (0-1)
-	float NormalizedTime = FMath::Clamp(JumpElapsedTime / JumpDuration, 0.0f, 1.0f);
-
-	// Curve'den deðer al (0-1 range)
-	float CurveValue = JumpCurve->GetFloatValue(NormalizedTime);
-
-	// Calculate target velocity
-	float BaseVelocity = CalculateInitialVelocity();
-	float TargetZVelocity = BaseVelocity * CurveValue;
-
-	// Smooth blend (daha yumuþak geçiþ için)
-	float CurrentZVelocity = CharacterMovement->Velocity.Z;
-	float BlendedVelocity = FMath::FInterpTo(CurrentZVelocity, TargetZVelocity, DeltaTime, 10.0f);
-
-	// Apply velocity
-	CharacterMovement->Velocity.Z = BlendedVelocity;
-}
-
-float UGA_HeroJump::CalculateInitialVelocity() const
-{
-	// Physics formula: v = sqrt(2 * g * h)
-	// Ama burada daha fazla kontrol için JumpHeight kullanýyoruz
-	float Gravity = FMath::Abs(CharacterMovement->GetGravityZ()) * JumpGravityScale;
-	return FMath::Sqrt(2.0f * Gravity * JumpHeight);
-}
-
-void UGA_HeroJump::RestoreGravity()
-{
-	if (CharacterMovement)
-	{
-		CharacterMovement->GravityScale = OriginalGravityScale;
-	}
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_HeroJump::EndAbility(const FGameplayAbilitySpecHandle Handle,
@@ -186,8 +99,6 @@ void UGA_HeroJump::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		GetWorld()->GetTimerManager().ClearTimer(JumpTimerHandle);
 	}
-
-	RestoreGravity();
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

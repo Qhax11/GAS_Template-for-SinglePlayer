@@ -208,7 +208,6 @@ void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSp
 	if (EnemyDeSpawnData.DeSpawnPhase == EDeSpawnPhase::DeathStarted)
 	{
 		EndTargetLock();
-		StartTargetLock(TracingDataCheckClosestTarget);
 	}
 }
 

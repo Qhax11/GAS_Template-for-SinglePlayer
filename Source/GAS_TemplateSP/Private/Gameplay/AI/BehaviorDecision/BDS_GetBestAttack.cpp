@@ -116,6 +116,11 @@ float UBDS_GetBestAttack::CalculateComboScore(FAttackData AttackData)
     {
         return 100.0f;
     }
+    
+    if (ExpectedNextIndex == 3 && AttackData.ComboIndex == 0)
+    {
+        return 100.0f;
+    }
 
     return 0.0f;
 }

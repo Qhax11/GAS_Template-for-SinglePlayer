@@ -67,10 +67,10 @@ public:
     FGameplayTag GetAttackTypeTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack);
 
 	UPROPERTY(EditDefaultsOnly, Category = "ParryKnockback")
-	TSubclassOf<UGameplayEffect> ParryKnockbackClass;
+	TSubclassOf<UGameplayEffect> GE_ParryKnockbackClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "ParryKnockback")
-    TSubclassOf<UGameplayEffect> ParryKnockbackCostClass;
+    TSubclassOf<UGameplayEffect> GE_ParryKnockbackCostClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "ParryKnockback")
     UAttackTypeToKnockbackAsset* KnockbackDataAsset;

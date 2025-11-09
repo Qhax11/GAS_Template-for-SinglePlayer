@@ -114,14 +114,9 @@ float UBDS_GetBestAttack::CalculateComboScore(FAttackData AttackData)
     // If this attack matches the expected combo step, give it a strong score
     if (AttackData.ComboIndex == ExpectedNextIndex)
     {
-        return 100.0f;
+        return 3.0f;
     }
     
-    if (ExpectedNextIndex == 3 && AttackData.ComboIndex == 0)
-    {
-        return 100.0f;
-    }
-
     return 0.0f;
 }
 

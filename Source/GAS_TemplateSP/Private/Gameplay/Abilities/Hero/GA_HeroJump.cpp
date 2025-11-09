@@ -94,7 +94,6 @@ void UGA_HeroJump::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
-	// Cleanup
 	if (JumpTimerHandle.IsValid())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(JumpTimerHandle);

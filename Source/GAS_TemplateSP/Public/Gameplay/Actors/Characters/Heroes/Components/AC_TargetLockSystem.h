@@ -57,7 +57,7 @@ protected:
 
 	AActor* FindNearestActor(AActor* TargetedActor, TArray<AActor*> ActorArray);
 
-	void ChangeTarget(AActor* NewTarget);
+	void ChangeTarget(AActor* NewTarget, bool bStartTargeting = false);
 
 public:
 	UPROPERTY(BlueprintAssignable)

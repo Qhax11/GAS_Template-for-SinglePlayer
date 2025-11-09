@@ -71,9 +71,14 @@ void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
 
 void UAC_StateManager::CreateStates()
 {
+	UGAS_AbilitySystemComponent* TargetASC = nullptr;
+	if (OwnerController->GetTargetHero())
+	{
+		TargetASC = Cast<UGAS_AbilitySystemComponent>(OwnerController->GetTargetHero()->GetAbilitySystemComponent());
+	}
+
 	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, 
-		EnemyTagDelegatesComponent, BehaviorDecisionComponent, OwnerController->GetTargetActor(), 
-		Cast<UGAS_AbilitySystemComponent>(OwnerController->GetTargetHero()->GetAbilitySystemComponent()), this);
+		EnemyTagDelegatesComponent, BehaviorDecisionComponent, OwnerController->GetTargetActor(), TargetASC, this);
 
 	for (TSubclassOf<UStateBase> StateClass : StateClassArray)
 	{

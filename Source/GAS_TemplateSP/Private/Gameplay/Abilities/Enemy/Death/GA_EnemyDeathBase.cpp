@@ -36,6 +36,8 @@ void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
+	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget, 100);
+
 	EnemyController->GetEnemyStateManagerComponent()->StopLogic();
 	EnemyController->GetBrainComponent()->StopLogic(TEXT("Enemey is dead"));
 }

@@ -131,7 +131,7 @@ void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 		return;
 	}
 
-	ChangeTarget(ClosestTarget);
+	ChangeTarget(ClosestTarget, true);
 
 	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	HeroASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
@@ -194,8 +194,13 @@ void UAC_TargetLockSystem::EndTargetLock()
 
 void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnData)
 {
-	/*
 	if (EnemyDeSpawnData.Character != CurrentTarget)
+	{
+		return;
+	}
+
+	// If it's other than dead basic like finisher dead, we should ignore it.
+	if (!EnemyDeSpawnData.ASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic))
 	{
 		return;
 	}
@@ -203,12 +208,8 @@ void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSp
 	if (EnemyDeSpawnData.DeSpawnPhase == EDeSpawnPhase::DeathStarted)
 	{
 		EndTargetLock();
-	}
-	else if(EnemyDeSpawnData.DeSpawnPhase == EDeSpawnPhase::DeathFinished)
-	{
 		StartTargetLock(TracingDataCheckClosestTarget);
 	}
-	*/
 }
 
 void UAC_TargetLockSystem::OnHeroFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -355,7 +356,7 @@ AActor* UAC_TargetLockSystem::FindNearestActor(AActor* TargetedActor, TArray<AAc
 	return NearestActor;
 }
 
-void UAC_TargetLockSystem::ChangeTarget(AActor* NewTarget)
+void UAC_TargetLockSystem::ChangeTarget(AActor* NewTarget, bool bStartTargeting)
 {
 	if (!NewTarget) 
 	{
@@ -378,7 +379,11 @@ void UAC_TargetLockSystem::ChangeTarget(AActor* NewTarget)
 
 	CurrentTargetASC = NewTargetASC;
 	CurrentTarget = NewTarget;
-	OnTargetChanged.Broadcast(NewTarget);
+
+	if (!bStartTargeting) 
+	{
+		OnTargetChanged.Broadcast(NewTarget);
+	}
 }
 
 void UAC_TargetLockSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

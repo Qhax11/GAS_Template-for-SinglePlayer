@@ -3,6 +3,7 @@
 
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
+#include <Gameplay/Attributes/AS_Base.h>
 
 void UBDS_ComingAttackReactionBase::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {

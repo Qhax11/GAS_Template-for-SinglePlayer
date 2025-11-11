@@ -3,8 +3,20 @@
 #pragma once
 
 #include "Gameplay/Effects/Calculations/EC_Base.h"
+#include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "EC_DamageBase.generated.h"
 
+USTRUCT()
+struct FDamageCalculationResult
+{
+	GENERATED_BODY()
+
+	float MitigatedDamage = 0.f;
+	float DamageDealt = 0.f;
+	bool bParrySuccess = false;
+	bool bIsUnparryableAttack = false;
+	bool bTargetInParry = false;
+};
 
 UCLASS()
 class GAS_TEMPLATESP_API UEC_DamageBase : public UEC_Base
@@ -13,6 +25,10 @@ class GAS_TEMPLATESP_API UEC_DamageBase : public UEC_Base
 	
 public:
 	virtual void ExecuteWithParams(FExecCalculationParameters Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
+
+	FDamageCalculationResult CalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const;
+
+	virtual void PostCalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const;
 
 	virtual float GetBaseDamage(const FExecCalculationParameters& Params) const;
 

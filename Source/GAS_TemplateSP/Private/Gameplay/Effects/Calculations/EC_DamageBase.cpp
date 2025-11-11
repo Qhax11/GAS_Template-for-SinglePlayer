@@ -3,7 +3,6 @@
 
 #include "Gameplay/Effects/Calculations/EC_DamageBase.h"
 #include "Gameplay/Attributes/AS_Hero.h"
-#include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Gameplay/Effects/GE_GainHealth.h"
 #include "Gameplay/Abilities/InCombat/GA_ParryBase.h"
 #include "Gameplay/StaticDelegates/S_DamageDelegates.h"
@@ -20,52 +19,66 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 		return;
 	}
 
-	bool bIsUnparrayableAttack = Params.SourceASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnparryableAttack);
-	bool bTargetInParry = Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);
-	bool bParrySucces = !bIsUnparrayableAttack && bTargetInParry && CalculateParry(Params);
+	FDamageCalculationResult Result = CalculateDamageResult(Params, OutExecutionOutput);
+	PostCalculateDamageResult(Params, OutExecutionOutput, Result);
 
-	float MitigatedDamage = GetTotalDamage(Params);
-
-	CalculateCritical(Params, MitigatedDamage, OutExecutionOutput);
-
-	CalculateDamageReduction(Params, MitigatedDamage, OutExecutionOutput);
-
-	const float DamageDealt = CalculateHealth(Params, MitigatedDamage, OutExecutionOutput);
-
+	// Broadcast damage event
 	if (Params.SourceASC->GetWorld())
 	{
 		if (US_DamageDelegates* DamageSubsystem = Params.SourceASC->GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>())
 		{
-			FDamageData DamageData = FDamageData(Params, bParrySucces);
+			FDamageData DamageData = FDamageData(Params, Result.bParrySuccess);
 			DamageSubsystem->OnDamageDealt.Broadcast(DamageData);
 		}
 	}
 
-	if (bParrySucces) 
+	if (Result.bParrySuccess)
 	{
 		return;
 	}
 
 	// ****************** APPLY DAMAGE ******************
 	// Apply that damage to the target's health  
-	if (DamageDealt > 0)
+	if (Result.DamageDealt > 0)
 	{
-		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(Params.GetTargetAttributeSet()->GetHealthAttribute(), EGameplayModOp::Additive, -DamageDealt));
+		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(
+			Params.GetTargetAttributeSet()->GetHealthAttribute(), EGameplayModOp::Additive, -Result.DamageDealt));
 	}
 
-	// Trigger events based on the damage dealt. AI is trigger take damage ability in his incoming state
-	if (DamageDealt > 0 && Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
+	// Trigger events based on the damage dealt. AI is trigger take damage ability in his IncomingAttack state
+	if (Result.DamageDealt > 0 && Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
 	{
-		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, DamageDealt);
+		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, Result.DamageDealt);
 	}
 
-	if (MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())
+	if (Result.MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())
 	{
 		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Basic);
 	}
 	
 	float LifeStealDone = .0f;
-	CalculateLifeSteal(Params, MitigatedDamage, LifeStealDone, OutExecutionOutput);
+	CalculateLifeSteal(Params, Result.MitigatedDamage, LifeStealDone, OutExecutionOutput);
+}
+
+FDamageCalculationResult UEC_DamageBase::CalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
+{
+	FDamageCalculationResult Result;
+
+	Result.bIsUnparryableAttack = Params.SourceASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnparryableAttack);
+	Result.bTargetInParry = Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);
+	Result.bParrySuccess = !Result.bIsUnparryableAttack && Result.bTargetInParry && CalculateParry(Params);
+
+	Result.MitigatedDamage = GetTotalDamage(Params);
+	CalculateCritical(Params, Result.MitigatedDamage, OutExecutionOutput);
+	CalculateDamageReduction(Params, Result.MitigatedDamage, OutExecutionOutput);
+	Result.DamageDealt = CalculateHealth(Params, Result.MitigatedDamage, OutExecutionOutput);
+
+	return Result;
+}
+
+void UEC_DamageBase::PostCalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const
+{
+	// Implementation will be in subclasses
 }
 
 float UEC_DamageBase::GetBaseDamage(const FExecCalculationParameters& Params) const

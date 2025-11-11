@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/SceneComponent.h"
+#include "GameplayTagContainer.h"
 #include "SC_FinisherMotionWarpLocation.generated.h"
 
 

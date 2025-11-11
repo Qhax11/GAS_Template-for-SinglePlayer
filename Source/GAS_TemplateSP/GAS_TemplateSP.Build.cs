@@ -22,7 +22,8 @@ public class GAS_TemplateSP : ModuleRules
 			"GameplayStateTreeModule",
             "StateTreeModule",
             "AnimGraphRuntime",
-            "MotionWarping"
+            "MotionWarping",
+            "Niagara"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {

@@ -16,6 +16,12 @@ bool UAS_Hero::ClampAttributeValues(const FGameplayEffectModCallbackData& Data)
 		Mana.SetCurrentValue(FMath::Clamp(Mana.GetBaseValue(), 0, MaxMana.GetCurrentValue()));
 	}
 
+	if (Data.EvaluatedData.Attribute == GetShadowGaugeAttribute())
+	{
+		ShadowGauge.SetBaseValue(FMath::Clamp(ShadowGauge.GetBaseValue(), 0, MaxShadowGauge.GetCurrentValue()));
+		ShadowGauge.SetCurrentValue(FMath::Clamp(ShadowGauge.GetBaseValue(), 0, MaxShadowGauge.GetCurrentValue()));
+	}
+
 	else if (Data.EvaluatedData.Attribute == GetLifeStealAttribute())
 	{
 		LifeSteal.SetBaseValue(FMath::Clamp(LifeSteal.GetCurrentValue(), 0, 100));
@@ -78,6 +84,12 @@ bool UAS_Hero::BroadcastPropertyChange(const FGameplayEffectModCallbackData& Dat
 		bIsBroadcasted = true;
 		PropertyCallbackData.CurrentValue = CriticalChance.GetCurrentValue();
 		OnCriticalChanceChanged.Broadcast(PropertyCallbackData);
+	}
+	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Hero::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Hero, ShadowGauge)))
+	{
+		bIsBroadcasted = true;
+		PropertyCallbackData.CurrentValue = ShadowGauge.GetCurrentValue();
+		OnShadowGaugeChanged.Broadcast(PropertyCallbackData);
 	}
 
 	return bIsBroadcasted;

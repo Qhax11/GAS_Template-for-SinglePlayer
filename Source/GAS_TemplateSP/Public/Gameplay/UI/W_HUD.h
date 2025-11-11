@@ -5,9 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "W_HUD.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API UW_HUD : public UUserWidget
 {
@@ -20,5 +18,5 @@ public:
 	void OnAbilitySetGiven(const AActor* OwnerActor);
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	TObjectPtr<class UW_PropertyBarsContainer> PropertyBarsContainer;
+	TObjectPtr<class UW_HeroPropertyBarsContainer> PropertyBarsContainer;
 };

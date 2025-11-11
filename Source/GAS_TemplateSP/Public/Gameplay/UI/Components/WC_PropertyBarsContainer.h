@@ -18,5 +18,5 @@ protected:
 	UFUNCTION()
 	void OnAbilitySetGiven(const AActor* OwnerActor);
 
-	TObjectPtr<class UW_PropertyBarsContainer> PropertyBarsContainer;
+	TObjectPtr<class UW_EnemyPropertyBarsContainer> PropertyBarsContainer;
 };

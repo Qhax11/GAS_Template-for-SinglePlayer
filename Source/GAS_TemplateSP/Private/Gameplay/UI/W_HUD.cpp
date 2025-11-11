@@ -5,7 +5,7 @@
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/UI/Bars/W_HealthBar.h"
 #include "Gameplay/UI/Bars/W_ManaBar.h"
-#include "Gameplay/UI/Bars/W_PropertyBarsContainer.h"
+#include "Gameplay/UI/Bars/Hero/W_HeroPropertyBarsContainer.h"
 
 void UW_HUD::NativeConstruct()
 {

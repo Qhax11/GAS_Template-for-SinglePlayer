@@ -3,7 +3,7 @@
 
 #include "Gameplay/UI/Components/WC_PropertyBarsContainer.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
-#include "Gameplay/UI/Bars/W_PropertyBarsContainer.h"
+#include "Gameplay/UI/Bars/Enemy/W_EnemyPropertyBarsContainer.h"
 
 
 void UWC_PropertyBarsContainer::BeginPlay()
@@ -29,7 +29,7 @@ void UWC_PropertyBarsContainer::BeginPlay()
 
 void UWC_PropertyBarsContainer::OnAbilitySetGiven(const AActor* OwnerActor)
 {
-	PropertyBarsContainer = Cast<UW_PropertyBarsContainer>(GetUserWidgetObject());
+	PropertyBarsContainer = Cast<UW_EnemyPropertyBarsContainer>(GetUserWidgetObject());
 	if (PropertyBarsContainer && OwnerActor)
 	{
 		PropertyBarsContainer->InitalizePropertyBarsContainer(GetOwner());

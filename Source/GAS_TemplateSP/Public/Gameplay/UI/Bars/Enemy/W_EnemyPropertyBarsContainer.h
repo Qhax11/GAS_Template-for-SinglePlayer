@@ -3,11 +3,11 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
-#include "W_PropertyBarsContainer.generated.h"
+#include "W_EnemyPropertyBarsContainer.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UW_PropertyBarsContainer : public UUserWidget
+class GAS_TEMPLATESP_API UW_EnemyPropertyBarsContainer : public UUserWidget
 {
 	GENERATED_BODY()
 

@@ -42,6 +42,16 @@ public:
 	ATTRIBUTE_ACCESSORS(UAS_Hero, CriticalChance)
 		FOnPropertyValueChanged OnCriticalChanceChanged;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Hero")
+	FGameplayAttributeData ShadowGauge;
+	ATTRIBUTE_ACCESSORS(UAS_Hero, ShadowGauge)
+		FOnPropertyValueChanged OnShadowGaugeChanged;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Hero")
+	FGameplayAttributeData MaxShadowGauge;
+	ATTRIBUTE_ACCESSORS(UAS_Hero, MaxShadowGauge)
+		FOnPropertyValueChanged OnMaxShadowGaugeChanged;
+
 	virtual bool ClampAttributeValues(const FGameplayEffectModCallbackData& Data)  override;
 
 protected:

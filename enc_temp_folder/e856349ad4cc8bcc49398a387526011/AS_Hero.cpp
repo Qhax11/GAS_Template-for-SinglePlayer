@@ -89,14 +89,6 @@ bool UAS_Hero::BroadcastPropertyChange(const FGameplayEffectModCallbackData& Dat
 	{
 		bIsBroadcasted = true;
 		PropertyCallbackData.CurrentValue = ShadowGauge.GetCurrentValue();
-		PropertyCallbackData.MaxValue = MaxShadowGauge.GetCurrentValue();
-		OnShadowGaugeChanged.Broadcast(PropertyCallbackData);
-	}
-	else if (Data.EvaluatedData.Attribute.GetUProperty() == FindFieldChecked<FProperty>(UAS_Hero::StaticClass(), GET_MEMBER_NAME_CHECKED(UAS_Hero, MaxShadowGauge)))
-	{
-		bIsBroadcasted = true;
-		PropertyCallbackData.CurrentValue = ShadowGauge.GetCurrentValue();
-		PropertyCallbackData.MaxValue = MaxShadowGauge.GetCurrentValue();
 		OnShadowGaugeChanged.Broadcast(PropertyCallbackData);
 	}
 

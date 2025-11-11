@@ -7,13 +7,12 @@
 
 void UW_EnemyPropertyBarsContainer::InitalizePropertyBarsContainer(AActor* Owner)
 {
-	if (HealthBar) 
+	if (!HealthBar || !PostureBar)
 	{
-		HealthBar->InitializePropertyBar(Owner);
+		UE_LOG(LogTemp, Warning, TEXT("HealthBar or PostureBar is null in: %s"), *GetName());
+		return;
 	}
 
-	if (PostureBar) 
-	{
-		PostureBar->InitializePropertyBar(Owner);
-	}
+	HealthBar->InitializePropertyBar(Owner);
+	PostureBar->InitializePropertyBar(Owner);
 }

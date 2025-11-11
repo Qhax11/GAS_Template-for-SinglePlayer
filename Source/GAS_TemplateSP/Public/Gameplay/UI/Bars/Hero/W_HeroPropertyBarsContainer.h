@@ -19,4 +19,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UW_PostureBar> PostureBar;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<class UW_ShadowGuageBar> ShadowGaugeBar;
 };

@@ -6,10 +6,10 @@
 
 void UW_ShadowGuageBar::SetDefaultValues(UAbilitySystemComponent* OwnerASC)
 {
-	if (UAS_Hero* CharacterAttributes = const_cast<UAS_Hero*>(OwnerASC->GetSet<UAS_Hero>()))
+	if (UAS_Base* CharacterAttributes = const_cast<UAS_Base*>(OwnerASC->GetSet<UAS_Base>()))
 	{
-		SetPercantage(CharacterAttributes->GetShadowGauge(), CharacterAttributes->GetMaxShadowGauge());
-		SetValuesToTexts(CharacterAttributes->GetShadowGauge(), CharacterAttributes->GetMaxShadowGauge());
+		SetPercantage(CharacterAttributes->GetPosture(), CharacterAttributes->GetMaxPosture());
+		SetValuesToTexts(CharacterAttributes->GetPosture(), CharacterAttributes->GetMaxPosture());
 	}
 }
 

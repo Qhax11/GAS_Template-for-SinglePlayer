@@ -22,26 +22,26 @@ public:
 
 	void ChaseStart();
 
-	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NiagaraController")
 	UNiagaraComponent* NiagaraComp;
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	AActor* TargetActor;
 
-	// Minimum distance to stop
-	UPROPERTY(EditAnywhere, Category = "NiagaraController")
-	float StopDistance = 10.f;
+	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
+	float ParticleAttractionStrength = 500.f; // Partikül çekim gücü
 
 	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
-	float ChaseDrag = 10.f;
+	float FalloffExponent = 0.3f; // Partikül çekim gücü
 
 	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
-	float ChaseAttractionStrenght = 400.f;
+	float ParticleDrag = 2.f; // Partikül drag'ý
 
 	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
-	float ChaseStartDelay = 2.f;
+	float ChaseStartDelay = 1.f;
 
 private:
 	FTimerHandle TimerHandle;
 	bool bChaseStart = false;
+
 };

@@ -28,31 +28,18 @@ void ANiagaraController::Tick(float DeltaTime)
 	}
 
 	NiagaraComp->SetNiagaraVariableVec3(TEXT("User_TargetLocation"), TargetActor->GetActorLocation());
-
-	/*
-	FVector CurrentPos = NiagaraComp->GetComponentLocation();
-	FVector TargetPos = TargetActor->GetActorLocation();
-	FVector Dir = (TargetPos - CurrentPos);
-	float Dist = Dir.Size();
-
-	if (Dist <= StopDistance)
-	{
-		// Hedefe yaklaştı → dur
-		NiagaraComp->SetNiagaraVariableVec3(TEXT("User_TargetLocation"), CurrentPos);
-	}
-	else
-	{
-		// Hedefe doğru hareket
-		FVector MoveStep = Dir.GetSafeNormal() * MoveSpeed * DeltaTime;
-		FVector NewPos = CurrentPos + MoveStep;
-	}
-	*/
 }
 
 void ANiagaraController::ChaseStart()
 {
-	NiagaraComp->SetNiagaraVariableFloat(TEXT("User.Drag"), ChaseDrag);
-	NiagaraComp->SetNiagaraVariableFloat(TEXT("User_AttrationStrength"), ChaseAttractionStrenght);
+	if (!TargetActor) 
+	{
+		return;
+	}
+
+	NiagaraComp->SetNiagaraVariableFloat(TEXT("User_AttrationStrength"), ParticleAttractionStrength);
+	NiagaraComp->SetNiagaraVariableFloat(TEXT("User_FalloffExponent"), FalloffExponent);
+	NiagaraComp->SetNiagaraVariableFloat(TEXT("User_Drag"), ParticleDrag);
 	bChaseStart = true;
 }
 

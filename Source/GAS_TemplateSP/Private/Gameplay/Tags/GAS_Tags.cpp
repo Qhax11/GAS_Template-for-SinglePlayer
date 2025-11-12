@@ -195,7 +195,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splash_Mid, "GameplayCue.VFX.Blood.Splash.Mid");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splash_Hero_Mid, "GameplayCue.VFX.Blood.Splash.Hero.Mid");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splash_High, "GameplayCue.VFX.Blood.Splash.High");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splash_Hero_High, "GameplayCue.VFX.Blood.Splash.Hero_High");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splash_Hero_High, "GameplayCue.VFX.Blood.Splash.Hero.High");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splatter, "GameplayCue.VFX.Blood.Splatter");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splatter_Low, "GameplayCue.VFX.Blood.Splatter.Low");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Blood_Splatter_Hero_Low, "GameplayCue.VFX.Blood.Splatter.Hero.Low");

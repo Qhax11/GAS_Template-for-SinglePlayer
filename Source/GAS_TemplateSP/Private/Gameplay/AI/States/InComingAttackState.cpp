@@ -46,8 +46,8 @@ void UInComingAttackState::OnEnter_Implementation()
 	Super::OnEnter_Implementation();
 
 	// Always bind to DamageSubsystem here so that the state can respond to any incoming damage
-    // regardless of the reaction type (take damage, parry, dodge). This ensures the state
-    // can exit correctly if the AI takes damage during any reaction.  
+	// regardless of the reaction type (take damage, parry, dodge). This ensures the state
+	// can exit correctly if the AI takes damage during any reaction.  
 	if (DamageSubsystem)
 	{
 		if (!DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
@@ -63,7 +63,7 @@ void UInComingAttackState::OnEnter_Implementation()
 bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 {
 	UBDS_ComingAttackReactionBase* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
-	if (!SelectedBestReaction) 
+	if (!SelectedBestReaction)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectedBestReaction is null in: %s"), *GetName());
 		return false;
@@ -75,14 +75,13 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 		BindTargetComingAttackEnd();
 		return true;
 	}
-	else if(SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
+	else if (SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
 		BindTargetComingAttackEnd();
 		MakeParryAbility(SelectedBestReaction);
 		return true;
 	}
-
 	return false;
 }
 
@@ -96,7 +95,6 @@ void UInComingAttackState::BindTargetComingAttackEnd()
 			ComingAttack->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UInComingAttackState::OnComingAttackAbilityEnded);
 		}
 	}
-
 	LastComingAttackAbility = ComingAttack;
 }
 
@@ -116,16 +114,16 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered."));
 
-	if (DamageData.ExecCalculationParameters.TargetActor != Enemy) 
+	if (DamageData.ExecCalculationParameters.TargetActor != Enemy)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt TargetActor is not Enemy."));
-		ExitRequest("State Manager: OnDamageDealt->TargetActor is not Enemy");
+		CheckThreadAndExitSafe("State Manager: OnDamageDealt->TargetActor is not Enemy");
 		return;
 	}
 
 	UnBindTargetComingAttackEnd();
 
-	if (DamageData.bParrySucces) 
+	if (DamageData.bParrySucces)
 	{
 		FGameplayEventData Payload;
 		Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback;
@@ -166,17 +164,16 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 		}
 		LastUsedTakeDamageAbility = TakeDamageAbility;
 	}
-
 }
 
 void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest("OnTakeDamageAbilityEnded");
+	CheckThreadAndExitSafe("OnTakeDamageAbilityEnded");
 }
 
 void UInComingAttackState::OnComingAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest("OnComingAttackAbilityEnded");
+	CheckThreadAndExitSafe("OnComingAttackAbilityEnded");
 }
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
@@ -216,13 +213,13 @@ void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeA
 	}
 	else
 	{
-		ExitRequest("Parry Ability Ended without knocback.");
+		CheckThreadAndExitSafe("Parry Ability Ended without knocback.");
 	}
 }
 
 void UInComingAttackState::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	ExitRequest("OnParryKnocbackAbilityEnded");
+	CheckThreadAndExitSafe("OnParryKnocbackAbilityEnded");
 }
 
 void UInComingAttackState::OnExit_Implementation()
@@ -285,6 +282,8 @@ void UInComingAttackState::OnExit_Implementation()
 		}
 		LastUsedParryKnocbackAbility = nullptr;
 	}
+
+	UnBindTargetComingAttackEnd();
 }
 
 

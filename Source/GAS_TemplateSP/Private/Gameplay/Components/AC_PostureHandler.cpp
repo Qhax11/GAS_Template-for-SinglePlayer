@@ -96,11 +96,15 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 		return;
 	}
 
+
 	if (Data.CurrentValue >= Data.MaxValue)
 	{
-		OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full);
+		if (!OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full))
+		{
+			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full);
+		}
 	}
-	else if(Data.CurrentValue < Data.MaxValue)
+	else
 	{
 		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full))
 		{
@@ -115,7 +119,7 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty);
 		}
 
-		if (!OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable))
+		if (!OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable) && !OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
 		{
 			OwnerASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
 		}
@@ -124,7 +128,12 @@ void UAC_PostureHandler::OnPostureChanged(const FAttributeChangeCallbackData& Da
 	{
 		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty))
 		{
-			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Full, 100);
+			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty, 100);
+		}
+
+		if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable))
+		{
+			OwnerASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable, 100);
 		}
 	}
 

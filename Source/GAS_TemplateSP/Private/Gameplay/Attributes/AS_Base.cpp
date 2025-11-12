@@ -115,8 +115,8 @@ bool UAS_Base::ClampAttributeValues(const FGameplayEffectModCallbackData& Data)
 
 	else if (Data.EvaluatedData.Attribute == GetPostureAttribute())
 	{
-		Posture.SetBaseValue(FMath::Clamp(Posture.GetCurrentValue(), 0, 100));
-		Posture.SetCurrentValue(FMath::Clamp(Posture.GetCurrentValue(), 0, 100));
+		Posture.SetBaseValue(FMath::Clamp(Posture.GetCurrentValue(), 0, MaxPosture.GetCurrentValue()));
+		Posture.SetCurrentValue(FMath::Clamp(Posture.GetCurrentValue(), 0, MaxPosture.GetCurrentValue()));
 	}
 
 	return true;

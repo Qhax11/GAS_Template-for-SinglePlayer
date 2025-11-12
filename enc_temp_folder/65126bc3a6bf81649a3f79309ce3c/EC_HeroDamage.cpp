@@ -6,7 +6,6 @@
 
 void UEC_HeroDamage::PostCalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const
 {
-    /*
     if (!DamageCalculationResult.bParrySuccess)
     {
         const UAS_Hero* HeroAttributes = Cast<UAS_Hero>(Params.GetSourceAttributeSet());
@@ -30,5 +29,4 @@ void UEC_HeroDamage::PostCalculateDamageResult(FExecCalculationParameters& Param
 
         Params.SourceASC->ApplyGameplayEffectToSelf(GE_IncreaseShadowGuage, 1, FGameplayEffectContextHandle());
     }
-    */
 }

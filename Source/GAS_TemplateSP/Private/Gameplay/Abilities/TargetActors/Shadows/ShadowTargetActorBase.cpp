@@ -58,7 +58,7 @@ void AShadowTargetActorBase::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);
 
     UpdateRelativeDirectionToTarget();
-    RotateToTarget(CurrentTarget, DeltaSeconds);
+    //RotateToTarget(CurrentTarget, DeltaSeconds);
 }
 
 void AShadowTargetActorBase::Confirm()

@@ -51,6 +51,8 @@ class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
+	UGAS_GameplayAbilityBase();
+
 	FORCEINLINE UGAS_AbilitySystemComponent* GetASC() const
 	{
 		return CastChecked<UGAS_AbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get());

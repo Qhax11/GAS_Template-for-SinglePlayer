@@ -4,7 +4,12 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 
-void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+UGAS_GameplayAbilityBase::UGAS_GameplayAbilityBase()
+{
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Debuff_Stun);
+}
+
+void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)

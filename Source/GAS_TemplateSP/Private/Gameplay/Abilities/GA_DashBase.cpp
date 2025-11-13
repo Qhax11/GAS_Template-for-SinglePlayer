@@ -13,7 +13,6 @@ UGA_DashBase::UGA_DashBase()
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Debuff_Stun);
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 }

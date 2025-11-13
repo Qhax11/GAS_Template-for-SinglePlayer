@@ -29,16 +29,16 @@ public:
 	AActor* TargetActor;
 
 	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
-	float ParticleAttractionStrength = 500.f; // Partikül çekim gücü
+	float ParticleAttractionStrength = 4000.f; // Partikül çekim gücü
 
 	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
 	float FalloffExponent = 0.3f; // Partikül çekim gücü
 
 	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
-	float ParticleDrag = 2.f; // Partikül drag'ý
+	float ParticleDrag = 10.f; // Partikül drag'ý
 
 	UPROPERTY(EditDefaultsOnly, Category = "NiagaraController")
-	float ChaseStartDelay = 1.f;
+	float ChaseStartDelay = 0.5f;
 
 private:
 	FTimerHandle TimerHandle;

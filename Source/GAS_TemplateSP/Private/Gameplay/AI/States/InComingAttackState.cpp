@@ -117,7 +117,13 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 	if (DamageData.ExecCalculationParameters.TargetActor != Enemy)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt TargetActor is not Enemy."));
-		CheckThreadAndExitSafe("State Manager: OnDamageDealt->TargetActor is not Enemy");
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+			{
+				if (IsValid(this))
+				{
+					CheckThreadAndExitSafe("State Manager: OnDamageDealt->TargetActor is not Enemy");
+				}
+			});
 		return;
 	}
 
@@ -240,17 +246,17 @@ void UInComingAttackState::OnExit_Implementation()
 
 	Super::OnExit_Implementation();
 
-	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())
-	{
-		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
-	}
-
 	if (IsValid(DamageSubsystem))
 	{
 		if (DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
 		{
 			DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UInComingAttackState::OnDamageDealt);
 		}
+	}
+
+	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())
+	{
+		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 	}
 
 	if (IsValid(LastUsedTakeDamageAbility))

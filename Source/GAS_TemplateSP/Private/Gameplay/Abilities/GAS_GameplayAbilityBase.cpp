@@ -11,10 +11,13 @@ void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+	if (bApplyCommit) 
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
+		if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+		{
+			EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+			return;
+		}
 	}
 
 	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());

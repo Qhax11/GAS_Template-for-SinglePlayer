@@ -30,7 +30,7 @@ bool UGA_ParryBase::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	if (UAS_Base* BaseAttributes = const_cast<UAS_Base*>(ASC->GetSet<UAS_Base>()))
 	{
-		return BaseAttributes->GetPosture() > 0.f;
+		return BaseAttributes->GetPosture() > GetCost(GetAbilityLevel());
 	}
 
 	return false;

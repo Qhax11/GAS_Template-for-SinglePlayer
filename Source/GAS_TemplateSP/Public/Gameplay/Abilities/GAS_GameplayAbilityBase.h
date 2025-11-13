@@ -94,6 +94,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
 	float MaxRange;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
+	bool bApplyCommit = true;
+
 	UPROPERTY(BlueprintAssignable, Category = "GameplayAbilityBase|Delegates")
 	FGameplayAbilityEndedBP OnGameplayAbilityEndedWithDataBP;
 

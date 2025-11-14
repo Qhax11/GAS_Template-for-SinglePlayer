@@ -33,6 +33,9 @@ void UAC_TagListenerBase::BeginPlay()
 
 		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing, EListenMode::OnAdded).BindDynamic(this, &UAC_TagListenerBase::OnStrafingTagAdded);
 		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing, EListenMode::OnRemoved).BindDynamic(this, &UAC_TagListenerBase::OnStrafingTagRemoved);
+
+		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Running, EListenMode::OnAdded).BindDynamic(this, &UAC_TagListenerBase::OnRunningTagAdded);
+		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Running, EListenMode::OnRemoved).BindDynamic(this, &UAC_TagListenerBase::OnRunningTagRemoved);
 	}
 	else
 	{
@@ -59,5 +62,15 @@ void UAC_TagListenerBase::OnStrafingTagAdded(const UAbilitySystemComponent* Abil
 void UAC_TagListenerBase::OnStrafingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+}
+
+void UAC_TagListenerBase::OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+}
+
+void UAC_TagListenerBase::OnRunningTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	OwnerCharacterMoveComp->bOrientRotationToMovement = false;
 }
 

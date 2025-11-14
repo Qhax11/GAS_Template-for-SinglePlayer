@@ -459,7 +459,9 @@ void UAC_TargetLockSystem::RotateHeroToTarget(float DeltaTime)
 		return;
 	}
 
-	if (!HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget))
+	bool LockRotationTowardsTarget = HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
+	bool Running = HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Running);
+	if (!LockRotationTowardsTarget || Running)
 	{
 		return;
 	}

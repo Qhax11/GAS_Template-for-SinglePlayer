@@ -37,10 +37,20 @@ void UGA_HeroRouterDashAndRun::OnDashAbilityEnded(const FAbilityEndedDataBP& Dod
 {
     if (!DodgeAbilityEndedData.bWasCancelled)
     {
-        UsedRunAbilty = GetASC()->TryActivateAbilityByClassAndReturnInstance(GA_RunAbilityClass);
-        if (!UsedRunAbilty)
+        // WaitRelease task'ý kontrol et - input hala basýlý mý?
+        if (WaitRelease && WaitRelease->IsActive())
         {
-            UE_LOG(LogTemp, Warning, TEXT("Run Ability could not be activated after Dash in: %s"), *GetName());
+            // Input hala basýlý, Run'ý baþlat
+            UsedRunAbilty = GetASC()->TryActivateAbilityByClassAndReturnInstance(GA_RunAbilityClass);
+            if (!UsedRunAbilty)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Run Ability could not be activated after Dash in: %s"), *GetName());
+                EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+            }
+        }
+        else
+        {
+            // Input býrakýlmýþ, sadece Dash yap
             EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
         }
     }

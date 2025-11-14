@@ -14,24 +14,22 @@ class GAS_TEMPLATESP_API UGA_HeroRouterDashAndRun : public UGAS_GameplayAbilityB
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	UFUNCTION()
-	void OnDashAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
-
-	UFUNCTION()
-	void OnInputReleased(float TimeHeld);
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGAS_GameplayAbilityBase> GA_DashAbilityClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGAS_GameplayAbilityBase> GA_RunAbilityClass;
 
+	UFUNCTION()
+	void OnDashAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+
+	UFUNCTION()
+	void OnInputReleased(float TimeHeld);
+
 	UGAS_GameplayAbilityBase* UsedDashAbilty;
 
 	UGAS_GameplayAbilityBase* UsedRunAbilty;
 
 	class UAbilityTask_WaitInputRelease* WaitRelease;
-
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 };

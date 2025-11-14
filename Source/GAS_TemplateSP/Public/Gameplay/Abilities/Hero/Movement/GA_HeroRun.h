@@ -12,15 +12,9 @@ class GAS_TEMPLATESP_API UGA_HeroRun : public UGAS_GameplayAbilityBase
 	GENERATED_BODY()
 
 public:
+	UGA_HeroRun(); 
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
-
-	UFUNCTION()
-	void OnInputReleased(float TimeHeld);
-
-	class UAbilityTask_WaitInputRelease* WaitRelease;
-
-	UPROPERTY(EditDefaultsOnly)
-	float SpeedBoost = 500.0f;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> GE_SpeedBoostClass;

@@ -35,23 +35,10 @@ void UGA_HeroRouterDashAndRun::ActivateAbility(const FGameplayAbilitySpecHandle 
 
 void UGA_HeroRouterDashAndRun::OnDashAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-    if (!DodgeAbilityEndedData.bWasCancelled)
-    {
-        UsedRunAbilty = GetASC()->TryActivateAbilityByClassAndReturnInstance(GA_RunAbilityClass);
-        if (!UsedRunAbilty)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Run Ability could not be activated after Dash in: %s"), *GetName());
-            EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
-        }
-    }
+    UsedRunAbilty = GetASC()->TryActivateAbilityByClassAndReturnInstance(GA_RunAbilityClass);
 }
 
 void UGA_HeroRouterDashAndRun::OnInputReleased(float TimeHeld)
-{
-    EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, true);
-}
-
-void UGA_HeroRouterDashAndRun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
     if (WaitRelease && IsValid(WaitRelease))
     {
@@ -62,7 +49,7 @@ void UGA_HeroRouterDashAndRun::EndAbility(const FGameplayAbilitySpecHandle Handl
     if (IsValid(UsedRunAbilty))
     {
         GetASC()->CancelAbilityHandle(UsedRunAbilty->GetCurrentAbilitySpecHandle());
-        UsedRunAbilty = nullptr;
+        UsedDashAbilty = nullptr;
     }
 
     if (IsValid(UsedDashAbilty))
@@ -74,5 +61,5 @@ void UGA_HeroRouterDashAndRun::EndAbility(const FGameplayAbilitySpecHandle Handl
         UsedDashAbilty = nullptr;
     }
 
-    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+    EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, true);
 }

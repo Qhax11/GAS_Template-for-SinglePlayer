@@ -33,30 +33,4 @@ protected:
 	UFUNCTION()
 	void OnStrafingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
-	UFUNCTION()
-	void OnWalkingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnWalkingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnJoggingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnJoggingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnRunningTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UPROPERTY(EditDefaultsOnly)
-	float WalkingSpeed = 200.0f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float JoggingSpeed = 400.0f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float RunningSpeed = 600.0f;
 };

@@ -8,6 +8,8 @@
 UGA_HeroRun::UGA_HeroRun()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Running);
 }
 
 void UGA_HeroRun::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

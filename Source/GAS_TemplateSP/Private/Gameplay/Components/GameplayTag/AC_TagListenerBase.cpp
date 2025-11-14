@@ -33,15 +33,6 @@ void UAC_TagListenerBase::BeginPlay()
 
 		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing, EListenMode::OnAdded).BindDynamic(this, &UAC_TagListenerBase::OnStrafingTagAdded);
 		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing, EListenMode::OnRemoved).BindDynamic(this, &UAC_TagListenerBase::OnStrafingTagRemoved);
-
-		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Walking, EListenMode::OnAdded).BindDynamic(this, &UAC_TagListenerBase::OnWalkingTagAdded);
-		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Walking, EListenMode::OnRemoved).BindDynamic(this, &UAC_TagListenerBase::OnWalkingTagRemoved);
-
-		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Jogging, EListenMode::OnAdded).BindDynamic(this, &UAC_TagListenerBase::OnJoggingTagAdded);
-		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Jogging, EListenMode::OnRemoved).BindDynamic(this, &UAC_TagListenerBase::OnJoggingTagRemoved);
-
-		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Running, EListenMode::OnAdded).BindDynamic(this, &UAC_TagListenerBase::OnRunningTagAdded);
-		TagDelegatesComponent->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Running, EListenMode::OnRemoved).BindDynamic(this, &UAC_TagListenerBase::OnRunningTagRemoved);
 	}
 	else
 	{
@@ -69,33 +60,4 @@ void UAC_TagListenerBase::OnStrafingTagRemoved(const UAbilitySystemComponent* Ab
 {
 	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
 }
-
-void UAC_TagListenerBase::OnWalkingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	//OwnerCharacterMoveComp->MaxWalkSpeed = WalkingSpeed;
-}
-
-void UAC_TagListenerBase::OnWalkingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-}
-
-void UAC_TagListenerBase::OnJoggingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	//OwnerCharacterMoveComp->MaxWalkSpeed = JoggingSpeed;
-}
-
-void UAC_TagListenerBase::OnJoggingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-}
-
-void UAC_TagListenerBase::OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	//OwnerCharacterMoveComp->MaxWalkSpeed = RunningSpeed;
-}
-
-void UAC_TagListenerBase::OnRunningTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-}
-
-
 

@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Hero/GA_HeroRouter.h"
+#include "Gameplay/Abilities/Hero/Router/GA_HeroRouter.h"
 
 void UGA_HeroRouter::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,

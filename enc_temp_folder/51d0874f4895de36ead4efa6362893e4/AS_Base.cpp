@@ -24,7 +24,6 @@ UAS_Base::UAS_Base()
 
 void UAS_Base::ActiveGameplayEffectAdded(UAbilitySystemComponent* OwnerASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle)
 {
-	// First, process the ModifiedAttributes (for instant effects)
 	for (int32 i = 0; i < EffectSpec.ModifiedAttributes.Num(); i++)
 	{
 		const FGameplayAttribute& GameplayAttribute = EffectSpec.ModifiedAttributes[i].Attribute;
@@ -41,39 +40,10 @@ void UAS_Base::ActiveGameplayEffectAdded(UAbilitySystemComponent* OwnerASC, cons
 		ClampAttributeValues(Data);
 		BroadcastPropertyChange(Data);
 	}
-
-	// If ModifiedAttributes is empty, directly check the Modifiers (for infinite/duration effects)
-	if (EffectSpec.ModifiedAttributes.Num() == 0 && EffectSpec.Modifiers.Num() > 0)
-	{
-		for (int32 i = 0; i < EffectSpec.Modifiers.Num(); i++)
-		{
-			const FGameplayModifierInfo& ModifierInfo = EffectSpec.Def->Modifiers[i];
-			const FGameplayAttribute& GameplayAttribute = ModifierInfo.Attribute;
-
-			float EvaluatedMagnitude = EffectSpec.Modifiers[i].GetEvaluatedMagnitude();
-
-			FGameplayModifierEvaluatedData EvaluatedData = FGameplayModifierEvaluatedData(
-				GameplayAttribute,
-				ModifierInfo.ModifierOp,
-				EvaluatedMagnitude,
-				EffectHandle
-			);
-
-			FGameplayEffectModCallbackData Data = FGameplayEffectModCallbackData(
-				EffectSpec,
-				EvaluatedData,
-				*EffectHandle.GetOwningAbilitySystemComponent()
-			);
-
-			ClampAttributeValues(Data);
-			BroadcastPropertyChange(Data);
-		}
-	}
 }
 
 void UAS_Base::ActiveGameplayEffectRemoved(const FActiveGameplayEffect& ActiveGameplayEffect)
 {
-	// First, process the ModifiedAttributes (for instant effects)
 	for (int32 i = 0; i < ActiveGameplayEffect.Spec.ModifiedAttributes.Num(); i++)
 	{
 		const FGameplayAttribute& GameplayAttribute = ActiveGameplayEffect.Spec.ModifiedAttributes[i].Attribute;
@@ -89,34 +59,6 @@ void UAS_Base::ActiveGameplayEffectRemoved(const FActiveGameplayEffect& ActiveGa
 
 		ClampAttributeValues(Data);
 		BroadcastPropertyChange(Data);
-	}
-
-	// If ModifiedAttributes is empty, directly check the Modifiers (for infinite/duration effects)
-	if (ActiveGameplayEffect.Spec.ModifiedAttributes.Num() == 0 && ActiveGameplayEffect.Spec.Modifiers.Num() > 0)
-	{
-		for (int32 i = 0; i < ActiveGameplayEffect.Spec.Modifiers.Num(); i++)
-		{
-			const FGameplayModifierInfo& ModifierInfo = ActiveGameplayEffect.Spec.Def->Modifiers[i];
-			const FGameplayAttribute& GameplayAttribute = ModifierInfo.Attribute;
-
-			float EvaluatedMagnitude = ActiveGameplayEffect.Spec.Modifiers[i].GetEvaluatedMagnitude();
-
-			FGameplayModifierEvaluatedData EvaluatedData = FGameplayModifierEvaluatedData(
-				GameplayAttribute,
-				ModifierInfo.ModifierOp,
-				EvaluatedMagnitude,
-				ActiveGameplayEffect.Handle
-			);
-
-			FGameplayEffectModCallbackData Data = FGameplayEffectModCallbackData(
-				ActiveGameplayEffect.Spec,
-				EvaluatedData,
-				*ActiveGameplayEffect.Handle.GetOwningAbilitySystemComponent()
-			);
-
-			ClampAttributeValues(Data);
-			BroadcastPropertyChange(Data);
-		}
 	}
 }
 

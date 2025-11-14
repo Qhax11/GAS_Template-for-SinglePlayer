@@ -17,6 +17,8 @@ public:
 	UFUNCTION()
 	void OnDashAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
 
+	void TryActivateRun();
+
 	UFUNCTION()
 	void OnInputReleased(float TimeHeld);
 
@@ -34,4 +36,10 @@ public:
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	float MinInputHoldTimeForRun = 0.2f; // 0.2 saniye minimum basýlý tutma süresi
+
+private:
+	float InputPressedTime = 0.0f;
 };

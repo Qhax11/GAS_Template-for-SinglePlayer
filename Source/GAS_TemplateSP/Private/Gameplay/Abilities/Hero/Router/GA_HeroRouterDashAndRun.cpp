@@ -31,28 +31,48 @@ void UGA_HeroRouterDashAndRun::ActivateAbility(const FGameplayAbilitySpecHandle 
         WaitRelease->OnRelease.AddDynamic(this, &UGA_HeroRouterDashAndRun::OnInputReleased);
         WaitRelease->ReadyForActivation();
     }
+
+    InputPressedTime = GetWorld()->GetTimeSeconds();
 }
 
 void UGA_HeroRouterDashAndRun::OnDashAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-    if (!DodgeAbilityEndedData.bWasCancelled)
+    if (DodgeAbilityEndedData.bWasCancelled)
     {
-        // WaitRelease task'ý kontrol et - input hala basýlý mý?
-        if (WaitRelease && WaitRelease->IsActive())
+        EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+    }
+
+    float CurrentTime = GetWorld()->GetTimeSeconds();
+    float HoldDuration = CurrentTime - InputPressedTime;
+
+    if (HoldDuration >= MinInputHoldTimeForRun)
+    {
+        TryActivateRun();
+    }
+    else
+    {
+        float RemainingTime = MinInputHoldTimeForRun - HoldDuration;
+        FTimerHandle TimerDel;
+        if (UWorld* World = GetWorld())
         {
-            // Input hala basýlý, Run'ý baþlat
-            UsedRunAbilty = GetASC()->TryActivateAbilityByClassAndReturnInstance(GA_RunAbilityClass);
-            if (!UsedRunAbilty)
-            {
-                UE_LOG(LogTemp, Warning, TEXT("Run Ability could not be activated after Dash in: %s"), *GetName());
-                EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
-            }
+            World->GetTimerManager().SetTimer(
+                TimerDel,
+                this,
+                &UGA_HeroRouterDashAndRun::TryActivateRun,
+                RemainingTime,
+                false
+            );
         }
-        else
-        {
-            // Input býrakýlmýþ, sadece Dash yap
-            EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
-        }
+    }
+}
+
+void UGA_HeroRouterDashAndRun::TryActivateRun()
+{
+    UsedRunAbilty = GetASC()->TryActivateAbilityByClassAndReturnInstance(GA_RunAbilityClass);
+    if (!UsedRunAbilty)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Run Ability could not be activated after Dash in: %s"), *GetName());
+        EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
     }
 }
 

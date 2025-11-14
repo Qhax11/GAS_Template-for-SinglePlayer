@@ -18,6 +18,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+	class AGAS_CharacterBase* OwnerCharacter;
+
+	UPROPERTY()
+	class UAbilitySystemComponent* OwnerCharacterASC;
+
+	UPROPERTY()
 	class UCharacterMovementComponent* OwnerCharacterMoveComp;
 
 	// Moving Tags

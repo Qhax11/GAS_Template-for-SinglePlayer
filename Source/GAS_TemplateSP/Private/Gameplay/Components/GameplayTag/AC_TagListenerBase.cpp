@@ -3,7 +3,7 @@
 
 #include "Gameplay/Components/GameplayTag/AC_TagListenerBase.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
-#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
@@ -16,14 +16,25 @@ void UAC_TagListenerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	OwnerCharacter = Cast<AGAS_CharacterBase>(GetOwner());
+	if (!OwnerCharacter) 
 	{
-		OwnerCharacterMoveComp = Character->GetCharacterMovement();
-		if (!OwnerCharacterMoveComp)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("OwnerCharacterMoveComp is null in %s"), *this->GetName());
-			return;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("OwnerCharacter is null in %s"), *this->GetName());
+		return;
+	}
+
+	OwnerCharacterASC = OwnerCharacter->GetAbilitySystemComponent();
+	if (!OwnerCharacterASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerCharacterASC is null in %s"), *this->GetName());
+		return;
+	}
+
+	OwnerCharacterMoveComp = OwnerCharacter->GetCharacterMovement();
+	if (!OwnerCharacterMoveComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerCharacterMoveComp is null in %s"), *this->GetName());
+		return;
 	}
 
 	if (UAC_TagDelegates* TagDelegatesComponent = GetOwner()->GetComponentByClass<UAC_TagDelegates>())
@@ -66,11 +77,17 @@ void UAC_TagListenerBase::OnStrafingTagRemoved(const UAbilitySystemComponent* Ab
 
 void UAC_TagListenerBase::OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+	if (OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+	{
+		OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+	}
 }
 
 void UAC_TagListenerBase::OnRunningTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	OwnerCharacterMoveComp->bOrientRotationToMovement = false;
+	if (OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+	{
+		OwnerCharacterMoveComp->bOrientRotationToMovement = false;
+	}
 }
 

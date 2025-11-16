@@ -30,10 +30,7 @@ void UAC_EnemyTagListener::OnPatrollingTagRemoved(const UAbilitySystemComponent*
 
 void UAC_EnemyTagListener::OnStrafingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	if (!OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Running))
-	{
-		OwnerCharacterMoveComp->bOrientRotationToMovement = false;
-	}
+	OwnerCharacterMoveComp->bOrientRotationToMovement = false;
 }
 
 void UAC_EnemyTagListener::OnStrafingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

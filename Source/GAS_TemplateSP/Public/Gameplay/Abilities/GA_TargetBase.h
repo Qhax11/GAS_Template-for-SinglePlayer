@@ -36,6 +36,8 @@ public:
 	UFUNCTION()
 	virtual void OnTargetActorInitialized();
 
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+
 	/** The TargetActor class that we spawned */
 	UPROPERTY(EditDefaultsOnly, Category = "TargetBase")
 	TSubclassOf<AGAS_TargetActorBase> TargetActorClass;

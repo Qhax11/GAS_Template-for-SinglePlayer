@@ -73,3 +73,4 @@ void UGA_HeroTargetBase::CancelAbilityFromInput()
 		TargetActor->Cancel();
 	}
 }
+

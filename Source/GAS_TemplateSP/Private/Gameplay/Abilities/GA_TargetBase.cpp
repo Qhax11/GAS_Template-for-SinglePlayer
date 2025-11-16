@@ -81,15 +81,25 @@ void UGA_TargetBase::OnTargetActorInitialized()
 
 void UGA_TargetBase::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
 {
-	TargetActor->DestroyTargetActor();
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_TargetBase::OnTargetActorCancelled(const FGAS_TargetActorData& TargetActorData)
 {
 	BP_OnTargetActorCancelled(TargetActorData);
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+}
+
+void UGA_TargetBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo,
+	bool bReplicateEndAbility, bool bWasCancelled)
+{
+	TargetActor->OnConfirm.Clear();
+	TargetActor->OnCancel.Clear();
+	TargetActor->OnInitialized.Clear();
 	TargetActor->DestroyTargetActor();
-	CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false);
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 

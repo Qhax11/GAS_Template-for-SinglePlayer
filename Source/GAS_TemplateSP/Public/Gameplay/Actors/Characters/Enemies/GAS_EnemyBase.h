@@ -45,6 +45,9 @@ protected:
 	class UAC_PatrolHandler* PatrolHandlerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
+	class UAC_EnemyTagListener* EnemyTagListenerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
     USceneComponent* FinisherPointComponent;
 
 	class AAIControllerBase* EnemyController;

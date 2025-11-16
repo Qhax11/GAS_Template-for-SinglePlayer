@@ -70,6 +70,9 @@ protected:
 	class UAC_HeroJumpHandler* HeroJumpHandlerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
+	class UAC_HeroTagListener* HeroTagListenerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_HeroGameplayCamera* HeroGameplayCameraComponent;
 
 private:

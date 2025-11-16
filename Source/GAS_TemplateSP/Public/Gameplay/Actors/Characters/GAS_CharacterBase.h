@@ -54,9 +54,6 @@ protected:
 	class UAC_PostureHandler* PostureHandlerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
-	class UAC_TagListenerBase* TagListenerComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CharacterBase|Components")
 	class UAC_TagDispatcher* TagDispatcherComponent;
 
 	class UAC_TagDelegates* TagDelegatesComponent;
@@ -98,8 +95,6 @@ public:
 
 	void RemoveGameplayTagsIfExist(FGameplayTagContainer& GameplayTags);
 
-private:
-	UFUNCTION()
-	void OnMovementModeChanged(ACharacter* Character, EMovementMode PrevMode, uint8 PreviousCustomMode);
-	
+	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode = 0) override;
+
 };

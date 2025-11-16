@@ -7,7 +7,6 @@
 #include "Gameplay/Components/AC_Team.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDispatcher.h"
-#include "Gameplay/Components/GameplayTag/AC_TagListenerBase.h"
 #include "Gameplay/Components/AC_GameplayData.h"
 #include "Gameplay/Components/AC_PostureHandler.h"
 #include "Gameplay/Components/AC_FootstepBase.h"
@@ -26,8 +25,6 @@ AGAS_CharacterBase::AGAS_CharacterBase(const FObjectInitializer& ObjectInitializ
 	TagDelegatesComponent = CreateDefaultSubobject<UAC_TagDelegates>(TEXT("TagDelegatesComponent"));
 
 	TagDispatcherComponent = CreateDefaultSubobject<UAC_TagDispatcher>(TEXT("TagDispatcherComponent"));
-
-	TagListenerComponent = CreateDefaultSubobject<UAC_TagListenerBase>(TEXT("TagListenerComponent"));
 
 	AttributesListenerComponent = CreateDefaultSubobject<UAC_AttributesListenerBase>(TEXT("AttributesListenerComponent"));
 
@@ -63,8 +60,6 @@ void AGAS_CharacterBase::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Weapon socket '%s' not found or WeaponChildComponent is null on %s"), *WeaponSocketName.ToString(), *GetName());
 	}
-
-	MovementModeChangedDelegate.AddDynamic(this, &AGAS_CharacterBase::OnMovementModeChanged);
 }
 
 UAbilitySystemComponent* AGAS_CharacterBase::GetAbilitySystemComponent() const
@@ -185,17 +180,21 @@ void AGAS_CharacterBase::RemoveGameplayTagsIfExist(FGameplayTagContainer& Gamepl
 	CharacterASC->RemoveLooseGameplayTags(GameplayTags);
 }
 
-void AGAS_CharacterBase::OnMovementModeChanged(ACharacter* Character, EMovementMode PrevMode, uint8 PreviousCustomMode)
+void AGAS_CharacterBase::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {
-	if (Character->GetCharacterMovement()->IsFalling())
+	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+
+	if (GetCharacterMovement()->IsFalling())
 	{
 		AddGameplayTagIfNotExist(GAS_Tags::TAG_Gameplay_State_InAir);
 	}
-	else if (PrevMode == MOVE_Falling)
+	else if (PrevMovementMode == MOVE_Falling)
 	{
 		RemoveGameplayTagIfExist(GAS_Tags::TAG_Gameplay_State_InAir);
 	}
 }
+
+
 
 
 

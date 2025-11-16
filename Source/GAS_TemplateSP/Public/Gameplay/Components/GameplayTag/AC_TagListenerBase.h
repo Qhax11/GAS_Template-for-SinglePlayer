@@ -3,6 +3,9 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemComponent.h"
 #include "AC_TagListenerBase.generated.h"
 
@@ -18,31 +21,17 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void BindTagDelegates();
+
 	UPROPERTY()
 	class AGAS_CharacterBase* OwnerCharacter;
 
 	UPROPERTY()
-	class UAbilitySystemComponent* OwnerCharacterASC;
+	UAbilitySystemComponent* OwnerCharacterASC;
 
 	UPROPERTY()
-	class UCharacterMovementComponent* OwnerCharacterMoveComp;
+	UCharacterMovementComponent* OwnerCharacterMoveComp;
 
-	// Moving Tags
-	UFUNCTION()
-	void OnPatrollingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnPatrollingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnStrafingTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnStrafingTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnRunningTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	UPROPERTY()
+	UAC_TagDelegates* OwnerTagDelegatesComp;
 };

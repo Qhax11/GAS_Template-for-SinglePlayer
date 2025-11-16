@@ -8,6 +8,7 @@
 #include "Gameplay/Abilities/InCombat/GA_TakeDamageBase.h"
 #include "Gameplay/AI/Components/IntendHandler/AC_IntendHandlerBase.h"
 #include <Gameplay/StaticDelegates/S_DamageDelegates.h>
+#include "Gameplay/AI/Components/AC_StateManager.h"
 
 
 UInComingAttackState::UInComingAttackState()
@@ -23,8 +24,11 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 
 bool UInComingAttackState::EnterCondition_Implementation()
 {
+	FComingAttackPayload ComingAttackPayload = StateManager->ComingAttackPayload;
+	float ComingAttackMaxRange = ComingAttackPayload.ComingAttack->MaxRange;
+
 	const float Distance = HeroTarget->GetDistanceTo(Enemy);
-	const bool bIsInRange = Distance < 350.f;
+	const bool bIsInRange = Distance < ComingAttackMaxRange;
 
 	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
 	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);

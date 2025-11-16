@@ -61,6 +61,14 @@ void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
 
 UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
+	bool bIsHeroRunning = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Running);
+	bool bIsHeroInAir = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InAir);
+
+	if (bIsHeroRunning && !bIsHeroInAir)
+	{
+		return nullptr;
+	}
+
 	if (CharacterBaseASC->HasAnyMatchingGameplayTags(BlockedTags))
 	{
 		return nullptr;

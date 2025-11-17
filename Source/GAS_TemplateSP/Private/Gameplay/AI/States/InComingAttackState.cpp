@@ -118,6 +118,12 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered."));
 
+	if (DamageData.ExecCalculationParameters.TargetActor != Enemy)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt TargetActor is not Enemy."));
+		return;
+	}
+
 	UnBindTargetComingAttackEnd();
 
 	if (DamageData.bParrySucces)
@@ -221,14 +227,45 @@ void UInComingAttackState::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP
 
 void UInComingAttackState::OnExit_Implementation()
 {
+	if (!IsInGameThread())
+	{
+		AsyncTask(ENamedThreads::GameThread, [WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
+			{
+				if (UInComingAttackState* Self = WeakThis.Get())
+				{
+					Self->OnExit_Implementation();
+				}
+			});
+		return;
+	}
+
 	Super::OnExit_Implementation();
 
+	// DEFER delegate cleanup - broadcast bitene kadar bekle
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().SetTimerForNextTick([WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
+			{
+				if (UInComingAttackState* Self = WeakThis.Get())
+				{
+					Self->CleanupDelegates();
+				}
+			});
+	}
+	else
+	{
+		// World yoksa direkt yap (BeginDestroy vs)
+		CleanupDelegates();
+	}
+
+	UnBindTargetComingAttackEnd();
+}
+
+void UInComingAttackState::CleanupDelegates()
+{
 	if (IsValid(DamageSubsystem))
 	{
-		if (DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
-		{
-			DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UInComingAttackState::OnDamageDealt);
-		}
+		DamageSubsystem->OnDamageDealt.RemoveAll(this);
 	}
 
 	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())
@@ -238,35 +275,20 @@ void UInComingAttackState::OnExit_Implementation()
 
 	if (IsValid(LastUsedTakeDamageAbility))
 	{
-		if (LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnTakeDamageAbilityEnded))
-		{
-			LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
-			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedTakeDamageAbility->GetName());
-		}
+		LastUsedTakeDamageAbility->OnGameplayAbilityEndedWithDataBP.RemoveAll(this);
 		LastUsedTakeDamageAbility = nullptr;
 	}
 
 	if (IsValid(LastUsedParryAbility))
 	{
-		if (LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryAbilityEnded))
-		{
-			LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnParryAbilityEnded);
-			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedParryAbility->GetName());
-		}
+		LastUsedParryAbility->OnGameplayAbilityEndedWithDataBP.RemoveAll(this);
 		LastUsedParryAbility = nullptr;
 	}
 
 	if (IsValid(LastUsedParryKnocbackAbility))
 	{
-		if (LastUsedParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UInComingAttackState::OnParryKnocbackAbilityEnded))
-		{
-			LastUsedParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
-			UE_LOG(LogTemp, Warning, TEXT("State Manager: %s ability's end bind is removed."), *LastUsedParryKnocbackAbility->GetName());
-		}
+		LastUsedParryKnocbackAbility->OnGameplayAbilityEndedWithDataBP.RemoveAll(this);
 		LastUsedParryKnocbackAbility = nullptr;
 	}
-
-	UnBindTargetComingAttackEnd();
 }
-
 

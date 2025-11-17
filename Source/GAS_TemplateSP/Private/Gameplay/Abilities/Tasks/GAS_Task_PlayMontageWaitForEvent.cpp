@@ -177,8 +177,22 @@ bool UGAS_Task_PlayMontageWaitForEvent::StopPlayingMontage() const
     return true;
 }
 
-void UGAS_Task_PlayMontageWaitForEvent::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) const
+void UGAS_Task_PlayMontageWaitForEvent::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) 
 {
+    if (!IsInGameThread())
+    {
+        // Delegate broadcast'i game thread'e defer et
+         TWeakObjectPtr<UGAS_Task_PlayMontageWaitForEvent> WeakThis(this);
+        AsyncTask(ENamedThreads::GameThread, [WeakThis, Montage, bInterrupted]()
+            {
+                if (UGAS_Task_PlayMontageWaitForEvent* Task = WeakThis.Get())
+                {
+                    Task->OnMontageBlendingOut(Montage, bInterrupted);
+                }
+            });
+        return;
+    }
+
     if (Ability && Ability->GetCurrentMontage() == MontageToPlay)
     {
         if (Montage == MontageToPlay)
@@ -207,8 +221,22 @@ void UGAS_Task_PlayMontageWaitForEvent::OnMontageBlendingOut(UAnimMontage* Monta
     }
 }
 
-void UGAS_Task_PlayMontageWaitForEvent::OnAbilityCancelled() const
+void UGAS_Task_PlayMontageWaitForEvent::OnAbilityCancelled() 
 {
+    if (!IsInGameThread())
+    {
+        // Delegate broadcast'i game thread'e defer et
+        TWeakObjectPtr<UGAS_Task_PlayMontageWaitForEvent> WeakThis(this);
+        AsyncTask(ENamedThreads::GameThread, [WeakThis]()
+            {
+                if (UGAS_Task_PlayMontageWaitForEvent* Task = WeakThis.Get())
+                {
+                    Task->OnAbilityCancelled();
+                }
+            });
+        return;
+    }
+
     if (StopPlayingMontage())
     {
         // Let the BP handle the interrupt as well
@@ -221,6 +249,20 @@ void UGAS_Task_PlayMontageWaitForEvent::OnAbilityCancelled() const
 
 void UGAS_Task_PlayMontageWaitForEvent::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
+    if (!IsInGameThread())
+    {
+        // Delegate broadcast'i game thread'e defer et
+        TWeakObjectPtr<UGAS_Task_PlayMontageWaitForEvent> WeakThis(this);
+        AsyncTask(ENamedThreads::GameThread, [WeakThis, Montage, bInterrupted]()
+            {
+                if (UGAS_Task_PlayMontageWaitForEvent* Task = WeakThis.Get())
+                {
+                    Task->OnMontageEnded(Montage, bInterrupted);
+                }
+            });
+        return;
+    }
+
     if (!bInterrupted)
     {
         if (ShouldBroadcastAbilityTaskDelegates())
@@ -232,8 +274,21 @@ void UGAS_Task_PlayMontageWaitForEvent::OnMontageEnded(UAnimMontage* Montage, bo
     EndTask();
 }
 
-void UGAS_Task_PlayMontageWaitForEvent::OnGameplayEvent(FGameplayTag EventTag, const FGameplayEventData* Payload) const
+void UGAS_Task_PlayMontageWaitForEvent::OnGameplayEvent(FGameplayTag EventTag, const FGameplayEventData* Payload) 
 {
+    if (!IsInGameThread())
+    {
+        TWeakObjectPtr<UGAS_Task_PlayMontageWaitForEvent> WeakThis(this);
+        AsyncTask(ENamedThreads::GameThread, [WeakThis, EventTag, Payload]()
+            {
+                if (UGAS_Task_PlayMontageWaitForEvent* Task = WeakThis.Get())
+                {
+                    Task->OnGameplayEvent(EventTag, Payload);
+                }
+            });
+        return;
+    }
+
     if (!ShouldBroadcastAbilityTaskDelegates())
     {
         return;

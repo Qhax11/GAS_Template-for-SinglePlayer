@@ -115,12 +115,10 @@ private:
 	UPROPERTY()
 	bool bStopWhenAbilityEnds = true;
 
-
-
-	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted) const;
-	void OnAbilityCancelled() const;
+	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
+	void OnAbilityCancelled();
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-	void OnGameplayEvent(FGameplayTag EventTag, const FGameplayEventData* Payload) const;
+	void OnGameplayEvent(FGameplayTag EventTag, const FGameplayEventData* Payload);
 
 	FOnMontageBlendingOutStarted BlendingOutDelegate;
 	FOnMontageEnded MontageEndedDelegate;

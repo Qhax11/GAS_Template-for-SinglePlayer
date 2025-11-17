@@ -162,24 +162,6 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 
 void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (!IsInGameThread())
-	{
-		TWeakObjectPtr<UGA_MontageAbility> WeakThis(this);
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, EventTag, EventData]()
-				{
-					if (UGA_MontageAbility* Self = WeakThis.Get())
-					{
-						Self->OnMontageBlendOut(EventTag, EventData);
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return;
-	}
-
 	//UE_LOG(LogTemp, Warning, TEXT("OnMontageBlendOut: AnimMontage is: %s"), *AnimMontage->GetName());
 	if (MontageEndPolicy == EMontageEndPolicy::Never) 
 	{
@@ -194,24 +176,6 @@ void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEvent
 
 void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (!IsInGameThread())
-	{
-		TWeakObjectPtr<UGA_MontageAbility> WeakThis(this);
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, EventTag, EventData]()
-				{
-					if (UGA_MontageAbility* Self = WeakThis.Get())
-					{
-						Self->OnMontageInterrupted(EventTag, EventData);
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return;
-	}
-
 	if (MontageEndPolicy == EMontageEndPolicy::Never)
 	{
 		return;
@@ -226,47 +190,11 @@ void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEv
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (!IsInGameThread())
-	{
-		TWeakObjectPtr<UGA_MontageAbility> WeakThis(this);
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, EventTag, EventData]()
-				{
-					if (UGA_MontageAbility* Self = WeakThis.Get())
-					{
-						Self->OnMontageCancelled(EventTag, EventData);
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return;
-	}
-
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (!IsInGameThread())
-	{
-		TWeakObjectPtr<UGA_MontageAbility> WeakThis(this);
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, EventTag, EventData]()
-				{
-					if (UGA_MontageAbility* Self = WeakThis.Get())
-					{
-						Self->OnMontageCompleted(EventTag, EventData);
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return;
-	}
-
 	if (MontageEndPolicy == EMontageEndPolicy::Never)
 	{
 		return;
@@ -280,24 +208,6 @@ void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEven
 
 void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (!IsInGameThread())
-	{
-		TWeakObjectPtr<UGA_MontageAbility> WeakThis(this);
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis, EventTag, EventData]()
-				{
-					if (UGA_MontageAbility* Self = WeakThis.Get())
-					{
-						Self->OnEventReceived(EventTag, EventData);
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return;
-	}
-
 	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_MotionWarping)
 	{
 		if (bEnableMotionWarping)

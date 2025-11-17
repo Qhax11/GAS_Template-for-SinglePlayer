@@ -41,7 +41,6 @@ protected:
 
 	void UnBindTargetComingAttackEnd();
 
-
 	UFUNCTION()
 	void OnDamageDealt(const FDamageData& DamageData);
 
@@ -77,4 +76,6 @@ protected:
 	TSubclassOf<UGA_ParryKnockbackBase> EnemyParryKnocbackAbilityClass;
 
 	UGAS_GameplayAbilityBase* LastUsedParryKnocbackAbility;
+
+	void CleanupDelegates();
 };

@@ -6,6 +6,7 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
@@ -99,7 +100,7 @@ protected:
     UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "TransactionTag"))
     virtual bool ExitRequest(FString Reason, const FGameplayTag& TransactionTag = FGameplayTag());
 
-    bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
+    bool IsAttackInRange(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass);
 
     FAttackData GetSelectedAttackAbilityData() const;
 
@@ -108,15 +109,6 @@ protected:
     UGAS_GameplayAbilityBase* GetSelectedAttackAbilityCDO() const;
 
     FAttackData SelectNewAttackAbility() const;
-
-    /**
-     * @brief Checks if the call is on the Game Thread. If not, it defers ExitRequest
-     * to the Game Thread to prevent data races and crashes.
-     * @param ExitReason The string reason passed to ExitRequest.
-     * @return True if ExitRequest was called immediately on the Game Thread,
-     * False if the request was deferred to the Game Thread.
-     */
-    bool CheckThreadAndExitSafe(const FString& ExitReason);
 
 protected:
     UPROPERTY(BlueprintReadOnly)

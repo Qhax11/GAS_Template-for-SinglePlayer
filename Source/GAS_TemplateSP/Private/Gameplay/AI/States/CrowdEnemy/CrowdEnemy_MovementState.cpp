@@ -56,10 +56,7 @@ void UCrowdEnemy_MovementState::OnExit_Implementation()
 
 	if (LastUsedStrafingAbility && LastUsedStrafingAbility->IsValidLowLevel())
 	{
-		if (LastUsedStrafingAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UCrowdEnemy_MovementState::OnStrafingAbilityEnded))
-		{
-			LastUsedStrafingAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UCrowdEnemy_MovementState::OnStrafingAbilityEnded);
-		}
+		LastUsedStrafingAbility->OnAbilityEnded.RemoveAll(this);
 		LastUsedStrafingAbility = nullptr;
 	}
 
@@ -127,16 +124,13 @@ void UCrowdEnemy_MovementState::MakeStrafingAbility()
 	UGAS_GameplayAbilityBase* ActivatedStrafingAbility = EnemyASC->TryActivateAbilityByClassWithEventData(StrafingAbilityClass, StrafingAbilityEventData);
 	if (ActivatedStrafingAbility)
 	{
-		if (!ActivatedStrafingAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UCrowdEnemy_MovementState::OnStrafingAbilityEnded))
-		{
-			ActivatedStrafingAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UCrowdEnemy_MovementState::OnStrafingAbilityEnded);
-		}
-
+		ActivatedStrafingAbility->OnAbilityEnded.RemoveAll(this);
+		ActivatedStrafingAbility->OnAbilityEnded.AddUObject(this, &UCrowdEnemy_MovementState::OnStrafingAbilityEnded);
 		LastUsedStrafingAbility = ActivatedStrafingAbility;
 	}
 }
 
-void UCrowdEnemy_MovementState::OnStrafingAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+void UCrowdEnemy_MovementState::OnStrafingAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
 	// Delay before make strafing again
 	float WaitTime = FMath::RandRange(MinStrafingWaitTime, MaxStrafingWaitTime);

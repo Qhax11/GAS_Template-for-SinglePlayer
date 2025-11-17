@@ -20,10 +20,8 @@ void UGA_HeroRouterDashAndRun::ActivateAbility(const FGameplayAbilitySpecHandle 
         return;
 	}
 
-    if (!UsedDashAbilty->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UGA_HeroRouterDashAndRun::OnDashAbilityEnded)) 
-    {
-        UsedDashAbilty->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UGA_HeroRouterDashAndRun::OnDashAbilityEnded);
-    }
+    UsedDashAbilty->OnAbilityEnded.RemoveAll(this);
+    UsedDashAbilty->OnAbilityEnded.AddUObject(this, &UGA_HeroRouterDashAndRun::OnDashAbilityEnded);
 
     WaitRelease = UAbilityTask_WaitInputRelease::WaitInputRelease(this, true);
     if (WaitRelease)
@@ -35,7 +33,7 @@ void UGA_HeroRouterDashAndRun::ActivateAbility(const FGameplayAbilitySpecHandle 
     InputPressedTime = GetWorld()->GetTimeSeconds();
 }
 
-void UGA_HeroRouterDashAndRun::OnDashAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+void UGA_HeroRouterDashAndRun::OnDashAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
     if (DodgeAbilityEndedData.bWasCancelled)
     {
@@ -97,10 +95,7 @@ void UGA_HeroRouterDashAndRun::EndAbility(const FGameplayAbilitySpecHandle Handl
 
     if (IsValid(UsedDashAbilty))
     {
-        if (UsedDashAbilty->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UGA_HeroRouterDashAndRun::OnDashAbilityEnded))
-        {
-            UsedDashAbilty->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UGA_HeroRouterDashAndRun::OnDashAbilityEnded);
-        }
+        UsedDashAbilty->OnAbilityEnded.RemoveAll(this);
         UsedDashAbilty = nullptr;
     }
 

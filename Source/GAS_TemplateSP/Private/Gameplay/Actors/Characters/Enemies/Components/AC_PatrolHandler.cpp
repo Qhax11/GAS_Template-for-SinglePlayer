@@ -62,10 +62,8 @@ void UAC_PatrolHandler::StopPatrolling()
 
 	if (LastMoveToLocationAbility) 
 	{
-		if (!LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded))
-		{
-			LastMoveToLocationAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
-		}
+		LastMoveToLocationAbility->OnAbilityEnded.RemoveAll(this);
+		LastMoveToLocationAbility->OnAbilityEnded.AddUObject(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(WaitForNextPatrolTimerHandle);
@@ -97,17 +95,15 @@ void UAC_PatrolHandler::ActivatePatrollingAbility()
 
 	if (PatrollingAbility)
 	{
-		if (!PatrollingAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded))
-		{
-			PatrollingAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
-		}
+		PatrollingAbility->OnAbilityEnded.RemoveAll(this);
+		PatrollingAbility->OnAbilityEnded.AddUObject(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
 	}
 
 	CurrentIndex++;
 	LastMoveToLocationAbility = PatrollingAbility;
 }
 
-void UAC_PatrolHandler::OnPatrollingAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData)
+void UAC_PatrolHandler::OnPatrollingAbilityEnded(const FCustomAbilityEndedData& ShadowAttackAbilityEndedData)
 {
 	if (!bInPatrolling || !IsValid(this) || GetWorld()->bIsTearingDown)
 	{

@@ -30,7 +30,7 @@ protected:
 	void ActivatePatrollingAbility();
 
 	UFUNCTION()
-	void OnPatrollingAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData);
+	void OnPatrollingAbilityEnded(const FCustomAbilityEndedData& ShadowAttackAbilityEndedData);
 
 	UPROPERTY(EditAnywhere, Category = "Patrolling")
 	TArray<AActor*> PatrolPoints;

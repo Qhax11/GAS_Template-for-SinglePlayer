@@ -17,10 +17,10 @@ public:
 	void ActivateVulnerableAbility();
 
 	UFUNCTION()
-	void OnVulnerableAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnVulnerableAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	UFUNCTION()
-	void OnHeroShadowFinisherAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnHeroShadowFinisherAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	virtual void OnExit_Implementation() override;
 

@@ -21,7 +21,7 @@ protected:
 
 	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
 
-	void OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData) override;
+	void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData) override;
 
 	UFUNCTION()
 	void OnCanActivateNextAttack();

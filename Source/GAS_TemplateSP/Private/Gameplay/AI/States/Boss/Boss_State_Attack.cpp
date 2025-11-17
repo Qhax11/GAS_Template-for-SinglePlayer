@@ -44,10 +44,8 @@ void UBoss_State_Attack::MakeShadowAttack()
 			ShadowAttack->OnBossShadowAttackCompleted.AddDynamic(this, &UBoss_State_Attack::ExecuteShadowAttack);
 		}
 
-		if (!ShadowAttack->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UBoss_State_Attack::OnShadowAttackAbilityEnded))
-		{
-			ShadowAttack->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UBoss_State_Attack::OnShadowAttackAbilityEnded);
-		}
+		ShadowAttack->OnAbilityEnded.RemoveAll(this);
+		ShadowAttack->OnAbilityEnded.AddUObject(this, &UBoss_State_Attack::OnShadowAttackAbilityEnded);
 
 		LastUsedShadowAttack = ShadowAttack;
 	}
@@ -64,7 +62,7 @@ void UBoss_State_Attack::ExecuteShadowAttack(const FGAS_TargetActorData& ShadowA
 	*/
 }
 
-void UBoss_State_Attack::OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData)
+void UBoss_State_Attack::OnShadowAttackAbilityEnded(const FCustomAbilityEndedData& ShadowAttackAbilityEndedData)
 {
 	// If it dosen't cancelled it's mean executed and we keep listening from executed side
 	if (ShadowAttackAbilityEndedData.bWasCancelled)
@@ -79,10 +77,7 @@ void UBoss_State_Attack::OnExit_Implementation()
 
 	if (LastUsedShadowAttack)
 	{
-		if (LastUsedShadowAttack->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UBoss_State_Attack::OnShadowAttackAbilityEnded))
-		{
-			LastUsedShadowAttack->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UBoss_State_Attack::OnShadowAttackAbilityEnded);
-		}
+		LastUsedShadowAttack->OnAbilityEnded.RemoveAll(this);
 		LastUsedShadowAttack = nullptr;
 	}
 }

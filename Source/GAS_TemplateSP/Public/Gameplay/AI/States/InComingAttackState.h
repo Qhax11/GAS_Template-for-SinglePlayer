@@ -45,7 +45,7 @@ protected:
 	void OnDamageDealt(const FDamageData& DamageData);
 
 	UFUNCTION()
-	void OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnTakeDamageAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGA_EnemyTakeDamage> EnemyTakeDamageAbilityClass;
@@ -53,7 +53,7 @@ protected:
 	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility;
 
 	UFUNCTION()
-	void OnComingAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnComingAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	UGAS_GameplayAbilityBase* LastComingAttackAbility;
 
@@ -62,7 +62,7 @@ protected:
 	void MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
 
 	UFUNCTION()
-	void OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnParryAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGA_ParryBase> EnemyParryAbilityClass;
@@ -70,7 +70,7 @@ protected:
 	UGAS_GameplayAbilityBase* LastUsedParryAbility;
 	
 	UFUNCTION()
-	void OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGA_ParryKnockbackBase> EnemyParryKnocbackAbilityClass;

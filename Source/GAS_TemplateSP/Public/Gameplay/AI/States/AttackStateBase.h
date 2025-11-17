@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AttackStateBase.generated.h"
 
 
@@ -24,7 +25,7 @@ protected:
 	void MakeAttack();
 
 	UFUNCTION()
-	void OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	UGAS_GameplayAbilityBase* LastUsedAttack;
 

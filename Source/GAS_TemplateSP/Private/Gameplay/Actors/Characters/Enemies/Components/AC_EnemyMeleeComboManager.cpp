@@ -121,7 +121,7 @@ void UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved(const UAbilitySystemComp
 	EnemyTagDelegatesComp->UnregisterAllDelegatesForObject(this);
 }
 
-void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData)
+void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
 {
 	Super::OnComboAbilityEnd(ComboAbilityEndedData);
 

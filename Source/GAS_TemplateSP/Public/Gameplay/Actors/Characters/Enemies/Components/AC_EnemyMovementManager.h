@@ -83,7 +83,7 @@ protected:
 	void TryActivateMovementAbilityWithEventData(FMovementAbilityData MovementChainData);
 
 	UFUNCTION()
-	void OnMovementAbilityEnded(const FAbilityEndedDataBP& AbilityEndedData);
+	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
 
 private:
 	FMovementChainTracker MovementChainTracker;

@@ -14,10 +14,8 @@ void UVulnerableState::OnEnter_Implementation()
 	UGAS_GameplayAbilityBase* ActivatedHeroShadowFinisher = HeroTargetASC->TryActivateAbilityByClassAndReturnInstance(HeroShadowFinisherAbilityClass);
 	if (ActivatedHeroShadowFinisher)
 	{
-		if (!ActivatedHeroShadowFinisher->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded))
-		{
-			ActivatedHeroShadowFinisher->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded);
-		}
+		ActivatedHeroShadowFinisher->OnAbilityEnded.RemoveAll(this);
+		ActivatedHeroShadowFinisher->OnAbilityEnded.AddUObject(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded);
 	}
 
 	ActivateVulnerableAbility();
@@ -36,10 +34,8 @@ void UVulnerableState::ActivateVulnerableAbility()
 	UGAS_GameplayAbilityBase* ActivatedVulnerableAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(VulnerableAbilityClass);
 	if (ActivatedVulnerableAbility && ActivatedVulnerableAbility->IsActive())
 	{
-		if (!ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnVulnerableAbilityEnded))
-		{
-			ActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UVulnerableState::OnVulnerableAbilityEnded);
-		}
+		ActivatedVulnerableAbility->OnAbilityEnded.RemoveAll(this);
+		ActivatedVulnerableAbility->OnAbilityEnded.AddUObject(this, &UVulnerableState::OnVulnerableAbilityEnded);
 		LastUsedActivatedVulnerableAbility = ActivatedVulnerableAbility;
 	}
 	else
@@ -48,7 +44,7 @@ void UVulnerableState::ActivateVulnerableAbility()
 	}
 }
 
-void UVulnerableState::OnVulnerableAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+void UVulnerableState::OnVulnerableAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead)) 
 	{
@@ -60,7 +56,7 @@ void UVulnerableState::OnVulnerableAbilityEnded(const FAbilityEndedDataBP& Dodge
 	}
 }
 
-void UVulnerableState::OnHeroShadowFinisherAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+void UVulnerableState::OnHeroShadowFinisherAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
 
 }
@@ -71,10 +67,7 @@ void UVulnerableState::OnExit_Implementation()
 
 	if (LastUsedActivatedVulnerableAbility)
 	{
-		if (LastUsedActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UVulnerableState::OnVulnerableAbilityEnded))
-		{
-			LastUsedActivatedVulnerableAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UVulnerableState::OnVulnerableAbilityEnded);
-		}
+		LastUsedActivatedVulnerableAbility->OnAbilityEnded.RemoveAll(this);
 		LastUsedActivatedVulnerableAbility = nullptr;
 	}
 }

@@ -32,7 +32,7 @@ public:
 	void MakeStrafingAbility();
 
 	UFUNCTION()
-	void OnStrafingAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData);
+	void OnStrafingAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	void OnWaitTimeFinished();
 

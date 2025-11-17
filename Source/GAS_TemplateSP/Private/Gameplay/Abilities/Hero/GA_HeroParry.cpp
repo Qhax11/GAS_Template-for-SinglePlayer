@@ -56,10 +56,8 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 		UGAS_GameplayAbilityBase* ActivatedAbility = HeroASC->TryActivateAbilityByClassWithEventData(ParryKnockbackAbilityClass, Payload);
 		if (ActivatedAbility)
 		{
-			if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded))
-			{
-				ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded);
-			}
+			ActivatedAbility->OnAbilityEnded.RemoveAll(this);
+			ActivatedAbility->OnAbilityEnded.AddUObject(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded);
 		}
 	}
 }
@@ -69,7 +67,7 @@ void UGA_HeroParry::OnInputReleased(float TimeHeld)
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, true);
 }
 
-void UGA_HeroParry::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+void UGA_HeroParry::OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
 	GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(GetClass());
 }

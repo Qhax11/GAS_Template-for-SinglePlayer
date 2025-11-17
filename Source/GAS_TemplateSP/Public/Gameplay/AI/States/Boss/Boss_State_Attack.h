@@ -22,7 +22,7 @@ public:
 	void ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData);
 
 	UFUNCTION()
-	void OnShadowAttackAbilityEnded(const FAbilityEndedDataBP& ShadowAttackAbilityEndedData);
+	void OnShadowAttackAbilityEnded(const FCustomAbilityEndedData& ShadowAttackAbilityEndedData);
 
 	class UGA_BossShadowAttack* LastUsedShadowAttack;
 

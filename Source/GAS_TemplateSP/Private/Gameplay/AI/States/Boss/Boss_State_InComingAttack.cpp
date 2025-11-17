@@ -73,10 +73,8 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 		EnemyASC->TryActivateAbilityByClassWithEventData(BDS_Dodge->DodgeMovementAbilityData.MovementAbilityClass, GameplayEventData);
 	if (ActivatedDodgeAbility && ActivatedDodgeAbility->IsActive())
 	{
-		if (!ActivatedDodgeAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded))
-		{
-			ActivatedDodgeAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded);
-		}
+		ActivatedDodgeAbility->OnAbilityEnded.RemoveAll(this);
+		ActivatedDodgeAbility->OnAbilityEnded.AddUObject(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded);
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: ActivatedDodgeAbility entered."));
 		LastUsedDodgeAbility = ActivatedDodgeAbility;
 	}
@@ -90,7 +88,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 	}
 }
 
-void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
 	// Execution path if the function was already called on the Game Thread.
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDodgeAbilityEnded entered."));
@@ -140,10 +138,7 @@ void UBoss_State_InComingAttack::OnExit_Implementation()
 
 	if (LastUsedDodgeAbility)
 	{
-		if (LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded))
-		{
-			LastUsedDodgeAbility->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded);
-		}
+		LastUsedDodgeAbility->OnAbilityEnded.RemoveAll(this);
 		LastUsedDodgeAbility = nullptr;
 	}
 }

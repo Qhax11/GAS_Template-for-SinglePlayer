@@ -44,16 +44,13 @@ void UAttackStateBase::MakeAttack()
 
 	if (ActivatedAbility) 
 	{
-		if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAttackStateBase::OnAttackAbilityEnded))
-		{
-			ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAttackStateBase::OnAttackAbilityEnded);
-		}
-
+		ActivatedAbility->OnAbilityEnded.RemoveAll(this);
+		ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAttackStateBase::OnAttackAbilityEnded);
 		LastUsedAttack = ActivatedAbility;
 	}
 }
 
-void UAttackStateBase::OnAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+void UAttackStateBase::OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
 	ExitRequest("OnAttackAbilityEnded");
 }
@@ -64,10 +61,7 @@ void UAttackStateBase::OnExit_Implementation()
 
 	if (LastUsedAttack)
 	{
-		if (LastUsedAttack->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAttackStateBase::OnAttackAbilityEnded))
-		{
-			LastUsedAttack->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UAttackStateBase::OnAttackAbilityEnded);
-		}
+		LastUsedAttack->OnAbilityEnded.RemoveAll(this);
 		LastUsedAttack = nullptr;
 	}
 }

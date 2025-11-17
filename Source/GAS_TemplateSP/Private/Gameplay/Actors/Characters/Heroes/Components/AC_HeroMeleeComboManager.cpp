@@ -88,7 +88,7 @@ UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility
 	return ActivatedComboMeleeAttack;
 }
 
-void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData)
+void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
 {
 	Super::OnComboAbilityEnd(ComboAbilityEndedData);
 

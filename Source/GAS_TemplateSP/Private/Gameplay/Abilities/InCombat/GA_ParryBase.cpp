@@ -59,7 +59,7 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_Attribute_Posture_Empty, EListenMode::OnAdded).BindDynamic(this, &UGA_ParryBase::OnPostureEmptyTagAdded);
 }
 
-void UGA_ParryBase::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
+void UGA_ParryBase::OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
 	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }

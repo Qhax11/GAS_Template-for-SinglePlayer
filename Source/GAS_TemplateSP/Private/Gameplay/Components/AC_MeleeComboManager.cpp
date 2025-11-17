@@ -102,10 +102,8 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	ActiveComboChainTracker.CurrentAbilityInstance = ActivatedAbility;
 
 	// Bind end event safely
-	if (!ActivatedAbility->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_MeleeComboManager::OnComboAbilityEnd))
-	{
-		ActivatedAbility->OnGameplayAbilityEndedWithDataBP.AddDynamic(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
-	}
+	ActivatedAbility->OnAbilityEnded.RemoveAll(this);
+	ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
 
 	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: Activated Combo Ability: %s"), *ComboAbilityData->ComboAbilityClass->GetName());
 
@@ -115,17 +113,14 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	return ActivatedAbility;
 }
 
-void UAC_MeleeComboManager::OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData)
+void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
 {
 	if (!LastActivatedCombo) 
 	{
 		return;
 	}
 
-	if (LastActivatedCombo->OnGameplayAbilityEndedWithDataBP.IsAlreadyBound(this, &UAC_MeleeComboManager::OnComboAbilityEnd))
-	{
-		LastActivatedCombo->OnGameplayAbilityEndedWithDataBP.RemoveDynamic(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
-	}
+	LastActivatedCombo->OnAbilityEnded.RemoveAll(this);
 }
 
 FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)

@@ -144,7 +144,7 @@ protected:
 	virtual void InitComboChainTracker();
 
 	UFUNCTION()
-	virtual void OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData);
+	virtual void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData);
 
 	FComboChainSearchResult GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
 

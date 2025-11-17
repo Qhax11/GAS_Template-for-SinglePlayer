@@ -31,7 +31,7 @@ protected:
 	UFUNCTION()
 	void OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
-	void OnComboAbilityEnd(const FAbilityEndedDataBP& ComboAbilityEndedData) override;
+	void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData) override;
 	
 private:
 	class AAIControllerBase* AIController;

@@ -11,39 +11,37 @@
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "GAS_GameplayAbilityBase.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityLevelChanged, UGameplayAbility*, Ability, int32, NewLevel);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCostChanged, UGameplayAbility*, Ability, float, NewCost);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownChanged, UGameplayAbility*, Ability, float, NewCooldown);
+class UGAS_GameplayAbilityBase;
 
-
-/** Ability Ended Data BP version*/
-USTRUCT(BlueprintType)
-struct FAbilityEndedDataBP
+USTRUCT()
+struct FCustomAbilityEndedData
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
-	FAbilityEndedDataBP()
+	FCustomAbilityEndedData()
 		: AbilityThatEnded(nullptr)
 		, bWasCancelled(false)
 	{
 	}
 
-	FAbilityEndedDataBP(UGAS_GameplayAbilityBase* InAbility, bool bInWasCancelled)
+	FCustomAbilityEndedData(UGAS_GameplayAbilityBase* InAbility, bool bInWasCancelled)
 		: AbilityThatEnded(InAbility)
 		, bWasCancelled(bInWasCancelled)
 	{
 	}
 
 	/** Ability that ended, normally instance but could be CDO */
-	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UGAS_GameplayAbilityBase> AbilityThatEnded;
+	UGAS_GameplayAbilityBase* AbilityThatEnded;
 
 	/** True if this was cancelled deliberately, false if it ended normally */
-	UPROPERTY(BlueprintReadOnly)
 	bool bWasCancelled;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameplayAbilityEndedBP, const FAbilityEndedDataBP&, AbilityEndedDataBP);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityLevelChanged, UGameplayAbility*, Ability, int32, NewLevel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCostChanged, UGameplayAbility*, Ability, float, NewCost);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownChanged, UGameplayAbility*, Ability, float, NewCooldown);
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityEnded, const FCustomAbilityEndedData&);
 
 UCLASS(BlueprintType)
 class GAS_TEMPLATESP_API UGAS_GameplayAbilityBase : public UGameplayAbility
@@ -99,8 +97,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
 	bool bApplyCommit = true;
 
-	UPROPERTY(BlueprintAssignable, Category = "GameplayAbilityBase|Delegates")
-	FGameplayAbilityEndedBP OnGameplayAbilityEndedWithDataBP;
+	FOnAbilityEnded OnAbilityEnded;
 
 	// Returns true if any of the ability's cooldown tags are currently active on the given ASC.
     // NOTE: This function is intended to be used with the CDO of the ability, so a valid ASC must be provided.

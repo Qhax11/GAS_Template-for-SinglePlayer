@@ -24,7 +24,7 @@ public:
 	UFUNCTION()
 	void OnInputReleased(float TimeHeld);
 
-	virtual void OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData) override;
+	virtual void OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData) override;
 
 	class UAbilityTask_WaitInputRelease* WaitRelease;
 

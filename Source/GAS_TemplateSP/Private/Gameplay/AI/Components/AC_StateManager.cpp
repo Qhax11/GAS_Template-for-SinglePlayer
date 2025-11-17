@@ -117,13 +117,14 @@ void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	if (CurrentState)
 	{
 		CurrentState->OnTick(DeltaTime);
-
+#if WITH_EDITOR
 		if (bEnableDebug) 
 		{
 			const FVector Location = OwnerEnemyBase->GetActorLocation() + FVector(0.f, 0.f, 150.f);
 			const FString DebugText = FString::Printf(TEXT("State: %s"), *CurrentState->GetName());
 			DrawDebugString(GetWorld(), Location, DebugText, nullptr, FColor::Cyan, 0.f, true, 1.5f);
 		}
+#endif // WITH_EDITOR
 	}
 }
 

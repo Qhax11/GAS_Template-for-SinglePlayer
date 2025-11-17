@@ -118,19 +118,6 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered."));
 
-	if (DamageData.ExecCalculationParameters.TargetActor != Enemy)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt TargetActor is not Enemy."));
-		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
-			{
-				if (IsValid(this))
-				{
-					CheckThreadAndExitSafe("State Manager: OnDamageDealt->TargetActor is not Enemy");
-				}
-			});
-		return;
-	}
-
 	UnBindTargetComingAttackEnd();
 
 	if (DamageData.bParrySucces)
@@ -178,12 +165,12 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 
 void UInComingAttackState::OnTakeDamageAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	CheckThreadAndExitSafe("OnTakeDamageAbilityEnded");
+	ExitRequest("OnTakeDamageAbilityEnded");
 }
 
 void UInComingAttackState::OnComingAttackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	CheckThreadAndExitSafe("OnComingAttackAbilityEnded");
+	ExitRequest("OnComingAttackAbilityEnded");
 }
 
 void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
@@ -223,31 +210,17 @@ void UInComingAttackState::OnParryAbilityEnded(const FAbilityEndedDataBP& DodgeA
 	}
 	else
 	{
-		CheckThreadAndExitSafe("Parry Ability Ended without knocback.");
+		ExitRequest("Parry Ability Ended without knocback.");
 	}
 }
 
 void UInComingAttackState::OnParryKnocbackAbilityEnded(const FAbilityEndedDataBP& DodgeAbilityEndedData)
 {
-	CheckThreadAndExitSafe("OnParryKnocbackAbilityEnded");
+	ExitRequest("OnParryKnocbackAbilityEnded");
 }
 
 void UInComingAttackState::OnExit_Implementation()
 {
-	if (!IsInGameThread())
-	{
-		AsyncTask(ENamedThreads::GameThread, [WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
-			{
-				if (UInComingAttackState* Self = WeakThis.Get())
-				{
-					// PROBLEM HERE: Recursive call could lead to an infinite loop 
-					// or stack overflow if not handled carefully, though unlikely here.
-					Self->OnExit_Implementation();
-				}
-			});
-		return;
-	}
-
 	Super::OnExit_Implementation();
 
 	if (IsValid(DamageSubsystem))

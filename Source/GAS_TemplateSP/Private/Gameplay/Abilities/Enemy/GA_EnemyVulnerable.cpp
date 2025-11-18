@@ -3,6 +3,11 @@
 
 #include "Gameplay/Abilities/Enemy/GA_EnemyVulnerable.h"
 
+UGA_EnemyVulnerable::UGA_EnemyVulnerable()
+{
+    TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
+}
+
 void UGA_EnemyVulnerable::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
     // CRITICAL FIX: Check if ASC is valid before accessing it

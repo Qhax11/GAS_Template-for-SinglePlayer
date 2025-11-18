@@ -33,6 +33,7 @@ void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle 
 	}
 
 	StartupEffects();
+	RemoveTags();
 }
 
 void UGAS_GameplayAbilityBase::StartupEffects()
@@ -43,6 +44,18 @@ void UGAS_GameplayAbilityBase::StartupEffects()
 void UGAS_GameplayAbilityBase::ApplyGameplayEffectToSelf(TArray<TSubclassOf<UGameplayEffect>> Effects)
 {
 	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), this, GetAbilitySystemComponentFromActorInfo(), Effects);
+}
+
+void UGAS_GameplayAbilityBase::RemoveTags()
+{
+	UAbilitySystemComponent* OwnerASC = GetAbilitySystemComponentFromActorInfo();
+	if (OwnerASC)
+	{
+		for (const FGameplayTag& Tag : TagsToRemove)
+		{
+			OwnerASC->RemoveLooseGameplayTag(Tag, 100);
+		}
+	}
 }
 
 float UGAS_GameplayAbilityBase::GetCost(int32 AbilityLevel) const

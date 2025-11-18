@@ -63,6 +63,8 @@ public:
 
 	virtual void ApplyGameplayEffectToSelf(TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects);
 
+	void RemoveTags();
+
 	UFUNCTION(BlueprintPure, Category = "GameplayAbilityBase")
 	float GetCost(int32 AbilityLevel) const;
 
@@ -96,6 +98,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
 	bool bApplyCommit = true;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
+	FGameplayTagContainer TagsToRemove;
 
 	FOnAbilityEnded OnAbilityEnded;
 

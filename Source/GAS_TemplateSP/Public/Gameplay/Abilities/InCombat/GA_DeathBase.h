@@ -25,14 +25,10 @@ protected:
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
-	UPROPERTY(EditDefaultsOnly, Category = "DeathBase")
-	FGameplayTagContainer TagsToRemove;
-
 private:
 	UPROPERTY()
 	const AGAS_CharacterBase* CachedInstigator = nullptr;
 
 	void BrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase);
 
-	void RemoveTags();
 };

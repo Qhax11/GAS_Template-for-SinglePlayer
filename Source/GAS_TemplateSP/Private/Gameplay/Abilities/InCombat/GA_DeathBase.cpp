@@ -46,18 +46,6 @@ void UGA_DeathBase::BrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase)
 	BroadcastDeSpawn(CharacterDeSpawnData);
 }
 
-void UGA_DeathBase::RemoveTags()
-{
-	UAbilitySystemComponent* OwnerASC = GetAbilitySystemComponentFromActorInfo();
-	if (OwnerASC)
-	{
-		for (const FGameplayTag& Tag : TagsToRemove)
-		{
-			OwnerASC->RemoveLooseGameplayTag(Tag, 100);
-		}
-	}
-}
-
 void UGA_DeathBase::BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData)
 {
 	// Logic will be implemented in subclasses.

@@ -10,7 +10,6 @@ UGA_EnemyVulnerable::UGA_EnemyVulnerable()
 
 void UGA_EnemyVulnerable::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-    // CRITICAL FIX: Check if ASC is valid before accessing it
     UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
     if (ASC && IsValid(ASC))
     {

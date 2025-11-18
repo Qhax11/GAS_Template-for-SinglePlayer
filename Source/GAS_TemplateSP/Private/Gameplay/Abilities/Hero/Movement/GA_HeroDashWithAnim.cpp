@@ -45,6 +45,7 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         return;
     }
 
+    DirectionTag = InputDirectionTag;
     AnimMontage = FindedDodgeMontage;
 
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);

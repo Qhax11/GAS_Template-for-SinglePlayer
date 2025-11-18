@@ -106,15 +106,25 @@ FVector UGA_MontageAbility::CalculateMotionWarpingLocation() const
 {
 	FVector OwnerLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
 	FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	FVector Right = GetAvatarActorFromActorInfo()->GetActorRightVector();
+
 	FVector TargetLocation = OwnerLocation;
 
-	if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Forward)
+	if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Forward)
 	{
 		TargetLocation += Forward * MotionWarpingDistance;
 	}
-	else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Backward)
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Backward)
 	{
 		TargetLocation -= Forward * MotionWarpingDistance;
+	}
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Right)
+	{
+		TargetLocation += Right * MotionWarpingDistance;
+	}
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Left)
+	{
+		TargetLocation -= Right * MotionWarpingDistance;
 	}
 	else
 	{

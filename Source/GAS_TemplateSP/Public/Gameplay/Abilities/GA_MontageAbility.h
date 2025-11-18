@@ -91,8 +91,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping && bUseDestinationReachForDistance"))
 	float DestinationReachDistance = 100.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"), meta = (Categories = "AI.Direction.Resolved"))
-	FGameplayTag DirectionTag;
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"), meta = (Categories = "Gameplay.Direction"))
+	FGameplayTag DirectionTag = GAS_Tags::TAG_Gameplay_Direction_Forward;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
 	bool bDebugPointMotionWarping = false;

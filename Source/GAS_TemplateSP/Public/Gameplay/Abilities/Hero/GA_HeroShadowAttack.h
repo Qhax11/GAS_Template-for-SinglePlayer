@@ -22,4 +22,9 @@ protected:
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
+	UFUNCTION()
+	void OnTargetLockedTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UPROPERTY()
+	class UAC_TagDelegates* HeroTagDelegatesComp;
 };

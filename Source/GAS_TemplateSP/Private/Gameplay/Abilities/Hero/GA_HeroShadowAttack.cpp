@@ -5,8 +5,9 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/SC_HeroShadowController.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Gameplay/Abilities/TargetActors/Shadows/HeroShadowTargetActor.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
 UGA_HeroShadowAttack::UGA_HeroShadowAttack()
@@ -14,6 +15,7 @@ UGA_HeroShadowAttack::UGA_HeroShadowAttack()
     AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Shadow);
     ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
+    ActivationRequiredTags.AddTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 }
 
 void UGA_HeroShadowAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -22,6 +24,22 @@ void UGA_HeroShadowAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     const FGameplayEventData* TriggerEventData)
 {
     Super::ActivateAbility (Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+    AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
+    if (!Hero)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Hero is null in %s"), *this->GetName());
+        return;
+    }
+
+    HeroTagDelegatesComp = Hero->GetTagDelegatesComponent();
+    if (!Hero)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("OwnerTagDelegatesComp is null in %s"), *this->GetName());
+        return;
+    }
+
+    HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, EListenMode::OnRemoved).BindDynamic(this, &UGA_HeroShadowAttack::OnTargetLockedTagRemoved);
 }
 
 void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData)
@@ -59,6 +77,11 @@ void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
     BP_OnTargetActorConfirm(TargetActorData);
 
     Super::OnTargetActorConfirm(TargetActorData);
+}
+
+void UGA_HeroShadowAttack::OnTargetLockedTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+    EndAbilityManually();
 }
 
 void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector Location)

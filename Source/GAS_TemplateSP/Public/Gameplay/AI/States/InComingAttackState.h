@@ -78,4 +78,11 @@ protected:
 	UGAS_GameplayAbilityBase* LastUsedParryKnocbackAbility;
 
 	void CleanupDelegates();
+
+private:
+	FDelegateHandle ComingAttackEndHandle;
+	FDelegateHandle TakeDamageEndHandle;
+	FDelegateHandle ParryEndHandle;
+	FDelegateHandle ParryKnockbackEndHandle;
+	FDelegateHandle DamageSubsystemHandle;
 };

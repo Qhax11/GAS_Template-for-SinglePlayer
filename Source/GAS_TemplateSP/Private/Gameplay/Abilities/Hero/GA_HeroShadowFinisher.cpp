@@ -121,11 +121,28 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
         return;
     }
 
-    UAbilitySystemComponent* TargetEnemyASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(HeroShadowTargetActor->GetCurrentTarget());
-    UGAS_AbilitySystemComponent* EnemyASC = CastChecked<UGAS_AbilitySystemComponent>(TargetEnemyASC);
+    AActor* CurrentTarget = HeroShadowTargetActor->GetCurrentTarget();
+    if (!CurrentTarget)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CurrentTarget is null in %s, cannot initialize ShadowFinisher."), *GetName());
+        Super::OnTargetActorConfirm(TargetActorData);
+        return;
+    }
+
+    UAbilitySystemComponent* TargetEnemyASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CurrentTarget);
+    if (!TargetEnemyASC)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("TargetEnemyASC is null for actor: %s in %s, cannot initialize ShadowFinisher."),
+            *CurrentTarget->GetName(), *GetName());
+        Super::OnTargetActorConfirm(TargetActorData);
+        return;
+    }
+
+    UGAS_AbilitySystemComponent* EnemyASC = Cast<UGAS_AbilitySystemComponent>(TargetEnemyASC);
     if (!EnemyASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("TargetEnemyASC is null in %s, cannot initialize ShadowFinisher."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Failed to cast ASC to UGAS_AbilitySystemComponent for actor: %s in %s"),
+            *CurrentTarget->GetName(), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
@@ -141,7 +158,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     }
 
     UGA_MeleeFinisher* ActivatedMeleeFinisher = Cast<UGA_MeleeFinisher>(GetASC()->TryActivateAbilityByClassAndReturnInstance(MeleeFinisherClass));
-    if (!ActivatedMeleeFinisher) 
+    if (!ActivatedMeleeFinisher)
     {
         UE_LOG(LogTemp, Warning, TEXT("ActivatedMeleeFinisher is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);

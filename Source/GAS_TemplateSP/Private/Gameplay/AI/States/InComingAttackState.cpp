@@ -94,8 +94,11 @@ void UInComingAttackState::BindTargetComingAttackEnd()
 	UGAS_GameplayAbilityBase* ComingAttack = StateManager->ComingAttackPayload.ComingAttack;
 	if (ComingAttack)
 	{
-		ComingAttack->OnAbilityEnded.RemoveAll(this);
-		ComingAttack->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnComingAttackAbilityEnded);
+		if (ComingAttackEndHandle.IsValid()) 
+		{
+			ComingAttack->OnAbilityEnded.RemoveAll(this);
+		}
+		ComingAttackEndHandle = ComingAttack->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnComingAttackAbilityEnded);
 	}
 	LastComingAttackAbility = ComingAttack;
 }
@@ -133,8 +136,11 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 		UGAS_GameplayAbilityBase* ParryKnocbackAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyParryKnocbackAbilityClass, Payload);
 		if (ParryKnocbackAbility && ParryKnocbackAbility->IsActive())
 		{
-			ParryKnocbackAbility->OnAbilityEnded.RemoveAll(this);
-			ParryKnocbackAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
+			if (ParryKnockbackEndHandle.IsValid()) 
+			{
+				ParryKnocbackAbility->OnAbilityEnded.RemoveAll(this);
+			}
+			ParryKnockbackEndHandle = ParryKnocbackAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: ParryKnocbackAbility executed."));
 		}
 		LastUsedParryKnocbackAbility = ParryKnocbackAbility;
@@ -152,8 +158,11 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 		UGAS_GameplayAbilityBase* TakeDamageAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyTakeDamageAbilityClass, Payload);
 		if (TakeDamageAbility && TakeDamageAbility->IsActive())
 		{
-			TakeDamageAbility->OnAbilityEnded.RemoveAll(this);
-			TakeDamageAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
+			if (TakeDamageEndHandle.IsValid()) 
+			{
+				TakeDamageAbility->OnAbilityEnded.RemoveAll(this);
+			}
+			TakeDamageEndHandle = TakeDamageAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnTakeDamageAbilityEnded);
 			UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageAbility executed."));
 		}
 		LastUsedTakeDamageAbility = TakeDamageAbility;
@@ -188,8 +197,11 @@ void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase*
 	UGAS_GameplayAbilityBase* ActivatedParryAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(EnemyParryAbilityClass);
 	if (ActivatedParryAbility && ActivatedParryAbility->IsActive())
 	{
-		ActivatedParryAbility->OnAbilityEnded.RemoveAll(this);
-		ActivatedParryAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryAbilityEnded);
+		if (ParryEndHandle.IsValid()) 
+		{
+			ActivatedParryAbility->OnAbilityEnded.RemoveAll(this);
+		}
+		ParryEndHandle = ActivatedParryAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryAbilityEnded);
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility executed."));
 	}
 
@@ -230,32 +242,14 @@ void UInComingAttackState::OnExit_Implementation()
 
 	Super::OnExit_Implementation();
 
+	// Hemen cleanup yap, sorun yok artık!
 	CleanupDelegates();
 	UnBindTargetComingAttackEnd();
-
-	/*
-	// DEFER delegate cleanup - broadcast bitene kadar bekle
-	if (GetWorld())
-	{
-		GetWorld()->GetTimerManager().SetTimerForNextTick([WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
-			{
-				if (UInComingAttackState* Self = WeakThis.Get())
-				{
-					Self->CleanupDelegates();
-					Self->UnBindTargetComingAttackEnd();
-				}
-			});
-	}
-	else
-	{
-		// World yoksa direkt yap (BeginDestroy vs)
-		CleanupDelegates();
-	}
-	*/
 }
 
 void UInComingAttackState::CleanupDelegates()
 {
+	// Bu fonksiyon defer edildiği için güvenli şekilde RemoveAll kullanabilir
 	if (IsValid(DamageSubsystem))
 	{
 		DamageSubsystem->OnDamageDealt.RemoveAll(this);
@@ -266,21 +260,27 @@ void UInComingAttackState::CleanupDelegates()
 		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 	}
 
-	if (IsValid(LastUsedTakeDamageAbility))
+	// TakeDamage
+	if (IsValid(LastUsedTakeDamageAbility) && TakeDamageEndHandle.IsValid())
 	{
-		LastUsedTakeDamageAbility->OnAbilityEnded.RemoveAll(this);
+		LastUsedTakeDamageAbility->OnAbilityEnded.Remove(TakeDamageEndHandle);
+		TakeDamageEndHandle.Reset();
 		LastUsedTakeDamageAbility = nullptr;
 	}
 
-	if (IsValid(LastUsedParryAbility))
+	// Parry
+	if (IsValid(LastUsedParryAbility) && ParryEndHandle.IsValid())
 	{
-		LastUsedParryAbility->OnAbilityEnded.RemoveAll(this);
+		LastUsedParryAbility->OnAbilityEnded.Remove(ParryEndHandle);
+		ParryEndHandle.Reset();
 		LastUsedParryAbility = nullptr;
 	}
 
-	if (IsValid(LastUsedParryKnocbackAbility))
+	// ParryKnockback
+	if (IsValid(LastUsedParryKnocbackAbility) && ParryKnockbackEndHandle.IsValid())
 	{
-		LastUsedParryKnocbackAbility->OnAbilityEnded.RemoveAll(this);
+		LastUsedParryKnocbackAbility->OnAbilityEnded.Remove(ParryKnockbackEndHandle);
+		ParryKnockbackEndHandle.Reset();
 		LastUsedParryKnocbackAbility = nullptr;
 	}
 }

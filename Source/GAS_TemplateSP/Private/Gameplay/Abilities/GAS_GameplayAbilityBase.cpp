@@ -124,15 +124,33 @@ void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	if (GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
+	TWeakObjectPtr<UGAS_GameplayAbilityBase> WeakThis(this);
+
+	if (GetWorld())
 	{
-		// We broadcast the event through the CDO, ensuring that even binders without access to the instance are triggered
-		UGAS_GameplayAbilityBase* CDO_AbilityBase = Cast<UGAS_GameplayAbilityBase>(GetClass()->GetDefaultObject());
-		CDO_AbilityBase->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(this, bWasCancelled));
-	}
-	else
-	{
-		OnAbilityEnded.Broadcast(FCustomAbilityEndedData(this, bWasCancelled));
+		GetWorld()->GetTimerManager().SetTimerForNextTick([WeakThis]()
+			{
+				// NULL CHECK!
+				if (!WeakThis.IsValid())
+				{
+					return; 
+				}
+
+				UGAS_GameplayAbilityBase* StrongThis = WeakThis.Get();
+
+				if (StrongThis->GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
+				{
+					UGAS_GameplayAbilityBase* CDO = Cast<UGAS_GameplayAbilityBase>(StrongThis->GetClass()->GetDefaultObject());
+					if (CDO)
+					{
+						CDO->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(StrongThis, false));
+					}
+				}
+				else
+				{
+					StrongThis->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(StrongThis, false));
+				}
+			});
 	}
 }
 

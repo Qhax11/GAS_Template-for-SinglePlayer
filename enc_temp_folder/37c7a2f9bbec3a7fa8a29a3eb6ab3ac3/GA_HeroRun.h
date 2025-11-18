@@ -21,11 +21,6 @@ public:
 
 	FActiveGameplayEffectHandle GE_SpeedBoostHandle;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGameplayEffect> GE_RunCostClass;
-
-	FActiveGameplayEffectHandle GE_RunCostHandle;
-
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 };

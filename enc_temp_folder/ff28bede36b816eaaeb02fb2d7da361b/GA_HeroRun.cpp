@@ -21,9 +21,6 @@ void UGA_HeroRun::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	UGameplayEffect* GE_SpeedBoost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GE_SpeedBoostClass);
 	GE_SpeedBoostHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_SpeedBoost, 1, FGameplayEffectContextHandle());
-
-	UGameplayEffect* GE_RunCost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GE_RunCostClass);
-	GE_RunCostHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_RunCost, 1, FGameplayEffectContextHandle());
 }
 
 void UGA_HeroRun::EndAbility(const FGameplayAbilitySpecHandle Handle,
@@ -32,6 +29,5 @@ void UGA_HeroRun::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
 	GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(GE_SpeedBoostHandle);
-	GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(GE_RunCostHandle);
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

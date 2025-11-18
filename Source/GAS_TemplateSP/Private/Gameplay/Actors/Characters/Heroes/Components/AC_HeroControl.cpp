@@ -1,6 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
 UAC_HeroControl::UAC_HeroControl()
@@ -51,27 +52,44 @@ void UAC_HeroControl::TryBindControlInputs()
 
 void UAC_HeroControl::Move(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = Value.Get<FVector2D>();
-
-	if (HeroBase != nullptr && HeroBase->Controller != nullptr)
+	if (!HeroBase || !HeroBase->Controller)
 	{
-		// Find out which way is forward
-		const FRotator Rotation = HeroBase->Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		HeroBase->AddMovementInput(ForwardDirection, MovementVector.Y);
-		HeroBase->AddMovementInput(RightDirection, MovementVector.X);
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase or Hero Controller are null in: %s"), *GetName());
+		return;
 	}
 
-	if (!MovementVector.IsNearlyZero())
+	FVector2D MovementVector = Value.Get<FVector2D>();
+	if (MovementVector.IsNearlyZero())
 	{
-		// New input received, update the LastMovementInput
-		LastMovementInput = MovementVector;
-		LastMovementInputTime = GetWorld()->GetTimeSeconds(); 
+		return;
+	}
+
+	// New input received, update the LastMovementInput
+	LastMovementInput = MovementVector;
+	LastMovementInputTime = GetWorld()->GetTimeSeconds();
+
+	// Find out which way is forward
+	const FRotator Rotation = HeroBase->Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	HeroBase->AddMovementInput(ForwardDirection, MovementVector.Y);
+	HeroBase->AddMovementInput(RightDirection, MovementVector.X);
+
+	// --- Snap-turn logic ---
+	float Speed = HeroBase->GetVelocity().Size2D();
+	float InputMagnitude = MovementVector.Size();
+
+	if (Speed < 80.f && InputMagnitude > 0.1f) // low-speed, small input
+	{
+		HeroBase->GetCharacterMovement()->RotationRate = FRotator(0.f, SnapRotationRate, 0.f);
+	}
+	else
+	{
+		HeroBase->GetCharacterMovement()->RotationRate = FRotator(0.f, DefaultRotationRate, 0.f);
 	}
 }
 

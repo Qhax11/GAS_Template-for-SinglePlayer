@@ -55,6 +55,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D LastLookMouseInput;
 
+	UPROPERTY(EditDefaultsOnly)
+	float SnapRotationRate = 3500.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DefaultRotationRate = 450.f;
+
 protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

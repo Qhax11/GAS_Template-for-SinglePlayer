@@ -53,6 +53,11 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Input) const
 {
+    if (!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+    {
+        return GAS_Tags::TAG_Gameplay_Direction_Forward;
+    }
+
     const float X = Input.X;
     const float Y = Input.Y;
 
@@ -64,18 +69,21 @@ FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Inp
 
     const float AngleDeg = FMath::RadiansToDegrees(FMath::Atan2(X, Y));
 
-    // Forward
-    if (AngleDeg >= -45.f && AngleDeg <= 45.f)
+    if (AngleDeg >= -45.f && AngleDeg <= 45.f) 
+    {
         return GAS_Tags::TAG_Gameplay_Direction_Forward;
-
-    // Right
-    if (AngleDeg > 45.f && AngleDeg < 135.f)
+    }
+    else if (AngleDeg > 45.f && AngleDeg < 135.f) 
+    {
         return GAS_Tags::TAG_Gameplay_Direction_Right;
-
-    // Backward
-    if (AngleDeg >= 135.f || AngleDeg <= -135.f)
+    }
+    else if (AngleDeg >= 135.f || AngleDeg <= -135.f) 
+    {
         return GAS_Tags::TAG_Gameplay_Direction_Backward;
+    }
+    else
+    {
+        return GAS_Tags::TAG_Gameplay_Direction_Left;
+    }
 
-    // Left
-    return GAS_Tags::TAG_Gameplay_Direction_Left;
 }

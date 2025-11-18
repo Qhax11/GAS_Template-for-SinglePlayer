@@ -5,6 +5,16 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
+UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
+{
+    AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dash);
+
+    ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
+    ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
+
+    ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
+}
+
 void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo,

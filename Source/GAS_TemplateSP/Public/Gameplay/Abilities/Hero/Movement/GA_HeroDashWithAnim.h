@@ -46,6 +46,8 @@ class GAS_TEMPLATESP_API UGA_HeroDashWithAnim : public UGA_MontageAbility
 	GENERATED_BODY()
 
 public:
+    UGA_HeroDashWithAnim();
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
     FGameplayTag GetDirectionTagFromInput(const FVector2D& Input) const;

@@ -22,9 +22,12 @@ public:
 	FActiveGameplayEffectHandle GE_SpeedBoostHandle;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGameplayEffect> GE_RunCostClass;
+	TSubclassOf<UGameplayEffect> GE_PostureDecreaseClass;
 
-	FActiveGameplayEffectHandle GE_RunCostHandle;
+	FActiveGameplayEffectHandle GE_PostureDecreaseHandle;
+
+	UPROPERTY(EditDefaultsOnly)
+	float PostureDecreaseAmount = 1.f;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 

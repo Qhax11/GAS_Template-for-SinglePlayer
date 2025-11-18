@@ -56,7 +56,7 @@ public:
 	FVector2D LastLookMouseInput;
 
 	UPROPERTY(EditDefaultsOnly)
-	float SnapRotationRate = 3500.f;
+	float SnapRotationRate = 12000.f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float DefaultRotationRate = 450.f;

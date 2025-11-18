@@ -101,6 +101,25 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility2, "Gameplay.Hero.Ability2");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_HeroAbility3, "Gameplay.Hero.Ability3");
 
+	// Directions
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction, "Gameplay.Direction");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction_Forward, "Gameplay.Direction.Forward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction_Backward, "Gameplay.Direction.Backward");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction_Left, "Gameplay.Direction.Left");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction_Right, "Gameplay.Direction.Right");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction_ForwardLeft, "Gameplay.Direction.ForwardLeft");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction_ForwardRight, "Gameplay.Direction.ForwardRight");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction_BackwardLeft, "Gameplay.Direction.BackwardLeft");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Direction_BackwardRight, "Gameplay.Direction.BackwardRight");
+
+	// ------------------------------------------------------------
+	// Ability Tags
+	// ------------------------------------------------------------
+	// These tags uniquely identify specific gameplay abilities.
+	// They are primarily used to classify, query, and activate abilities
+	// (e.g., attack, parry, take damage) through the Gameplay Ability System.
+	// Each ability owns a defining tag under the "Ability" category, which
+	// serves as a stable identifier rather than a temporary state indicator.
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat, "Gameplay.Ability.Combat");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_TakeDamage, "Gameplay.Ability.Combat.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Combat_Parry, "Gameplay.Ability.Combat.Parry");

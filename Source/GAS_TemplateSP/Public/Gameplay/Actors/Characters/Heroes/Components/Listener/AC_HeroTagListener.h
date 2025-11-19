@@ -45,4 +45,5 @@ protected:
 
 	UFUNCTION()
 	void OnHeroFinisherTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
 };

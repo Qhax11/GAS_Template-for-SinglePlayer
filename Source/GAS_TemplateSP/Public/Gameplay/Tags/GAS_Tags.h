@@ -97,6 +97,7 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_LockRotationTowardsTarget);
+
 	// ------------------------------------------------------------
 	// State Tags
 	// ------------------------------------------------------------

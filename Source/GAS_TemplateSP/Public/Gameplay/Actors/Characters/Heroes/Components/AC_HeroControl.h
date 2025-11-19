@@ -23,35 +23,41 @@ public:
 
 	void CharacterTurn(float DeltaTime);
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "HeroController|HeroRotation")
 	bool bOrientRotationToMovement = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HeroController|HeroRotation")
+	float MinRotationRate = 360.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HeroController|HeroRotation")
+	float MaxRotationRate = 720.f;
 
 	void LookMouse(const FInputActionValue& Value);
 
 	void ClampingPitchValue(const float NewPitchValue, const float LookMouseValueY);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "HeroController|Input")
 	const UInputAction* IA_Move;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "HeroController|Input")
 	const UInputAction* IA_LookMouse;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "HeroController|Input")
 	const UInputAction* IA_ConfirmTarget;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "HeroController|Input")
 	const UInputAction* IA_CancelTarget;
 
-	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = " Minimum limit for looking down from below"))
+	UPROPERTY(EditDefaultsOnly, Category = "HeroController|CameraRotation", Meta = (ToolTip = " Minimum limit for looking down from below"))
 	float MinPitchA = 0.0f;  
 
-	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking down from below"))
+	UPROPERTY(EditDefaultsOnly, Category = "HeroController|CameraRotation", Meta = (ToolTip = "Maximum limit for looking down from below"))
 	float MaxPitchA = 10.0f;  
 
-	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Minimum limit for looking up from above"))
+	UPROPERTY(EditDefaultsOnly, Category = "HeroController|CameraRotation", Meta = (ToolTip = "Minimum limit for looking up from above"))
 	float MinPitchB = 340.0f; 
 
-	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking up from above"))
+	UPROPERTY(EditDefaultsOnly, Category = "HeroController|CameraRotation", Meta = (ToolTip = "Maximum limit for looking up from above"))
 	float MaxPitchB = 360.0f; 
 
 	UPROPERTY(BlueprintReadOnly)
@@ -77,4 +83,6 @@ private:
 
 	FRotator CachedDesiredRotation;
 	bool bHasDesiredRotation = false;
+
+	static constexpr float MaxAngle = 180.f;
 };

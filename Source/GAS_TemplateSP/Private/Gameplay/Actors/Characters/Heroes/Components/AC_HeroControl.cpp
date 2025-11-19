@@ -164,7 +164,6 @@ void UAC_HeroControl::CharacterTurn(float DeltaTime)
 		return;
 	}
 
-	// Mode: manual rotation (target lock)
 	if (!bOrientRotationToMovement)
 	{
 		CachedDesiredRotation = HeroBase->GetActorRotation();
@@ -174,7 +173,6 @@ void UAC_HeroControl::CharacterTurn(float DeltaTime)
 
 	// Collect input
 	const FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
-
 	if (!MovementInput.IsNearlyZero())
 	{
 		CachedDesiredRotation = MovementInput.GetSafeNormal().Rotation();
@@ -186,11 +184,24 @@ void UAC_HeroControl::CharacterTurn(float DeltaTime)
 		return;
 	}
 
-	// Turn toward cached desired rotation
-	const float RotationRate = HeroBase->GetCharacterMovement()->RotationRate.Yaw;
 	const FRotator CurrentRotation = HeroBase->GetActorRotation();
 
-	const float NewYaw = FMath::FixedTurn(CurrentRotation.Yaw, CachedDesiredRotation.Yaw, RotationRate * DeltaTime);
+	// Angle difference
+	float AngleDiff = FMath::Abs(FRotator::NormalizeAxis(CachedDesiredRotation.Yaw - CurrentRotation.Yaw));
+
+	// Linear scale [0,1] of angle
+	float RateScale = FMath::Clamp(AngleDiff / MaxAngle, 0.f, 1.f);
+
+	// Ease-in/out curve applied
+	// 2 -> ease in/out exponent, sonucu 0-1 arasýnda normalize ediyoruz
+	float EaseScale = FMath::InterpEaseInOut(0.f, 1.f, RateScale, 2.f);
+
+	// Final dynamic rotation rate
+	float DynamicRotationRate = FMath::Lerp(MinRotationRate, MaxRotationRate, EaseScale);
+
+	// Rotate toward desired
+	float NewYaw = FMath::FixedTurn(CurrentRotation.Yaw, CachedDesiredRotation.Yaw, DynamicRotationRate * DeltaTime);
+
 	if (FMath::IsNearlyEqual(NewYaw, CachedDesiredRotation.Yaw, 1.f))
 	{
 		bHasDesiredRotation = false;

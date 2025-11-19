@@ -21,6 +21,16 @@ public:
 
 	void Move(const FInputActionValue& Value);
 
+	void MoveReleased(const FInputActionValue& Value);
+
+	UPROPERTY(EditDefaultsOnly, Category = "TabTurning")
+	float TabTurningSpeed = 20.0f;
+
+	float PressedTime;
+	bool bMoveInputPressed;
+	FRotator TargetRotation;
+	bool bShouldSnapRotate = false;
+
 	void LookMouse(const FInputActionValue& Value);
 
 	void ClampingPitchValue(const float NewPitchValue, const float LookMouseValueY);

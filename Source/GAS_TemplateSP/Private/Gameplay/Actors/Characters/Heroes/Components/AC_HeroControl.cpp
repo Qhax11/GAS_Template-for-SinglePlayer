@@ -171,13 +171,11 @@ void UAC_HeroControl::CharacterTurn(float DeltaTime)
 		return;
 	}
 
-	// Use velocity instead of input
-	FVector Velocity = HeroBase->GetVelocity();
-	Velocity.Z = 0.f; // Ignore vertical velocity
-
-	if (!Velocity.IsNearlyZero())
+	// Collect input
+	const FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
+	if (!MovementInput.IsNearlyZero())
 	{
-		CachedDesiredRotation = Velocity.GetSafeNormal().Rotation();
+		CachedDesiredRotation = MovementInput.GetSafeNormal().Rotation();
 		bHasDesiredRotation = true;
 	}
 
@@ -195,6 +193,7 @@ void UAC_HeroControl::CharacterTurn(float DeltaTime)
 	float RateScale = FMath::Clamp(AngleDiff / MaxAngle, 0.f, 1.f);
 
 	// Ease-in/out curve applied
+	// 2 -> ease in/out exponent, sonucu 0-1 arasýnda normalize ediyoruz
 	float EaseScale = FMath::InterpEaseInOut(0.f, 1.f, RateScale, 2.f);
 
 	// Final dynamic rotation rate

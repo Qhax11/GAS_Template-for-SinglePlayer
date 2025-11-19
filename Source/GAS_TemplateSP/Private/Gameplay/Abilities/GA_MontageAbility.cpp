@@ -69,7 +69,6 @@ void UGA_MontageAbility::ActivateMotionWarping()
 #endif
 
 	CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
-
 }
 
 FVector UGA_MontageAbility::CalculateDestinationReachLocation() const

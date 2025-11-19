@@ -38,7 +38,6 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         return;
     }
 
-    HeroControlComponent->bOrientRotationToMovement = false;
 
     if (!InputDirectionToDodgeMontageAsset)
     {
@@ -88,12 +87,13 @@ void UGA_HeroDashWithAnim::OnAfterFrame()
         nullptr
     );
 
+
 }
 
 void UGA_HeroDashWithAnim::ActivateMotionWarping()
 {
     Super::ActivateMotionWarping();
-    HeroControlComponent->bOrientRotationToMovement = true;
+
 }
 
 FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
@@ -158,3 +158,10 @@ FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Inp
     }
 
 }
+
+void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+    HeroControlComponent->bOrientRotationToMovement = true;
+    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+

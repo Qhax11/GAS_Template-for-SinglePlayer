@@ -67,4 +67,6 @@ public:
 
     UPROPERTY()
     class UAC_HeroControl* HeroControlComponent;
+
+    void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 };

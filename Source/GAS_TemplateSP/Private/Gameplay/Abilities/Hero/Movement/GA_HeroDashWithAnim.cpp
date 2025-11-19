@@ -82,13 +82,7 @@ void UGA_HeroDashWithAnim::OnAfterFrame()
     DirectionTag = InputDirectionTag;
 
     // Activate the ability now that input is read correctly
-    Super::ActivateAbility(
-        GetCurrentAbilitySpecHandle(),
-        GetCurrentActorInfo(),
-        GetCurrentActivationInfo(),
-        nullptr
-    );
-
+    Super::ActivateAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), nullptr);
 }
 
 FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
@@ -99,31 +93,19 @@ FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
     }
 
     FVector OwnerLocation = HeroBase->GetActorLocation();
-
-    // Karakterin son input vektörü (world space, kamera-relative)
     FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
-
-    // Input yoksa varsayılan olarak ileri yönde warp
     if (MovementInput.IsNearlyZero())
     {
         return OwnerLocation + HeroBase->GetActorForwardVector() * MotionWarpingDistance;
     }
 
-    // Input yönünü normalize et
     FVector Direction = MovementInput.GetSafeNormal();
 
-    // Motion warping hedef konumu
-    FVector TargetLocation = OwnerLocation + Direction * MotionWarpingDistance;
-    return TargetLocation;
+    return OwnerLocation + Direction * MotionWarpingDistance;
 }
 
 FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Input) const
 {
-    if (!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
-    {
-        //return GAS_Tags::TAG_Gameplay_Direction_Forward;
-    }
-
     const float X = Input.X;
     const float Y = Input.Y;
 
@@ -157,6 +139,9 @@ void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEvent
 {
     Super::OnEventReceived(EventTag, EventData);
 
+    // During dash the character is allowed to rotate freely for a brief moment,
+    // but once this notify triggers, rotation to movement is disabled to 
+    // ensure consistent forward dash behavior.
     if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Hero_LockRotation)
     {
         HeroControlComponent->bOrientRotationToMovement = false;

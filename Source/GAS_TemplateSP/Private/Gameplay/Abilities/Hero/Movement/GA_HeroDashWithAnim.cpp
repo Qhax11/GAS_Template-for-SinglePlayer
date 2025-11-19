@@ -59,22 +59,26 @@ void UGA_HeroDashWithAnim::OnAfterFrame()
         return;
     }
 
-    const FVector2D HeroLastMovementInput = HeroControlComponent->LastMovementInput;
-    const FGameplayTag InputDirectionTag = GetDirectionTagFromInput(HeroLastMovementInput);
-
+    FGameplayTag InputDirectionTag;
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        UAnimMontage* FoundDodgeMontage = InputDirectionToDodgeMontageAsset->FindDodgetMontage(InputDirectionTag);
-        if (!FoundDodgeMontage)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("No montage found for direction tag: %s"), *InputDirectionTag.ToString());
-            EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-            return;
-        }
-
-        AnimMontage = FoundDodgeMontage;
+        const FVector2D HeroLastMovementInput = HeroControlComponent->LastMovementInput;
+        InputDirectionTag = GetDirectionTagFromInput(HeroLastMovementInput);
+    }
+    else
+    {
+        InputDirectionTag = GAS_Tags::TAG_Gameplay_Direction_Forward;
     }
 
+    UAnimMontage* FoundDodgeMontage = InputDirectionToDodgeMontageAsset->FindDodgetMontage(InputDirectionTag);
+    if (!FoundDodgeMontage)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No montage found for direction tag: %s"), *InputDirectionTag.ToString());
+        EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+        return;
+    }
+
+    AnimMontage = FoundDodgeMontage;
     DirectionTag = InputDirectionTag;
 
     // Activate the ability now that input is read correctly
@@ -161,7 +165,11 @@ void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEvent
 
 void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-    HeroControlComponent->bOrientRotationToMovement = true;
+    if(!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+    {
+        HeroControlComponent->bOrientRotationToMovement = true;
+    }
+
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

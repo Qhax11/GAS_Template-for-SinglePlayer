@@ -13,6 +13,7 @@ UGA_MeleeAttackBase::UGA_MeleeAttackBase()
 	AssetTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack);
 	SetAssetTags(AssetTags);
 
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeAttack);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
 }
 

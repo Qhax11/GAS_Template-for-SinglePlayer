@@ -37,6 +37,9 @@ void UAC_HeroTagListener::BindTagDelegates()
 	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroTagListener::OnHeroTargetLockedTagAdded);
 	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroTagListener::OnHeroTargetLockedTagRemoved);
 
+	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeAttack, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroTagListener::OnHeroMeleeAttackTagAdded);
+	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeAttack, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroTagListener::OnHeroMeleeAttackTagRemoved);
+
 	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroTagListener::OnHeroFinisherTagAdded);
 	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroTagListener::OnHeroFinisherTagRemoved);
 }
@@ -68,6 +71,19 @@ void UAC_HeroTagListener::OnHeroTargetLockedTagAdded(const UAbilitySystemCompone
 void UAC_HeroTagListener::OnHeroTargetLockedTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	HeroControlComp->bOrientRotationToMovement = true;
+}
+
+void UAC_HeroTagListener::OnHeroMeleeAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	HeroControlComp->bOrientRotationToMovement = false;
+}
+
+void UAC_HeroTagListener::OnHeroMeleeAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	if (!OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+	{
+		HeroControlComp->bOrientRotationToMovement = true;
+	}
 }
 
 void UAC_HeroTagListener::OnHeroFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

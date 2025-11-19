@@ -42,7 +42,6 @@ void UAC_HeroControl::TryBindControlInputs()
 	if (IA_Move && IA_LookMouse)
 	{
 		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &UAC_HeroControl::Move);
-		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Completed, this, &UAC_HeroControl::MoveReleased);
 		EnhancedInputComponent->BindAction(IA_LookMouse, ETriggerEvent::Triggered, this, &UAC_HeroControl::LookMouse);
 	}
 	else
@@ -79,66 +78,7 @@ void UAC_HeroControl::Move(const FInputActionValue& Value)
 
 	HeroBase->AddMovementInput(ForwardDirection, MovementVector.Y);
 	HeroBase->AddMovementInput(RightDirection, MovementVector.X);
-
-	/*
-	// --- Snap-turn logic ---
-	float Speed = HeroBase->GetVelocity().Size2D();
-	float InputMagnitude = MovementVector.Size();
-
-	if (Speed < 80.f && InputMagnitude > 0.1f) // low-speed, small input
-	{
-		HeroBase->GetCharacterMovement()->RotationRate = FRotator(0.f, SnapRotationRate, 0.f);
-	}
-	else
-	{
-		HeroBase->GetCharacterMovement()->RotationRate = FRotator(0.f, DefaultRotationRate, 0.f);
-	}
-	*/
-	if (!bMoveInputPressed) 
-	{
-		PressedTime = GetWorld()->GetTimeSeconds();
-		bMoveInputPressed = true;
-	}
 }
-
-void UAC_HeroControl::MoveReleased(const FInputActionValue& Value)
-{
-	if (!HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked)) 
-	{
-		return;
-	}
-
-	bMoveInputPressed = false;
-	float ReleasedTime = GetWorld()->GetTimeSeconds() - PressedTime;
-
-	if (ReleasedTime < 0.12f)
-	{
-		// Son input'un dünya yönünü hesapla (zaten Move() içinde hesapladýðýn yön)
-		const FRotator YawRotation(0, HeroBase->Controller->GetControlRotation().Yaw, 0);
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		FVector WorldInputDirection = (ForwardDirection * LastMovementInput.Y + RightDirection * LastMovementInput.X).GetSafeNormal();
-
-		TargetRotation = WorldInputDirection.Rotation();
-		bShouldSnapRotate = true;
-
-		if (ReleasedTime < 0.12f)
-		{
-			// Snap dönüþ
-			TabTurningSpeed = 20.f;
-			bShouldSnapRotate = true;
-		}
-		else
-		{
-			// Normal smooth dönüþ ama tamamla
-			TabTurningSpeed = 8.f; // Default rotation rate gibi
-			bShouldSnapRotate = true;
-		}
-	}
-}
-
-
 
 void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 {
@@ -219,18 +159,25 @@ void UAC_HeroControl::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UAC_HeroControl::CharacterTurn(float DeltaTime)
 {
+	bool HeroTargetLocked = HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
+	bool HeroFinisher = HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
+
+	// Target lock veya finisher aktifse cache'i temizle ve çýk
+	if (HeroTargetLocked || HeroFinisher)
+	{
+		bHasDesiredRotation = false; // Cache'i temizle!
+		return;
+	}
+
 	if (!HeroBase || !HeroBase->GetCharacterMovement())
 	{
 		return;
 	}
 
 	FRotator CurrentRotation = HeroBase->GetActorRotation();
-
-	// Input var mý kontrol et (velocity deðil!)
 	FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
 	bool bHasInput = !MovementInput.IsNearlyZero();
 
-	// Input varsa yeni hedef kaydet
 	if (bHasInput)
 	{
 		FRotator DesiredRotation = MovementInput.GetSafeNormal().Rotation();

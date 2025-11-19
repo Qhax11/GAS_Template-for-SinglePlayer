@@ -22,7 +22,7 @@ void UAC_HeroTagListener::OnRunningTagAdded(const UAbilitySystemComponent* Abili
 {
 	if (OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
-		OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+		//OwnerCharacterMoveComp->bOrientRotationToMovement = true;
 	}
 }
 
@@ -30,7 +30,7 @@ void UAC_HeroTagListener::OnRunningTagRemoved(const UAbilitySystemComponent* Abi
 {
 	if (OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
-		OwnerCharacterMoveComp->bOrientRotationToMovement = false;
+		//OwnerCharacterMoveComp->bOrientRotationToMovement = false;
 	}
 }
 
@@ -38,11 +38,11 @@ void UAC_HeroTagListener::OnHeroTargetLockedTagAdded(const UAbilitySystemCompone
 {
 	if (!OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Running))
 	{
-		OwnerCharacterMoveComp->bOrientRotationToMovement = false;
+		//OwnerCharacterMoveComp->bOrientRotationToMovement = false;
 	}
 }
 
 void UAC_HeroTagListener::OnHeroTargetLockedTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+	//OwnerCharacterMoveComp->bOrientRotationToMovement = true;
 }

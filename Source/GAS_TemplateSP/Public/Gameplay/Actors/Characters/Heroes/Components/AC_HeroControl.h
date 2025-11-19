@@ -23,8 +23,13 @@ public:
 
 	void MoveReleased(const FInputActionValue& Value);
 
+	void CharacterTurn(float DeltaTime);
+
 	UPROPERTY(EditDefaultsOnly, Category = "TabTurning")
 	float TabTurningSpeed = 20.0f;
+
+	FRotator CachedDesiredRotation;
+	bool bHasDesiredRotation = false;
 
 	float PressedTime;
 	bool bMoveInputPressed;

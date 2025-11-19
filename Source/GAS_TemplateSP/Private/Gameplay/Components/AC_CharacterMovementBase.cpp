@@ -8,23 +8,6 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 
-
-void UAC_CharacterMovementBase::HandleImpact(const FHitResult& Hit, float TimeSlice, const FVector& MoveDelta)
-{
-    Super::HandleImpact(Hit, TimeSlice, MoveDelta);
-
-    /*
-    if (ACharacter* Other = Cast<ACharacter>(Hit.GetActor()))
-    {
-        // Çarpışma yönüne ters yöne kayma ekle
-        const FVector SlideDir = FVector::VectorPlaneProject(MoveDelta, Hit.Normal).GetSafeNormal();
-        const float SlideForce = 200.f;
-
-         Velocity += SlideDir * SlideForce;
-    }
-    */
-}
-
 FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const
 {
      if (const AActor* OtherActor = Hit.GetActor())
@@ -42,29 +25,6 @@ FVector UAC_CharacterMovementBase::ComputeSlideVector(const FVector& Delta, cons
     }
 
     return Super::ComputeSlideVector(Delta, Time, Normal, Hit);
-
-    /*
-    if (const AActor* OtherActor = Hit.GetActor())
-    {
-        if (!OtherActor->IsA<ACharacter>())
-        {
-            return Super::ComputeSlideVector(Delta, Time, Normal, Hit);
-        }
-    }
-
-    FVector SlideDir = FVector(0, 0, -1.f); // sabit aşağı yön
-
-    // Eğer biraz yana doğru bir eğim istiyorsan, sabit bir offset ekleyebilirsin:
-    SlideDir = (SlideDir + FVector(0.2f, 0.f, 0.f)).GetSafeNormal(); // X yönünde 0.2 eğim
-
-    FVector Result = SlideDir * SlideSpeedMultiplier * Time; // zamanla ölçeklendir
-
-    // Debug
-    DrawDebugLine(GetWorld(), Hit.ImpactPoint, Hit.ImpactPoint + Result * 0.1f, FColor::Red, false, 2.f, 0, 2.f);
-    DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 12.f, FColor::Yellow, false, 2.f);
-
-    return Result;
-    */
 }
 
 bool UAC_CharacterMovementBase::ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const
@@ -104,22 +64,7 @@ void UAC_CharacterMovementBase::FindFloor(const FVector& CapsuleLocation, FFindF
     }
 }
 
-void UAC_CharacterMovementBase::DebugLogMovement(const FString& FunctionName, const FVector& VelocityBefore, const FVector& VelocityAfter, const FHitResult* Hit)
-{
-    FVector VelChange = VelocityAfter - VelocityBefore;
 
-    if (VelChange.Size() > 10.f) // Önemli değişiklik varsa
-    {
-        UE_LOG(LogTemp, Warning, TEXT("=== %s ==="), *FunctionName);
-        UE_LOG(LogTemp, Warning, TEXT("Velocity Before: %s"), *VelocityBefore.ToString());
-        UE_LOG(LogTemp, Warning, TEXT("Velocity After: %s"), *VelocityAfter.ToString());
-        UE_LOG(LogTemp, Warning, TEXT("Change: %s (Size: %.2f)"),
-            *VelChange.ToString(), VelChange.Size());
 
-        if (Hit)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Hit Normal: %s"), *Hit->Normal.ToString());
-            UE_LOG(LogTemp, Warning, TEXT("Hit Location: %s"), *Hit->ImpactPoint.ToString());
-        }
-    }
-}
+
+

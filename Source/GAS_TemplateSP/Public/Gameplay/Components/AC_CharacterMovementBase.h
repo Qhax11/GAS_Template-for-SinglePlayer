@@ -12,27 +12,14 @@ class GAS_TEMPLATESP_API UAC_CharacterMovementBase : public UCharacterMovementCo
 	GENERATED_BODY()
 	
 protected:
-	virtual void HandleImpact(const FHitResult& Hit, float TimeSlice = 0.f, const FVector& MoveDelta = FVector::ZeroVector) override;
-
     virtual FVector ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const override;
 
 	virtual bool ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const override;
 
 	virtual void FindFloor(const FVector& CapsuleLocation, FFindFloorResult& OutFloorResult, bool bCanUseCachedLocation, const FHitResult* DownwardSweepResult = NULL) const override;
 
-	void DebugLogMovement(const FString& FunctionName, const FVector& VelocityBefore,
-		const FVector& VelocityAfter, const FHitResult* Hit = nullptr);
-
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
-	float MinDownwardComponent = -0.3f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
-	float DownForce = 10;
-
-	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
-	float SlideSpeedMultiplier = 100;
-
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterMovementBase")
 	bool bEnableDebug = false;
+
 
 };

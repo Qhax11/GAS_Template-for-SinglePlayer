@@ -103,7 +103,7 @@ void UAC_HeroControl::Move(const FInputActionValue& Value)
 
 void UAC_HeroControl::MoveReleased(const FInputActionValue& Value)
 {
-	if (HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked)) 
+	if (!HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked)) 
 	{
 		return;
 	}
@@ -123,9 +123,22 @@ void UAC_HeroControl::MoveReleased(const FInputActionValue& Value)
 		TargetRotation = WorldInputDirection.Rotation();
 		bShouldSnapRotate = true;
 
-		UE_LOG(LogTemp, Warning, TEXT("TAB - Target Yaw: %f"), TargetRotation.Yaw);
+		if (ReleasedTime < 0.12f)
+		{
+			// Snap dönüþ
+			TabTurningSpeed = 20.f;
+			bShouldSnapRotate = true;
+		}
+		else
+		{
+			// Normal smooth dönüþ ama tamamla
+			TabTurningSpeed = 8.f; // Default rotation rate gibi
+			bShouldSnapRotate = true;
+		}
 	}
 }
+
+
 
 void UAC_HeroControl::LookMouse(const FInputActionValue& Value)
 {
@@ -201,17 +214,42 @@ void UAC_HeroControl::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		LastLookMouseInput = FVector2D::ZeroVector;
 	}
 
-	if (bShouldSnapRotate && HeroBase)
-	{
-		FRotator CurrentRot = HeroBase->GetActorRotation();
-		FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRotation, DeltaTime, TabTurningSpeed); 
-
-		HeroBase->SetActorRotation(FRotator(0, NewRot.Yaw, 0));
-
-		if (FMath::IsNearlyEqual(CurrentRot.Yaw, TargetRotation.Yaw, 2.f))
-		{
-			bShouldSnapRotate = false;
-		}
-	}
+	CharacterTurn(DeltaTime);
 }
 
+void UAC_HeroControl::CharacterTurn(float DeltaTime)
+{
+	if (!HeroBase || !HeroBase->GetCharacterMovement())
+	{
+		return;
+	}
+
+	FRotator CurrentRotation = HeroBase->GetActorRotation();
+
+	// Input var mý kontrol et (velocity deðil!)
+	FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
+	bool bHasInput = !MovementInput.IsNearlyZero();
+
+	// Input varsa yeni hedef kaydet
+	if (bHasInput)
+	{
+		FRotator DesiredRotation = MovementInput.GetSafeNormal().Rotation();
+		CachedDesiredRotation = DesiredRotation;
+		bHasDesiredRotation = true;
+	}
+
+	if (!bHasDesiredRotation)
+	{
+		return;
+	}
+
+	float RotationRate = HeroBase->GetCharacterMovement()->RotationRate.Yaw;
+	float NewYaw = FMath::FixedTurn(CurrentRotation.Yaw, CachedDesiredRotation.Yaw, RotationRate * DeltaTime);
+
+	if (FMath::IsNearlyEqual(NewYaw, CachedDesiredRotation.Yaw, 1.f))
+	{
+		bHasDesiredRotation = false;
+	}
+
+	HeroBase->SetActorRotation(FRotator(0, NewYaw, 0));
+}

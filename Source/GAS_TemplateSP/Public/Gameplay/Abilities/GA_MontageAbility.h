@@ -26,11 +26,11 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	void ActivateMotionWarping();
+	virtual void ActivateMotionWarping();
 
 	FVector CalculateDestinationReachLocation() const;
 
-	FVector CalculateMotionWarpingLocation() const;
+	virtual FVector CalculateMotionWarpingLocation() const;
 
 	void CleanupMotionWarping();
 

@@ -72,7 +72,7 @@ protected:
 	AGAS_HeroBase* HeroBase;
 	UAbilitySystemComponent* HeroASC;
 
-private:
+public:
 	UEnhancedInputComponent* EnhancedInputComponent;
 	
 	float LastMovementInputTime = 0.0f; // The time when the last movement input was received

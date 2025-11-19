@@ -50,10 +50,21 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+    UFUNCTION()
+    void OnAfterFrame();
+
+    virtual void ActivateMotionWarping() override;
+
+    virtual FVector CalculateMotionWarpingLocation() const override;
+
     FGameplayTag GetDirectionTagFromInput(const FVector2D& Input) const;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UInputDirectionToDodgeMontageAsset* InputDirectionToDodgeMontageAsset;
 
+	UPROPERTY()
     class AGAS_HeroBase* HeroBase;
+
+    UPROPERTY()
+    class UAC_HeroControl* HeroControlComponent;
 };

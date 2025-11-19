@@ -4,6 +4,8 @@
 #include "Gameplay/Abilities/Hero/Movement/GA_HeroDashWithAnim.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/Abilities/Tasks/AT_WaitOneFrame.h"
 
 UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
 {
@@ -24,48 +26,107 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     if (!HeroBase)
     {
         UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
-        EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+        EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
         return;
     }
 
-    UAC_HeroControl* HeroControlComponent = HeroBase->GetHeroControlComponent();
+    HeroControlComponent = HeroBase->GetHeroControlComponent();
     if (!HeroControlComponent)
     {
         UE_LOG(LogTemp, Warning, TEXT("GetHeroControlComponent is null in: %s"), *GetName());
-        EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+        EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
         return;
     }
+
+    HeroControlComponent->bOrientRotationToMovement = false;
 
     if (!InputDirectionToDodgeMontageAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("InputDirectionToDodgeMontageAsset is null in: %s"), *GetName());
+        EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
+        return;
+    }
+
+    // Wait one frame to ensure LastMovementInput is updated
+    UAT_WaitOneFrame* Task = UAT_WaitOneFrame::WaitOneFrame(this);
+    Task->OnFinished.AddDynamic(this, &UGA_HeroDashWithAnim::OnAfterFrame);
+    Task->ReadyForActivation();
+
+}
+
+void UGA_HeroDashWithAnim::OnAfterFrame()
+{
+    if (!HeroControlComponent || !InputDirectionToDodgeMontageAsset)
+    {
         EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
         return;
     }
 
-    const FVector2D& HeroLastMovementInput = HeroControlComponent->LastMovementInput;
+    const FVector2D HeroLastMovementInput = HeroControlComponent->LastMovementInput;
+    const FGameplayTag InputDirectionTag = GetDirectionTagFromInput(HeroLastMovementInput);
 
-    const FGameplayTag InputDirectionTag = GetDirectionTagFromInput(HeroLastMovementInput);     
-
-    UAnimMontage* FindedDodgeMontage = InputDirectionToDodgeMontageAsset->FindDodgetMontage(InputDirectionTag);
-    if (!FindedDodgeMontage)
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        UE_LOG(LogTemp, Warning, TEXT("No montage found for direction tag: %s"), *InputDirectionTag.ToString());
-        EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-        return;
+        UAnimMontage* FoundDodgeMontage = InputDirectionToDodgeMontageAsset->FindDodgetMontage(InputDirectionTag);
+        if (!FoundDodgeMontage)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("No montage found for direction tag: %s"), *InputDirectionTag.ToString());
+            EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+            return;
+        }
+
+        AnimMontage = FoundDodgeMontage;
     }
 
     DirectionTag = InputDirectionTag;
-    AnimMontage = FindedDodgeMontage;
 
-    Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+    // Activate the ability now that input is read correctly
+    Super::ActivateAbility(
+        GetCurrentAbilitySpecHandle(),
+        GetCurrentActorInfo(),
+        GetCurrentActivationInfo(),
+        nullptr
+    );
+
+}
+
+void UGA_HeroDashWithAnim::ActivateMotionWarping()
+{
+    Super::ActivateMotionWarping();
+    HeroControlComponent->bOrientRotationToMovement = true;
+}
+
+FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
+{
+    if (!HeroBase)
+    {
+        return FVector::ZeroVector;
+    }
+
+    FVector OwnerLocation = HeroBase->GetActorLocation();
+
+    // Karakterin son input vektörü (world space, kamera-relative)
+    FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
+
+    // Input yoksa varsayılan olarak ileri yönde warp
+    if (MovementInput.IsNearlyZero())
+    {
+        return OwnerLocation + HeroBase->GetActorForwardVector() * MotionWarpingDistance;
+    }
+
+    // Input yönünü normalize et
+    FVector Direction = MovementInput.GetSafeNormal();
+
+    // Motion warping hedef konumu
+    FVector TargetLocation = OwnerLocation + Direction * MotionWarpingDistance;
+    return TargetLocation;
 }
 
 FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Input) const
 {
     if (!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        return GAS_Tags::TAG_Gameplay_Direction_Forward;
+        //return GAS_Tags::TAG_Gameplay_Direction_Forward;
     }
 
     const float X = Input.X;

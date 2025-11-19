@@ -159,26 +159,25 @@ void UAC_HeroControl::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UAC_HeroControl::CharacterTurn(float DeltaTime)
 {
-	if (!bOrientRotationToMovement)
-	{
-		CachedDesiredRotation = HeroBase ? HeroBase->GetActorRotation() : FRotator::ZeroRotator;
-		bHasDesiredRotation = false;  
-		return;
-	}
-
 	if (!HeroBase || !HeroBase->GetCharacterMovement())
 	{
 		return;
 	}
 
-	FRotator CurrentRotation = HeroBase->GetActorRotation();
-	FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
-	bool bHasInput = !MovementInput.IsNearlyZero();
-
-	if (bHasInput)
+	// Mode: manual rotation (target lock)
+	if (!bOrientRotationToMovement)
 	{
-		FRotator DesiredRotation = MovementInput.GetSafeNormal().Rotation();
-		CachedDesiredRotation = DesiredRotation;
+		CachedDesiredRotation = HeroBase->GetActorRotation();
+		bHasDesiredRotation = false;
+		return;
+	}
+
+	// Collect input
+	const FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
+
+	if (!MovementInput.IsNearlyZero())
+	{
+		CachedDesiredRotation = MovementInput.GetSafeNormal().Rotation();
 		bHasDesiredRotation = true;
 	}
 
@@ -187,13 +186,15 @@ void UAC_HeroControl::CharacterTurn(float DeltaTime)
 		return;
 	}
 
-	float RotationRate = HeroBase->GetCharacterMovement()->RotationRate.Yaw;
-	float NewYaw = FMath::FixedTurn(CurrentRotation.Yaw, CachedDesiredRotation.Yaw, RotationRate * DeltaTime);
+	// Turn toward cached desired rotation
+	const float RotationRate = HeroBase->GetCharacterMovement()->RotationRate.Yaw;
+	const FRotator CurrentRotation = HeroBase->GetActorRotation();
 
+	const float NewYaw = FMath::FixedTurn(CurrentRotation.Yaw, CachedDesiredRotation.Yaw, RotationRate * DeltaTime);
 	if (FMath::IsNearlyEqual(NewYaw, CachedDesiredRotation.Yaw, 1.f))
 	{
 		bHasDesiredRotation = false;
 	}
 
-	HeroBase->SetActorRotation(FRotator(0, NewYaw, 0));
+	HeroBase->SetActorRotation(FRotator(0.f, NewYaw, 0.f));
 }

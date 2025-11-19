@@ -53,8 +53,6 @@ public:
     UFUNCTION()
     void OnAfterFrame();
 
-    virtual void ActivateMotionWarping() override;
-
     virtual FVector CalculateMotionWarpingLocation() const override;
 
     FGameplayTag GetDirectionTagFromInput(const FVector2D& Input) const;
@@ -67,6 +65,8 @@ public:
 
     UPROPERTY()
     class UAC_HeroControl* HeroControlComponent;
+
+    virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
     void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 };

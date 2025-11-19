@@ -38,7 +38,6 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         return;
     }
 
-
     if (!InputDirectionToDodgeMontageAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("InputDirectionToDodgeMontageAsset is null in: %s"), *GetName());
@@ -50,7 +49,6 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     UAT_WaitOneFrame* Task = UAT_WaitOneFrame::WaitOneFrame(this);
     Task->OnFinished.AddDynamic(this, &UGA_HeroDashWithAnim::OnAfterFrame);
     Task->ReadyForActivation();
-
 }
 
 void UGA_HeroDashWithAnim::OnAfterFrame()
@@ -86,13 +84,6 @@ void UGA_HeroDashWithAnim::OnAfterFrame()
         GetCurrentActivationInfo(),
         nullptr
     );
-
-
-}
-
-void UGA_HeroDashWithAnim::ActivateMotionWarping()
-{
-    Super::ActivateMotionWarping();
 
 }
 
@@ -156,7 +147,16 @@ FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Inp
     {
         return GAS_Tags::TAG_Gameplay_Direction_Left;
     }
+}
 
+void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+    Super::OnEventReceived(EventTag, EventData);
+
+    if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Hero_LockRotation)
+    {
+        HeroControlComponent->bOrientRotationToMovement = false;
+    }
 }
 
 void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

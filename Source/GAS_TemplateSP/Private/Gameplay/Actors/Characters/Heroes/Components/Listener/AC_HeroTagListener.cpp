@@ -2,6 +2,26 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/Listener/AC_HeroTagListener.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+
+void UAC_HeroTagListener::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Hero = Cast<AGAS_HeroBase>(OwnerCharacter);
+	if (!Hero) 
+	{
+		return;
+	}
+
+	HeroControlComp = Hero->GetHeroControlComponent();
+	if (!HeroControlComp)
+	{
+		return;
+	}
+
+}
 
 void UAC_HeroTagListener::BindTagDelegates()
 {
@@ -16,13 +36,16 @@ void UAC_HeroTagListener::BindTagDelegates()
 
 	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroTagListener::OnHeroTargetLockedTagAdded);
 	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroTagListener::OnHeroTargetLockedTagRemoved);
+
+	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroTagListener::OnHeroFinisherTagAdded);
+	OwnerTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroTagListener::OnHeroFinisherTagRemoved);
 }
 
 void UAC_HeroTagListener::OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	if (OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
-		//OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+		HeroControlComp->bOrientRotationToMovement = true;
 	}
 }
 
@@ -30,7 +53,7 @@ void UAC_HeroTagListener::OnRunningTagRemoved(const UAbilitySystemComponent* Abi
 {
 	if (OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
 	{
-		//OwnerCharacterMoveComp->bOrientRotationToMovement = false;
+		HeroControlComp->bOrientRotationToMovement = false;
 	}
 }
 
@@ -38,11 +61,24 @@ void UAC_HeroTagListener::OnHeroTargetLockedTagAdded(const UAbilitySystemCompone
 {
 	if (!OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Running))
 	{
-		//OwnerCharacterMoveComp->bOrientRotationToMovement = false;
+		HeroControlComp->bOrientRotationToMovement = false;
 	}
 }
 
 void UAC_HeroTagListener::OnHeroTargetLockedTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	//OwnerCharacterMoveComp->bOrientRotationToMovement = true;
+	HeroControlComp->bOrientRotationToMovement = true;
+}
+
+void UAC_HeroTagListener::OnHeroFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	HeroControlComp->bOrientRotationToMovement = false;
+}
+
+void UAC_HeroTagListener::OnHeroFinisherTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	if (!OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+	{
+		HeroControlComp->bOrientRotationToMovement = true;
+	}
 }

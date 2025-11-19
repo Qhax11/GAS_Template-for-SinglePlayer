@@ -159,13 +159,10 @@ void UAC_HeroControl::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UAC_HeroControl::CharacterTurn(float DeltaTime)
 {
-	bool HeroTargetLocked = HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
-	bool HeroFinisher = HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
-
-	// Target lock veya finisher aktifse cache'i temizle ve çýk
-	if (HeroTargetLocked || HeroFinisher)
+	if (!bOrientRotationToMovement)
 	{
-		bHasDesiredRotation = false; // Cache'i temizle!
+		CachedDesiredRotation = HeroBase ? HeroBase->GetActorRotation() : FRotator::ZeroRotator;
+		bHasDesiredRotation = false;  
 		return;
 	}
 

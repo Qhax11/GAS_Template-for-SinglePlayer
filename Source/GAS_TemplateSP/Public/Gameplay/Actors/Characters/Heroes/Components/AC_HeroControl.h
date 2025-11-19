@@ -23,8 +23,8 @@ public:
 
 	void CharacterTurn(float DeltaTime);
 
-	FRotator CachedDesiredRotation;
-	bool bHasDesiredRotation = false;
+	UPROPERTY(BlueprintReadOnly)
+	bool bOrientRotationToMovement = true;
 
 	void LookMouse(const FInputActionValue& Value);
 
@@ -46,7 +46,7 @@ public:
 	float MinPitchA = 0.0f;  
 
 	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Maximum limit for looking down from below"))
-	float MaxPitchA = 20.0f;  
+	float MaxPitchA = 10.0f;  
 
 	UPROPERTY(EditDefaultsOnly, Meta = (ToolTip = "Minimum limit for looking up from above"))
 	float MinPitchB = 340.0f; 
@@ -59,12 +59,6 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D LastLookMouseInput;
-
-	UPROPERTY(EditDefaultsOnly)
-	float SnapRotationRate = 12000.f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float DefaultRotationRate = 450.f;
 
 protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -80,4 +74,7 @@ private:
 
 	float LastLookMouseInputTime = 0.0f; // The time when the last movement input was received
 	const float LookMouseInputResetThreshold = 0.1f; // Threshold duration for resetting movement input (0.1 seconds)
+
+	FRotator CachedDesiredRotation;
+	bool bHasDesiredRotation = false;
 };

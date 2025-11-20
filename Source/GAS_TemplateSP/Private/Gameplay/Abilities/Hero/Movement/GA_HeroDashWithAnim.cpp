@@ -135,21 +135,37 @@ FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Inp
 
     const float AngleDeg = FMath::RadiansToDegrees(FMath::Atan2(X, Y));
 
-    if (AngleDeg >= -45.f && AngleDeg <= 45.f) 
+    if (AngleDeg >= -22.5f && AngleDeg <= 22.5f)
     {
         return GAS_Tags::TAG_Gameplay_Direction_Forward;
     }
-    else if (AngleDeg > 45.f && AngleDeg < 135.f) 
+    else if (AngleDeg > 22.5f && AngleDeg <= 67.5f)
+    {
+        return GAS_Tags::TAG_Gameplay_Direction_ForwardRight;
+    }
+    else if (AngleDeg > 67.5f && AngleDeg <= 112.5f)
     {
         return GAS_Tags::TAG_Gameplay_Direction_Right;
     }
-    else if (AngleDeg >= 135.f || AngleDeg <= -135.f) 
+    else if (AngleDeg > 112.5f && AngleDeg <= 157.5f)
+    {
+        return GAS_Tags::TAG_Gameplay_Direction_BackwardRight;
+    }
+    else if (AngleDeg > 157.5f || AngleDeg <= -157.5f)
     {
         return GAS_Tags::TAG_Gameplay_Direction_Backward;
     }
-    else
+    else if (AngleDeg > -157.5f && AngleDeg <= -112.5f)
+    {
+        return GAS_Tags::TAG_Gameplay_Direction_BackwardLeft;
+    }
+    else if (AngleDeg > -112.5f && AngleDeg <= -67.5f)
     {
         return GAS_Tags::TAG_Gameplay_Direction_Left;
+    }
+    else // -67.5f < AngleDeg < -22.5f
+    {
+        return GAS_Tags::TAG_Gameplay_Direction_ForwardLeft;
     }
 }
 

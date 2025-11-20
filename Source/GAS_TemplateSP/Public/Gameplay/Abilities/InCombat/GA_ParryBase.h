@@ -21,6 +21,9 @@ public:
 	UFUNCTION()
 	virtual void OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
+	UPROPERTY()
+	class UAC_TagDelegates* TargetCharacterTagDelegatesComp;
+
 	UFUNCTION()
 	virtual void OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 

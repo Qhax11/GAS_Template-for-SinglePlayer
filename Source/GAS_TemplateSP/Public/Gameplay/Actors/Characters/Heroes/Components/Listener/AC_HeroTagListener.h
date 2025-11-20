@@ -22,6 +22,10 @@ protected:
 	UPROPERTY()
 	class UAC_HeroControl* HeroControlComp;
 
+	bool IsTargetLocked() const;
+
+	bool IsRunning() const;
+
 	UFUNCTION()
 	void OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 

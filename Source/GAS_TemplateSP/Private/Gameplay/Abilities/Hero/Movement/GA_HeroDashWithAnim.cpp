@@ -13,6 +13,7 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
 
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
+    ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 
     ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 }
@@ -92,14 +93,31 @@ FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
         return FVector::ZeroVector;
     }
 
+    // Target locked modda DirectionTag'e göre hareket et
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(
+        GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+    {
+        // Parent class'ın DirectionTag bazlı hesaplamasını kullan
+        return Super::CalculateMotionWarpingLocation();
+    }
+
+    // Target locked değilse input yönüne göre hareket et
     FVector OwnerLocation = HeroBase->GetActorLocation();
     FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
+
     if (MovementInput.IsNearlyZero())
     {
         return OwnerLocation + HeroBase->GetActorForwardVector() * MotionWarpingDistance;
     }
 
     FVector Direction = MovementInput.GetSafeNormal();
+
+    // Güvenlik kontrolü ekle
+    float Distance = (Direction * MotionWarpingDistance).Size();
+    if (Distance < 10.0f) // Minimum 10 cm
+    {
+        return OwnerLocation + HeroBase->GetActorForwardVector() * MotionWarpingDistance;
+    }
 
     return OwnerLocation + Direction * MotionWarpingDistance;
 }

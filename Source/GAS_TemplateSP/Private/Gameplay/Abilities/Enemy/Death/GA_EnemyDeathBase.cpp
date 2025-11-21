@@ -44,7 +44,7 @@ void UGA_EnemyDeathBase::BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnDa
 {
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
-		SpawnDelegatesSubsystem->OnEnemyDeSpawn.Broadcast(DespawnData);
+		SpawnDelegatesSubsystem->UnregisterEnemy(DespawnData);
 	}
 }
 

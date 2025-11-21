@@ -137,11 +137,7 @@ namespace GAS_Tags
 	// time frames where certain actions become available, more effective,
 	// or trigger special responses.
 
-    // Perfect Timing Windows
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Window);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Window_Perfect);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Window_Perfect_Parry);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Window_Perfect_Dodge);
 
 
 	// ============================================================

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
+#include "Gameplay/Abilities/Tasks/AT_WaitOneFrame.h"
+#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "GA_HeroDashWithAnim.generated.h"
 
 USTRUCT(BlueprintType)
@@ -57,11 +59,11 @@ public:
 
     virtual FVector CalculateMotionWarpingLocation() const override;
 
-    UFUNCTION()
-    void OnPerfectDodgeReceived(FGameplayEventData Payload);
-
     UFUNCTION(BlueprintImplementableEvent)
     void OnPerfectDodgeReceivedBP();
+
+    UFUNCTION()
+    void RemoveDamageImmuneTag();
 
     virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
@@ -69,6 +71,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UInputDirectionToDodgeMontageAsset* InputDirectionToDodgeMontageAsset;
+
+    UPROPERTY()
+    class UAT_WaitOneFrame* WaitOneFrameTask;
+
+    UPROPERTY()
+    class UAbilityTask_WaitDelay* WaitDelayTask;
 
     UPROPERTY()
     class AGAS_HeroBase* HeroBase;

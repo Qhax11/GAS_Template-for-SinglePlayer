@@ -7,7 +7,6 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/Abilities/Tasks/AT_WaitOneFrame.h"
-#include <Abilities/Tasks/AbilityTask_WaitGameplayEvent.h>
 
 UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
 {
@@ -49,7 +48,7 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         return;
     }
 
-    UAT_WaitOneFrame* WaitOneFrameTask = UAT_WaitOneFrame::WaitOneFrame(this);
+    WaitOneFrameTask = UAT_WaitOneFrame::WaitOneFrame(this);
     if (!WaitOneFrameTask)
     {
         UE_LOG(LogTemp, Warning, TEXT("WaitOneFrameTask is null in: %s"), *GetName());
@@ -59,21 +58,19 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     WaitOneFrameTask->OnFinished.AddDynamic(this, &UGA_HeroDashWithAnim::OnAfterFrame);
     WaitOneFrameTask->ReadyForActivation();
 
-    UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this,
-        GAS_Tags::TAG_Gameplay_Event_Trigger_Perfect_Dodge,
-        nullptr, // Opsiyonel Target Actor
-        true,    // Only Trigger Once 
-        true     // Match Exact
-    );
+    GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
 
-    if (!WaitGameplayEventTask)
+    // 2. Ability Task ile 0.3 Saniye Bekle
+    WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.3f);
+    if (!WaitDelayTask)
     {
-        UE_LOG(LogTemp, Warning, TEXT("WaitGameplayEventTask is null in: %s"), *GetName());
-        EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
+        GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
+        EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
         return;
     }
-    WaitGameplayEventTask->EventReceived.AddDynamic(this, &UGA_HeroDashWithAnim::OnPerfectDodgeReceived);
-    WaitGameplayEventTask->ReadyForActivation();
+
+    WaitDelayTask->OnFinish.AddDynamic(this, &UGA_HeroDashWithAnim::RemoveDamageImmuneTag);
+    WaitDelayTask->ReadyForActivation();
 
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect)) 
     {
@@ -83,6 +80,12 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UGA_HeroDashWithAnim::OnAfterFrame()
 {
+    if (!HeroBase || !HeroControlComponent)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HeroBase or HeroControlComponent is null"));
+        return;
+    }
+
     if (GetAbilitySystemComponentFromActorInfo()->HasAnyMatchingGameplayTags(ActivationBlockedTags))
     {
         EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
@@ -204,9 +207,9 @@ FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
     return OwnerLocation + Direction * MotionWarpingDistance;
 }
 
-void UGA_HeroDashWithAnim::OnPerfectDodgeReceived(FGameplayEventData Payload)
+void UGA_HeroDashWithAnim::RemoveDamageImmuneTag()
 {
-    OnPerfectDodgeReceivedBP();
+    GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
 }
 
 void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -224,6 +227,14 @@ void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEvent
 
 void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+    GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
+
+    if (IsValid(WaitOneFrameTask))
+    {
+        WaitOneFrameTask->EndTask();
+        WaitOneFrameTask = nullptr;
+    }
+
     if(!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
         HeroControlComponent->bOrientRotationToMovement = true;

@@ -1,12 +1,11 @@
 ﻿// Qhax's GAS Template for SinglePlayer
 
-
 #include "Gameplay/Actors/Characters/Heroes/Components/Listener/AC_HeroEnemyAttackListener.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Gameplay/Animation/AN_SendTag.h"
 #include "AbilitySystemComponent.h"
-
+#include "TimerManager.h"
 
 UAC_HeroEnemyAttackListener::UAC_HeroEnemyAttackListener()
 {
@@ -20,13 +19,12 @@ void UAC_HeroEnemyAttackListener::BeginPlay()
     US_SpawnDelegates* SpawnSubs = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>();
     if (!SpawnSubs) return;
 
-    // 1. GELECEK ���N: Bundan sonra do�acaklara abone ol
+    // 1. Gelecek için abone ol
     SpawnSubs->OnEnemySpawn.AddDynamic(this, &UAC_HeroEnemyAttackListener::OnEnemySpawn);
 
-    // 2. GE�M�� ���N: Sen yokken do�mu� olanlar� al ve i�le
+    // 2. Geçmişte doğmuş olanları işle
     for (const FEnemySpawnData& ExistingEnemy : SpawnSubs->AliveEnemies)
     {
-        // Sanki yeni do�mu� gibi fonksiyonu tetikle
         OnEnemySpawn(ExistingEnemy);
     }
 }
@@ -38,6 +36,7 @@ void UAC_HeroEnemyAttackListener::OnEnemySpawn(const FEnemySpawnData& EnemySpawn
         return;
     }
 
+    // ASC callback ekle ve weak pointer ile takip et
     EnemySpawnData.ASC->AbilityActivatedCallbacks.AddUObject(this, &UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated);
 }
 
@@ -54,7 +53,6 @@ void UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated(UGameplayAbility* Abil
         return;
     }
 
-    // Hero'nun ASC'si (Owner �zerinden al�yoruz)
     UAbilitySystemComponent* ASC = Cast<UAbilitySystemComponent>(GetOwner()->FindComponentByClass<UAbilitySystemComponent>());
     if (!ASC)
     {
@@ -69,7 +67,6 @@ void UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated(UGameplayAbility* Abil
         CombinedTags.AppendTags(Spec->DynamicAbilityTags);
     }
 
-    // Attack notify zaman�n� al
     float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility, CombinedTags);
     if (AttackTime < 0.0f)
     {
@@ -80,32 +77,29 @@ void UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated(UGameplayAbility* Abil
     float PerfectWindowStartTime = CurrentTime + (AttackTime - PerfectOffsetStart);
     float PerfectWindowEndTime = CurrentTime + (AttackTime + PerfectOffsetEnd);
 
-    // TAG EKLE D�REKT B�TT�
-    // 
-    // 
-    // Timer ile tag a�/kapat
-    FTimerHandle TimerHandle_Start;
-    FTimerHandle TimerHandle_End;
+    // Timer lambda’larında weak pointer kullan
+    TWeakObjectPtr<UAbilitySystemComponent> ASCWeak = ASC;
 
-    GetWorld()->GetTimerManager().SetTimer(
-        TimerHandle_Start,
-        FTimerDelegate::CreateLambda([ASC, this]()
+    FTimerDelegate TimerStartDelegate;
+    TimerStartDelegate.BindLambda([ASCWeak]()
+        {
+            if (ASCWeak.IsValid())
             {
-                ASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
-            }),
-        AttackTime - PerfectOffsetStart,
-        false
-    );
+                ASCWeak->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
+            }
+        });
 
-    GetWorld()->GetTimerManager().SetTimer(
-        TimerHandle_End,
-        FTimerDelegate::CreateLambda([ASC, this]()
+    FTimerDelegate TimerEndDelegate;
+    TimerEndDelegate.BindLambda([ASCWeak]()
+        {
+            if (ASCWeak.IsValid())
             {
-                ASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
-            }),
-        AttackTime + PerfectOffsetEnd,
-        false
-    );
+                ASCWeak->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
+            }
+        });
+
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle_Start, TimerStartDelegate, AttackTime - PerfectOffsetStart, false);
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle_End, TimerEndDelegate, AttackTime + PerfectOffsetEnd, false);
 }
 
 float UAC_HeroEnemyAttackListener::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability, const FGameplayTagContainer& AbilityTags)
@@ -130,10 +124,21 @@ float UAC_HeroEnemyAttackListener::GetAttackNotifyTriggerTime(UGA_MeleeAttackBas
         }
     }
 
-    if (NotifyTime < 0.f)
+    return NotifyTime >= 0.f ? NotifyTime : -1.f;
+}
+
+void UAC_HeroEnemyAttackListener::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+
+    if (US_SpawnDelegates* SpawnSubs = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
     {
-        return -1.0f;
+        SpawnSubs->OnEnemySpawn.RemoveDynamic(this, &UAC_HeroEnemyAttackListener::OnEnemySpawn);
     }
 
-    return NotifyTime;
+    if (GetWorld())
+    {
+        GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Start);
+        GetWorld()->GetTimerManager().ClearTimer(TimerHandle_End);
+    }
 }

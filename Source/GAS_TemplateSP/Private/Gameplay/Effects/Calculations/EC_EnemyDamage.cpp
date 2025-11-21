@@ -8,6 +8,7 @@ static const float PERFECT_PARRY_WINDOW = 0.25f;
 
 void UEC_EnemyDamage::PreApplyDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const
 {
+    /*
     FGameplayTagContainer DodgeTags(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 
     FGameplayEffectQuery QueryDash;
@@ -43,7 +44,7 @@ void UEC_EnemyDamage::PreApplyDamageResult(FExecCalculationParameters& Params, F
         }
         DamageCalculationResult.DamageDealt = 0.0f;
     }
-
+    */
     /*
     FGameplayTagContainer ParryTags(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);
 

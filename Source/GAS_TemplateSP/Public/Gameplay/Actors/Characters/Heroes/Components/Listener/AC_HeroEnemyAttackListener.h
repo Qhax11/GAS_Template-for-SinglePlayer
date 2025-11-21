@@ -7,6 +7,7 @@
 
 struct FEnemySpawnData;
 struct FGameplayTagContainer;
+struct FTimerHandle;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class GAS_TEMPLATESP_API UAC_HeroEnemyAttackListener : public UActorComponent
@@ -31,5 +32,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	float PerfectOffsetEnd = 0.05f;
+
+	FTimerHandle TimerHandle_Start;
+    FTimerHandle TimerHandle_End;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
 };

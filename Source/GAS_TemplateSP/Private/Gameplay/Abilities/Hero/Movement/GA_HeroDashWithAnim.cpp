@@ -3,9 +3,11 @@
 
 #include "Gameplay/Abilities/Hero/Movement/GA_HeroDashWithAnim.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/Abilities/Tasks/AT_WaitOneFrame.h"
+#include <Abilities/Tasks/AbilityTask_WaitGameplayEvent.h>
 
 UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
 {
@@ -15,7 +17,8 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 
-    ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
+    // Giving effect insted of using ActivationOwnedTags for the perfect dodge check in damage exec calculation
+   // ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 }
 
 void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -51,10 +54,24 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     Task->OnFinished.AddDynamic(this, &UGA_HeroDashWithAnim::OnAfterFrame);
     Task->ReadyForActivation();
 
-    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect)) 
+    // 2. Event Bekleme Task'ini Oluştur
+    UAbilityTask_WaitGameplayEvent* WaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
+        this,
+        GAS_Tags::TAG_Gameplay_Event_Trigger_Perfect_Dodge,
+        nullptr, // Opsiyonel Target Actor
+        true,    // Only Trigger Once (Bir kere perfect dodge olunca task bitsin mi? Genelde Evet)
+        true     // Match Exact
+    );
+
+    // 3. Task Tetiklendiğinde Çalışacak Fonksiyonu Bağla
+    if (WaitTask)
     {
-        UE_LOG(LogTemp, Warning, TEXT("MADE PERFECT!"));
+        WaitTask->EventReceived.AddDynamic(this, &UGA_HeroDashWithAnim::OnPerfectDodgeReceived);
+        WaitTask->ReadyForActivation();
     }
+
+    UGameplayEffect* GE_SpeedBoost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GE_GiveDashTag);
+    GE_GiveDashTagHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_SpeedBoost, 1, FGameplayEffectContextHandle());
 }
 
 void UGA_HeroDashWithAnim::OnAfterFrame()
@@ -174,6 +191,11 @@ FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Inp
     }
 }
 
+void UGA_HeroDashWithAnim::OnPerfectDodgeReceived(FGameplayEventData Payload)
+{
+    UE_LOG(LogTemp, Warning, TEXT("Perfect Dodgeee!!!"));
+}
+
 void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     Super::OnEventReceived(EventTag, EventData);
@@ -192,6 +214,11 @@ void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, c
     if(!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
         HeroControlComponent->bOrientRotationToMovement = true;
+    }
+
+    if (GE_GiveDashTagHandle.IsValid())
+    {
+        GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(GE_GiveDashTagHandle);
     }
 
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

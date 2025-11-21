@@ -37,8 +37,13 @@ namespace GAS_Tags
 
 
 	// ============================================================
-	// ANIMATION NOTIFY EVENTS
-	// ============================================================
+    // EVENTS
+    // ============================================================
+    // Trigger Event
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_Trigger_Perfect);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_Trigger_Perfect_Dodge);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_Trigger_Perfect_Parry);
+	
 	// Attack Notifies
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Attack);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Attack_TraceStart);

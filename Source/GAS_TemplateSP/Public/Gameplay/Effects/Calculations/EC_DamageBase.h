@@ -28,7 +28,7 @@ public:
 
 	FDamageCalculationResult CalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const;
 
-	virtual void PostCalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const;
+	virtual void PreApplyDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const;
 
 	virtual float GetBaseDamage(const FExecCalculationParameters& Params) const;
 

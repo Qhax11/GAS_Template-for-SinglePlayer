@@ -4,7 +4,7 @@
 #include "Gameplay/Effects/Calculations/EC_HeroDamage.h"
 #include "Gameplay/Attributes/AS_Hero.h"
 
-void UEC_HeroDamage::PostCalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const
+void UEC_HeroDamage::PreApplyDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const
 {
     /*
     if (!DamageCalculationResult.bParrySuccess)

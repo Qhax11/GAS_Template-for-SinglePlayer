@@ -60,11 +60,19 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UInputDirectionToDodgeMontageAsset* InputDirectionToDodgeMontageAsset;
 
+    UFUNCTION()
+    void OnPerfectDodgeReceived(FGameplayEventData Payload);
+
 	UPROPERTY()
     class AGAS_HeroBase* HeroBase;
 
     UPROPERTY()
     class UAC_HeroControl* HeroControlComponent;
+
+    UPROPERTY(EditDefaultsOnly)
+    TSubclassOf<UGameplayEffect> GE_GiveDashTag;
+
+    FActiveGameplayEffectHandle GE_GiveDashTagHandle;
 
     virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 

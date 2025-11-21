@@ -26,9 +26,10 @@ protected:
 
 	float GetAttackNotifyTriggerTime(class UGA_MeleeAttackBase* Ability, const FGameplayTagContainer& AbilityTags);
 
+	UPROPERTY(EditDefaultsOnly)
 	float PerfectOffsetStart = 0.10f;
 
+	UPROPERTY(EditDefaultsOnly)
 	float PerfectOffsetEnd = 0.05f;
-
 
 };

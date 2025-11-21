@@ -12,51 +12,43 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 {
 	// Gameplay tags that are attached to the ***Effect*** (not the actor!)
 
-	// If target has a DamageImmune Tag, we shouldn't be able to attack
+	// Immunity Check
 	if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Damage immune has exist!"));
 		return;
 	}
 
 	FDamageCalculationResult Result = CalculateDamageResult(Params, OutExecutionOutput);
-	PostCalculateDamageResult(Params, OutExecutionOutput, Result);
+	PreApplyDamageResult(Params, OutExecutionOutput, Result); // BEFORE applying damage, subclasses may modify the result
 
-	// Broadcast damage event
-	if (Params.SourceASC->GetWorld())
+	// Broadcast
+	if (US_DamageDelegates* DamageSubsystem = Params.SourceASC->GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>())
 	{
-		if (US_DamageDelegates* DamageSubsystem = Params.SourceASC->GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>())
-		{
-			FDamageData DamageData = FDamageData(Params, Result.bParrySuccess);
-			DamageSubsystem->OnDamageDealt.Broadcast(DamageData);
-		}
+		FDamageData Data(Params, Result.bParrySuccess);
+		DamageSubsystem->OnDamageDealt.Broadcast(Data);
 	}
 
-	if (Result.bParrySuccess)
+	if (Result.bParrySuccess) 
 	{
 		return;
 	}
 
-	// ****************** APPLY DAMAGE ******************
-	// Apply that damage to the target's health  
 	if (Result.DamageDealt > 0)
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(
 			Params.GetTargetAttributeSet()->GetHealthAttribute(), EGameplayModOp::Additive, -Result.DamageDealt));
 	}
 
-	// Trigger events based on the damage dealt. AI is trigger take damage ability in his IncomingAttack state
 	if (Result.DamageDealt > 0 && Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
 	{
 		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage, Result.DamageDealt);
 	}
-
 	if (Result.MitigatedDamage >= Params.GetTargetAttributeSet()->GetHealth())
 	{
 		TriggerGameplayEvent(Params, GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Basic);
 	}
-	
-	float LifeStealDone = .0f;
+
+	float LifeStealDone = 0.f;
 	CalculateLifeSteal(Params, Result.MitigatedDamage, LifeStealDone, OutExecutionOutput);
 }
 
@@ -76,7 +68,7 @@ FDamageCalculationResult UEC_DamageBase::CalculateDamageResult(FExecCalculationP
 	return Result;
 }
 
-void UEC_DamageBase::PostCalculateDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const
+void UEC_DamageBase::PreApplyDamageResult(FExecCalculationParameters& Params, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, FDamageCalculationResult& DamageCalculationResult) const
 {
 	// Implementation will be in subclasses
 }

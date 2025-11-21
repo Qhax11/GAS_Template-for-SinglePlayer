@@ -34,8 +34,13 @@ namespace GAS_Tags
 
 
 	// ============================================================
-	// ANIMATION NOTIFY EVENTS
-	// ============================================================
+    // EVENTS
+    // ============================================================
+    // Trigger Event
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_Trigger_Perfect, "Gameplay.Event.Trigger.Perfect");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_Trigger_Perfect_Dodge, "Gameplay.Event.Trigger.Perfect.Dodge");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_Trigger_Perfect_Parry, "Gameplay.Event.Trigger.Perfect.Parry");
+	
 	// Attack Notifies
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack, "Gameplay.Event.AnimNotify.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_TraceStart, "Gameplay.Event.AnimNotify.Attack.TraceStart");

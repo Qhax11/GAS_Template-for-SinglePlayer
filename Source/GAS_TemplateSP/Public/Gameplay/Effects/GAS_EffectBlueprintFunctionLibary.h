@@ -43,5 +43,5 @@ public:
 	static void AddTagsToEffectSpecWithContain(FGameplayEffectSpec& Spec, FGameplayTagContainer TagContainer);
 
 	UFUNCTION(BlueprintCallable, Category = "GAS_EffectBlueprintFunctionLibary")
-	static bool ApplyEffectArrayToTarget(UAbilitySystemComponent* SourceASC, const UGameplayAbility* SourceAbility, UAbilitySystemComponent* TargetASC, TArray<TSubclassOf<UGameplayEffect>> EffectClasses);
+	static TArray<FActiveGameplayEffectHandle> ApplyEffectArrayToTarget(UAbilitySystemComponent* SourceASC, const UGameplayAbility* SourceAbility, UAbilitySystemComponent* TargetASC, TArray<TSubclassOf<UGameplayEffect>> EffectClasses);
 };

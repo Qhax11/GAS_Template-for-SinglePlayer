@@ -53,28 +53,26 @@ public:
     UFUNCTION()
     void OnAfterFrame();
 
-    virtual FVector CalculateMotionWarpingLocation() const override;
-
     FGameplayTag GetDirectionTagFromInput(const FVector2D& Input) const;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    UInputDirectionToDodgeMontageAsset* InputDirectionToDodgeMontageAsset;
+    virtual FVector CalculateMotionWarpingLocation() const override;
 
     UFUNCTION()
     void OnPerfectDodgeReceived(FGameplayEventData Payload);
 
-	UPROPERTY()
-    class AGAS_HeroBase* HeroBase;
-
-    UPROPERTY()
-    class UAC_HeroControl* HeroControlComponent;
-
-    UPROPERTY(EditDefaultsOnly)
-    TSubclassOf<UGameplayEffect> GE_GiveDashTag;
-
-    FActiveGameplayEffectHandle GE_GiveDashTagHandle;
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnPerfectDodgeReceivedBP(FGameplayEventData Payload);
 
     virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
     void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UInputDirectionToDodgeMontageAsset* InputDirectionToDodgeMontageAsset;
+
+    UPROPERTY()
+    class AGAS_HeroBase* HeroBase;
+
+    UPROPERTY()
+    class UAC_HeroControl* HeroControlComponent;
 };

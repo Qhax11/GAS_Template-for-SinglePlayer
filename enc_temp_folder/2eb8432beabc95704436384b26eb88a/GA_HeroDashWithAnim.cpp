@@ -17,8 +17,8 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 
-    // Giving TAG_Gameplay_State_Moving_Dash tag using ActivationEffectsToApply instead of ActivationOwnedTags
-    // ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
+    // Giving effect insted of using ActivationOwnedTags for the perfect dodge check in damage exec calculation
+   // ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 }
 
 void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -49,31 +49,29 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         return;
     }
 
-    UAT_WaitOneFrame* WaitOneFrameTask = UAT_WaitOneFrame::WaitOneFrame(this);
-    if (!WaitOneFrameTask)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("WaitOneFrameTask is null in: %s"), *GetName());
-        EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
-        return;
-    }
-    WaitOneFrameTask->OnFinished.AddDynamic(this, &UGA_HeroDashWithAnim::OnAfterFrame);
-    WaitOneFrameTask->ReadyForActivation();
+    // Wait one frame to ensure LastMovementInput is updated
+    UAT_WaitOneFrame* Task = UAT_WaitOneFrame::WaitOneFrame(this);
+    Task->OnFinished.AddDynamic(this, &UGA_HeroDashWithAnim::OnAfterFrame);
+    Task->ReadyForActivation();
 
-    UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this,
+    // 2. Event Bekleme Task'ini Oluştur
+    UAbilityTask_WaitGameplayEvent* WaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
+        this,
         GAS_Tags::TAG_Gameplay_Event_Trigger_Perfect_Dodge,
         nullptr, // Opsiyonel Target Actor
-        true,    // Only Trigger Once 
+        true,    // Only Trigger Once (Bir kere perfect dodge olunca task bitsin mi? Genelde Evet)
         true     // Match Exact
     );
 
-    if (!WaitGameplayEventTask)
+    // 3. Task Tetiklendiğinde Çalışacak Fonksiyonu Bağla
+    if (WaitTask)
     {
-        UE_LOG(LogTemp, Warning, TEXT("WaitGameplayEventTask is null in: %s"), *GetName());
-        EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
-        return;
+        WaitTask->EventReceived.AddDynamic(this, &UGA_HeroDashWithAnim::OnPerfectDodgeReceived);
+        WaitTask->ReadyForActivation();
     }
-    WaitGameplayEventTask->EventReceived.AddDynamic(this, &UGA_HeroDashWithAnim::OnPerfectDodgeReceived);
-    WaitGameplayEventTask->ReadyForActivation();
+
+    UGameplayEffect* GE_SpeedBoost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GE_GiveDashTag);
+    GE_GiveDashTagHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_SpeedBoost, 1, FGameplayEffectContextHandle());
 }
 
 void UGA_HeroDashWithAnim::OnAfterFrame()
@@ -108,6 +106,42 @@ void UGA_HeroDashWithAnim::OnAfterFrame()
 
     // Activate the ability now that input is read correctly
     Super::ActivateAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), nullptr);
+}
+
+FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
+{
+    if (!HeroBase)
+    {
+        return FVector::ZeroVector;
+    }
+
+    // Target locked modda DirectionTag'e göre hareket et
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(
+        GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+    {
+        // Parent class'ın DirectionTag bazlı hesaplamasını kullan
+        return Super::CalculateMotionWarpingLocation();
+    }
+
+    // Target locked değilse input yönüne göre hareket et
+    FVector OwnerLocation = HeroBase->GetActorLocation();
+    FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
+
+    if (MovementInput.IsNearlyZero())
+    {
+        return OwnerLocation + HeroBase->GetActorForwardVector() * MotionWarpingDistance;
+    }
+
+    FVector Direction = MovementInput.GetSafeNormal();
+
+    // Güvenlik kontrolü ekle
+    float Distance = (Direction * MotionWarpingDistance).Size();
+    if (Distance < 10.0f) // Minimum 10 cm
+    {
+        return OwnerLocation + HeroBase->GetActorForwardVector() * MotionWarpingDistance;
+    }
+
+    return OwnerLocation + Direction * MotionWarpingDistance;
 }
 
 FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Input) const
@@ -157,45 +191,9 @@ FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Inp
     }
 }
 
-FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
-{
-    if (!HeroBase)
-    {
-        return FVector::ZeroVector;
-    }
-
-    // Target locked modda DirectionTag'e göre hareket et
-    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(
-        GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
-    {
-        // Parent class'ın DirectionTag bazlı hesaplamasını kullan
-        return Super::CalculateMotionWarpingLocation();
-    }
-
-    // Target locked değilse input yönüne göre hareket et
-    FVector OwnerLocation = HeroBase->GetActorLocation();
-    FVector MovementInput = HeroBase->GetCharacterMovement()->GetLastInputVector();
-
-    if (MovementInput.IsNearlyZero())
-    {
-        return OwnerLocation + HeroBase->GetActorForwardVector() * MotionWarpingDistance;
-    }
-
-    FVector Direction = MovementInput.GetSafeNormal();
-
-    // Güvenlik kontrolü ekle
-    float Distance = (Direction * MotionWarpingDistance).Size();
-    if (Distance < 10.0f) // Minimum 10 cm
-    {
-        return OwnerLocation + HeroBase->GetActorForwardVector() * MotionWarpingDistance;
-    }
-
-    return OwnerLocation + Direction * MotionWarpingDistance;
-}
-
 void UGA_HeroDashWithAnim::OnPerfectDodgeReceived(FGameplayEventData Payload)
 {
-    OnPerfectDodgeReceivedBP(Payload);
+    UE_LOG(LogTemp, Warning, TEXT("Perfect Dodgeee!!!"));
 }
 
 void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -216,6 +214,11 @@ void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, c
     if(!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
         HeroControlComponent->bOrientRotationToMovement = true;
+    }
+
+    if (GE_GiveDashTagHandle.IsValid())
+    {
+        GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(GE_GiveDashTagHandle);
     }
 
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

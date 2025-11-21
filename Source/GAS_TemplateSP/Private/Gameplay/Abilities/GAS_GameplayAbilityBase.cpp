@@ -38,12 +38,13 @@ void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle 
 
 void UGAS_GameplayAbilityBase::StartupEffects()
 {
-	ApplyGameplayEffectToSelf(AbilityActivationEffects);
+	ApplyGameplayEffectToSelf(ActivationEffectsToApply);
 }
 
 void UGAS_GameplayAbilityBase::ApplyGameplayEffectToSelf(TArray<TSubclassOf<UGameplayEffect>> Effects)
 {
-	UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), this, GetAbilitySystemComponentFromActorInfo(), Effects);
+	// Use the library function to apply effects and capture only the Handles of non-instant effects.
+	ActiveEffectsOnOwner = UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(GetAbilitySystemComponentFromActorInfo(), this, GetAbilitySystemComponentFromActorInfo(), Effects);
 }
 
 void UGAS_GameplayAbilityBase::RemoveTags()
@@ -137,8 +138,15 @@ void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	TWeakObjectPtr<UGAS_GameplayAbilityBase> WeakThis(this);
+	for (const FActiveGameplayEffectHandle& HandleToRemove : ActiveEffectsOnOwner)
+	{
+		if (HandleToRemove.IsValid()) 
+		{
+			GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(HandleToRemove);
+		}
+	}
 
+	TWeakObjectPtr<UGAS_GameplayAbilityBase> WeakThis(this);
 	if (GetWorld())
 	{
 		GetWorld()->GetTimerManager().SetTimerForNextTick([WeakThis]()

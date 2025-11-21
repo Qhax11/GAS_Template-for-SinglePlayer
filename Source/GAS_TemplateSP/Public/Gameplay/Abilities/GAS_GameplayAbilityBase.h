@@ -88,7 +88,16 @@ public:
 	class UTexture2D* AbilityIcon;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameplayAbilityBase")
-	TArray<TSubclassOf<UGameplayEffect>> AbilityActivationEffects;
+	TArray<TSubclassOf<UGameplayEffect>> ActivationEffectsToApply;
+
+	// Handles of the actively applied effects that need to be cleaned up on EndAbility.
+    // Marked as Transient as these handles are only valid during the current game session.
+	UPROPERTY(Transient)
+	TArray<FActiveGameplayEffectHandle> ActiveEffectsOnOwner;
+
+	// Gameplay Tags that will be removed when this ability is activated
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
+	FGameplayTagContainer TagsToRemove;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
 	float MinRange;
@@ -98,9 +107,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
 	bool bApplyCommit = true;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbilityBase")
-	FGameplayTagContainer TagsToRemove;
 
 	FOnAbilityEnded OnAbilityEnded;
 

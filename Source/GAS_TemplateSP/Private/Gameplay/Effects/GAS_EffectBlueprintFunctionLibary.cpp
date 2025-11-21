@@ -151,32 +151,40 @@ void UGAS_EffectBlueprintFunctionLibary::AddTagsToEffectSpecWithContain(FGamepla
 	Spec.AppendDynamicAssetTags(TagContainer);
 }
 
-bool UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(UAbilitySystemComponent* SourceASC, const UGameplayAbility* SourceAbility, UAbilitySystemComponent* TargetASC, TArray<TSubclassOf<UGameplayEffect>> EffectClasses)
+TArray<FActiveGameplayEffectHandle> UGAS_EffectBlueprintFunctionLibary::ApplyEffectArrayToTarget(UAbilitySystemComponent* SourceASC, const UGameplayAbility* SourceAbility, UAbilitySystemComponent* TargetASC, TArray<TSubclassOf<UGameplayEffect>> EffectClasses)
 {
+	TArray<FActiveGameplayEffectHandle> ActiveGameplayEffectsHandle;
 	if (!SourceASC || !TargetASC || EffectClasses.IsEmpty())
 	{
-		return false;
+		return ActiveGameplayEffectsHandle;
 	}
 
-	for (TSubclassOf<UGameplayEffect> GameplayEffect : EffectClasses)
+	for (TSubclassOf<UGameplayEffect> GameplayEffectClass : EffectClasses)
 	{
 		FGameplayEffectContextHandle EffectContext = SourceASC->MakeEffectContext();
 		EffectContext.SetAbility(SourceAbility);
-		FGameplayEffectSpecHandle NewHandle = SourceASC->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
+		FGameplayEffectSpecHandle NewHandle = SourceASC->MakeOutgoingSpec(GameplayEffectClass, 1, EffectContext);
 
-		FGameplayEffectSpec* EffectSpec = nullptr;
-		if (NewHandle.IsValid())
+		if (!NewHandle.IsValid())
 		{
-			EffectSpec = NewHandle.Data.Get();
+			continue;
 		}
 
-		if (EffectSpec)
+		FGameplayEffectSpec& EffectSpec = *NewHandle.Data.Get();
+
+		FActiveGameplayEffectHandle AppliedEffectHandle = SourceASC->ApplyGameplayEffectSpecToTarget(EffectSpec, TargetASC);
+
+		const UGameplayEffect* EffectDef = EffectSpec.Def;
+		if (EffectDef && EffectDef->DurationPolicy != EGameplayEffectDurationType::Instant)
 		{
-			SourceASC->ApplyGameplayEffectSpecToTarget(*EffectSpec, TargetASC);
+			if (AppliedEffectHandle.IsValid())
+			{
+				ActiveGameplayEffectsHandle.Add(AppliedEffectHandle);
+			}
 		}
 	}
 
-	return true;
+	return ActiveGameplayEffectsHandle;
 }
 
 

@@ -74,6 +74,11 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     }
     WaitGameplayEventTask->EventReceived.AddDynamic(this, &UGA_HeroDashWithAnim::OnPerfectDodgeReceived);
     WaitGameplayEventTask->ReadyForActivation();
+
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect)) 
+    {
+        OnPerfectDodgeReceivedBP();
+    }
 }
 
 void UGA_HeroDashWithAnim::OnAfterFrame()
@@ -201,7 +206,7 @@ FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
 
 void UGA_HeroDashWithAnim::OnPerfectDodgeReceived(FGameplayEventData Payload)
 {
-    OnPerfectDodgeReceivedBP(Payload);
+    OnPerfectDodgeReceivedBP();
 }
 
 void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)

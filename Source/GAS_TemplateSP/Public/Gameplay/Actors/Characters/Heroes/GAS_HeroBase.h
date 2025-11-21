@@ -69,6 +69,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components|Listener")
 	class UAC_HeroTagListener* HeroTagListenerComponent;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components|Listener")
+	class UAC_HeroEnemyAttackListener* HeroEnemyAttackListenerComponent;
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_HeroGameplayCamera* HeroGameplayCameraComponent;
 

@@ -70,13 +70,13 @@ void UGA_HeroRouterDashAndRun::TryActivateRun()
     if (!UsedRunAbilty)
     {
         UE_LOG(LogTemp, Warning, TEXT("Run Ability could not be activated after Dash in: %s"), *GetName());
-        EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+        EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
     }
 }
 
 void UGA_HeroRouterDashAndRun::OnInputReleased(float TimeHeld)
 {
-    EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, true);
+    EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_HeroRouterDashAndRun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

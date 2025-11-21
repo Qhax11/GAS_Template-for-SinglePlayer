@@ -127,6 +127,9 @@ namespace GAS_Tags
     // ============================================================
 	// Perfect Timing Windows
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Window, "Gameplay.Window");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Window_Perfect, "Gameplay.Window.Perfect");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Window_Perfect_Dodge, "Gameplay.Window.Perfect.Dodge");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Window_Perfect_Parry, "Gameplay.Window.Perfect.Parry");
 
 
 	// ============================================================

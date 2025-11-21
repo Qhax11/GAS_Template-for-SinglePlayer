@@ -61,7 +61,7 @@ public:
     void OnPerfectDodgeReceived(FGameplayEventData Payload);
 
     UFUNCTION(BlueprintImplementableEvent)
-    void OnPerfectDodgeReceivedBP(FGameplayEventData Payload);
+    void OnPerfectDodgeReceivedBP();
 
     virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 

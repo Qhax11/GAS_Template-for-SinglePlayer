@@ -13,6 +13,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroGameplayCamera.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/Listener/AC_HeroTagListener.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/Listener/AC_HeroEnemyAttackListener.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
@@ -40,6 +41,7 @@ AGAS_HeroBase::AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer)
     HeroMovementListenerComponent = CreateDefaultSubobject<UAC_HeroMovementListener>(TEXT("HeroMovementListenerComponent"));
     HeroGameplayCameraComponent = CreateDefaultSubobject<UAC_HeroGameplayCamera>(TEXT("HeroGameplayCameraComponent"));
     HeroTagListenerComponent = CreateDefaultSubobject<UAC_HeroTagListener>(TEXT("HeroTagListenerComponent"));
+    HeroEnemyAttackListenerComponent = CreateDefaultSubobject<UAC_HeroEnemyAttackListener>(TEXT("HeroEnemyAttackListenerComponent"));
 
     HeroShadowControllerComponent = CreateDefaultSubobject<USC_HeroShadowController>(TEXT("HeroShadowControllerComponent"));
     HeroShadowControllerComponent->SetupAttachment(RootComponent);

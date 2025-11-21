@@ -78,6 +78,12 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UGA_HeroDashWithAnim::OnAfterFrame()
 {
+    if (GetAbilitySystemComponentFromActorInfo()->HasAnyMatchingGameplayTags(ActivationBlockedTags))
+    {
+        EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+        return;
+    }
+
     if (!HeroControlComponent || !InputDirectionToDodgeMontageAsset)
     {
         EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);

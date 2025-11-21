@@ -63,13 +63,16 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class USC_HeroShadowController* HeroShadowControllerComponent;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components|Listener")
 	class UAC_HeroMovementListener* HeroMovementListenerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components|Listener")
+	class UAC_HeroEnemyAttackListener* HeroEnemyAttackListenerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_HeroJumpHandler* HeroJumpHandlerComponent;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components|Listener")
 	class UAC_HeroTagListener* HeroTagListenerComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")

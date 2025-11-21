@@ -108,7 +108,17 @@ class GAS_TEMPLATESP_API US_SpawnDelegates : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	/** Enemy BeginPlay'de bunu çaðýracak (Artýk direkt Broadcast yapmayacaklar) */
+	UFUNCTION(BlueprintCallable, Category = "Spawn Tracking")
+	void RegisterEnemy(const FEnemySpawnData& SpawnData);
+
+	/** Enemy öldüðünde listeden silmek için (Opsiyonel ama temizlik için iyi) */
+	UFUNCTION(BlueprintCallable, Category = "Spawn Tracking")
+	void UnregisterEnemy(const FCharacterDeSpawnData& DeSpawnData);
+
+	/** Aktif olarak yaþayan düþmanlarýn listesi */
+	UPROPERTY(BlueprintReadOnly, Category = "Spawn Tracking")
+	TArray<FEnemySpawnData> AliveEnemies;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHeroSpawn OnHeroSpawn;

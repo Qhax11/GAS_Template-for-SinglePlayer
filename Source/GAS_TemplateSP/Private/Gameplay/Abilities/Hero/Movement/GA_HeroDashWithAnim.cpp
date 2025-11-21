@@ -50,6 +50,11 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     UAT_WaitOneFrame* Task = UAT_WaitOneFrame::WaitOneFrame(this);
     Task->OnFinished.AddDynamic(this, &UGA_HeroDashWithAnim::OnAfterFrame);
     Task->ReadyForActivation();
+
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect)) 
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MADE PERFECT!"));
+    }
 }
 
 void UGA_HeroDashWithAnim::OnAfterFrame()

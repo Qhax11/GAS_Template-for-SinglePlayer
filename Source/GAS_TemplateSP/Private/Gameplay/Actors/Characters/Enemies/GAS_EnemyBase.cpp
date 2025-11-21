@@ -46,6 +46,6 @@ void AGAS_EnemyBase::PossessedBy(AController* NewController)
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
 		FEnemySpawnData EnemySpawnData = FEnemySpawnData(this, GetAbilitySystemComponent(), EnemyController->GetStateTreeComponent());
-		SpawnDelegatesSubsystem->OnEnemySpawn.Broadcast(EnemySpawnData);
+		SpawnDelegatesSubsystem->RegisterEnemy(EnemySpawnData);
 	}
 }

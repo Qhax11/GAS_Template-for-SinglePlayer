@@ -8,6 +8,7 @@
 UGA_HeroParry::UGA_HeroParry()
 {
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 }
 
 void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

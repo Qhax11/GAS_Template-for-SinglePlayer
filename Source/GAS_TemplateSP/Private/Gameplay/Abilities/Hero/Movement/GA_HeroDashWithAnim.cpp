@@ -16,6 +16,7 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 
+    bApplyCommit = false;
     // Giving TAG_Gameplay_State_Moving_Dash tag using ActivationEffectsToApply instead of ActivationOwnedTags
     // ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 }
@@ -60,7 +61,6 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
     GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
 
-    // 2. Ability Task ile 0.3 Saniye Bekle
     WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.3f);
     if (!WaitDelayTask)
     {
@@ -68,7 +68,6 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
         return;
     }
-
     WaitDelayTask->OnFinish.AddDynamic(this, &UGA_HeroDashWithAnim::RemoveDamageImmuneTag);
     WaitDelayTask->ReadyForActivation();
 
@@ -76,23 +75,27 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     {
         OnPerfectDodgeReceivedBP();
     }
+    else
+    {
+        if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+        {
+            EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+            return;
+        }
+    }
+
 }
 
 void UGA_HeroDashWithAnim::OnAfterFrame()
 {
-    if (!HeroBase || !HeroControlComponent)
+    if (!HeroBase || !HeroControlComponent || !InputDirectionToDodgeMontageAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("HeroBase or HeroControlComponent is null"));
-        return;
-    }
-
-    if (GetAbilitySystemComponentFromActorInfo()->HasAnyMatchingGameplayTags(ActivationBlockedTags))
-    {
         EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
         return;
     }
 
-    if (!HeroControlComponent || !InputDirectionToDodgeMontageAsset)
+    if (GetAbilitySystemComponentFromActorInfo()->HasAnyMatchingGameplayTags(ActivationBlockedTags))
     {
         EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
         return;
@@ -209,7 +212,7 @@ FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
 
 void UGA_HeroDashWithAnim::RemoveDamageImmuneTag()
 {
-    GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
+    GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune, 100);
 }
 
 void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -227,7 +230,7 @@ void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEvent
 
 void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-    GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
+    GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune, 100);
 
     if (IsValid(WaitOneFrameTask))
     {

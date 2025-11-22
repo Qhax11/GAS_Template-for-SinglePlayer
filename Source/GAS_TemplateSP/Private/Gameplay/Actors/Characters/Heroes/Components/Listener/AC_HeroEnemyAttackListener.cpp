@@ -17,12 +17,12 @@ void UAC_HeroEnemyAttackListener::BeginPlay()
     Super::BeginPlay();
 
     US_SpawnDelegates* SpawnSubs = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>();
-    if (!SpawnSubs) return;
+    if (!SpawnSubs)
+    {
+        return;
+    }
 
-    // 1. Gelecek için abone ol
     SpawnSubs->OnEnemySpawn.AddDynamic(this, &UAC_HeroEnemyAttackListener::OnEnemySpawn);
-
-    // 2. Geçmişte doğmuş olanları işle
     for (const FEnemySpawnData& ExistingEnemy : SpawnSubs->AliveEnemies)
     {
         OnEnemySpawn(ExistingEnemy);
@@ -48,7 +48,7 @@ void UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated(UGameplayAbility* Abil
     }
 
     UGA_MeleeAttackBase* MeleeAttackAbility = Cast<UGA_MeleeAttackBase>(Ability);
-    if (!MeleeAttackAbility)
+    if (!MeleeAttackAbility) 
     {
         return;
     }
@@ -59,7 +59,6 @@ void UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated(UGameplayAbility* Abil
         return;
     }
 
-    // Ability taglerini al
     FGameplayTagContainer CombinedTags;
     CombinedTags.AppendTags(Ability->GetAssetTags());
     if (const FGameplayAbilitySpec* Spec = Ability->GetCurrentAbilitySpec())
@@ -68,38 +67,98 @@ void UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated(UGameplayAbility* Abil
     }
 
     float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility, CombinedTags);
-    if (AttackTime < 0.0f)
-    {
-        return;
-    }
+    if (AttackTime < 0.0f) return;
 
-    float CurrentTime = GetWorld()->GetTimeSeconds();
-    float PerfectWindowStartTime = CurrentTime + (AttackTime - PerfectOffsetStart);
-    float PerfectWindowEndTime = CurrentTime + (AttackTime + PerfectOffsetEnd);
+    CleanupAbilityTimers(Ability);
 
-    // Timer lambda’larında weak pointer kullan
     TWeakObjectPtr<UAbilitySystemComponent> ASCWeak = ASC;
+    TWeakObjectPtr<UGameplayAbility> AbilityWeak = Ability;
+    TWeakObjectPtr<UAC_HeroEnemyAttackListener> ThisWeak = this;
 
+    // Start timer
     FTimerDelegate TimerStartDelegate;
-    TimerStartDelegate.BindLambda([ASCWeak]()
+    TimerStartDelegate.BindLambda([ASCWeak, AbilityWeak, ThisWeak]()
         {
-            if (ASCWeak.IsValid())
+            if (ThisWeak.IsValid() && ASCWeak.IsValid())
             {
-                ASCWeak->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
+                // İlk window açılıyorsa tag ekle
+                if (ThisWeak->ActivePerfectWindows == 0)
+                {
+                    ASCWeak->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
+                }
+                ThisWeak->ActivePerfectWindows++;
+
+                if (AbilityWeak.IsValid())
+                {
+                    ThisWeak->ActiveAbilityTimers_Start.Remove(AbilityWeak.Get());
+                }
             }
         });
 
+    // End timer
     FTimerDelegate TimerEndDelegate;
-    TimerEndDelegate.BindLambda([ASCWeak]()
+    TimerEndDelegate.BindLambda([ASCWeak, AbilityWeak, ThisWeak]()
         {
-            if (ASCWeak.IsValid())
+            if (ThisWeak.IsValid() && ASCWeak.IsValid())
             {
-                ASCWeak->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
+                ThisWeak->ActivePerfectWindows--;
+
+                // Son window kapandıysa tag'i sil
+                if (ThisWeak->ActivePerfectWindows <= 0)
+                {
+                    ThisWeak->ActivePerfectWindows = 0; // Güvenlik için
+                    ASCWeak->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
+                }
+
+                if (AbilityWeak.IsValid())
+                {
+                    ThisWeak->ActiveAbilityTimers_End.Remove(AbilityWeak.Get());
+                }
             }
         });
 
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle_Start, TimerStartDelegate, AttackTime - PerfectOffsetStart, false);
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle_End, TimerEndDelegate, AttackTime + PerfectOffsetEnd, false);
+    FTimerHandle StartHandle, EndHandle;
+    GetWorld()->GetTimerManager().SetTimer(StartHandle, TimerStartDelegate, AttackTime - PerfectOffsetStart, false);
+    GetWorld()->GetTimerManager().SetTimer(EndHandle, TimerEndDelegate, AttackTime + PerfectOffsetEnd, false);
+
+    ActiveAbilityTimers_Start.Add(Ability, StartHandle);
+    ActiveAbilityTimers_End.Add(Ability, EndHandle);
+
+    Ability->OnGameplayAbilityEnded.RemoveAll(this);
+    Ability->OnGameplayAbilityEnded.AddUObject(this, &UAC_HeroEnemyAttackListener::OnEnemyAbilityEnded);
+}
+
+void UAC_HeroEnemyAttackListener::OnEnemyAbilityEnded(UGameplayAbility* Ability)
+{
+    if (!Ability) return;
+
+    // Timer'ların durumunu kontrol et
+    bool bStartTimerExists = ActiveAbilityTimers_Start.Contains(Ability);
+    bool bEndTimerExists = ActiveAbilityTimers_End.Contains(Ability);
+
+    // Eğer Start timer yoksa ama End timer varsa = window açıktı
+    bool bWindowWasActive = !bStartTimerExists && bEndTimerExists;
+
+    // Timer'ları temizle
+    CleanupAbilityTimers(Ability);
+
+    // Eğer window açıktıysa, counter'ı düşür ve tag'i kontrol et
+    if (bWindowWasActive)
+    {
+        ActivePerfectWindows--;
+        if (ActivePerfectWindows <= 0)
+        {
+            ActivePerfectWindows = 0;
+            if (UAbilitySystemComponent* ASC = Cast<UAbilitySystemComponent>(GetOwner()->FindComponentByClass<UAbilitySystemComponent>()))
+            {
+                ASC->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
+            }
+        }
+    }
+    // Eğer Start timer hala varsa = window henüz açılmamıştı, hiçbir şey yapma
+    // Eğer her ikisi de yoksa = timer'lar zaten doğal olarak bitmişti, hiçbir şey yapma
+
+    Ability->OnGameplayAbilityEnded.RemoveAll(this);
 }
 
 float UAC_HeroEnemyAttackListener::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Ability, const FGameplayTagContainer& AbilityTags)
@@ -127,6 +186,23 @@ float UAC_HeroEnemyAttackListener::GetAttackNotifyTriggerTime(UGA_MeleeAttackBas
     return NotifyTime >= 0.f ? NotifyTime : -1.f;
 }
 
+void UAC_HeroEnemyAttackListener::CleanupAbilityTimers(UGameplayAbility* Ability)
+{
+    if (!Ability || !GetWorld()) return;
+
+    if (FTimerHandle* StartHandle = ActiveAbilityTimers_Start.Find(Ability))
+    {
+        GetWorld()->GetTimerManager().ClearTimer(*StartHandle);
+        ActiveAbilityTimers_Start.Remove(Ability);
+    }
+
+    if (FTimerHandle* EndHandle = ActiveAbilityTimers_End.Find(Ability))
+    {
+        GetWorld()->GetTimerManager().ClearTimer(*EndHandle);
+        ActiveAbilityTimers_End.Remove(Ability);
+    }
+}
+
 void UAC_HeroEnemyAttackListener::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
@@ -138,7 +214,21 @@ void UAC_HeroEnemyAttackListener::EndPlay(const EEndPlayReason::Type EndPlayReas
 
     if (GetWorld())
     {
-        GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Start);
-        GetWorld()->GetTimerManager().ClearTimer(TimerHandle_End);
+        UWorld* World = GetWorld();
+        auto& TM = World->GetTimerManager();
+
+        // Start timers
+        for (auto& Pair : ActiveAbilityTimers_Start)
+        {
+            TM.ClearTimer(Pair.Value);
+        }
+        ActiveAbilityTimers_Start.Empty();
+
+        // End timers
+        for (auto& Pair : ActiveAbilityTimers_End)
+        {
+            TM.ClearTimer(Pair.Value);
+        }
+        ActiveAbilityTimers_End.Empty();
     }
 }

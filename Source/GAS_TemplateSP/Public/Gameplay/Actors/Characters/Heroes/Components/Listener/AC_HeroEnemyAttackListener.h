@@ -5,6 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "AC_HeroEnemyAttackListener.generated.h"
 
+class UGameplayAbility;
 struct FEnemySpawnData;
 struct FGameplayTagContainer;
 struct FTimerHandle;
@@ -23,7 +24,9 @@ protected:
 	UFUNCTION()
 	void OnEnemySpawn(const FEnemySpawnData& EnemySpawnData);
 
-	void OnEnemyAbilityActivated(class UGameplayAbility* Ability);
+	void OnEnemyAbilityActivated(UGameplayAbility* Ability);
+
+	void OnEnemyAbilityEnded(UGameplayAbility* Ability);
 
 	float GetAttackNotifyTriggerTime(class UGA_MeleeAttackBase* Ability, const FGameplayTagContainer& AbilityTags);
 
@@ -33,8 +36,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float PerfectOffsetEnd = 0.05f;
 
-	FTimerHandle TimerHandle_Start;
-    FTimerHandle TimerHandle_End;
+	TMap<UGameplayAbility*, FTimerHandle> ActiveAbilityTimers_Start;
+	TMap<UGameplayAbility*, FTimerHandle> ActiveAbilityTimers_End;
+
+	int32 ActivePerfectWindows = 0;
+
+	void CleanupAbilityTimers(UGameplayAbility* Ability);
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 

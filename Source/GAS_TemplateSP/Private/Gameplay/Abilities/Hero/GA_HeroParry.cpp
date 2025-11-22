@@ -5,7 +5,12 @@
 #include "Abilities/Tasks/AbilityTask_WaitInputRelease.h"
 #include "Gameplay/Abilities/InCombat/GA_ParryKnockbackBase.h"
 
-void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
+UGA_HeroParry::UGA_HeroParry()
+{
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
+}
+
+void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)

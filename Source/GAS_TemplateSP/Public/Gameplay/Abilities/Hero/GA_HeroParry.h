@@ -12,6 +12,8 @@ class GAS_TEMPLATESP_API UGA_HeroParry : public UGA_ParryBase
 	GENERATED_BODY()
 	
 public:
+	UGA_HeroParry();
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	// TODO: U can make as AbilityTask so every ability can use easly and it will be blueprintable.

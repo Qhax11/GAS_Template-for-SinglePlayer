@@ -15,6 +15,7 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
+    ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
 
     bApplyCommit = false;
     // Giving TAG_Gameplay_State_Moving_Dash tag using ActivationEffectsToApply instead of ActivationOwnedTags

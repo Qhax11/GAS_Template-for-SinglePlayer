@@ -12,6 +12,7 @@ UGA_HeroJump::UGA_HeroJump()
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
 }
 
 void UGA_HeroJump::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

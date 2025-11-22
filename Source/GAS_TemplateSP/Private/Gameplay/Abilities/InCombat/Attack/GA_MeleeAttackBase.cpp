@@ -15,6 +15,7 @@ UGA_MeleeAttackBase::UGA_MeleeAttackBase()
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeAttack);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
 }
 
 void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

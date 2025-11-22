@@ -81,6 +81,12 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Stun, "Gameplay.State.Debuff.Stun");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Debuff_Slow, "Gameplay.State.Debuff.Slow");
 
+	// Action Phase States
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase, "Gameplay.State.Phase");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Startup, "Gameplay.State.Phase.Startup");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Active, "Gameplay.State.Phase.Active");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Recovery, "Gameplay.State.Phase.Recovery");
+
 	// Movement States
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving, "Gameplay.State.Moving");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Strafing, "Gameplay.State.Moving.Strafing");

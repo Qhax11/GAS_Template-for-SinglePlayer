@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "AC_TargetLockSystem.generated.h"
 
@@ -20,7 +20,7 @@ enum ETargetChangeDirection : uint8
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class GAS_TEMPLATESP_API UAC_TargetLockSystem : public UActorComponent
+class GAS_TEMPLATESP_API UAC_TargetLockSystem : public UAC_HeroBase
 {
 	GENERATED_BODY()
 
@@ -129,12 +129,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bLocked = false;
-
-	UPROPERTY()
-	AGAS_HeroBase* HeroBase;
-
-	UPROPERTY()
-	UAbilitySystemComponent* HeroASC;
 
 	UPROPERTY()
 	class UAC_TagDelegates* HeroTagDelegatesComp;

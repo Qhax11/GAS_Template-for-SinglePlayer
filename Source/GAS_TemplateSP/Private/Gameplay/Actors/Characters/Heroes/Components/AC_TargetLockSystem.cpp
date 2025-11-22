@@ -23,20 +23,12 @@ void UAC_TargetLockSystem::BeginPlay()
 
 	SetComponentTickEnabled(false);
 
-	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
-	if (!HeroBase)
+	if (!HeroBase || !HeroASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s)"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase or HeroASC is null in: %s)"), *GetName());
 		return;
 	}
 
-	HeroASC = HeroBase->GetAbilitySystemComponent();
-	if (!HeroASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in %s, cannot initialize HeroControl."), *GetName());
-		return;
-	}
-	
 	HeroTagDelegatesComp = HeroBase->GetTagDelegatesComponent();
 	if (!HeroTagDelegatesComp) 
 	{

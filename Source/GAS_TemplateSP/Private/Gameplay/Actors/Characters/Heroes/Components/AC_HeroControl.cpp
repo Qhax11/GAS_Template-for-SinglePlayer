@@ -13,17 +13,9 @@ void UAC_HeroControl::BeginPlay()
 {
 	Super::BeginPlay();
 
-	HeroBase = Cast<AGAS_HeroBase>(GetOwner());
-	if (!HeroBase)
+	if (!HeroBase || !HeroASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s, cannot initialize HeroControl"), *GetName());
-		return;
-	}
-
-	HeroASC = HeroBase->GetAbilitySystemComponent();
-	if (!HeroASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in %s, cannot initialize HeroControl."), *this->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase or HeroASC null in: %s, cannot initialize HeroControl"), *GetName());
 		return;
 	}
 

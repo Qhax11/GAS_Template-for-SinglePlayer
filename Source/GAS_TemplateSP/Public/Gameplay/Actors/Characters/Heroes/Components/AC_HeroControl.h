@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "AC_HeroControl.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GAS_TEMPLATESP_API UAC_HeroControl : public UActorComponent
+class GAS_TEMPLATESP_API UAC_HeroControl : public UAC_HeroBase
 {
 	GENERATED_BODY()
 
@@ -68,9 +68,6 @@ public:
 
 protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	AGAS_HeroBase* HeroBase;
-	UAbilitySystemComponent* HeroASC;
 
 public:
 	UEnhancedInputComponent* EnhancedInputComponent;

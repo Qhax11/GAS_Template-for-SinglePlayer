@@ -29,7 +29,6 @@ class GAS_TEMPLATESP_API UAC_AbilityInputBinding : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UAC_AbilityInputBinding();
 
 	virtual void BeginPlay() override;

@@ -11,11 +11,7 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 	Super::BeginPlay();
 
 	HeroBase = Cast<AGAS_HeroBase>(CharacterBase);
-	if (HeroBase)
-	{
-		BindHeroMeleeComboInput();
-	}
-	else
+	if (!HeroBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
 		return;
@@ -33,47 +29,8 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 	InitComboChainTracker();
 }
 
-bool UAC_HeroMeleeComboManager::BindHeroMeleeComboInput()
-{
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(HeroBase->InputComponent);
-	if (!EnhancedInputComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("EnhancedInputComponent is null in: %s"), *GetName());
-		return false;
-	}
-
-	if (IA_ActivateMeleeCombo)
-	{
-		EnhancedInputComponent->BindAction(IA_ActivateMeleeCombo, ETriggerEvent::Triggered, this, &UAC_HeroMeleeComboManager::OnComboMeleeAttackInput);
-		return true;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Input actions are null in: %s"), *GetName());
-		return false;
-	}
-}
-
-void UAC_HeroMeleeComboManager::OnComboMeleeAttackInput()
-{
-	ActivateComboMeleeAttackAbility();
-}
-
 UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
-	bool bIsHeroRunning = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Running);
-	bool bIsHeroInAir = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InAir);
-
-	if (bIsHeroRunning && !bIsHeroInAir)
-	{
-		return nullptr;
-	}
-
-	if (CharacterBaseASC->HasAnyMatchingGameplayTags(BlockedTags))
-	{
-		return nullptr;
-	}
-
 	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMeleeAttackAbility(MontageSection, AdditionalTag);
 	if (!ActivatedComboMeleeAttack) 
 	{

@@ -23,6 +23,11 @@ void UAC_HeroAbilityBuffer::BeginPlay()
 
 void UAC_HeroAbilityBuffer::OnAbilityFailed(const UGameplayAbility* FailedAbility, const FGameplayTagContainer& TagExplaining)
 {
+    if (!FailedAbility) 
+    {
+        UE_LOG(LogTemp, Warning, TEXT("FailedAbility null in: %s"), *GetName());
+        return;
+    }
 
     FString AllTags;
     // Container boþ deðilse yazalým
@@ -41,6 +46,6 @@ void UAC_HeroAbilityBuffer::OnAbilityFailed(const UGameplayAbility* FailedAbilit
         AllTags.RemoveFromEnd(TEXT(", "));
     }
 
-    UE_LOG(LogTemp, Error, TEXT("OnAbilityFailed, TagExplain: %s"), *AllTags);
+    UE_LOG(LogTemp, Error, TEXT("FailedAbility: %s, TagExplain: %s"), *FailedAbility->GetName(), *AllTags);
 }
 

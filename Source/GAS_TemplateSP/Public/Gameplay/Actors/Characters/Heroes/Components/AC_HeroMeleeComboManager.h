@@ -15,10 +15,6 @@ class GAS_TEMPLATESP_API UAC_HeroMeleeComboManager : public UAC_MeleeComboManage
 protected:
 	virtual void BeginPlay() override;
 
-	bool BindHeroMeleeComboInput();
-
-	void OnComboMeleeAttackInput();
-
 	void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData) override;
 
 	UFUNCTION()
@@ -29,13 +25,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ActivateComboMeleeAttackAbilityWithShadowAttack(FName MontageSection, int32 ComboIndex = 0, FGameplayTag AdditionalTag = FGameplayTag());
-
-	// The tags are blocks MeleeCombo because of same input
-	UPROPERTY(EditDefaultsOnly, Category = "HeroMeleeComboManager")
-	FGameplayTagContainer BlockedTags;
-
-	UPROPERTY(EditDefaultsOnly, Category = "HeroMeleeComboManager")
-	const UInputAction* IA_ActivateMeleeCombo;
 
 	AGAS_HeroBase* HeroBase;
 

@@ -38,4 +38,6 @@ void UGA_HeroRouterAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         HeroMeleeComboManager->ActivateComboMeleeAttackAbility();
     }
    
+    EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
 }
+

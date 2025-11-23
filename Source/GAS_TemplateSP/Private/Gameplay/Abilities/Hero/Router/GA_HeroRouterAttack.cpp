@@ -6,6 +6,12 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 
+UGA_HeroRouterAttack::UGA_HeroRouterAttack()
+{
+    ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_AbilityTargeting_Shadow);
+    ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
+}
+
 void UGA_HeroRouterAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     const FGameplayAbilityActorInfo* ActorInfo,
     const FGameplayAbilityActivationInfo ActivationInfo,

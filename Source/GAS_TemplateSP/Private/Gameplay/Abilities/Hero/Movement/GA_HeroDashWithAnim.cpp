@@ -239,7 +239,9 @@ void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, c
         WaitOneFrameTask = nullptr;
     }
 
-    if(!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
+    bool IsHeroLocked = GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
+    bool IsHeroMeleeAttack = GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeAttack);
+    if(!IsHeroLocked && !IsHeroMeleeAttack)
     {
         HeroControlComponent->bOrientRotationToMovement = true;
     }

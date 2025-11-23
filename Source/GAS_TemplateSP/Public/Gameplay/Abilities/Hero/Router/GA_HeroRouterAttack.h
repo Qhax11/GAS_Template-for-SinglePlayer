@@ -20,6 +20,8 @@ class GAS_TEMPLATESP_API UGA_HeroRouterAttack : public UGAS_GameplayAbilityBase
 	GENERATED_BODY()
 
 public:
+	UGA_HeroRouterAttack();
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	UPROPERTY(EditDefaultsOnly)

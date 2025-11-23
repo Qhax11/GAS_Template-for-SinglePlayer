@@ -1,4 +1,4 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
@@ -199,12 +199,30 @@ void UAC_TargetLockSystem::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSp
 
 void UAC_TargetLockSystem::OnHeroFinisherTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	EndTargetLock();
+	//→ EndTargetLock() 
+	// → RemoveLooseGameplayTag()
+	//  → Tag delegate broadcast
+	//	 → OnTargetLockedTagRemoved() (in another ability)
+	// 	  → EndAbility()
+	// 	   → Delegate'e write access (CRASH!) Multi-threaded access detector
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+		{
+			EndTargetLock();
+		});
 }
 
 void UAC_TargetLockSystem::OnHeroFinisherTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	StartTargetLock(TracingDataCheckClosestTarget);
+	//→ EndTargetLock() 
+	// → RemoveLooseGameplayTag()
+	//  → Tag delegate broadcast
+	//	 → OnTargetLockedTagRemoved() (in another ability)
+	// 	  → EndAbility()
+	// 	   → Delegate'e write access (CRASH!) Multi-threaded access detector
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+		{
+			StartTargetLock(TracingDataCheckClosestTarget);
+		});
 }
 
 void UAC_TargetLockSystem::LookMouse(const FInputActionValue& Value)

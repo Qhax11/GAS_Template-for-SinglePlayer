@@ -23,6 +23,24 @@ void UAC_HeroAbilityBuffer::BeginPlay()
 
 void UAC_HeroAbilityBuffer::OnAbilityFailed(const UGameplayAbility* FailedAbility, const FGameplayTagContainer& TagExplaining)
 {
-    UE_LOG(LogTemp, Error, TEXT("!!! OnAbilityFailed CALLBACK TRIGGERED !!!"));
+
+    FString AllTags;
+    // Container boþ deðilse yazalým
+    for (const FGameplayTag& Tag : TagExplaining)
+    {
+        AllTags += Tag.GetTagName().ToString();
+        AllTags += TEXT(", ");
+    }
+
+    if (AllTags.IsEmpty())
+    {
+        AllTags = TEXT("None");
+    }
+    else
+    {
+        AllTags.RemoveFromEnd(TEXT(", "));
+    }
+
+    UE_LOG(LogTemp, Error, TEXT("OnAbilityFailed, TagExplain: %s"), *AllTags);
 }
 

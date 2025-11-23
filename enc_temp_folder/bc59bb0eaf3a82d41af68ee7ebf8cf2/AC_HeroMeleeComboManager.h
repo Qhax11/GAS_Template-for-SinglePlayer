@@ -19,14 +19,14 @@ protected:
 
 	void OnComboMeleeAttackInput();
 
+	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
+
 	void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData) override;
 
 	UFUNCTION()
 	void OnCanActivateNextAttack();
 
 public:
-	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
-
 	UFUNCTION(BlueprintCallable)
 	void ActivateComboMeleeAttackAbilityWithShadowAttack(FName MontageSection, int32 ComboIndex = 0, FGameplayTag AdditionalTag = FGameplayTag());
 

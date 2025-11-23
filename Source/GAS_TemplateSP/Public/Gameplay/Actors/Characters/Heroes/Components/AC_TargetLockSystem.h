@@ -130,9 +130,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	bool bLocked = false;
 
-	UPROPERTY()
-	class UAC_TagDelegates* HeroTagDelegatesComp;
-
 public:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* CurrentTarget;

@@ -21,4 +21,20 @@ protected:
 	UFUNCTION()
 	void OnAbilityFailed(const UGameplayAbility* FailedAbility, const FGameplayTagContainer& TagExplaining);
 
+	UFUNCTION()
+	void OnHeroPhaseActiveTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input Buffer")
+	float BufferWindowDuration = 0.2f;
+
+	UPROPERTY()
+	TSubclassOf<UGameplayAbility> BufferedAbilityClass;
+
+	FTimerHandle BufferTimerHandle;
+
+	void TryActivateBufferedAbility();
+
+	void ClearBuffer();
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

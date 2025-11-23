@@ -3,9 +3,11 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "AC_HeroBase.generated.h"
 
+class AGAS_HeroBase;
+class UAbilitySystemComponent;
+class UAC_TagDelegates;
 
 UCLASS(Abstract)
 class GAS_TEMPLATESP_API UAC_HeroBase : public UActorComponent
@@ -23,4 +25,7 @@ protected:
 
 	UPROPERTY()
 	UAbilitySystemComponent* HeroASC;
+
+	UPROPERTY()
+	UAC_TagDelegates* HeroTagDelegatesComp;
 };

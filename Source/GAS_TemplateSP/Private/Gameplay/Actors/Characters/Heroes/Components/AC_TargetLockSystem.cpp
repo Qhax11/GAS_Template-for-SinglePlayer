@@ -3,13 +3,13 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Abilities/Tracing/GAS_AbilityTraceData.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "GameFramework/Controller.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemGlobals.h"
-#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
@@ -23,18 +23,12 @@ void UAC_TargetLockSystem::BeginPlay()
 
 	SetComponentTickEnabled(false);
 
-	if (!HeroBase || !HeroASC)
+	if (!HeroBase || !HeroASC || !HeroTagDelegatesComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase or HeroASC is null in: %s)"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase, HeroASC or HeroTagDelegatesComp is null in: %s)"), *GetName());
 		return;
 	}
 
-	HeroTagDelegatesComp = HeroBase->GetTagDelegatesComponent();
-	if (!HeroTagDelegatesComp) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroTagDelegatesComp is null in %s, cannot initialize HeroControl."), *GetName());
-		return;
-	}
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnAdded).BindDynamic(this, &UAC_TargetLockSystem::OnHeroFinisherTagAdded);
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnRemoved).BindDynamic(this, &UAC_TargetLockSystem::OnHeroFinisherTagRemoved);
 

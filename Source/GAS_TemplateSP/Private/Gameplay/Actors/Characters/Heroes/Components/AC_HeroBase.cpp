@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroBase.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 UAC_HeroBase::UAC_HeroBase()
 {
@@ -20,11 +21,7 @@ void UAC_HeroBase::BeginPlay()
 	}
 
 	HeroASC = HeroBase->GetAbilitySystemComponent();
-	if (!HeroASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroASC is null in %s, cannot initialize in BeginPlay()!"), *this->GetName());
-		return;
-	}
+	HeroTagDelegatesComp = HeroBase->GetTagDelegatesComponent();
 }
 
 

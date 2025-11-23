@@ -2,12 +2,10 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroBase.h"
 #include "GameplayAbilitySpec.h" 
 #include "EnhancedInputComponent.h" 
-#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "AC_AbilityInputBinding.generated.h"
-
 
 class UInputAction;
 
@@ -22,9 +20,8 @@ struct FAbilityInputBinding
 	TArray<FGameplayAbilitySpecHandle> BoundAbilitiesStack;
 };
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GAS_TEMPLATESP_API UAC_AbilityInputBinding : public UActorComponent
+class GAS_TEMPLATESP_API UAC_AbilityInputBinding : public UAC_HeroBase
 {
 	GENERATED_BODY()
 
@@ -51,8 +48,6 @@ public:
 	void TryBindAbilityInput(UInputAction* InputAction, FAbilityInputBinding& AbilityInputBinding);
 
 protected:
-	UGAS_AbilitySystemComponent* OwnerAbilitySystemComponent;
-
 	UPROPERTY(transient)
 	TMap<UInputAction*, FAbilityInputBinding> MappedAbilities;
 

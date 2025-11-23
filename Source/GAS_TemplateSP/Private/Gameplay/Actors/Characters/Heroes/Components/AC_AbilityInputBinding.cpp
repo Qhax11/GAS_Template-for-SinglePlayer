@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_AbilityInputBinding.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "AbilitySystemGlobals.h"
 
 namespace EnhancedInputAbilitySystem_Impl
@@ -23,26 +24,33 @@ UAC_AbilityInputBinding::UAC_AbilityInputBinding()
 void UAC_AbilityInputBinding::BeginPlay()
 {
 	Super::BeginPlay();
-	AActor* Owner = GetOwner();
-	if (IsValid(Owner) && Owner->InputComponent)
+
+	if (!HeroBase || !HeroASC)
 	{
-		InputComponent = CastChecked<UEnhancedInputComponent>(Owner->InputComponent);
+		UE_LOG(LogTemp, Warning, TEXT("HeroBase or HeroASC is null in: %s)"), *GetName());
+		return;
 	}
 
-	OwnerAbilitySystemComponent = Cast<UGAS_AbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Owner));
-	check(OwnerAbilitySystemComponent);
+	if (!HeroBase->InputComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InputComponent is null in: %s)"), *GetName());
+		return;
+	}
+
+	InputComponent = CastChecked<UEnhancedInputComponent>(HeroBase->InputComponent);
+	check(InputComponent);
 }
 
 void UAC_AbilityInputBinding::SetInputBinding(UInputAction* InputAction, const FGameplayAbilitySpecHandle& AbilityHandle)
 {
 	using namespace EnhancedInputAbilitySystem_Impl;
 
-	FGameplayAbilitySpec* BindingAbility = OwnerAbilitySystemComponent->FindAbilitySpecFromHandle(AbilityHandle);
+	FGameplayAbilitySpec* BindingAbility = HeroASC->FindAbilitySpecFromHandle(AbilityHandle);
 
 	FAbilityInputBinding* AbilityInputBinding = MappedAbilities.Find(InputAction);
 	if (AbilityInputBinding)
 	{
-		FGameplayAbilitySpec* OldBoundAbility = OwnerAbilitySystemComponent->FindAbilitySpecFromHandle(AbilityInputBinding->BoundAbilitiesStack.Top());
+		FGameplayAbilitySpec* OldBoundAbility = HeroASC->FindAbilitySpecFromHandle(AbilityInputBinding->BoundAbilitiesStack.Top());
 		if (OldBoundAbility && OldBoundAbility->InputID == AbilityInputBinding->InputID)
 		{
 			OldBoundAbility->InputID = InvalidInputID;
@@ -70,7 +78,7 @@ void UAC_AbilityInputBinding::OnAbilityInputPressed(UInputAction* InputAction)
 	FAbilityInputBinding* FoundBinding = MappedAbilities.Find(InputAction);
 	if (FoundBinding && ensure(FoundBinding->InputID != InvalidInputID))
 	{
-		OwnerAbilitySystemComponent->AbilityLocalInputPressed(FoundBinding->InputID);
+		HeroASC->AbilityLocalInputPressed(FoundBinding->InputID);
 	}
 }
 
@@ -81,7 +89,7 @@ void UAC_AbilityInputBinding::OnAbilityInputReleased(UInputAction* InputAction)
 	FAbilityInputBinding* FoundBinding = MappedAbilities.Find(InputAction);
 	if (FoundBinding && ensure(FoundBinding->InputID != InvalidInputID))
 	{
-		OwnerAbilitySystemComponent->AbilityLocalInputReleased(FoundBinding->InputID);
+		HeroASC->AbilityLocalInputReleased(FoundBinding->InputID);
 	}
 }
 

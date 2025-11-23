@@ -3,9 +3,9 @@
 #pragma once
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroBase.h"
-#include "GameplayTagContainer.h"
 #include "AC_HeroAbilityBuffer.generated.h"
 
+struct GameplayTagContainer;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_HeroAbilityBuffer : public UAC_HeroBase

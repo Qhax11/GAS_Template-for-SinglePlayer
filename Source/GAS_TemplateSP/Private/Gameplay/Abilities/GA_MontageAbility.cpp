@@ -7,10 +7,6 @@
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 
-UGA_MontageAbility::UGA_MontageAbility()
-{
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-}
 
 void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 

@@ -6,6 +6,8 @@
 
 UGAS_GameplayAbilityBase::UGAS_GameplayAbilityBase()
 {
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Debuff_Stun);
 }
 

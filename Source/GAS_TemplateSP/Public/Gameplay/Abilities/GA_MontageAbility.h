@@ -22,8 +22,6 @@ class GAS_TEMPLATESP_API UGA_MontageAbility : public UGAS_GameplayAbilityBase
 	GENERATED_BODY()
 
 public:
-	UGA_MontageAbility();
-
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	void ActivateMotionWarping();

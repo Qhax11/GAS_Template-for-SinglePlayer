@@ -47,14 +47,15 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_TraceEnd, "Gameplay.Event.AnimNotify.Attack.TraceEnd");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_CanActivateNextAttack, "Gameplay.Event.AnimNotify.Attack.CanActivateNextAttack");
 
-	// Movement & Rotation Notifies
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_MotionWarping, "Gameplay.Event.AnimNotify.MotionWarping");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_LockRotationTowardsTarget, "Gameplay.Event.AnimNotify.LockRotationTowardsTarget");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_UnLockRotationTowardsTarget, "Gameplay.Event.AnimNotify.UnLockRotationTowardsTarget");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Hero_LockRotation, "Gameplay.Event.AnimNotify.Hero.LockRotation");
+	// Rotation Notifies
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Rotation_Lock, "Gameplay.Event.AnimNotify.Rotation.Lock");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Rotation_Unlock, "Gameplay.Event.AnimNotify.Rotation.Unlock");
+
+	// Movement
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping, "Gameplay.Event.AnimNotify.Movement.MotionWarping");
 
 	// Weapon Notifies
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Weapon_StorePreviousLocation, "Gameplay.Event.AnimNotify.Weapon.StorePreviousLocation");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Weapon_StoreLocation, "Gameplay.Event.AnimNotify.Weapon.StoreLocation");
 
 	// Misc Notifies
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Footstep, "Gameplay.Event.AnimNotify.Footstep");
@@ -125,8 +126,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_AbilityTargeting_Shadow, "Gameplay.State.AbilityTargeting.Shadow");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked, "Gameplay.State.TargetLockSystem.Hero.TargetLocked");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_TargetLockSystem_Enemy_Targeted, "Gameplay.State.TargetLockSystem.Enemy.Targeted");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_LockRotationTowardsTarget, "Gameplay.State.LockRotationTowardsTarget");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_UnLockRotationTowardsTarget, "Gameplay.State.UnLockRotationTowardsTarget");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Rotation_LockTowardsTarget, "Gameplay.State.Rotation.LockTowardsTarget");
 
 	// ============================================================
     // WINDOW TAGS

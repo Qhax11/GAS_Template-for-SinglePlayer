@@ -99,7 +99,7 @@ void AAIControllerBase::UpdateRotationTowardsTarget(float DeltaTime)
 		return;
 	}
 
-	if (!ControlledEnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget))
+	if (!ControlledEnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Rotation_LockTowardsTarget))
 	{
 		return;
 	}

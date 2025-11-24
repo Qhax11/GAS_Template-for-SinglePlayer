@@ -40,6 +40,7 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 {
 	Super::OnEventReceived(EventTag, EventData);
 
+	/*
 	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_LockRotationTowardsTarget)
 	{
 		GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
@@ -48,8 +49,8 @@ void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventD
 	{
 		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget, 100);
 	}
-
-	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Weapon_StorePreviousLocation)
+	*/
+	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Weapon_StoreLocation)
 	{
 		CharacterWeapon->UpdatePreviousLocation();
 	}
@@ -123,7 +124,6 @@ void UGA_MeleeAttackBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
-	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

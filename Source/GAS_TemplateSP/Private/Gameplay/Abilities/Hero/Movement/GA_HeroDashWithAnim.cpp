@@ -223,7 +223,7 @@ void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEvent
     // During dash the character is allowed to rotate freely for a brief moment,
     // but once this notify triggers, rotation to movement is disabled to 
     // ensure consistent forward dash behavior.
-    if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Hero_LockRotation)
+    if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Rotation_Lock)
     {
         HeroControlComponent->bOrientRotationToMovement = false;
     }

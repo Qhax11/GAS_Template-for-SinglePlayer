@@ -5,7 +5,7 @@
 
 UGA_EnemyVulnerable::UGA_EnemyVulnerable()
 {
-    TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_LockRotationTowardsTarget);
+    TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Rotation_LockTowardsTarget);
 }
 
 void UGA_EnemyVulnerable::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

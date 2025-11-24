@@ -214,7 +214,7 @@ void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEven
 
 void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_MotionWarping)
+	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping)
 	{
 		if (bEnableMotionWarping)
 		{

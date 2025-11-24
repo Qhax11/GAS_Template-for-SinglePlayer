@@ -19,7 +19,7 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
 
     bApplyCommit = false;
     // Giving TAG_Gameplay_State_Moving_Dash tag using ActivationEffectsToApply instead of ActivationOwnedTags
-    // ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
+    ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 }
 
 void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

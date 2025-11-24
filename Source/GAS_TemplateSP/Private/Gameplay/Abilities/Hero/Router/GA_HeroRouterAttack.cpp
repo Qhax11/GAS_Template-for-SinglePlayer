@@ -37,7 +37,11 @@ void UGA_HeroRouterAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Running))
     {
-        GetASC()->TryActivateAbilityByClassAndReturnInstance(GA_RunAttackClass);
+        GetASC()->TryActivateAbilityByClassAndReturnInstance(RunAttackClass);
+    }
+    else if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash))
+    {
+        GetASC()->TryActivateAbilityByClassAndReturnInstance(DodgeRecoveryAttackClass);
     }
     else
     {

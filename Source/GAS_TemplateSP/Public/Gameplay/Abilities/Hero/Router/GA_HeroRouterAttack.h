@@ -25,7 +25,10 @@ public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGAS_GameplayAbilityBase> GA_RunAttackClass;
+	TSubclassOf<UGAS_GameplayAbilityBase> RunAttackClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGAS_GameplayAbilityBase> DodgeRecoveryAttackClass;
 
 	UPROPERTY()
 	AGAS_HeroBase* HeroBase;

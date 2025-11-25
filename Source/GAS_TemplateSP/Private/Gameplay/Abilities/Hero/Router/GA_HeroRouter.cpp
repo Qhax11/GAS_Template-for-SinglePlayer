@@ -10,21 +10,14 @@ void UGA_HeroRouter::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-    for (const TSubclassOf<UGameplayAbility>& AbilityClass : AbilitiesToTry)
+    if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InAir))
     {
-        if (!AbilityClass) 
-        {
-            continue;
-        }
-
-        bool bActivated = GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(AbilityClass);
-
-        if (bActivated)
-        {
-            EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
-            return;
-        }
+        GetASC()->TryActivateAbilityByClassAndReturnInstance(KickAirAbilityClass);
     }
-
+    else 
+    {
+        GetASC()->TryActivateAbilityByClassAndReturnInstance(JumpAbilityClass);
+    }
+   
     EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }

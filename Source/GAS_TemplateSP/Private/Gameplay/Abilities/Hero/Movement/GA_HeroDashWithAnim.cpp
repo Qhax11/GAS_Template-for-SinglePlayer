@@ -17,9 +17,11 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
 
-    bApplyCommit = false;
-    // Giving TAG_Gameplay_State_Moving_Dash tag using ActivationEffectsToApply instead of ActivationOwnedTags
     ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
+
+    bApplyCommit = false;
+
+    MontageEndPolicy = EMontageEndPolicy::EndWithDelay;
 }
 
 void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

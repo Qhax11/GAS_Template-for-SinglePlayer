@@ -6,6 +6,7 @@
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
+#include <Abilities/Tasks/AbilityTask_WaitDelay.h>
 
 
 UGA_MontageAbility::UGA_MontageAbility()
@@ -171,48 +172,94 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	PlayMontageWaitForEventTask->ReadyForActivation();
 }
 
-void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGA_MontageAbility::HandleMontageEvent(bool bWasCancelled)
 {
 	if (MontageEndPolicy == EMontageEndPolicy::Never)
 	{
 		return;
 	}
 
-	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::BlendOut)
+	CancelBlendOutDelay();
+
+	if (bWasCancelled)
 	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+		return;
 	}
+
+	if (MontageEndPolicy == EMontageEndPolicy::EndWithDelay)
+	{
+		WaitForBlendOutAndEnd(bWasCancelled);
+	}
+	else if (MontageEndPolicy == EMontageEndPolicy::Standard)
+	{
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, bWasCancelled);
+	}
+}
+
+void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	HandleMontageEvent(false);
+}
+
+void UGA_MontageAbility::WaitForBlendOutAndEnd(bool bWasCancelled)
+{
+	CancelBlendOutDelay();
+
+	if (AnimMontage && AnimMontage->BlendOut.GetBlendTime() > 0.1f )
+	{
+		// Animation Blend Time Correction: 
+		// Visually, the character appears to have transitioned to the next pose (e.g., Idle) 
+		// before the engine's internal blend timer fully expires. 
+		// Subtracting a small, empirical value corrects this perceptual delay, preventing 
+		// the ability from unnecessarily delaying player input execution (input lag).
+		float const BlendDuration = AnimMontage->BlendOut.GetBlendTime() - 0.1f;
+		BlendOutDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, BlendDuration);
+
+		if (BlendOutDelayTask)
+		{
+			BlendOutDelayTask->OnFinish.AddDynamic(this, &UGA_MontageAbility::OnBlendOutDelayFinished);
+			BlendOutDelayTask->ReadyForActivation();
+		}
+	}
+	else
+	{
+		// No blend time, end immediately
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, bWasCancelled);
+	}
+}
+
+void UGA_MontageAbility::CancelBlendOutDelay()
+{
+	if (IsValid(BlendOutDelayTask))
+	{
+		if (BlendOutDelayTask->IsActive())
+		{
+			BlendOutDelayTask->EndTask();
+		}
+		BlendOutDelayTask = nullptr;
+	}
+}
+
+void UGA_MontageAbility::OnBlendOutDelayFinished()
+{
+	BlendOutDelayTask = nullptr;
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (MontageEndPolicy == EMontageEndPolicy::Never)
-	{
-		return;
-	}
-
-	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Interrupted)
-	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-	}
+	HandleMontageEvent(true);
 }
 
 void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (MontageEndPolicy == EMontageEndPolicy::Never)
-	{
-		return;
-	}
-
-	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Completed)
-	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-	}
+	HandleMontageEvent(false);
 }
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+	HandleMontageEvent(true);
 }
 
 void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -229,6 +276,9 @@ void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventDa
 
 void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	// Delay task cleanup
+	CancelBlendOutDelay();
+
 	if (PlayMontageWaitForEventTask && IsValid(PlayMontageWaitForEventTask))
 	{
 		if (PlayMontageWaitForEventTask->IsActive())

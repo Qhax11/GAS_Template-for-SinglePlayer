@@ -8,13 +8,17 @@
 UENUM(BlueprintType)
 enum EMontageEndPolicy : uint8
 {
-	Completed,    // The ability will end when the montage has fully completed
-	BlendOut,     // The ability will end when the montage starts blending out
-	Interrupted,  // The ability will end if the montage is interrupted by something else
-	Any,           // The ability will end on any of the above events
-	Never           // The ability will never end
+	// Ends ability immediately when montage finishes (no blend-out wait)
+	Standard       UMETA(DisplayName = "Standard"),
+
+	// Waits for blend-out duration before ending ability (smooth transition)
+	EndWithDelay   UMETA(DisplayName = "End With Delay"),
+
+	// Ability never ends automatically, requires manual cancellation
+	Never          UMETA(DisplayName = "Never")
 };
 
+class UAbilityTask_WaitDelay;
 
 UCLASS()
 class GAS_TEMPLATESP_API UGA_MontageAbility : public UGAS_GameplayAbilityBase
@@ -44,7 +48,7 @@ public:
     // Interrupted → End if the montage is interrupted
     // Any → End on any of the above events
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
-	TEnumAsByte<EMontageEndPolicy> MontageEndPolicy = EMontageEndPolicy::Any;
+	TEnumAsByte<EMontageEndPolicy> MontageEndPolicy = EMontageEndPolicy::Standard;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	TObjectPtr<UAnimMontage> AnimMontage;
@@ -98,8 +102,20 @@ public:
 	bool bDebugPointMotionWarping = false;
 
 protected:
+	UPROPERTY()
+	TObjectPtr<UAbilityTask_WaitDelay> BlendOutDelayTask;
+
+	void HandleMontageEvent(bool bWasCancelled);
+
 	UFUNCTION()
 	virtual void OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	void WaitForBlendOutAndEnd(bool bWasCancelled);
+
+	void CancelBlendOutDelay();
+
+	UFUNCTION()
+	void OnBlendOutDelayFinished();
 
 	UFUNCTION()
 	virtual void OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData);

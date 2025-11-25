@@ -8,21 +8,11 @@
 UENUM(BlueprintType)
 enum EMontageEndPolicy : uint8
 {
-	// The ability will end if it is forcibly Interrupted OR Cancelled. 
-	// This policy serves as the primary safety net, allowing forced termination.
-	InterruptedOrCancelled,
-
-	// The ability will ONLY end upon receiving the successful Finished Trigger Event. 
-	// All external forced terminations (Interrupt/Cancel) are ignored. (The strict success check).
-	TriggerOnly,
-
-	// The ability will end on ANY termination event: Interrupt, Cancel, OR the Finished Trigger Event. 
-	// This is the most comprehensive safety policy for combat abilities.
-	Any,
-
-	// The ability will NEVER end autonomously via any event (Interrupt, Cancel, or Finished Trigger). 
-	// It must be terminated manually by external code (e.g., ClearAbility call).
-	Never
+	Completed,    // The ability will end when the montage has fully completed
+	BlendOut,     // The ability will end when the montage starts blending out
+	Interrupted,  // The ability will end if the montage is interrupted by something else
+	Any,           // The ability will end on any of the above events
+	Never           // The ability will never end
 };
 
 
@@ -109,7 +99,13 @@ public:
 
 protected:
 	UFUNCTION()
+	virtual void OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	UFUNCTION()
 	virtual void OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData);
+
+	UFUNCTION()
+	virtual void OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData);
 
 	UFUNCTION()
 	virtual void OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData);

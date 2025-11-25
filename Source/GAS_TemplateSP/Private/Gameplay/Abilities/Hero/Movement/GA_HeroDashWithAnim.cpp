@@ -11,16 +11,22 @@
 UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
 {
     AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dash);
-
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
-
     ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 
+    WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Rotation_Lock);
+
+    // Skip ability cost on perfect dodge. This ability is triggered as the
+    // perfect-dodge follow-up, so resource cost should not be committed here.
     bApplyCommit = false;
 
+    // Keep the dash state active slightly past montage end.
+    // UGA_HeroRouterAttack checks for the dash tag to decide whether it should trigger
+    // the dash-follow-up attack (DodgeRecoveryAttack). The delayed end ensures the tag
+    // is still present during this decision window.
     MontageEndPolicy = EMontageEndPolicy::EndWithDelay;
 }
 

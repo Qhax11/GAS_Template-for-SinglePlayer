@@ -11,7 +11,7 @@
 
 UGA_MontageAbility::UGA_MontageAbility()
 {
-	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Ability_Finished);
+	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping);
 }
 
 void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

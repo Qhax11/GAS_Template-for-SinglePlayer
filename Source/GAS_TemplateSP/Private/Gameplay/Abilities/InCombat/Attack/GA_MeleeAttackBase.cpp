@@ -14,6 +14,10 @@ UGA_MeleeAttackBase::UGA_MeleeAttackBase()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeAttack);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
+
+	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart);
+	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceEnd);
+	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Weapon_StoreLocation);
 }
 
 void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

@@ -132,6 +132,7 @@ void AAIControllerBase::TargetPreceptionUpdated(AActor* Actor, FAIStimulus Stimu
 
 		OnTargetDetected.Broadcast(Actor);
 		bHasTargetBeenDetected = true;
+		ControlledEnemyASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_Rotation_LockTowardsTarget);
 	}
 }
 

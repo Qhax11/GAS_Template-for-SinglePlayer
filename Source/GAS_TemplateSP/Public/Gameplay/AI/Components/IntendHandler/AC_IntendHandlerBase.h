@@ -48,6 +48,9 @@ protected:
 	AGAS_EnemyBase* ControlledEnemy;
 
 	UPROPERTY()
+	UAbilitySystemComponent* ControlledEnemyASC;
+
+	UPROPERTY()
 	class AGAS_HeroBase* TargetHero;
 
 	// Listening own tags and target tag's

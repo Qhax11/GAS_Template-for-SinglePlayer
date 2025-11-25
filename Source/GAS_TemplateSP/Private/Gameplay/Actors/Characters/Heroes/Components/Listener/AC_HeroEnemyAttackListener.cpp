@@ -3,7 +3,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/Listener/AC_HeroEnemyAttackListener.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
-#include "Gameplay/Animation/AN_SendTag.h"
+#include "Gameplay/Animation/AN_SendGameplayEvent.h"
 #include "AbilitySystemComponent.h"
 #include "TimerManager.h"
 
@@ -173,9 +173,9 @@ float UAC_HeroEnemyAttackListener::GetAttackNotifyTriggerTime(UGA_MeleeAttackBas
     float NotifyTime = -1.0f;
     for (const FAnimNotifyEvent& Notify : Montage->Notifies)
     {
-        if (const UAN_SendTag* TagNotify = Cast<UAN_SendTag>(Notify.Notify))
+        if (const UAN_SendGameplayEvent* TagNotify = Cast<UAN_SendGameplayEvent>(Notify.Notify))
         {
-            if (TagNotify->NotifyTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart)
+            if (TagNotify->EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart)
             {
                 NotifyTime = Notify.GetTriggerTime();
                 break;

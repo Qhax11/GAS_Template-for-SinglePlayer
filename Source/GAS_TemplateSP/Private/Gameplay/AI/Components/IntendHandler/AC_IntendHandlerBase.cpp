@@ -7,7 +7,7 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
-#include "Gameplay/Animation/AN_SendTag.h"
+#include "Gameplay/Animation/AN_SendGameplayEvent.h"
 #include <Kismet/GameplayStatics.h>
 
 UAC_IntendHandlerBase::UAC_IntendHandlerBase()
@@ -149,9 +149,9 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 
 	for (const FAnimNotifyEvent& Notify : Montage->Notifies)
 	{
-		if (const UAN_SendTag* TagNotify = Cast<UAN_SendTag>(Notify.Notify))
+		if (const UAN_SendGameplayEvent* TagNotify = Cast<UAN_SendGameplayEvent>(Notify.Notify))
 		{
-			if (TagNotify->NotifyTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart)
+			if (TagNotify->EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart)
 			{
 				NotifyTime = Notify.GetTriggerTime();
 				break;

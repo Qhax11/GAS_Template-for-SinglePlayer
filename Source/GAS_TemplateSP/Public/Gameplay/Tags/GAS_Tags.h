@@ -63,6 +63,10 @@ namespace GAS_Tags
 	// Misc Notifies
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Footstep);
 
+	// Event signaled by an AnimNotify, indicating the successful completion of the ability's
+    // animation phase (e.g., successful recovery) and used to trigger EndAbility.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Ability_Finished);
+
 
 	// ============================================================
 	// ABILITY TRIGGER EVENTS

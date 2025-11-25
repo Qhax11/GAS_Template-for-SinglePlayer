@@ -60,6 +60,9 @@ namespace GAS_Tags
 	// Misc Notifies
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Footstep, "Gameplay.Event.AnimNotify.Footstep");
 
+	// Misc Notifies
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Ability_Finished, "Gameplay.Event.AnimNotify.Ability.Finished");
+
 
 	// ============================================================
 	// ABILITY TRIGGER EVENTS

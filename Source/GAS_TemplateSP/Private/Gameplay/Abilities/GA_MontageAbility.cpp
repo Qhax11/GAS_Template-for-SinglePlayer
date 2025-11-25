@@ -8,6 +8,11 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 
 
+UGA_MontageAbility::UGA_MontageAbility()
+{
+	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Ability_Finished);
+}
+
 void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
@@ -157,27 +162,11 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
 		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
 
-	PlayMontageWaitForEventTask->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
-	PlayMontageWaitForEventTask->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
 	PlayMontageWaitForEventTask->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
 	PlayMontageWaitForEventTask->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
 	PlayMontageWaitForEventTask->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
 
 	PlayMontageWaitForEventTask->ReadyForActivation();
-}
-
-void UGA_MontageAbility::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	//UE_LOG(LogTemp, Warning, TEXT("OnMontageBlendOut: AnimMontage is: %s"), *AnimMontage->GetName());
-	if (MontageEndPolicy == EMontageEndPolicy::Never) 
-	{
-		return;
-	}
-
-	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::BlendOut)
-	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-	}
 }
 
 void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -187,8 +176,7 @@ void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEv
 		return;
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("OnMontageInterrupted: AnimMontage is: %s"), *AnimMontage->GetName());
-	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Interrupted)
+	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::InterruptedOrCancelled)
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 	}
@@ -196,24 +184,34 @@ void UGA_MontageAbility::OnMontageInterrupted(FGameplayTag EventTag, FGameplayEv
 
 void UGA_MontageAbility::OnMontageCancelled(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-}
-
-void UGA_MontageAbility::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
-{
 	if (MontageEndPolicy == EMontageEndPolicy::Never)
 	{
 		return;
 	}
 
-	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::Completed)
+	if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::InterruptedOrCancelled)
 	{
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 	}
 }
 
 void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	// Purpose: Cleanly terminates the ability upon receiving the successful animation completion signal 
+	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Ability_Finished)
+	{
+		if (MontageEndPolicy == EMontageEndPolicy::Never)
+		{
+			return;
+		}
+
+		if (MontageEndPolicy == EMontageEndPolicy::Any || MontageEndPolicy == EMontageEndPolicy::TriggerOnly)
+		{
+			EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+		}
+	}
+
+	// Purpose: Activates Motion Warping to align the character precisely with the target position/rotation at the specific moment determined by the animation.
 	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping)
 	{
 		if (bEnableMotionWarping)

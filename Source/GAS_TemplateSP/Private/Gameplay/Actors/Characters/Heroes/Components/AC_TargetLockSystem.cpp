@@ -51,6 +51,16 @@ void UAC_TargetLockSystem::BeginPlay()
 	}
 }
 
+void UAC_TargetLockSystem::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (GetWorld()) 
+	{
+		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+	}
+}
+
 bool UAC_TargetLockSystem::BindTargetLockSystemInputs()
 {
 	UAC_HeroControl* HeroControlComponent = HeroBase->GetHeroControlComponent();
@@ -94,6 +104,12 @@ void UAC_TargetLockSystem::ActivateTargetLock(const FInputActionValue& Value)
 
 void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 {
+	if (!IsValid(HeroASC))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StartTargetLock: HeroASC INVALID"));
+		return;
+	}
+
  	if (!TracingData || HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TracingData is null in: %s, cannot initialize TargetLockSystem."), *GetName());
@@ -205,9 +221,14 @@ void UAC_TargetLockSystem::OnHeroFinisherTagAdded(const UAbilitySystemComponent*
 	//	 → OnTargetLockedTagRemoved() (in another ability)
 	// 	  → EndAbility()
 	// 	   → Delegate'e write access (CRASH!) Multi-threaded access detector
-	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+	TWeakObjectPtr<UAC_TargetLockSystem> WeakThis(this);
+	GetWorld()->GetTimerManager().SetTimerForNextTick(
+		[WeakThis]()
 		{
-			EndTargetLock();
+			if (UAC_TargetLockSystem* Self = WeakThis.Get())
+			{
+				Self->EndTargetLock();;
+			}
 		});
 }
 
@@ -219,9 +240,14 @@ void UAC_TargetLockSystem::OnHeroFinisherTagRemoved(const UAbilitySystemComponen
 	//	 → OnTargetLockedTagRemoved() (in another ability)
 	// 	  → EndAbility()
 	// 	   → Delegate'e write access (CRASH!) Multi-threaded access detector
-	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+	TWeakObjectPtr<UAC_TargetLockSystem> WeakThis(this);
+	GetWorld()->GetTimerManager().SetTimerForNextTick(
+		[WeakThis]()
 		{
-			StartTargetLock(TracingDataCheckClosestTarget);
+			if (UAC_TargetLockSystem* Self = WeakThis.Get())
+			{
+				Self->StartTargetLock(Self->TracingDataCheckClosestTarget);
+			}
 		});
 }
 

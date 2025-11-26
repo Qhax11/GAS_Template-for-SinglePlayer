@@ -75,7 +75,7 @@ DerivedDataCache/*
 
 # Big Unreal assets
 Content/IthrisCemetery/**
-Content/ModularDungeonCollection/**
+Content/Dungeon_Modular_V1/**
 Content/MedievalVillageMegascansSample/**
 Content/Assets/Environments/**
 Content/Audio/**

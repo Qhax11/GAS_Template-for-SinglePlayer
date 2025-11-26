@@ -72,3 +72,13 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Big Unreal assets
+Content/IthrisCemetery/**
+Content/ModularDungeonCollection/**
+Content/MedievalVillageMegascansSample/**
+
+
+
+
+

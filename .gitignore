@@ -78,7 +78,20 @@ Content/IthrisCemetery/**
 Content/ModularDungeonCollection/**
 Content/MedievalVillageMegascansSample/**
 Content/Assets/Environments/**
-
+Content/Audio/**
+Content/Blueprints/**
+Content/Cinematics/**
+Content/Effects/**
+Content/Environment/**
+Content/Maps/**
+Content/Materials/**
+Content/Megascans/**
+Content/Meshes/**
+Content/MSPresets/**
+Content/PhysMat/**
+Content/Textures/**
+Content/ThirdParty/**
+Content/__ExternalActors__/**
 
 
 

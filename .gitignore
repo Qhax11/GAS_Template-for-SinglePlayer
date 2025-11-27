@@ -75,5 +75,6 @@ DerivedDataCache/*
 
 # Big Unreal assets
 Content/Assets/Environments/**
+Content/Dungeon_Modular_V1/**
 
 

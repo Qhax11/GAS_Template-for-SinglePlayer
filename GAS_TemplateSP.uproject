@@ -141,6 +141,10 @@
 		{
 			"Name": "RigLogicMutable",
 			"Enabled": true
+		},
+		{
+			"Name": "AudioModulation",
+			"Enabled": true
 		}
 	]
 }

@@ -66,22 +66,23 @@ FName US_LevelManager::GetCleanLevelName() const
 {
 	if (!GetWorld())
 	{
-		return TEXT("InvalidWorld");
+		return FName();
 	}
 
-	// PIE veya Editor kopyasý da dahil olmak üzere GetMapName() al
-	FString MapName = GetWorld()->GetMapName(); // UEDPIE_0_MedievalVillage_P_WP gibi
+	FString RawLevelName = GetWorld()->GetMapName();
+	FString CleanLevelName;
 
-	// PIE prefixini kaldýr
-	MapName.RemoveFromStart(TEXT("UEDPIE_0_"));
-
-	// Path varsa sadece son kýsmý al
-	int32 LastSlash;
-	if (MapName.FindLastChar('/', LastSlash))
+	// When running in editor, level names have a "UEDPIE_" prefix
+	if (RawLevelName.StartsWith(TEXT("UEDPIE_")))
 	{
-		MapName = MapName.Mid(LastSlash + 1);
+		// Split from the end to retrieve the actual level name
+		RawLevelName.Split(TEXT("_"), nullptr, &CleanLevelName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+	}
+	else
+	{
+		CleanLevelName = RawLevelName;
 	}
 
-	return FName(MapName);
+	return FName(CleanLevelName);
 }
 

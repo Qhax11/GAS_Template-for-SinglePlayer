@@ -5,6 +5,8 @@
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
+
 
 UGA_HeroRun::UGA_HeroRun()
 {
@@ -28,7 +30,15 @@ bool UGA_HeroRun::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 
 	if (UAS_Base* BaseAttributes = const_cast<UAS_Base*>(ASC->GetSet<UAS_Base>()))
 	{
-		return BaseAttributes->GetPosture() > 0;
+		if (BaseAttributes->GetPosture() <= 0)
+		{
+			return false;
+		}
+	}
+
+	if (UAC_HeroControl* HeroControl = CastChecked<AGAS_HeroBase>(GetAvatarActorFromActorInfo())->GetHeroControlComponent())
+	{
+		return !HeroControl->LastMovementInput.IsNearlyZero();
 	}
 
 	return false;

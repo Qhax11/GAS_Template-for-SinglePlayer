@@ -10,5 +10,8 @@ UCLASS()
 class GAS_TEMPLATESP_API UGA_HeroFinisher : public UGA_MeleeFinisher
 {
 	GENERATED_BODY()
+
+public:
+	UGA_HeroFinisher();
 	
 };

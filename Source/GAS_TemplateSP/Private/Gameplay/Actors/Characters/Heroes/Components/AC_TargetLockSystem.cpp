@@ -10,6 +10,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "AbilitySystemGlobals.h"
+#include "Gameplay/Utilities/GAS_UtilityLibrary.h"
 
 
 UAC_TargetLockSystem::UAC_TargetLockSystem()
@@ -123,8 +124,8 @@ void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 		return;
 	}
 
-	FilterOutDeadActors(OutResultActors);
-	AActor* ClosestTarget = FindNearestActor(HeroBase, OutResultActors);
+	UGAS_UtilityLibrary::FilterOutDeadActors(OutResultActors);
+	AActor* ClosestTarget = UGAS_UtilityLibrary::FindNearestActor(HeroBase, OutResultActors);
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(ClosestTarget);
 	if (!TargetASC)
@@ -140,35 +141,6 @@ void UAC_TargetLockSystem::StartTargetLock(UGAS_AbilityTraceData* TracingData)
 	bLocked = true;
 	SetComponentTickEnabled(true);
 	OnStartTargetLock.Broadcast();
-}
-
-void UAC_TargetLockSystem::FilterOutDeadActors(TArray<AActor*>& Actors)
-{
-	// We'll build a new array of only alive actors
-	TArray<AActor*> FilteredActors;
-
-	for (AActor* Actor : Actors)
-	{
-		if (!Actor)
-		{
-			continue;
-		}
-
-		UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor);
-		if (!ASC)
-		{
-			continue;
-		}
-
-		if (!ASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
-		{
-			// Only keep alive actors
-			FilteredActors.Add(Actor);
-		}
-	}
-
-	// Replace old array with filtered version
-	Actors = MoveTemp(FilteredActors);
 }
 
 void UAC_TargetLockSystem::EndTargetLock()
@@ -308,11 +280,11 @@ void UAC_TargetLockSystem::TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection
 	AActor* FoundNewTarget = nullptr;
 	if (TargetChangeDirection == ETargetChangeDirection::TCD_Left) 
 	{
-		FoundNewTarget = FindNearestActor(CurrentTarget, LeftActors);
+		FoundNewTarget = UGAS_UtilityLibrary::FindNearestActor(CurrentTarget, LeftActors);
 	}
 	else if(TargetChangeDirection == ETargetChangeDirection::TCD_Right)
 	{
-		FoundNewTarget = FindNearestActor(CurrentTarget, RightActors);
+		FoundNewTarget = UGAS_UtilityLibrary::FindNearestActor(CurrentTarget, RightActors);
 	}
 
 	// If there is an enemy directly in the player's line of sight (viewing direction), we select it as the new target
@@ -359,30 +331,6 @@ void UAC_TargetLockSystem::SplitActorsByPositionRelativeToHero(const TArray<AAct
 			OutLeftActors.Add(Actor);
 		}
 	}
-}
-
-AActor* UAC_TargetLockSystem::FindNearestActor(AActor* TargetedActor, TArray<AActor*> ActorArray)
-{
-	if (ActorArray.IsEmpty())
-	{
-		return nullptr;
-	}
-
-	AActor* NearestActor = nullptr;
-	float NearestDistance = FLT_MAX;
-
-	for (AActor* Actor : ActorArray)
-	{
-		float Distance = FVector::Dist(TargetedActor->GetActorLocation(), Actor->GetActorLocation());
-
-		if (Distance < NearestDistance)
-		{
-			NearestDistance = Distance;
-			NearestActor = Actor;
-		}
-	}
-
-	return NearestActor;
 }
 
 void UAC_TargetLockSystem::ChangeTarget(AActor* NewTarget, bool bStartTargeting)

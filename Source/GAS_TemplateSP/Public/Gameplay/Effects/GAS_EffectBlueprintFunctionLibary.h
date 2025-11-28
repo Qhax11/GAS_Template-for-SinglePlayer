@@ -7,9 +7,7 @@
 #include "GameplayEffect.h"
 #include "GAS_EffectBlueprintFunctionLibary.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAS_TEMPLATESP_API UGAS_EffectBlueprintFunctionLibary : public UBlueprintFunctionLibrary
 {

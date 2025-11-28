@@ -40,8 +40,6 @@ protected:
 
 	void StartTargetLock(class UGAS_AbilityTraceData* TracingData);
 
-	void FilterOutDeadActors(TArray<AActor*>& Actors);
-
 	void EndTargetLock();
 
 	UFUNCTION()
@@ -56,8 +54,6 @@ protected:
 	void TryToFindNewTarget(TEnumAsByte<ETargetChangeDirection> TargetChangeDirection);
 
 	void SplitActorsByPositionRelativeToHero(const TArray<AActor*>& InActors, TArray<AActor*>& OutLeftActors, TArray<AActor*>& OutRightActors);
-
-	AActor* FindNearestActor(AActor* TargetedActor, TArray<AActor*> ActorArray);
 
 	void ChangeTarget(AActor* NewTarget, bool bStartTargeting = false);
 

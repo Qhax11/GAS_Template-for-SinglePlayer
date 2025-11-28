@@ -78,6 +78,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
 	class UAC_HeroAbilityBuffer* HeroAbilityBufferComponent;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components")
+	class UAC_HeroAimAssist* HeroAimAssistComponent;
+
 private:
 	class UAC_AbilityInputBinding* AbilityInputBindingComponent;
 

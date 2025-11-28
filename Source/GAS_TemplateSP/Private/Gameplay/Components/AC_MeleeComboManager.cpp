@@ -48,12 +48,13 @@ void UAC_MeleeComboManager::InitComboChainTracker()
 
 UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
 {
+	/*
 	if (!ActiveComboChainTracker.bNextAttackAllowed)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: bNextAttackAllowed is false"));
 		return nullptr;
 	}
-
+	*/
 	if (!CharacterBaseASC)
 	{
 		return nullptr;

@@ -55,16 +55,8 @@ void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData&
 		return;
 	}
 
-	if (ComboAbilityEndedData.bWasCancelled)
-	{
-		if (!ActiveComboChainTracker.bNextAttackAllowed)
-		{
-			ActiveComboChainTracker.Reset();
-			OnComboEnded.Broadcast();
-		}
-	}
 	// If ComboMelee ability ended as normal
-	else if (!ComboAbilityEndedData.bWasCancelled)
+	if (!ComboAbilityEndedData.bWasCancelled)
 	{
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();

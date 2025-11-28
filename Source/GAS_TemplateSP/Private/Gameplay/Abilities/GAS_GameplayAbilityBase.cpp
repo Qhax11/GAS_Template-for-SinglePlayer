@@ -148,10 +148,25 @@ void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handl
 		}
 	}
 
+	// DIRECT BROADCAST — no timer
+	if (GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
+	{
+		UGAS_GameplayAbilityBase* CDO = Cast<UGAS_GameplayAbilityBase>(GetClass()->GetDefaultObject());
+		if (CDO)
+		{
+			CDO->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(this, bWasCancelled));
+		}
+	}
+	else
+	{
+		OnAbilityEnded.Broadcast(FCustomAbilityEndedData(this, bWasCancelled));
+	}
+
+	/*
 	TWeakObjectPtr<UGAS_GameplayAbilityBase> WeakThis(this);
 	if (GetWorld())
 	{
-		GetWorld()->GetTimerManager().SetTimerForNextTick([WeakThis]()
+		GetWorld()->GetTimerManager().SetTimerForNextTick([WeakThis, bWasCancelled]()
 			{
 				// NULL CHECK!
 				if (!WeakThis.IsValid())
@@ -166,14 +181,15 @@ void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handl
 					UGAS_GameplayAbilityBase* CDO = Cast<UGAS_GameplayAbilityBase>(StrongThis->GetClass()->GetDefaultObject());
 					if (CDO)
 					{
-						CDO->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(StrongThis, false));
+						CDO->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(StrongThis, bWasCancelled));
 					}
 				}
 				else
 				{
-					StrongThis->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(StrongThis, false));
+					StrongThis->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(StrongThis, bWasCancelled));
 				}
 			});
 	}
+	*/
 }
 

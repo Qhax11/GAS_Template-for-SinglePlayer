@@ -53,6 +53,11 @@ bool UAC_HeroTagListener::IsRunning() const
 	return OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Moving_Running);
 }
 
+bool UAC_HeroTagListener::IsFinisher() const
+{
+	return OwnerCharacterASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
+}
+
 void UAC_HeroTagListener::OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	if (IsTargetLocked())
@@ -79,7 +84,10 @@ void UAC_HeroTagListener::OnHeroTargetLockedTagAdded(const UAbilitySystemCompone
 
 void UAC_HeroTagListener::OnHeroTargetLockedTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	HeroControlComp->bOrientRotationToMovement = true;
+	if (!IsFinisher()) 
+	{
+		HeroControlComp->bOrientRotationToMovement = true;
+	}
 }
 
 void UAC_HeroTagListener::OnHeroMeleeAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

@@ -84,6 +84,8 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 		PrimaryInstance->SectionName = MontageSection;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: TryActivate Ability: %s, index is: %d"), *ComboAbilityData->ComboAbilityClass->GetName(), ActiveComboChainTracker.CurrentIndex);
+
 	// Try activate ability and get its instance
 	UGA_ComboMeleeAttack* ActivatedAbility = Cast<UGA_ComboMeleeAttack>(
 		CharacterBaseASC->TryActivateAbilityByClassAndReturnInstance(ComboAbilityData->ComboAbilityClass)
@@ -103,10 +105,9 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	ActiveComboChainTracker.CurrentAbilityInstance = ActivatedAbility;
 
 	// Bind end event safely
-	ActivatedAbility->OnAbilityEnded.RemoveAll(this);
+	ActivatedAbility->OnAbilityEnded.Clear();
 	ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
-
-	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: Activated Combo Ability: %s"), *ComboAbilityData->ComboAbilityClass->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: ActivatedAbility ability is binded: %s"), *ActivatedAbility->GetName());
 
 	ActiveComboChainTracker.bNextAttackAllowed = false;
 	LastActivatedCombo = ActivatedAbility;

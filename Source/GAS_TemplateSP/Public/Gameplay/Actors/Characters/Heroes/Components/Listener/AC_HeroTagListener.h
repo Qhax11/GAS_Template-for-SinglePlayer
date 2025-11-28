@@ -26,6 +26,8 @@ protected:
 
 	bool IsRunning() const;
 
+	bool IsFinisher() const;
+
 	UFUNCTION()
 	void OnRunningTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 

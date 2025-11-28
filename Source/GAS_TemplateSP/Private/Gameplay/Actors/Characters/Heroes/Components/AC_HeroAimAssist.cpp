@@ -51,6 +51,7 @@ void UAC_HeroAimAssist::BeginPlay()
 	}
 
 	HeroASC->AbilityActivatedCallbacks.AddUObject(this, &UAC_HeroAimAssist::OnHeroAbilityActivated);
+	HeroASC->AbilityEndedCallbacks.AddUObject(this, &UAC_HeroAimAssist::OnHeroAbilityEnded);
 }
 
 void UAC_HeroAimAssist::OnHeroAbilityActivated(UGameplayAbility* Ability) 
@@ -60,7 +61,6 @@ void UAC_HeroAimAssist::OnHeroAbilityActivated(UGameplayAbility* Ability)
 		return;
 	}
 
-	// Sadece melee attack ability'lerde çalýþ
 	UGA_MeleeAttackBase* MeleeAttackAbility = Cast<UGA_MeleeAttackBase>(Ability);
 	if (!MeleeAttackAbility)
 	{
@@ -70,26 +70,21 @@ void UAC_HeroAimAssist::OnHeroAbilityActivated(UGameplayAbility* Ability)
 	bool HeroTargetLocked = HeroASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked);
 	bool HeroOrientRotationToMovement = HeroController->bOrientRotationToMovement;
 
-	// DURUM 1: Target Lock VARSA ve Orient Rotation AKTÝFSE
 	if (HeroTargetLocked && HeroOrientRotationToMovement)
 	{
-		return; // Hiçbir þey yapma, zaten otomatik dönüyor
+		return; 
 	}
 
-	// DURUM 2: Target Lock VARSA ama Orient Rotation KAPALI
 	if (HeroTargetLocked && !HeroOrientRotationToMovement)
 	{
-		// Locked target'a dön
 		if (HeroTargetLock && HeroTargetLock->CurrentTarget)
 		{
 			TargetActor = HeroTargetLock->CurrentTarget;
-			bIsRotating = true;
-			SetComponentTickEnabled(true);
+			StartRotation(Ability);
 		}
 		return;
 	}
 
-	// DURUM 3: Target Lock YOKSA - En yakýn düþmaný bul ve dön
 	TArray<AActor*> OutResultActors;
 	TraceCheckEnemy->Trace->CreateTraceWithTeamFilter(GetWorld(), HeroBase, ETeamAttitude::Hostile, OutResultActors);
 
@@ -106,11 +101,17 @@ void UAC_HeroAimAssist::OnHeroAbilityActivated(UGameplayAbility* Ability)
 		return;
 	}
 
-	// Açý kontrolü yap
 	if (IsTargetInAngle())
 	{
-		bIsRotating = true;
-		SetComponentTickEnabled(true);
+		StartRotation(Ability);
+	}
+}
+
+void UAC_HeroAimAssist::OnHeroAbilityEnded(UGameplayAbility* Ability)
+{
+	if (Ability == CurrentActiveAbility)
+	{
+		StopRotation();
 	}
 }
 
@@ -157,6 +158,13 @@ void UAC_HeroAimAssist::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	{
 		StopRotation();
 	}
+}
+
+void UAC_HeroAimAssist::StartRotation(UGameplayAbility* Ability)
+{
+	bIsRotating = true;
+	CurrentActiveAbility = Ability;
+	SetComponentTickEnabled(true);
 }
 
 void UAC_HeroAimAssist::StopRotation()

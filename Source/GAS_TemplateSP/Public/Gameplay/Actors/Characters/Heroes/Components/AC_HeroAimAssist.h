@@ -23,11 +23,18 @@ public:
 
     void OnHeroAbilityActivated(UGameplayAbility* Ability);
 
+    void OnHeroAbilityEnded(UGameplayAbility* Ability);
+
     bool IsTargetInAngle();
 
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+    void StartRotation(UGameplayAbility* Ability);
+
     void StopRotation();
+
+    UPROPERTY()
+    UGameplayAbility* CurrentActiveAbility = nullptr;
 
     UPROPERTY()
     AActor* TargetActor;

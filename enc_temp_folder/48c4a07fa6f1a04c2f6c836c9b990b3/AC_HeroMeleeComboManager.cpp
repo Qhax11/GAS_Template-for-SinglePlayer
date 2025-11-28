@@ -38,13 +38,11 @@ void UAC_HeroMeleeComboManager::OnHeroAbilityActivated(UGameplayAbility* Ability
 		return;
 	}
 
-	/*
-	if (!Ability->IsA<UGA_ComboMeleeAttack>() || !Ability->IsA<UGA_HeroShadowAttack>())
+	if (!Ability->IsA<UGA_ComboMeleeAttack>() || Ability->IsA<UGA_HeroShadowAttack>())
 	{
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}
-	*/
 }
 
 UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
@@ -73,17 +71,8 @@ void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData&
 		return;
 	}
 
-	// It is mean Interrupted by any ability that doesen't combo, so we need a reset
-	if (ComboAbilityEndedData.bWasCancelled)
-	{
-		if (!CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo))
-		{
-			ActiveComboChainTracker.Reset();
-			OnComboEnded.Broadcast();
-		}
-	}
 	// If ComboMelee ability ended as normal
-	else
+	if (!ComboAbilityEndedData.bWasCancelled)
 	{
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();

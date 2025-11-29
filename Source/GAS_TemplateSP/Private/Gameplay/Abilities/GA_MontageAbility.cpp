@@ -5,8 +5,10 @@
 #include "Gameplay/Abilities/Tasks/GAS_Task_PlayMontageWaitForEvent.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include <Abilities/Tasks/AbilityTask_WaitDelay.h>
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_TargetLockSystem.h"
 
 
 UGA_MontageAbility::UGA_MontageAbility()
@@ -54,9 +56,35 @@ void UGA_MontageAbility::ActivateMotionWarping()
 	}
 
 	FVector TargetLocation;
-	if (bUseDestinationReachForDistance) 
+	bool bShouldUseTargetReach = false;
+
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
 	{
-		TargetLocation = CalculateDestinationReachLocation();
+		const AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
+		if (Hero && Hero->GetTargetLockSystemComponent())
+		{
+			AActor* Target = Hero->GetTargetLockSystemComponent()->CurrentTarget;
+
+			if (Target && bUseTargetReachDistance)
+			{
+				const FVector OwnerLocation = Hero->GetActorLocation();
+				const float DistanceToTarget = FVector::Dist(OwnerLocation, Target->GetActorLocation());
+
+				if (DistanceToTarget <= MaxRange)
+				{
+					bShouldUseTargetReach = true;
+				}
+			}
+		}
+	}
+	else if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Enemy))
+	{
+		bShouldUseTargetReach = bUseTargetReachDistance;
+	}
+
+	if (bShouldUseTargetReach)
+	{
+		TargetLocation = CalculateReachLocationToTarget();
 	}
 	else
 	{
@@ -73,32 +101,47 @@ void UGA_MontageAbility::ActivateMotionWarping()
 	CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
 }
 
-FVector UGA_MontageAbility::CalculateDestinationReachLocation() const
+FVector UGA_MontageAbility::CalculateReachLocationToTarget() const
 {
-	FVector OwnerLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
-	AGAS_EnemyBase* Enemy = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
-	if (!Enemy) 
+	const AActor* Avatar = GetAvatarActorFromActorInfo();
+	if (!Avatar)
 	{
-		return OwnerLocation;
-	} 
+		return FVector::ZeroVector;
+	}
 
-	AAIControllerBase* EnemyController = Enemy->GetEnemyController();
-	if (!EnemyController)
+	const FVector OwnerLocation = Avatar->GetActorLocation();
+
+	AActor* Target = nullptr;
+
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
+	{
+		const AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(Avatar);
+		if (Hero && Hero->GetTargetLockSystemComponent())
+		{
+			Target = Hero->GetTargetLockSystemComponent()->CurrentTarget;
+		}
+	}
+
+	else if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Enemy))
+	{
+		const AGAS_EnemyBase* Enemy = Cast<AGAS_EnemyBase>(Avatar);
+		if (Enemy && Enemy->GetEnemyController())
+		{
+			Target = Enemy->GetEnemyController()->GetTargetActor();
+		}
+	}
+
+	if (!Target)
 	{
 		return OwnerLocation;
 	}
 
-	AActor* TargetHero = EnemyController->GetTargetActor();
-	if (!TargetHero)
-	{
-		return OwnerLocation;
-	}
+	const FVector ToTarget = Target->GetActorLocation() - OwnerLocation;
+	const float Distance = ToTarget.Size();
 
-	FVector ToTarget = TargetHero->GetActorLocation() - OwnerLocation;
-	float Distance = ToTarget.Size();
-	if (Distance > DestinationReachDistance)
+	if (Distance > TargetReachDistance)
 	{
-		return TargetHero->GetActorLocation() - ToTarget.GetSafeNormal() * DestinationReachDistance;
+		return Target->GetActorLocation() - ToTarget.GetSafeNormal() * TargetReachDistance;
 	}
 
 	return OwnerLocation;

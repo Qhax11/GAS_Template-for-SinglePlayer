@@ -32,7 +32,7 @@ public:
 
 	void ActivateMotionWarping();
 
-	FVector CalculateReachLocationToTarget() const;
+	FVector CalculateDestinationReachLocation() const;
 
 	virtual FVector CalculateMotionWarpingLocation() const;
 
@@ -80,20 +80,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
 	FName MotionWarpingName = NAME_None;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping && !bUseTargetReachDistance"))
-	float MotionWarpingDistance = 150.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping && !bUseDestinationReachForDistance"))
+	float MotionWarpingDistance = 0.0f;
 
 	/**
-    * If true, the ability will calculate a motion warp target based on the distance to the target destination.
+    * If true, the ability will calculate a motion warp target based on the distance to the destination.
     * This is generally used for AI characters to stop a fixed distance away from their target
     * rather than moving a fixed forward/backward distance.
     * Essentially, it allows AI to “approach but not overshoot” the target.
     */
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	bool bUseTargetReachDistance = false;
+	bool bUseDestinationReachForDistance = false;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping && bUseTargetReachDistance"))
-	float TargetReachDistance = 150.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping && bUseDestinationReachForDistance"))
+	float DestinationReachDistance = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"), meta = (Categories = "Gameplay.Direction"))
 	FGameplayTag DirectionTag = GAS_Tags::TAG_Gameplay_Direction_Forward;

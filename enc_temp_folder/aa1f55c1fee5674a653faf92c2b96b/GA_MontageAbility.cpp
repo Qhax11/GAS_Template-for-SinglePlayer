@@ -116,23 +116,7 @@ FVector UGA_MontageAbility::CalculateMotionWarpingLocation() const
 	{
 		TargetLocation += Forward * MotionWarpingDistance;
 	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardLeft)
-	{
-		TargetLocation += Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardRight)
-	{
-		TargetLocation += Forward * MotionWarpingDistance;
-	}
 	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Backward)
-	{
-		TargetLocation -= Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardLeft)
-	{
-		TargetLocation -= Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardRight)
 	{
 		TargetLocation -= Forward * MotionWarpingDistance;
 	}

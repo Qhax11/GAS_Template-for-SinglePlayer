@@ -27,7 +27,7 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
     // UGA_HeroRouterAttack checks for the dash tag to decide whether it should trigger
     // the dash-follow-up attack (DodgeRecoveryAttack). The delayed end ensures the tag
     // is still present during this decision window.
-    //MontageEndPolicy = EMontageEndPolicy::EndWithDelay;
+    MontageEndPolicy = EMontageEndPolicy::EndWithDelay;
 }
 
 void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

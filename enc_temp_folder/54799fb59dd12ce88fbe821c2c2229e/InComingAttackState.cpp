@@ -28,7 +28,7 @@ bool UInComingAttackState::EnterCondition_Implementation()
 	float ComingAttackMaxRange = ComingAttackPayload.ComingAttack->MaxRange;
 
 	const float Distance = HeroTarget->GetDistanceTo(Enemy);
-	const bool bIsInRange = Distance < ComingAttackMaxRange + 50.0f;
+	const bool bIsInRange = Distance < ComingAttackMaxRange;
 
 	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
 	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);

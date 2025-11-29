@@ -64,10 +64,12 @@ void UGA_MontageAbility::ActivateMotionWarping()
 		if (Hero && Hero->GetTargetLockSystemComponent())
 		{
 			AActor* Target = Hero->GetTargetLockSystemComponent()->CurrentTarget;
+
 			if (Target && bUseTargetReachDistance)
 			{
 				const FVector OwnerLocation = Hero->GetActorLocation();
 				const float DistanceToTarget = FVector::Dist(OwnerLocation, Target->GetActorLocation());
+
 				if (DistanceToTarget <= MaxRange)
 				{
 					bShouldUseTargetReach = true;

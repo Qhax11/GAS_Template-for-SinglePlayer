@@ -1,4 +1,4 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/Components/AC_MeleeComboManager.h"
@@ -26,19 +26,37 @@ void UAC_MeleeComboManager::BeginPlay()
 		return;
 	}
 
-	InitComboChainTracker();
+	InitComboChainTracker(EComboType::GroundCombo);
 }
 
-void UAC_MeleeComboManager::InitComboChainTracker()
+void UAC_MeleeComboManager::InitComboChainTracker(EComboType NewComboType)
 {
-	if (!ComboChainAsset || !ComboChainAsset->ComboChains.IsValidIndex(SelectedComboIndex))
+	if (!ComboChainAsset)
 	{
 		return;
 	}
 
-	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[SelectedComboIndex];
-	ActiveComboChainTracker.CurrentIndex = 0;
+	// ---- Enum → Index translate ----
+	int32 Index = static_cast<int32>(NewComboType);
+	// EComboType::GroundCombo → 0
+	// EComboType::AirCombo    → 1
+	// EComboType::ShadowCombo → 2
 
+	if (!ComboChainAsset->ComboChains.IsValidIndex(Index))
+	{
+		return;
+	}
+
+	// ---- Initialize tracker ----
+	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[Index];
+	ActiveComboChainTracker.CurrentStepIndex = 0;
+	ActiveComboChainTracker.bNextAttackAllowed = true;
+
+	ActiveComboChainTracker.CurrentAbilitySpecHandle = FGameplayAbilitySpecHandle();
+	ActiveComboChainTracker.CurrentAbilityInstance = nullptr;
+	ActiveComboChainTracker.CurrentAbilityClass = nullptr;
+
+	// Pull first step
 	const FComboAbilityData* FirstCombo = ActiveComboChainTracker.GetCurrentCombo();
 	if (FirstCombo)
 	{
@@ -84,7 +102,7 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 		PrimaryInstance->SectionName = MontageSection;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: TryActivate Ability: %s, index is: %d"), *ComboAbilityData->ComboAbilityClass->GetName(), ActiveComboChainTracker.CurrentIndex);
+	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: TryActivate Ability: %s, index is: %d"), *ComboAbilityData->ComboAbilityClass->GetName(), ActiveComboChainTracker.CurrentStepIndex);
 
 	// Try activate ability and get its instance
 	UGA_ComboMeleeAttack* ActivatedAbility = Cast<UGA_ComboMeleeAttack>(

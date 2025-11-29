@@ -14,8 +14,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboMeleeAbilityEnded, const boo
 UENUM(BlueprintType)
 enum class EComboType : uint8
 {
-	InFloor,
-	InAir
+	GroundCombo,
+	AirCombo,
+	ShadowCombo
 };
 
 USTRUCT(BlueprintType)
@@ -36,7 +37,7 @@ struct FComboChainData
 	FName ComboChainName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EComboType ComboType = EComboType::InFloor;
+	EComboType ComboType = EComboType::GroundCombo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FComboAbilityData> ComboAbilities;
@@ -61,7 +62,7 @@ struct FActiveComboChainTracker
 	FComboChainData ComboChain = FComboChainData();
 
 	UPROPERTY()
-	int32 CurrentIndex = 0;
+	int32 CurrentStepIndex = 0;
 
 	UPROPERTY()
 	TSubclassOf<UGA_ComboMeleeAttack> CurrentAbilityClass = nullptr;
@@ -80,27 +81,27 @@ struct FActiveComboChainTracker
 
 	bool IsCurrentComboValid() const
 	{
-		return ComboChain.ComboAbilities.IsValidIndex(CurrentIndex);
+		return ComboChain.ComboAbilities.IsValidIndex(CurrentStepIndex);
 	}
 
 	bool IsChainFinished() const
 	{
-		return CurrentIndex >= ComboChain.ComboAbilities.Num();
+		return CurrentStepIndex >= ComboChain.ComboAbilities.Num();
 	}
 
 	const FComboAbilityData* GetCurrentCombo() const
 	{
-		return IsCurrentComboValid() ? &ComboChain.ComboAbilities[CurrentIndex] : nullptr;
+		return IsCurrentComboValid() ? &ComboChain.ComboAbilities[CurrentStepIndex] : nullptr;
 	}
 
 	void Advance()
 	{
-		++CurrentIndex;
+		++CurrentStepIndex;
 	}
 
 	void Reset()
 	{
-		CurrentIndex = 0;
+		CurrentStepIndex = 0;
 		CurrentAbilityClass = nullptr;
 		CurrentAbilityInstance = nullptr;
 		CurrentAbilitySpecHandle = FGameplayAbilitySpecHandle();
@@ -141,7 +142,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void InitComboChainTracker();
+	virtual void InitComboChainTracker(EComboType NewComboType);
 
 	UFUNCTION()
 	virtual void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData);
@@ -152,9 +153,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	UComboChainAsset* ComboChainAsset;
-
-	// Can be set from UI in the future to allow different combo styles.
-	int32 SelectedComboIndex = 0;
 
 	AGAS_CharacterBase* CharacterBase;
 	UGAS_AbilitySystemComponent* CharacterBaseASC;

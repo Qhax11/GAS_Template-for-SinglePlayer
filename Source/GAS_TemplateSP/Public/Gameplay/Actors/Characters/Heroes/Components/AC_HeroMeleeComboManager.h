@@ -20,13 +20,15 @@ protected:
 	UFUNCTION()
 	void OnCanActivateNextAttack();
 
+	void ChangeComboSet();
+
 	void OnHeroAbilityActivated(UGameplayAbility* Ability);
 
 public:
 	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
 
 	UFUNCTION(BlueprintCallable)
-	void ActivateComboMeleeAttackAbilityWithShadowAttack(FName MontageSection, int32 ComboIndex = 0, FGameplayTag AdditionalTag = FGameplayTag());
+	void StartShadowCombo(FName MontageSection, FGameplayTag AdditionalTag = FGameplayTag());
 
 	AGAS_HeroBase* HeroBase;
 

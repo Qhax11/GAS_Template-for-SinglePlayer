@@ -26,7 +26,7 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagAdded);
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagRemoved);
 
-	InitComboChainTracker();
+	InitComboChainTracker(EComboType::GroundCombo);
 
 	CharacterBaseASC->AbilityActivatedCallbacks.AddUObject(this, &UAC_HeroMeleeComboManager::OnHeroAbilityActivated);
 }
@@ -99,29 +99,38 @@ void UAC_HeroMeleeComboManager::OnCanActivateNextAttack()
 
 	if (ActiveComboChainTracker.IsChainFinished())
 	{
+		ChangeComboSet();
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}
 }
 
-void UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbilityWithShadowAttack(FName MontageSection, int32 ComboIndex, FGameplayTag AdditionalTag)
+void UAC_HeroMeleeComboManager::ChangeComboSet()
 {
-	ActiveComboChainTracker.CurrentIndex = ComboIndex;
+	if (CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InAir))
+	{
+		InitComboChainTracker(EComboType::AirCombo);
+	}
+	else
+	{
+		InitComboChainTracker(EComboType::GroundCombo);
+	}
+}
+
+void UAC_HeroMeleeComboManager::StartShadowCombo(FName MontageSection, FGameplayTag AdditionalTag)
+{
+	InitComboChainTracker(EComboType::ShadowCombo);
 	ActivateComboMeleeAttackAbility(MontageSection, AdditionalTag);
 }
 
 void UAC_HeroMeleeComboManager::OnInAirTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	// SelectedComboIndex = 1 means inair attack combo
-	SelectedComboIndex = 1;
-	InitComboChainTracker();
+	InitComboChainTracker(EComboType::AirCombo);
 }
 
 void UAC_HeroMeleeComboManager::OnInAirTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	// SelectedComboIndex = 0 means land attack combo
-	SelectedComboIndex = 0;
-	InitComboChainTracker();
+	InitComboChainTracker(EComboType::GroundCombo);
 }
 
 

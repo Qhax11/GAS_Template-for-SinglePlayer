@@ -44,7 +44,7 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 	}
 
 	ActiveComboChainTracker.ComboChain = SearchResult.ComboChain;
-	ActiveComboChainTracker.CurrentIndex = SearchResult.FindedComboIndex;
+	ActiveComboChainTracker.CurrentStepIndex = SearchResult.FindedComboIndex;
 
 	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
 	if (!ComboAbilityData)

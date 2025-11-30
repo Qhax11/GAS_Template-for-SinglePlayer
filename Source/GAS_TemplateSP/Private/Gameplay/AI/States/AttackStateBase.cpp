@@ -27,21 +27,19 @@ void UAttackStateBase::OnEnter_Implementation()
 bool UAttackStateBase::SelectAndMakeAttack()
 {
 	SelectedAttackClass = GetSelectedAttackAbilityData().AbilityClass;
-	if (!SelectedAttackClass) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SelectedAttackClass is null in: %s"), *GetName());
-		return false;
-	}
-
 	MakeAttack();
 	return true;
 }
 
 void UAttackStateBase::MakeAttack()
 {
-	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(
-			BehaviorDecisionComponent->LastSelectedAttackAbilityData.AbilityClass);
+	if (!SelectedAttackClass) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SelectedAttackClass is null in: %s"), *GetName());
+		return;
+	}
 
+	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(SelectedAttackClass);
 	if (ActivatedAbility) 
 	{
 		ActivatedAbility->OnAbilityEnded.RemoveAll(this);

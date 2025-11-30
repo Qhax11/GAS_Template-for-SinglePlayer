@@ -6,6 +6,7 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AttackStateBase.generated.h"
 
+class UGAS_GameplayAbilityBase;
 
 UCLASS()
 class GAS_TEMPLATESP_API UAttackStateBase : public UStateBase
@@ -29,7 +30,7 @@ protected:
 
 	UGAS_GameplayAbilityBase* LastUsedAttack;
 
-	TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackClass;
+	TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass;
 
 public:
 	virtual void OnExit_Implementation() override;

@@ -52,17 +52,10 @@ void UAC_BehaviorDecision::BeginPlay()
         return;
     }
 
-    InitalizeServiceses();
-
-   // OwnerController->OnTargetDetected.AddDynamic(this, &UAC_BehaviorDecision::OnTargetDetected);
+    CreateAndInitalizeServiceses();
 }
 
-void UAC_BehaviorDecision::OnTargetDetected(AActor* Target)
-{
-    InitalizeServiceses();
-}
-
-void UAC_BehaviorDecision::InitalizeServiceses()
+void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
 {
     for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionAsset->ComingAttackReactions)
     {
@@ -74,12 +67,12 @@ void UAC_BehaviorDecision::InitalizeServiceses()
         }
     }
 
-    GetBestAttackService = NewObject<UBDS_GetBestAttack>(GetOwner());
+    GetBestAttackService = NewObject<UBDS_GetBestAttack>(GetOwner(), GetBestAttackServiceClass);
     FBehaviorServiceInitParams GetBestAttackServiceInitData = FBehaviorServiceInitParams
     (AttackAbilityAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
     GetBestAttackService->Initialize(GetBestAttackServiceInitData);
 
-    GetBestMovementChainService = NewObject<UBDS_GetBestMovementChain>(GetOwner());
+    GetBestMovementChainService = NewObject<UBDS_GetBestMovementChain>(GetOwner(), GetBestMovementChainClass);
     FBehaviorServiceInitParams GetBestMovementChainServiceInitData = FBehaviorServiceInitParams(
         AttackAbilityMovementChainMapAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
     GetBestMovementChainService->Initialize(GetBestMovementChainServiceInitData);

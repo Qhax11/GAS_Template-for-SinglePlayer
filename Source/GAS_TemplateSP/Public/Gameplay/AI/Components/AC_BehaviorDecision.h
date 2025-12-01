@@ -8,6 +8,7 @@
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestMovementChain.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_BehaviorDecision.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBehaviorDecisionInitialized);
@@ -22,10 +23,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-    UFUNCTION()
-    void OnTargetDetected(AActor* Target);
-
-    void InitalizeServiceses();
+    void CreateAndInitalizeServiceses();
 
     UPROPERTY(EditDefaultsOnly, Category = "UAC_BehaviorDecision")
     UAttackAbilityAsset* AttackAbilityAsset;
@@ -73,10 +71,14 @@ protected:
 
     UPROPERTY()
     UBDS_ComingAttackReactionBase* ComingAttackReactionService;
+	TSubclassOf<UBDS_ComingAttackReactionBase> ComingAttackReactionServiceClass;
 
     UPROPERTY()
     UBDS_GetBestAttack* GetBestAttackService;
+    TSubclassOf<UBDS_GetBestAttack> GetBestAttackServiceClass;
 
     UPROPERTY()
     UBDS_GetBestMovementChain* GetBestMovementChainService;
+    TSubclassOf<UBDS_GetBestMovementChain> GetBestMovementChainClass;
+
 };

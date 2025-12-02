@@ -34,8 +34,6 @@ public:
 
 	void HandleIncomingEvent(const FGameplayTag& StateEventTag);
 
-	bool RequestStateTreeEnter(const FGameplayTag& StateTag);
-
 	bool RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason);
 
 	bool IsCurrentState(const FGameplayTag& StateTag);
@@ -59,6 +57,8 @@ public:
 	UStateBase* CurrentState = nullptr;
 
 protected:
+	bool RequestStateTreeEnter(const FGameplayTag& StateTag);
+
 	void HandleStateExit(const FGameplayTag& ExitedState);
 
 	void HandleTargetDetected();

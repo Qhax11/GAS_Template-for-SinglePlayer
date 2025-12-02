@@ -8,6 +8,7 @@
 #include "Gameplay/Abilities/InCombat/GA_ParryKnockbackBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/ComingAttackReactionData.h"
 #include "InComingAttackState.generated.h"
 
 struct FDamageData;
@@ -59,7 +60,7 @@ protected:
 
 	//********************* PARRY *********************/
 
-	void MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
+	void MakeParryAbility(const UComingAttackReactionData* BestComingAttackReaction);
 
 	UFUNCTION()
 	void OnParryAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);

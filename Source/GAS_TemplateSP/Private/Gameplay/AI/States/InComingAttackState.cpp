@@ -180,7 +180,7 @@ void UInComingAttackState::OnComingAttackAbilityEnded(const FCustomAbilityEndedD
 	ExitRequest("OnComingAttackAbilityEnded");
 }
 
-void UInComingAttackState::MakeParryAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
+void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* BestComingAttackReaction)
 {
 	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();

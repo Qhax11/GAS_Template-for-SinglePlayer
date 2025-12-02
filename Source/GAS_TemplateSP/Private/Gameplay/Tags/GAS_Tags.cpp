@@ -393,6 +393,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_VulnerableTagAdded, "AI.StateEvent.VulnerableTagAdded");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_InComingAttack, "AI.StateEvent.InComingAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_TargetDetected, "AI.StateEvent.TargetDetected");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_BackupReaction, "AI.StateEvent.BackupReaction");
 
 
 	// ============================================================

@@ -12,7 +12,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBehaviorDecisionInitialized);
 
-class ComingAttackReactionData;
+class UComingAttackReactionData;
+class UBDS_ComingAttackReactionBase;
+struct FComingAttackPayload;
 
 UCLASS(BlueprintType)
 class UBehaviorDecisionConfigAsset : public UPrimaryDataAsset
@@ -59,7 +61,7 @@ public:
     TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
     UFUNCTION(BlueprintCallable)
-    UBDS_ComingAttackReactionBase* GetBestComingAttackReaction(struct FComingAttackPayload ComingAttackPayload);
+    UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);
 
     FAttackData LastSelectedAttackAbilityData;
     //UComingAttackReactionData* LastSelectedComingAttackReaction;

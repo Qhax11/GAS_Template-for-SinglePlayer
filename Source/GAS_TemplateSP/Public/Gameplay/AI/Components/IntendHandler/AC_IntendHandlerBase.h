@@ -17,6 +17,8 @@
  * It processes external stimuli and triggers state transitions via the State Manager.
  */
 
+class UComingAttackReactionData;
+struct FComingAttackPayload;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_IntendHandlerBase : public UActorComponent
@@ -66,7 +68,7 @@ protected:
 
 	void SendEventToDefense(FComingAttackPayload EventPayload);
 
-	void HandleReactionTiming(UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload);
+	void HandleReactionTiming(UComingAttackReactionData* Reaction, FComingAttackPayload Payload);
 
 	void TriggerIncomingAttackReaction(class UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload);
 };

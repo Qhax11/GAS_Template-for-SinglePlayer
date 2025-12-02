@@ -413,6 +413,7 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateEvent_VulnerableTagAdded);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateEvent_InComingAttack);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateEvent_TargetDetected);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateEvent_BackupReaction);
 
 
 	// ============================================================

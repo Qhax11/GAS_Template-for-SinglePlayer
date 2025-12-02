@@ -148,6 +148,15 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag)
 	{
 		HandleTargetDetected();
 	}
+	else if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_BackupReaction)
+	{
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_BackupReaction);
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Unhandled StateEventTag: %s"), *StateEventTag.ToString());
+	}
+
 }
 
 void UAC_StateManager::HandleTargetDetected()

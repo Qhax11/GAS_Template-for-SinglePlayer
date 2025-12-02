@@ -6,6 +6,7 @@
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/ComingAttackReactionData.h"
 #include <Kismet/GameplayStatics.h>
 
 UAC_BehaviorDecision::UAC_BehaviorDecision()
@@ -145,14 +146,15 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     return BestMovementChainDataAsset->MovementChain;
 }
 
-UBDS_ComingAttackReactionBase* UAC_BehaviorDecision::GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload)
+UComingAttackReactionData* UAC_BehaviorDecision::GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload)
 {
-    UBDS_ComingAttackReactionBase* BestComingAttackInstance = nullptr;
-
     if (!IsValid(ComingAttackReactionService) || !ComingAttackPayload.ComingAttack)
     {
-        return BestComingAttackInstance;
+        UE_LOG(LogTemp, Warning, TEXT("GetBestAttackService is null in: %s"), *GetName());
+        return nullptr;
     }
+
+    UComingAttackReactionData* BestComingAttackData = nullptr;
 
     EComingAttackReaction BestReaction = EComingAttackReaction::TakeDamage;
     float BestScore = -FLT_MAX;
@@ -188,6 +190,6 @@ UBDS_ComingAttackReactionBase* UAC_BehaviorDecision::GetBestComingAttackReaction
     }
     */
 
-    return BestComingAttackInstance;
+    return BestComingAttackData;
 }
 

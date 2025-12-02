@@ -76,7 +76,7 @@ void UAC_IntendHandlerBase::OnTargetDetected(AActor* DetectedTarget)
 
 void UAC_IntendHandlerBase::OnRequestEnemyBackupReaction()
 {
-	OwnerStateManager->RequestStateTreeEnter(GAS_Tags::TAG_AI_State_BackupReaction);
+	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_BackupReaction);
 }
 
 bool UAC_IntendHandlerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
@@ -184,17 +184,17 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 
 void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 {
-	UBDS_ComingAttackReactionBase* BestReaction = OwnerBehaviorDecisionComp->GetBestComingAttackReaction(EventPayload);
-	if (!BestReaction) 
+	UComingAttackReactionData* BestReactionData = OwnerBehaviorDecisionComp->GetBestComingAttackReaction(EventPayload);
+	if (!BestReactionData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BestReaction is null in: %s"), *GetName());
 		return;
 	}
 
-	HandleReactionTiming(BestReaction, EventPayload);
+	HandleReactionTiming(BestReactionData, EventPayload);
 }
 
-void UAC_IntendHandlerBase::HandleReactionTiming(UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload)
+void UAC_IntendHandlerBase::HandleReactionTiming(UComingAttackReactionData* Reaction, FComingAttackPayload Payload)
 {
 	/*
 	if (BestReaction->ReactionType == EComingAttackReaction::TakeDamage)

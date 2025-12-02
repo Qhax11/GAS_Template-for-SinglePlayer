@@ -12,6 +12,8 @@ class GAS_TEMPLATESP_API UComingAttackReactionDataDodge : public UComingAttackRe
 	GENERATED_BODY()
 	
 public:
+	UComingAttackReactionDataDodge(); 
+
 	//virtual void InitializeAfterSelection() override;
 
 	virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const override;

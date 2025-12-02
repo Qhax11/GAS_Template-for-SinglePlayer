@@ -12,6 +12,8 @@ class GAS_TEMPLATESP_API UComingAttackReactionDataParry : public UComingAttackRe
 	GENERATED_BODY()
 
 public:
+	UComingAttackReactionDataParry();
+
 	virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const override;
 	
 };

@@ -190,12 +190,6 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 		UE_LOG(LogTemp, Warning, TEXT("BestReaction is null in: %s"), *GetName());
 		return;
 	}
-
-	HandleReactionTiming(BestReaction, EventPayload);
-}
-
-void UAC_IntendHandlerBase::HandleReactionTiming(UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload)
-{
 	/*
 	if (BestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{

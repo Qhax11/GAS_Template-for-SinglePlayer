@@ -254,6 +254,7 @@ bool UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 	}
 
 	HandleStateExit(StateTag);
+
 	return true;
 }
 

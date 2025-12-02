@@ -403,9 +403,23 @@ namespace GAS_Tags
 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI);
 
+	// ============================================================
+    // AI STATE EVENTS
+    // These tags represent events that can trigger or influence state transitions within the AI state machine. 
+	// They are used to notify states of external or internal occurrences, such as becoming vulnerable, detecting an incoming attack, 
+    // or spotting the target, so the state machine can respond appropriately.
+    // ============================================================
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateEvent);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateEvent_VulnerableTagAdded);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateEvent_InComingAttack);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_StateEvent_TargetDetected);
+
 
 	// ============================================================
-	// AI STATE TAGS
+	// AI STATE TAGS 
+    // These tags represent the unique identities of AI states. 
+    // Each state instance in the state machine is associated with one of these tags, and state transitions are requested or validated using these tags.
+	// Essentially, they serve as identifiers for patrolling, movement, attack, incoming attack, vulnerable, backup reaction, hero finisher, and attack intention states.
 	// ============================================================
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_Patrolling);

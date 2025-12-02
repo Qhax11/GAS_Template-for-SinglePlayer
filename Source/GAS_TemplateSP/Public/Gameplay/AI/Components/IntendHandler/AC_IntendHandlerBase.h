@@ -66,5 +66,7 @@ protected:
 
 	void SendEventToDefense(FComingAttackPayload EventPayload);
 
+	void HandleReactionTiming(UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload);
+
 	void TriggerIncomingAttackReaction(class UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload);
 };

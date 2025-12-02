@@ -32,8 +32,7 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
-	// Its called from UAC_IntendHandlerBase
-	void OnTargetDetected();
+	void HandleIncomingEvent(const FGameplayTag& StateEventTag);
 
 	bool RequestStateTreeEnter(const FGameplayTag& StateTag);
 
@@ -60,6 +59,10 @@ public:
 	UStateBase* CurrentState = nullptr;
 
 protected:
+	void HandleStateExit(const FGameplayTag& ExitedState);
+
+	void HandleTargetDetected();
+
 	// Find the instance of the requested state
 	UStateBase* GetStateWithTag(const FGameplayTag& StateTag) const;
 

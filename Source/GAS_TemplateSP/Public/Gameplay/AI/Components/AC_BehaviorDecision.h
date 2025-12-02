@@ -64,7 +64,8 @@ public:
     UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);
 
     FAttackData LastSelectedAttackAbilityData;
-    //UComingAttackReactionData* LastSelectedComingAttackReaction;
+
+    UComingAttackReactionData* LastSelectedComingAttackReaction;
 
     UPROPERTY(BlueprintAssignable)
     FOnBehaviorDecisionInitialized OnBehaviorDecisionInitialized;

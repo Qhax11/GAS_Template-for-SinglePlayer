@@ -65,8 +65,7 @@ void UInComingAttackState::OnEnter_Implementation()
 
 bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 {
-	/*
-	UBDS_ComingAttackReactionBase* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
+	UComingAttackReactionData* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
 	if (!SelectedBestReaction)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectedBestReaction is null in: %s"), *GetName());
@@ -86,7 +85,7 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 		MakeParryAbility(SelectedBestReaction);
 		return true;
 	}
-	*/
+
 	return false;
 }
 

@@ -196,31 +196,29 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 
 void UAC_IntendHandlerBase::HandleReactionTiming(UComingAttackReactionData* Reaction, FComingAttackPayload Payload)
 {
-	/*
-	if (BestReaction->ReactionType == EComingAttackReaction::TakeDamage)
+	if (Reaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
-		TriggerIncomingAttackReaction(BestReaction, EventPayload);
+		TriggerIncomingAttackReaction(Reaction, Payload);
 		return;
 	}
 
-	const float PreferredDelay = EventPayload.ComingAttackHitTime - BestReaction->PreferredTriggerTimeBeforeHit;
+	const float PreferredDelay = Payload.ComingAttackHitTime - Reaction->PreferredTriggerTimeBeforeHit;
 
 	if (PreferredDelay <= 0.f)
 	{
-		TriggerIncomingAttackReaction(BestReaction, EventPayload);
+		TriggerIncomingAttackReaction(Reaction, Payload);
 	}
 	else
 	{
 		FTimerHandle ReactionDelayTimer;
 		GetWorld()->GetTimerManager().SetTimer(ReactionDelayTimer, FTimerDelegate::CreateUObject(
-			this, &UAC_IntendHandlerBase::TriggerIncomingAttackReaction, BestReaction, EventPayload), PreferredDelay, false);
+			this, &UAC_IntendHandlerBase::TriggerIncomingAttackReaction, Reaction, Payload), PreferredDelay, false);
 
 		UE_LOG(LogTemp, Warning, TEXT("IncomingAttack Reaction delayed by %.2f seconds."), PreferredDelay);
 	}
-	*/
 }
 
-void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload)
+void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UComingAttackReactionData* Reaction, FComingAttackPayload Payload)
 {
 	OwnerStateManager->ComingAttackPayload = Payload;
 	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_InComingAttack);

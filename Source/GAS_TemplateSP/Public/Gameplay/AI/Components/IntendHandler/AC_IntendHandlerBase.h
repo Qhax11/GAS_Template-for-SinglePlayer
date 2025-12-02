@@ -70,5 +70,5 @@ protected:
 
 	void HandleReactionTiming(UComingAttackReactionData* Reaction, FComingAttackPayload Payload);
 
-	void TriggerIncomingAttackReaction(class UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload);
+	void TriggerIncomingAttackReaction(UComingAttackReactionData* Reaction, FComingAttackPayload Payload);
 };

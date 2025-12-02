@@ -4,7 +4,6 @@
 #include "Gameplay/AI/States/InComingAttackState.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReaction_Parry.h"
 #include "Gameplay/Abilities/InCombat/GA_TakeDamageBase.h"
 #include "Gameplay/AI/Components/IntendHandler/AC_IntendHandlerBase.h"
 #include <Gameplay/StaticDelegates/S_DamageDelegates.h>
@@ -66,6 +65,7 @@ void UInComingAttackState::OnEnter_Implementation()
 
 bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 {
+	/*
 	UBDS_ComingAttackReactionBase* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
 	if (!SelectedBestReaction)
 	{
@@ -86,6 +86,7 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 		MakeParryAbility(SelectedBestReaction);
 		return true;
 	}
+	*/
 	return false;
 }
 

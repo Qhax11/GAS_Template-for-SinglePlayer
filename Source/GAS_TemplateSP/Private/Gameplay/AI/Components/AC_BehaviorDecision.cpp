@@ -5,6 +5,7 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include <Kismet/GameplayStatics.h>
 
 UAC_BehaviorDecision::UAC_BehaviorDecision()
@@ -57,25 +58,32 @@ void UAC_BehaviorDecision::BeginPlay()
 
 void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
 {
-    for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionAsset->ComingAttackReactions)
+    if (!BehaviorDecisionConfigAsset)
     {
-        if (ReactionInstance) 
-        {
-            FBehaviorServiceInitParams ComingAttackReactionServiceInitData = FBehaviorServiceInitParams(
-                ComingAttackReactionAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
-            ReactionInstance->Initialize(ComingAttackReactionServiceInitData);
-        }
+        UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionConfigAsset is null in: %s !"), *GetName());
+        return;
     }
 
-    GetBestAttackService = NewObject<UBDS_GetBestAttack>(GetOwner(), GetBestAttackServiceClass);
-    FBehaviorServiceInitParams GetBestAttackServiceInitData = FBehaviorServiceInitParams
-    (AttackAbilityAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
-    GetBestAttackService->Initialize(GetBestAttackServiceInitData);
+    FBehaviorServiceInitParams ServiceInitData = FBehaviorServiceInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
 
-    GetBestMovementChainService = NewObject<UBDS_GetBestMovementChain>(GetOwner(), GetBestMovementChainClass);
-    FBehaviorServiceInitParams GetBestMovementChainServiceInitData = FBehaviorServiceInitParams(
-        AttackAbilityMovementChainMapAsset, OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
-    GetBestMovementChainService->Initialize(GetBestMovementChainServiceInitData);
+    if (BehaviorDecisionConfigAsset->AttackDecisionServiceClass) 
+    {
+        GetBestAttackService = NewObject<UBDS_GetBestAttack>(this, BehaviorDecisionConfigAsset->AttackDecisionServiceClass);
+        GetBestAttackService->Initialize(ServiceInitData);
+    }
+
+    if (BehaviorDecisionConfigAsset->MovementChainServiceClass)
+    {
+        GetBestMovementChainService = NewObject<UBDS_GetBestMovementChain>(this, BehaviorDecisionConfigAsset->MovementChainServiceClass);
+        GetBestAttackService->Initialize(ServiceInitData);
+    }
+
+    if (BehaviorDecisionConfigAsset->ComingAttackReactionServiceClass)
+    {
+        ComingAttackReactionService = NewObject<UBDS_ComingAttackReactionBase>(this, BehaviorDecisionConfigAsset->ComingAttackReactionServiceClass);
+        ComingAttackReactionService->Initialize(ServiceInitData);
+    }
+
 }
 
 FAttackData UAC_BehaviorDecision::GetBestAttack()
@@ -141,15 +149,15 @@ UBDS_ComingAttackReactionBase* UAC_BehaviorDecision::GetBestComingAttackReaction
 {
     UBDS_ComingAttackReactionBase* BestComingAttackInstance = nullptr;
 
-    if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack)
+    if (!IsValid(ComingAttackReactionService) || !ComingAttackPayload.ComingAttack)
     {
         return BestComingAttackInstance;
     }
 
     EComingAttackReaction BestReaction = EComingAttackReaction::TakeDamage;
     float BestScore = -FLT_MAX;
-
-    for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionAsset->ComingAttackReactions)
+    /*0
+    for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionService->ComingAttackReactions)
     {
         if (!ReactionInstance) 
         {
@@ -178,6 +186,7 @@ UBDS_ComingAttackReactionBase* UAC_BehaviorDecision::GetBestComingAttackReaction
         LastSelectedComingAttackReaction = BestComingAttackInstance;
         UE_LOG(LogTemp, Log, TEXT("[AI] SelectedReaction %s"), *BestComingAttackInstance->ComingAttackReactionName.ToString());
     }
+    */
 
     return BestComingAttackInstance;
 }

@@ -92,6 +92,6 @@ protected:
 
     bool ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset);
 
-    UPROPERTY()
+    UPROPERTY(EditDefaultsOnly)
     UAttackAbilityMovementChainMapAsset* AttackAbilityMovementChainMapAsset;
 };

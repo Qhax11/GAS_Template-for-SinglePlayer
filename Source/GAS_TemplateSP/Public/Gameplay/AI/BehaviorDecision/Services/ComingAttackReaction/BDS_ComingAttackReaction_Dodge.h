@@ -7,15 +7,16 @@
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UBDS_ComingAttackReaction_Dodge : public UBDS_ComingAttackReactionBase
+class GAS_TEMPLATESP_API UBDS_ComingAttackReaction_Dodge : public UComingAttackReactionData
 {
 	GENERATED_BODY()
 	
 public:
-	virtual void InitializeAfterSelection() override;
+	//virtual void InitializeAfterSelection() override;
 
-	virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const override;
-
+	/*
+	virtual bool IsEnable(FComingReactionData ComingReactionData, FComingAttackPayload ComingAttackPayload) const override;
+	*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMovementAbilityData DodgeMovementAbilityData;
 };

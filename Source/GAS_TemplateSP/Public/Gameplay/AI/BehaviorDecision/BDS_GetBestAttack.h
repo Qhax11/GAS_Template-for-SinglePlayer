@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "BDS_GetBestAttack.generated.h"
 
 USTRUCT(BlueprintType)
@@ -13,7 +14,7 @@ struct FAttackData
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Ability class that defines the actual gameplay logic and range values"))
-    TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass;
+    TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
@@ -53,7 +54,7 @@ protected:
 
     float CalculateComboScore(FAttackData AttackData);
 
-    UPROPERTY()
+    UPROPERTY(EditDefaultsOnly)
     UAttackAbilityAsset* AttackAbilityAsset;
 
     FAttackData LastSelectedAttackAbilityData;

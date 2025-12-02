@@ -5,13 +5,30 @@
 #include "Components/ActorComponent.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
 #include "Gameplay/AI/BehaviorDecision/BDS_GetBestMovementChain.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_BehaviorDecision.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBehaviorDecisionInitialized);
+
+class ComingAttackReactionData;
+
+UCLASS(BlueprintType)
+class UBehaviorDecisionConfigAsset : public UPrimaryDataAsset
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
+    TSubclassOf<UBDS_GetBestAttack> AttackDecisionServiceClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
+    TSubclassOf<UBDS_GetBestMovementChain> MovementChainServiceClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
+    TSubclassOf<UBDS_ComingAttackReactionBase> ComingAttackReactionServiceClass;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_BehaviorDecision : public UActorComponent
@@ -24,15 +41,6 @@ protected:
 	virtual void BeginPlay() override;
 
     void CreateAndInitalizeServiceses();
-
-    UPROPERTY(EditDefaultsOnly, Category = "UAC_BehaviorDecision")
-    UAttackAbilityAsset* AttackAbilityAsset;
-
-    UPROPERTY(EditDefaultsOnly, Category = "UAC_BehaviorDecision")
-    UAttackAbilityMovementChainMapAsset* AttackAbilityMovementChainMapAsset;
-
-    UPROPERTY(EditDefaultsOnly, Category = "UAC_BehaviorDecision")
-    UComingAttackReactionAsset* ComingAttackReactionAsset;
 
     UPROPERTY(EditDefaultsOnly)
     float SecondsCheckMovement = 1.0f;
@@ -54,7 +62,7 @@ public:
     UBDS_ComingAttackReactionBase* GetBestComingAttackReaction(struct FComingAttackPayload ComingAttackPayload);
 
     FAttackData LastSelectedAttackAbilityData;
-    UBDS_ComingAttackReactionBase* LastSelectedComingAttackReaction;
+    //UComingAttackReactionData* LastSelectedComingAttackReaction;
 
     UPROPERTY(BlueprintAssignable)
     FOnBehaviorDecisionInitialized OnBehaviorDecisionInitialized;
@@ -69,16 +77,17 @@ protected:
     class AGAS_HeroBase* HeroBase;
     UAC_HeroMovementListener* HeroMovementListenerComp;
 
-    UPROPERTY()
-    UBDS_ComingAttackReactionBase* ComingAttackReactionService;
-	TSubclassOf<UBDS_ComingAttackReactionBase> ComingAttackReactionServiceClass;
+    UPROPERTY(EditDefaultsOnly)
+    UBehaviorDecisionConfigAsset* BehaviorDecisionConfigAsset;
 
+private:
     UPROPERTY()
     UBDS_GetBestAttack* GetBestAttackService;
-    TSubclassOf<UBDS_GetBestAttack> GetBestAttackServiceClass;
 
     UPROPERTY()
     UBDS_GetBestMovementChain* GetBestMovementChainService;
-    TSubclassOf<UBDS_GetBestMovementChain> GetBestMovementChainClass;
+
+    UPROPERTY()
+    UBDS_ComingAttackReactionBase* ComingAttackReactionService;
 
 };

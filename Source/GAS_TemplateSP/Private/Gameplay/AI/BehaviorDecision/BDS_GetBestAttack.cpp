@@ -7,16 +7,6 @@
 void UBDS_GetBestAttack::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {
     Super::Initialize(BehaviorServiceInitParams);
-
-    UAttackAbilityAsset* CastedAsset = Cast<UAttackAbilityAsset>(BehaviorServiceInitParams.Asset);
-    if (CastedAsset)
-    {
-        AttackAbilityAsset = CastedAsset;
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Invalid asset type passed to UDefenseReactionService!"));
-    }
 }
 
 FAttackData UBDS_GetBestAttack::GetBestAttack()

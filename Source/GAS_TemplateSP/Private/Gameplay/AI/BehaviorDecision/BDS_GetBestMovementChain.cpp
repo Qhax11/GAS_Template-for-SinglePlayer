@@ -6,16 +6,6 @@
 void UBDS_GetBestMovementChain::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {
     Super::Initialize(BehaviorServiceInitParams);
-
-    UAttackAbilityMovementChainMapAsset* CastedAsset = Cast<UAttackAbilityMovementChainMapAsset>(BehaviorServiceInitParams.Asset);
-    if (CastedAsset)
-    {
-        AttackAbilityMovementChainMapAsset = CastedAsset;
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Invalid asset type passed to %s!"), *GetName());
-    }
 }
 
 UMovementChainAsset* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)

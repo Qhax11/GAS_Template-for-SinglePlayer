@@ -7,6 +7,7 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/ComingAttackReactionData.h"
 #include "Gameplay/Animation/AN_SendGameplayEvent.h"
 #include <Kismet/GameplayStatics.h>
 
@@ -189,7 +190,7 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 		UE_LOG(LogTemp, Warning, TEXT("BestReaction is null in: %s"), *GetName());
 		return;
 	}
-
+	/*
 	if (BestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		TriggerIncomingAttackReaction(BestReaction, EventPayload);
@@ -210,6 +211,7 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload
 
 		UE_LOG(LogTemp, Warning, TEXT("IncomingAttack Reaction delayed by %.2f seconds."), PreferredDelay);
 	}
+	*/
 }
 
 void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UBDS_ComingAttackReactionBase* Reaction, FComingAttackPayload Payload)

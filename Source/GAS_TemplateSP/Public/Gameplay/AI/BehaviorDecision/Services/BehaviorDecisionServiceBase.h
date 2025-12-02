@@ -7,6 +7,7 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "BehaviorDecisionServiceBase.generated.h"
 
 UENUM(BlueprintType)
@@ -26,9 +27,6 @@ struct FBehaviorServiceInitParams
 
 public:
 	UPROPERTY()
-	UObject* Asset = nullptr;
-
-	UPROPERTY()
 	AGAS_EnemyBase* Enemy = nullptr;
 
     UPROPERTY()
@@ -47,15 +45,13 @@ public:
 	EBehaviorState BehaviorState = EBehaviorState::None;
 
     FBehaviorServiceInitParams(
-        UObject* InAsset,
         AGAS_EnemyBase* InEnemy,
         AAIControllerBase* InEnemyController,
         UAbilitySystemComponent* InEnemyASC,
         AGAS_HeroBase* InHero,
         UAC_HeroMovementListener* InHeroMovementListener,
         EBehaviorState InBehaviorState)
-        : Asset(InAsset)
-        , Enemy(InEnemy)
+        : Enemy(InEnemy)
         , EnemyController(InEnemyController)
         , EnemyASC(InEnemyASC)
         , Hero(InHero)

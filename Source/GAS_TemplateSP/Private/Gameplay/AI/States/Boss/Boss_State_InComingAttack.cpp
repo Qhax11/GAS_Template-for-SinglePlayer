@@ -3,6 +3,7 @@
 
 #include "Gameplay/AI/States/Boss/Boss_State_InComingAttack.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReaction_Dodge.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/ComingAttackReactionData.h"
 
 void UBoss_State_InComingAttack::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -20,34 +21,21 @@ bool UBoss_State_InComingAttack::SelectAndMakeInComingAttackReaction()
 	{
 		return true;
 	}
-
-	UBDS_ComingAttackReactionBase* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
-	if (!SelectedBestReaction)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SelectedBestReaction is null in: %s"), *GetName());
-		return false;
-	}
-
+	/*
+	UComingAttackReactionData* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
 	if (SelectedBestReaction->ReactionType == EComingAttackReaction::Dodge) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: ActivateDodgeAbility entered."));
 		ActivateDodgeAbility(SelectedBestReaction);
 		return true;
 	}
-
+	*/
 	return false;
 }
 
 void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
 {
-	const UBDS_ComingAttackReaction_Dodge* BDS_Dodge = Cast<UBDS_ComingAttackReaction_Dodge>(BestComingAttackReaction);
-	if (!BDS_Dodge)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("BDS_Dodge is null in: %s"), *GetName());
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: BDS_Dodge entered."));
-		return;
-	}
-
+	/*
 	if (Enemy && HeroTarget)
 	{
 		FVector StartLocation = Enemy->GetActorLocation();
@@ -65,9 +53,9 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	FGameplayEventData GameplayEventData = FGameplayEventData();
-	GameplayEventData.InstigatorTags.AddTag(BDS_Dodge->DodgeMovementAbilityData.ResolvedDirectionTag);
-	GameplayEventData.EventTag = BDS_Dodge->DodgeMovementAbilityData.AbilityTriggerTag;
-	GameplayEventData.EventMagnitude = BDS_Dodge->DodgeMovementAbilityData.AbilityEventMagnitude;
+	//GameplayEventData.InstigatorTags.AddTag(BDS_Dodge->DodgeMovementAbilityData.ResolvedDirectionTag);
+	//GameplayEventData.EventTag = BDS_Dodge->DodgeMovementAbilityData.AbilityTriggerTag;
+	//GameplayEventData.EventMagnitude = BDS_Dodge->DodgeMovementAbilityData.AbilityEventMagnitude;
 
 	UGAS_GameplayAbilityBase* ActivatedDodgeAbility =
 		EnemyASC->TryActivateAbilityByClassWithEventData(BDS_Dodge->DodgeMovementAbilityData.MovementAbilityClass, GameplayEventData);
@@ -86,6 +74,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 			BindTargetComingAttackEnd();
 		}
 	}
+	*/
 }
 
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)

@@ -8,37 +8,48 @@
 void UBDS_ComingAttackReactionBase::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {
     Super::Initialize(BehaviorServiceInitParams);
+}
 
-    UComingAttackReactionAsset* CastedAsset = Cast<UComingAttackReactionAsset>(BehaviorServiceInitParams.Asset);
-    if (CastedAsset)
+UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload)
+{
+    if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack)
     {
-        ComingAttackReactionAsset = CastedAsset;
+        return nullptr;
     }
-    else
+
+    UComingAttackReactionData* BestReaction = nullptr;
+    float BestScore = -FLT_MAX;
+
+    for (UComingAttackReactionData* Reaction : ComingAttackReactionAsset->ComingAttackReactions)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Invalid asset type passed to UComingAttackReactionService!"));
+        if (!IsEnable(Reaction, ComingAttackPayload))
+        {
+            continue;
+        }
+
+        float BehaviorScore = CalculateBehaviorStateScore(Reaction);
+        float TagScore = CalculateTagScore(Reaction, ComingAttackPayload);
+
+        float ComingAttackReactionScore = BehaviorScore + TagScore + Reaction->ScoreBias;
+
+        if (ComingAttackReactionScore > BestScore)
+        {
+            BestScore = ComingAttackReactionScore;
+            BestReaction = Reaction;
+        }
     }
+
+    return BestReaction;
 }
 
-float UBDS_ComingAttackReactionBase::CalculateComingAttackReactionScore(FComingAttackPayload ComingAttackPayload)
+bool UBDS_ComingAttackReactionBase::IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) 
 {
-    float BehaviorScore = CalculateBehaviorStateScore();
-    float TagScore = CalculateTagScore(ComingAttackPayload);
-
-    float TotalScore = BehaviorScore + TagScore + ScoreBias;
-    UE_LOG(LogTemp, Log, TEXT("[AI] Reaction %s → Score: %.2f"), *ComingAttackReactionName.ToString(), TotalScore);
-
-    return TotalScore;
+    return PassesFinalChanceRoll(ComingReactionData) && ComingAttackPayload.ComingAttackHitTime > ComingReactionData->MinimumTimeBeforeHitToReact;
 }
 
-bool UBDS_ComingAttackReactionBase::IsEnable(FComingAttackPayload ComingAttackPayload) const
+float UBDS_ComingAttackReactionBase::CalculateBehaviorStateScore(UComingAttackReactionData* ComingReactionData) 
 {
-    return PassesFinalChanceRoll() && ComingAttackPayload.ComingAttackHitTime > MinimumTimeBeforeHitToReact;
-}
-
-float UBDS_ComingAttackReactionBase::CalculateBehaviorStateScore() const
-{
-	if (const float* Mod = BehaviorStateScoreModifiers.Find(BehaviorState))
+	if (const float* Mod = ComingReactionData->BehaviorStateScoreModifiers.Find(BehaviorState))
 	{
 		return *Mod;
 	}
@@ -46,11 +57,11 @@ float UBDS_ComingAttackReactionBase::CalculateBehaviorStateScore() const
 	return 0.f;
 }
 
-float UBDS_ComingAttackReactionBase::CalculateTagScore(const FComingAttackPayload ComingAttackPayload) const
+float UBDS_ComingAttackReactionBase::CalculateTagScore(UComingAttackReactionData* ComingReactionData, const FComingAttackPayload ComingAttackPayload) 
 {
 	float Score = 0.f;
 
-	for (const auto& Pair : TagScoreModifiers)
+	for (const auto& Pair : ComingReactionData->TagScoreModifiers)
 	{
 		if (ComingAttackPayload.ComingAttackTags.HasTag(Pair.Key))
 		{
@@ -61,15 +72,15 @@ float UBDS_ComingAttackReactionBase::CalculateTagScore(const FComingAttackPayloa
 	return Score;
 }
 
-bool UBDS_ComingAttackReactionBase::PassesFinalChanceRoll() const
+bool UBDS_ComingAttackReactionBase::PassesFinalChanceRoll(UComingAttackReactionData* ComingReactionData) 
 {
-    if (ReactionType == EComingAttackReaction::Dodge)
+    if (ComingReactionData->ReactionType == EComingAttackReaction::Dodge)
     {
-        return PassesChanceRoll();
+        return PassesChanceRoll(ComingReactionData);
     }
-    else if (ReactionType == EComingAttackReaction::Parry)
+    else if (ComingReactionData->ReactionType == EComingAttackReaction::Parry)
     {
-        return PassesChanceRollBasedOnPosture();
+        return PassesChanceRollBasedOnPosture(ComingReactionData);
     }
     // ReactionType == EComingAttackReaction::TakeDamage
     else 
@@ -78,21 +89,15 @@ bool UBDS_ComingAttackReactionBase::PassesFinalChanceRoll() const
     }
 }
 
-bool UBDS_ComingAttackReactionBase::PassesChanceRoll() const
+bool UBDS_ComingAttackReactionBase::PassesChanceRoll(UComingAttackReactionData* ComingReactionData) 
 {
     const float Roll = FMath::FRandRange(0.f, 1.f);  
-    const bool bPassed = Roll <= BaseChance;
-
-    UE_LOG(LogTemp, Log, TEXT("[AI] Static chance reaction %s: roll %.2f <= base chance %.2f → %s"),
-        *ComingAttackReactionName.ToString(),
-        Roll,
-        BaseChance,
-        bPassed ? TEXT("PASS") : TEXT("FAIL"));
+    const bool bPassed = Roll <= ComingReactionData->BaseChance;
 
     return bPassed;
 }
 
-bool UBDS_ComingAttackReactionBase::PassesChanceRollBasedOnPosture() const
+bool UBDS_ComingAttackReactionBase::PassesChanceRollBasedOnPosture(UComingAttackReactionData* ComingReactionData) 
 {
     UAS_Base* BaseAttributes = const_cast<UAS_Base*>(EnemyASC->GetSet<UAS_Base>());
     if (!BaseAttributes)
@@ -102,14 +107,7 @@ bool UBDS_ComingAttackReactionBase::PassesChanceRollBasedOnPosture() const
 
     const float PostureValue = BaseAttributes->GetPosture();  
     const float Roll = FMath::FRandRange(0.f, 100.f);
-
     const bool bPassed = Roll <= PostureValue;
-
-    UE_LOG(LogTemp, Log, TEXT("[AI] Posture-based reaction %s: roll %.2f <= posture %.2f → %s"),
-        *ComingAttackReactionName.ToString(),
-        Roll,
-        PostureValue,
-        bPassed ? TEXT("PASS") : TEXT("FAIL"));
 
     return bPassed;
 }

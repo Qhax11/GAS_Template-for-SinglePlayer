@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReaction_Dodge.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/ComingAttackReactionDataDodge.h"
 /*
 
 void UBDS_ComingAttackReaction_Dodge::InitializeAfterSelection()

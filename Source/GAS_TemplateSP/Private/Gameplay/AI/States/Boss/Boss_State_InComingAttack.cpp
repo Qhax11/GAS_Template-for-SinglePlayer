@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/AI/States/Boss/Boss_State_InComingAttack.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReaction_Dodge.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/ComingAttackReactionDataDodge.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/ComingAttackReactionData.h"
 
 void UBoss_State_InComingAttack::StateInitalize(const FStateInitParams& StateInitParams)

@@ -5,8 +5,8 @@
 #include "Components/ActorComponent.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
-#include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
-#include "Gameplay/AI/BehaviorDecision/BDS_GetBestMovementChain.h"
+#include "Gameplay/AI/BehaviorDecision/Services/GetBestAttack/BDS_GetBestAttack.h"
+#include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_BehaviorDecision.generated.h"
 

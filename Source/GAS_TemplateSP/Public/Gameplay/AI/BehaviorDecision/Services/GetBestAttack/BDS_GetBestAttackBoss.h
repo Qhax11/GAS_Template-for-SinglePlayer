@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
+#include "Gameplay/AI/BehaviorDecision/Services/GetBestAttack/BDS_GetBestAttack.h"
 #include "BDS_GetBestAttackBoss.generated.h"
 
 

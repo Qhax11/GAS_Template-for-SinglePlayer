@@ -4,7 +4,7 @@
 
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/ComingAttackReactionData.h"
+#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 #include "Gameplay/AI/States/Boss/Boss_State_InComingAttack.h"
 #include "BDS_ComingAttackReactionBase.generated.h"
 

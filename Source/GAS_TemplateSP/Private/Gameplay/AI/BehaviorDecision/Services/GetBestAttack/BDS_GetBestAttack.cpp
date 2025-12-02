@@ -1,7 +1,7 @@
 ﻿// Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/AI/BehaviorDecision/BDS_GetBestAttack.h"
+#include "Gameplay/AI/BehaviorDecision/Services/GetBestAttack/BDS_GetBestAttack.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_ComboMeleeAttack.h"
 
 void UBDS_GetBestAttack::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)

@@ -1,7 +1,7 @@
 ﻿// Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/AI/BehaviorDecision/BDS_GetBestMovementChain.h"
+#include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
 
 void UBDS_GetBestMovementChain::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {

@@ -155,41 +155,7 @@ UComingAttackReactionData* UAC_BehaviorDecision::GetBestComingAttackReaction(FCo
     }
 
     UComingAttackReactionData* BestComingAttackData = nullptr;
-
-    EComingAttackReaction BestReaction = EComingAttackReaction::TakeDamage;
-    float BestScore = -FLT_MAX;
-    /*0
-    for (UBDS_ComingAttackReactionBase* ReactionInstance : ComingAttackReactionService->ComingAttackReactions)
-    {
-        if (!ReactionInstance) 
-        {
-            UE_LOG(LogTemp, Warning, TEXT("ReactionInstance is null in: %s"), *GetName());
-            continue;
-        }
-
-        if (!ReactionInstance->IsEnable(ComingAttackPayload))
-        {
-            continue;
-        }
-
-        float ComingAttackReactionScore = ReactionInstance->CalculateComingAttackReactionScore(ComingAttackPayload);
-        UE_LOG(LogTemp, Log, TEXT("[AI] Reaction %s → Score: %.2f"), *ReactionInstance->ComingAttackReactionName.ToString(), ComingAttackReactionScore);
-
-        if (ComingAttackReactionScore > BestScore)
-        {
-            BestScore = ComingAttackReactionScore;
-            BestComingAttackInstance = ReactionInstance;
-        }
-    }
-
-    if (BestComingAttackInstance)
-    {
-        BestComingAttackInstance->InitializeAfterSelection();
-        LastSelectedComingAttackReaction = BestComingAttackInstance;
-        UE_LOG(LogTemp, Log, TEXT("[AI] SelectedReaction %s"), *BestComingAttackInstance->ComingAttackReactionName.ToString());
-    }
-    */
-
+    BestComingAttackData = ComingAttackReactionService->GetBestComingAttackReaction(ComingAttackPayload);
     return BestComingAttackData;
 }
 

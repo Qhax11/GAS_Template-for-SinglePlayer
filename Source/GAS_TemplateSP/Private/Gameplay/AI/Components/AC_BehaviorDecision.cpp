@@ -54,6 +54,11 @@ void UAC_BehaviorDecision::BeginPlay()
         return;
     }
 
+    OwnerController->OnTargetDetected.AddDynamic(this, &UAC_BehaviorDecision::OnTargetDetected);
+}
+
+void UAC_BehaviorDecision::OnTargetDetected(AActor* DetectedTarget)
+{
     CreateAndInitalizeServiceses();
 }
 

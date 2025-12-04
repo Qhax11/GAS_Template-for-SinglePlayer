@@ -161,7 +161,7 @@ AActor* AAIControllerBase::GetTargetActor()
 
 float AAIControllerBase::GetTargetHeroDistance() const
 {
-	if (!ControlledEnemy || !TargetHero)
+	if (!IsValid(ControlledEnemy) || !IsValid(TargetHero))
 	{
 		return -1.0f;
 	}

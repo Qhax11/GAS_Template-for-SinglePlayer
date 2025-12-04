@@ -42,6 +42,9 @@ protected:
 
 	virtual void BeginPlay() override;
 
+    UFUNCTION()
+    void OnTargetDetected(AActor* DetectedTarget);
+
     void CreateAndInitalizeServiceses();
 
     UPROPERTY(EditDefaultsOnly)

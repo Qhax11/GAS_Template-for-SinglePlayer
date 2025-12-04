@@ -75,10 +75,21 @@ protected:
 	UPROPERTY()
 	TObjectPtr<AGAS_EnemyBase> OwnerEnemy = nullptr;
 
+	UPROPERTY()
 	class AAIControllerBase* OwnerController;
+
+	UPROPERTY()
 	class AGAS_EnemyBase* OwnerEnemyBase;
+
+	UPROPERTY()
 	class UAC_BehaviorDecision* BehaviorDecisionComponent;
+
+	UPROPERTY()
 	class UAC_TagDelegates* EnemyTagDelegatesComponent;
+
+	UPROPERTY()
 	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
+
+	UPROPERTY()
 	class AGAS_HeroBase* HeroBase;
 };

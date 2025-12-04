@@ -93,5 +93,4 @@ private:
 
     UPROPERTY()
     UBDS_ComingAttackReactionBase* ComingAttackReactionService;
-
 };

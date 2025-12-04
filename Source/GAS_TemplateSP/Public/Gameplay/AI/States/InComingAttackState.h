@@ -13,6 +13,16 @@
 
 struct FDamageData;
 
+struct FIncomingAttackStatePayload : public FStatePayloadBase
+{
+	FComingAttackPayload AttackPayload;
+	UComingAttackReactionData* ReactionData = nullptr;
+
+	FIncomingAttackStatePayload(FComingAttackPayload InPayload, UComingAttackReactionData* InReaction)
+		: AttackPayload(InPayload), ReactionData(InReaction) {
+	}
+};
+
 UCLASS()
 class GAS_TEMPLATESP_API UInComingAttackState : public UStateBase
 {
@@ -23,9 +33,9 @@ public:
 
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
-	virtual bool EnterCondition_Implementation() override;
+	virtual bool EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	virtual void OnEnter_Implementation() override;
+	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 	virtual void OnExit_Implementation() override;
 
@@ -34,11 +44,11 @@ protected:
 
 	FTimerHandle DelayedReactionTimerHandle;
 
-	virtual bool SelectAndMakeInComingAttackReaction();
+	virtual bool SelectAndExecuteReaction(TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload);
 
 	//********************* TAKE DAMAGE *********************/
 
-	void BindTargetComingAttackEnd();
+	void BindTargetComingAttackEnd(TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload);
 
 	void UnBindTargetComingAttackEnd();
 

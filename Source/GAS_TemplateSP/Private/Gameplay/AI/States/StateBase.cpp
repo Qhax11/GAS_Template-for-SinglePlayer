@@ -16,7 +16,7 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 	StateManager = StateInitParams.StateManager;
 }
 
-void UStateBase::OnEnter_Implementation()
+void UStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	if (!StateManager)
 	{

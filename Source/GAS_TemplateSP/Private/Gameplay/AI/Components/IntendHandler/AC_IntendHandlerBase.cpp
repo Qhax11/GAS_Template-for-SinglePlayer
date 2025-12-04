@@ -9,6 +9,7 @@
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 #include "Gameplay/Animation/AN_SendGameplayEvent.h"
+#include "Gameplay/AI/States/InComingAttackState.h"
 #include <Kismet/GameplayStatics.h>
 
 UAC_IntendHandlerBase::UAC_IntendHandlerBase()
@@ -220,7 +221,8 @@ void UAC_IntendHandlerBase::HandleReactionTiming(UComingAttackReactionData* Reac
 
 void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UComingAttackReactionData* Reaction, FComingAttackPayload Payload)
 {
-	OwnerStateManager->ComingAttackPayload = Payload;
-	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_InComingAttack);
+	TSharedPtr<FIncomingAttackStatePayload> AttackStateData = MakeShared<FIncomingAttackStatePayload>(Payload, Reaction);
+
+	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_State_InComingAttack, AttackStateData);
 }
 

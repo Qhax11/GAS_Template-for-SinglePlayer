@@ -7,9 +7,9 @@
 #include "Gameplay/AI/Components/AC_StateManager.h"
 
 
-void UVulnerableState::OnEnter_Implementation()
+void UVulnerableState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation();
+	Super::OnEnter();
 
 	UGAS_GameplayAbilityBase* ActivatedHeroShadowFinisher = HeroTargetASC->TryActivateAbilityByClassAndReturnInstance(HeroShadowFinisherAbilityClass);
 	if (ActivatedHeroShadowFinisher)

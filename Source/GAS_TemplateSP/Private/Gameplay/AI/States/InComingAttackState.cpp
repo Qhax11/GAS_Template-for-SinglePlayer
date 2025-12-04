@@ -21,9 +21,24 @@ void UInComingAttackState::StateInitalize(const FStateInitParams& StateInitParam
 	DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>();
 }
 
-bool UInComingAttackState::EnterCondition_Implementation()
+bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	FComingAttackPayload ComingAttackPayload = StateManager->ComingAttackPayload;
+	if (!EnterPayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnterPayload is invalid in: %s"), *GetName());
+		return false;
+	}
+
+	// StaticCastSharedPtr is fast and safe if we trust the logic flow.
+	// Since we know InComingAttackState expects FIncomingAttackStatePayload.
+	TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
+	if (!InComingAttackStatePayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MyPayload is invalid in: %s"), *GetName());
+		return false;
+	}
+
+	FComingAttackPayload ComingAttackPayload = InComingAttackStatePayload->AttackPayload;
 	float ComingAttackMaxRange = ComingAttackPayload.ComingAttack->MaxRange;
 
 	const float Distance = HeroTarget->GetDistanceTo(Enemy);
@@ -44,9 +59,26 @@ bool UInComingAttackState::EnterCondition_Implementation()
 	return bIsInRange;
 }
 
-void UInComingAttackState::OnEnter_Implementation()
+void UInComingAttackState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation();
+	Super::OnEnter(EnterPayload);
+
+	if (!EnterPayload.IsValid()) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnterPayload is invalid in: %s"), *GetName());
+		return;
+	}
+
+	// StaticCastSharedPtr is fast and safe if we trust the logic flow.
+	// Since we know InComingAttackState expects FIncomingAttackStatePayload.
+	TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
+	if (!InComingAttackStatePayload.IsValid())
+	{	
+		UE_LOG(LogTemp, Warning, TEXT("MyPayload is invalid in: %s"), *GetName());
+		return;
+	}
+
+	SelectAndExecuteReaction(InComingAttackStatePayload);
 
 	// Always bind to DamageSubsystem here so that the state can respond to any incoming damage
 	// regardless of the reaction type (take damage, parry, dodge). This ensures the state
@@ -59,12 +91,16 @@ void UInComingAttackState::OnEnter_Implementation()
 		}
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: DamageSubsystem binded."));
 	}
-
-	SelectAndMakeInComingAttackReaction();
 }
 
-bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
+bool UInComingAttackState::SelectAndExecuteReaction(TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload)
 {
+	if (!InComingAttackStatePayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MyPayload is invalid in: %s"), *GetName());
+		return false;
+	}
+
 	UComingAttackReactionData* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
 	if (!SelectedBestReaction)
 	{
@@ -75,13 +111,13 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 	if (SelectedBestReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeTakeDamage entered."));
-		BindTargetComingAttackEnd();
+		BindTargetComingAttackEnd(InComingAttackStatePayload);
 		return true;
 	}
 	else if (SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
-		BindTargetComingAttackEnd();
+		BindTargetComingAttackEnd(InComingAttackStatePayload);
 		MakeParryAbility(SelectedBestReaction);
 		return true;
 	}
@@ -89,9 +125,9 @@ bool UInComingAttackState::SelectAndMakeInComingAttackReaction()
 	return false;
 }
 
-void UInComingAttackState::BindTargetComingAttackEnd()
+void UInComingAttackState::BindTargetComingAttackEnd(TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload)
 {
-	UGAS_GameplayAbilityBase* ComingAttack = StateManager->ComingAttackPayload.ComingAttack;
+	UGAS_GameplayAbilityBase* ComingAttack = InComingAttackStatePayload->AttackPayload.ComingAttack;
 	if (ComingAttack)
 	{
 		if (ComingAttackEndHandle.IsValid()) 

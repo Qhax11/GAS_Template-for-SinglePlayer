@@ -14,7 +14,7 @@ class GAS_TEMPLATESP_API UCrowdEnemy_State_Attack : public UAttackStateBase
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
-	virtual void OnEnter_Implementation() override;
+	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 	virtual void OnExit_Implementation() override;
 

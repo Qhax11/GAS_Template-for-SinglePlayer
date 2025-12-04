@@ -64,6 +64,11 @@ public:
     FStateInitParams() = default;
 };
 
+// 1. BASE STRUCT (Polymorphic)
+struct FStatePayloadBase
+{
+    virtual ~FStatePayloadBase() {} // Virtual destructor is essential!
+};
 
 UCLASS(Blueprintable, BlueprintType)
 class GAS_TEMPLATESP_API UStateBase : public UObject
@@ -73,13 +78,9 @@ class GAS_TEMPLATESP_API UStateBase : public UObject
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
-    UFUNCTION(BlueprintNativeEvent, Category = "State")
-    bool EnterCondition();
-    virtual bool EnterCondition_Implementation() {return true;}
+    virtual bool EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload = nullptr) { return true; }
 
-    UFUNCTION(BlueprintNativeEvent, Category = "State")
-    void OnEnter();
-    virtual void OnEnter_Implementation();
+    virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload = nullptr);
 
     UFUNCTION(BlueprintNativeEvent, Category = "State")
     bool ExitCondition();

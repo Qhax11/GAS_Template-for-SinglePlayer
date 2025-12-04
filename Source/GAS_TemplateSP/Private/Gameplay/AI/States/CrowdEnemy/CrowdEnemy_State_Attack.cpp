@@ -19,9 +19,9 @@ void UCrowdEnemy_State_Attack::StateInitalize(const FStateInitParams& StateInitP
 	}
 }
 
-void UCrowdEnemy_State_Attack::OnEnter_Implementation()
+void UCrowdEnemy_State_Attack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation();
+	Super::OnEnter(EnterPayload);
 
 	AICrowdEventManager->ForceAddAttackIntender(EnemyASC);
 }

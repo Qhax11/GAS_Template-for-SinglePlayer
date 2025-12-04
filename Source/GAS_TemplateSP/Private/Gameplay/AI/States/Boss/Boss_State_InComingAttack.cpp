@@ -10,14 +10,14 @@ void UBoss_State_InComingAttack::StateInitalize(const FStateInitParams& StateIni
 	Super::StateInitalize(StateInitParams);
 }
 
-void UBoss_State_InComingAttack::OnEnter_Implementation()
+void UBoss_State_InComingAttack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation();
+	Super::OnEnter(EnterPayload);
 }
 
-bool UBoss_State_InComingAttack::SelectAndMakeInComingAttackReaction()
+bool UBoss_State_InComingAttack::SelectAndExecuteReaction(TSharedPtr<FIncomingAttackStatePayload> AttackStatePayload)
 {
-	if (Super::SelectAndMakeInComingAttackReaction())
+	if (Super::SelectAndExecuteReaction(AttackStatePayload))
 	{
 		return true;
 	}

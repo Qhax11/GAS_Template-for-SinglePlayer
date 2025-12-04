@@ -4,9 +4,9 @@
 #include "Gameplay/AI/States/Boss/Boss_State_Attack.h"
 #include "Gameplay/Abilities/Enemy/Boss/GA_BossShadowAttack.h"
 
-void UBoss_State_Attack::OnEnter_Implementation()
+void UBoss_State_Attack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation();
+	Super::OnEnter(EnterPayload);
 }
 
 bool UBoss_State_Attack::SelectAndMakeAttack()

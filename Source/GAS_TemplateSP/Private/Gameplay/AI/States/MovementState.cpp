@@ -17,9 +17,9 @@ void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 	}
 }
 
-void UMovementState::OnEnter_Implementation()
+void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation();
+	Super::OnEnter();
 
 	SelectedAttack = SelectNewAttackAbility();
 	if (!SelectedAttack.AbilityClass)

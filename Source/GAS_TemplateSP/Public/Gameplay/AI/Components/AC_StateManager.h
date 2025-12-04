@@ -32,7 +32,7 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
-	void HandleIncomingEvent(const FGameplayTag& StateEventTag);
+	void HandleIncomingEvent(const FGameplayTag& StateEventTag, TSharedPtr<FStatePayloadBase> EnterPayload = nullptr);
 
 	bool RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason);
 
@@ -41,11 +41,6 @@ public:
 	float GetTargetDistance() const;
 
 	bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
-
-	UPROPERTY(BlueprintReadOnly)
-	FComingAttackPayload ComingAttackPayload;
-
-	//FComingAttackReactionData SelectedReactionData;
 
 	FAttackData SelectNewBestAttack();
 	FAttackData LastSelectedAttackData;
@@ -57,7 +52,7 @@ public:
 	UStateBase* CurrentState = nullptr;
 
 protected:
-	bool RequestStateTreeEnter(const FGameplayTag& StateTag);
+	bool RequestStateTreeEnter(const FGameplayTag& StateTag, TSharedPtr<FStatePayloadBase> EnterPayload = nullptr);
 
 	void HandleStateExit(const FGameplayTag& ExitedState);
 

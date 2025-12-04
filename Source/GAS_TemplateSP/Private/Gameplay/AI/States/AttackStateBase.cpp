@@ -17,9 +17,9 @@ void UAttackStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 	Super::StateInitalize(StateInitParams);
 }
 
-void UAttackStateBase::OnEnter_Implementation()
+void UAttackStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation(); 
+	Super::OnEnter();
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 	SelectAndMakeAttack();
 }

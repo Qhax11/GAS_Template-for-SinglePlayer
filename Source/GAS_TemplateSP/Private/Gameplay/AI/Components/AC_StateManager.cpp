@@ -128,7 +128,7 @@ void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	}
 }
 
-void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag)
+void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag, TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	if (!StateEventTag.IsValid()) 
 	{
@@ -138,11 +138,11 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag)
 
 	if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_VulnerableTagAdded) 
 	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Vulnerable);
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Vulnerable, EnterPayload);
 	}
 	else if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_InComingAttack) 
 	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack);
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_InComingAttack, EnterPayload);
 	}
 	else if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_TargetDetected) 
 	{
@@ -150,7 +150,7 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag)
 	}
 	else if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_BackupReaction)
 	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_BackupReaction);
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_BackupReaction, EnterPayload);
 	}
 	else 
 	{
@@ -182,7 +182,7 @@ void UAC_StateManager::HandleTargetDetected()
 	}
 }
 
-bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
+bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag, TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	if (!StateTag.IsValid() || !bActive)
 	{
@@ -208,7 +208,7 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag)
 			CurrentState->OnExit();
 		}
 
-		FindedState->OnEnter();
+		FindedState->OnEnter(EnterPayload);
 		CurrentState = FindedState;
 		return true;
 	}

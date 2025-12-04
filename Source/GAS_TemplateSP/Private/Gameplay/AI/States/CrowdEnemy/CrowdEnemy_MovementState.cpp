@@ -24,9 +24,9 @@ void UCrowdEnemy_MovementState::StateInitalize(const FStateInitParams& StateInit
 	}
 }
 
-void UCrowdEnemy_MovementState::OnEnter_Implementation()
+void UCrowdEnemy_MovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation();
+	Super::OnEnter();
 
 	if (!BehaviorDecisionComponent)
 	{

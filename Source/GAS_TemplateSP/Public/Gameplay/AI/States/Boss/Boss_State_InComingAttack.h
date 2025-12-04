@@ -14,9 +14,9 @@ class GAS_TEMPLATESP_API UBoss_State_InComingAttack : public UInComingAttackStat
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
-	virtual void OnEnter_Implementation() override;
+	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	virtual bool SelectAndMakeInComingAttackReaction() override;
+	virtual bool SelectAndExecuteReaction(TSharedPtr<FIncomingAttackStatePayload> AttackStatePayload) override;
 
 	void ActivateDodgeAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
 

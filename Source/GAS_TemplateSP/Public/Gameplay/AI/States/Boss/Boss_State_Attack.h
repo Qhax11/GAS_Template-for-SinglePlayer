@@ -12,7 +12,7 @@ class GAS_TEMPLATESP_API UBoss_State_Attack : public UAttackStateBase
 	GENERATED_BODY()
 
 public:
-	virtual void OnEnter_Implementation() override;
+	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 	virtual bool SelectAndMakeAttack() override;
 

@@ -8,9 +8,9 @@ void UCrowdEnemy_State_IncomingAttack::StateInitalize(const FStateInitParams& St
 	Super::StateInitalize(StateInitParams);
 }
 
-void UCrowdEnemy_State_IncomingAttack::OnEnter_Implementation()
+void UCrowdEnemy_State_IncomingAttack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter_Implementation();
+	Super::OnEnter(EnterPayload);
 }
 
 void UCrowdEnemy_State_IncomingAttack::OnExit_Implementation()

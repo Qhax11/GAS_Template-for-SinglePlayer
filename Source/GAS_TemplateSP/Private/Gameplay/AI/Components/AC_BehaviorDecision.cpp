@@ -7,6 +7,7 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
+#include "Gameplay/AI/BehaviorDecision/Services/GetBestAttack/BDS_GetBestAttack.h"
 #include <Kismet/GameplayStatics.h>
 
 UAC_BehaviorDecision::UAC_BehaviorDecision()

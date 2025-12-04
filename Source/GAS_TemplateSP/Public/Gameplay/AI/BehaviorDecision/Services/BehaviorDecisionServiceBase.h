@@ -8,17 +8,9 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "BehaviorDecisionServiceBase.generated.h"
 
-UENUM(BlueprintType)
-enum class EBehaviorState : uint8
-{
-    None        UMETA(DisplayName = "None"),
-    Passive     UMETA(DisplayName = "Passive"),
-    Aggressive  UMETA(DisplayName = "Aggressive"),
-    Defensive   UMETA(DisplayName = "Defensive"),
-    Confused    UMETA(DisplayName = "Confused")
-};
 
 USTRUCT()
 struct FBehaviorServiceInitParams

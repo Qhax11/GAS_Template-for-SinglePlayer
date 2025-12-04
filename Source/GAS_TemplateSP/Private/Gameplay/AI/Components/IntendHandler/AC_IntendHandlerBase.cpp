@@ -222,7 +222,6 @@ void UAC_IntendHandlerBase::HandleReactionTiming(UComingAttackReactionData* Reac
 void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UComingAttackReactionData* Reaction, FComingAttackPayload Payload)
 {
 	TSharedPtr<FIncomingAttackStatePayload> AttackStateData = MakeShared<FIncomingAttackStatePayload>(Payload, Reaction);
-
-	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_State_InComingAttack, AttackStateData);
+	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_InComingAttack, AttackStateData);
 }
 

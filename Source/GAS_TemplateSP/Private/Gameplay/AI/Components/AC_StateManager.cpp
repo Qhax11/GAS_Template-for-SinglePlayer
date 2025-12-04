@@ -195,13 +195,13 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag, TShar
 	}
 
 	UStateBase* FindedState = GetStateWithTag(StateTag);
-	if (!FindedState) 
+	if (!IsValid(FindedState)) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is null!"));
 		return false;
 	}
 
-	if (FindedState->EnterCondition())
+	if (FindedState->EnterCondition(EnterPayload))
 	{
 		if (CurrentState)
 		{

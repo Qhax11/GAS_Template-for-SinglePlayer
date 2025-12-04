@@ -101,7 +101,7 @@ bool UInComingAttackState::SelectAndExecuteReaction(TSharedPtr<FIncomingAttackSt
 		return false;
 	}
 
-	UComingAttackReactionData* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
+	UComingAttackReactionData* SelectedBestReaction = InComingAttackStatePayload->ReactionData;
 	if (!SelectedBestReaction)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectedBestReaction is null in: %s"), *GetName());

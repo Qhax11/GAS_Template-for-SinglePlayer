@@ -68,8 +68,6 @@ public:
 
     FAttackData LastSelectedAttackAbilityData;
 
-    UComingAttackReactionData* LastSelectedComingAttackReaction;
-
     UPROPERTY(BlueprintAssignable)
     FOnBehaviorDecisionInitialized OnBehaviorDecisionInitialized;
 

@@ -2,12 +2,9 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
-#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
+#include "Gameplay/AI/Components/AC_AIControllerBase.h"
 #include "Gameplay/AI/DataTypes/AttackData.h"
 #include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
-
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_BehaviorDecision.generated.h"
 
@@ -36,7 +33,7 @@ public:
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GAS_TEMPLATESP_API UAC_BehaviorDecision : public UActorComponent
+class GAS_TEMPLATESP_API UAC_BehaviorDecision : public UAC_AIControllerBase
 {
 	GENERATED_BODY()
 
@@ -78,11 +75,7 @@ protected:
     UPROPERTY(EditDefaultsOnly)
     EBehaviorState BehaviorState = EBehaviorState::None;
 
-    class AAIControllerBase* OwnerController;
-    class AGAS_EnemyBase* OwnerEnemyBase;
-    class UAbilitySystemComponent* OwnerEnemyASC;
-    class AGAS_HeroBase* HeroBase;
-    UAC_HeroMovementListener* HeroMovementListenerComp;
+    class UAC_HeroMovementListener* HeroMovementListenerComp;
 
     UPROPERTY(EditDefaultsOnly)
     UBehaviorDecisionConfigAsset* BehaviorDecisionConfigAsset;

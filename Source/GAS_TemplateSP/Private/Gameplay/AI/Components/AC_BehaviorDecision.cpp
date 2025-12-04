@@ -2,14 +2,14 @@
 
 
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
-#include "Gameplay/AI/Controllers/AIControllerBase.h"
-#include "Gameplay/AI/StateTree/ST_Base.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 #include "Gameplay/AI/BehaviorDecision/Services/GetBestAttack/BDS_GetBestAttack.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
-#include <Kismet/GameplayStatics.h>
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
+
 
 UAC_BehaviorDecision::UAC_BehaviorDecision()
 {
@@ -20,34 +20,11 @@ void UAC_BehaviorDecision::BeginPlay()
 {
 	Super::BeginPlay();
 
-    OwnerController = Cast<AAIControllerBase>(GetOwner());
-    if (!OwnerController) 
+    if(OwnerController || OwnerEnemyBase || OwnerEnemyASC || HeroBase)
     {
-        UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Some owner variables are already set in: %s !"), *GetName());
         return;
-    }
-
-    OwnerEnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
-    if (!OwnerEnemyBase)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
-        return;
-    }
-
-    OwnerEnemyASC = OwnerEnemyBase->GetAbilitySystemComponent();
-    if (!OwnerEnemyASC)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
-        return;
-    }
-
-    ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-    HeroBase = Cast<AGAS_HeroBase>(PlayerCharacter);
-    if (!HeroBase)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s !"), *GetName());
-        return;
-    }
+	}
 
     HeroMovementListenerComp = HeroBase->GetMovementListenerComponent();
     if (!HeroMovementListenerComp)

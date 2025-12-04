@@ -6,7 +6,8 @@
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/AI/DataTypes/AttackData.h"
-#include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
+#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
+
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_BehaviorDecision.generated.h"
 
@@ -15,6 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBehaviorDecisionInitialized);
 class UComingAttackReactionData;
 class UBDS_ComingAttackReactionBase;
 class UBDS_GetBestAttack;
+class UBDS_GetBestMovementChain;
 struct FComingAttackPayload;
 
 UCLASS(BlueprintType)

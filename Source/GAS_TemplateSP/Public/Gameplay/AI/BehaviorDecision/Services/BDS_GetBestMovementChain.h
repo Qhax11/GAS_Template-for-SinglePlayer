@@ -3,63 +3,11 @@
 #pragma once
 
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
+#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "BDS_GetBestMovementChain.generated.h"
 
-UENUM(BlueprintType)
-enum class EMovementDirection : uint8
-{
-    None         UMETA(DisplayName = "None"),
-    Forward      UMETA(DisplayName = "Forward"),
-    Backward     UMETA(DisplayName = "Backward"),
-    Left         UMETA(DisplayName = "Left"),
-    Right        UMETA(DisplayName = "Right")
-};
+struct FMovementAbilityData;
 
-
-
-UCLASS(BlueprintType)
-class UMovementChainAsset : public UPrimaryDataAsset
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this movement chain. Used for debugging or referencing in logic."))
-    FName MovementChainName;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Sequence of movement abilities that make up this chain. Executed in order."))
-    TArray<FMovementAbilityData> MovementChain;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers based on current behavior state (e.g., aggressive, defensive)."))
-    TMap<EBehaviorState, float> BehaviorStateModifiers;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score curve based on distance to target. High values make this chain more likely when far/close depending on the curve."))
-    UCurveFloat* DistanceScoreCurve = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score bonus applied if the target is currently moving."))
-    float ScoreModifierWhenTargetIsMoving = 0.0f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score bonus applied if the target is not moving)."))
-    float ScoreModifierWhenTargetIsNotMoving = 0.0f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Minimum target distance required for this chain to be considered."))
-    float MinRange;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Flat score bias added to this chain's total score. Useful to prioritize certain chains."))
-    float ScoreBias = 0.f;
-};
-
-USTRUCT(BlueprintType)
-struct FAttackAbilityMovementChains
-{
-    GENERATED_BODY()
-
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TSubclassOf<UGAS_GameplayAbilityBase> AttackAbilityClass;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<UMovementChainAsset*> MovementChainAssets;
-};
 
 UCLASS(BlueprintType)
 class UAttackAbilityMovementChainMapAsset : public UPrimaryDataAsset

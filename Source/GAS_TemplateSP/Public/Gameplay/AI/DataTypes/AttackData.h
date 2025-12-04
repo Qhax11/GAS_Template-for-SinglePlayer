@@ -6,6 +6,23 @@
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "AttackData.generated.h"
 
+/**
+ * FAttackData
+ *
+ * Metadata used by the AI behavior-selection system to evaluate and choose attack abilities.
+ * This struct does not represent runtime combat events. It only defines scoring parameters
+ * and configuration values used during AI decision making.
+ *
+ * Key points:
+ * - Contains the ability class associated with the attack.
+ * - Stores optional score modifiers per behavior state (e.g., Aggressive, Defensive).
+ * - Supports combo-chain ordering through ComboIndex.
+ * - Provides a bias value used during weighted attack selection.
+ *
+ * This type belongs under Behavior data definitions because it is strictly related to
+ * decision making and ability evaluation logic, not general combat gameplay.
+ */
+
 class UGAS_GameplayAbilityBase;
 
 USTRUCT(BlueprintType)

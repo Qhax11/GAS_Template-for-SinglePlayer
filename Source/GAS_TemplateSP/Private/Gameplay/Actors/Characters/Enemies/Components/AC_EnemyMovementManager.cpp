@@ -4,6 +4,7 @@
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
+#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "Gameplay/Tags/GAS_Tags.h"

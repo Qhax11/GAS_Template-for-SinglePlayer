@@ -10,7 +10,6 @@
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
-
 USTRUCT()
 struct FStateInitParams
 {
@@ -40,26 +39,6 @@ public:
 
     UPROPERTY()
     UAC_StateManager* StateManager = nullptr;
-
-    FStateInitParams(
-        AGAS_EnemyBase* InEnemy,
-        AAIControllerBase* InEnemyController, 
-        UGAS_AbilitySystemComponent* InEnemyASC,
-        UAC_TagDelegates* InEnemyTagDelegatesComp,
-        UAC_BehaviorDecision* InBehaviorDecisionComponent,
-        AActor* InHeroTarget,
-        UGAS_AbilitySystemComponent* InHeroTargetASC,
-        UAC_StateManager* InStateManager)
-        :
-        Enemy(InEnemy),
-        EnemyController(InEnemyController),
-        EnemyASC(InEnemyASC),
-        EnemyTagDelegatesComp(InEnemyTagDelegatesComp),
-        BehaviorDecisionComponent(InBehaviorDecisionComponent),
-        HeroTarget(InHeroTarget),
-        HeroTargetASC(InHeroTargetASC),
-        StateManager(InStateManager)
-    {}
 
     FStateInitParams() = default;
 };

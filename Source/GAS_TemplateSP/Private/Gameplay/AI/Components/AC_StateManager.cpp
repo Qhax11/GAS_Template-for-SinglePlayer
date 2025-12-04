@@ -2,11 +2,16 @@
 
 
 #include "Gameplay/AI/Components/AC_StateManager.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
-#include "Gameplay/Components/AC_AbilitySet.h"
-#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-#include "Gameplay/AI/States/StateBase.h"
+
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/Components/AC_AbilitySet.h"
+#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
+#include "Gameplay/AI/States/StateBase.h"
 
 
 UAC_StateManager::UAC_StateManager()
@@ -18,32 +23,18 @@ void UAC_StateManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerController = Cast<AAIControllerBase>(GetOwner());
-	if (!OwnerController)
+	if (!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Some owner variables are already set in: %s !"), *GetName());
 		return;
 	}
 
-	OwnerEnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
-	if (!OwnerEnemyBase)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
-		return;
-	}
 	OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
 
 	BehaviorDecisionComponent = OwnerController->GetBehaviorDecisionComponent();
 	if (!BehaviorDecisionComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
-		return;
-	}
-
-	OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
-	if (!OwnerEnemyASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
 		return;
 	}
 
@@ -79,8 +70,15 @@ void UAC_StateManager::CreateStates()
 		TargetASC = Cast<UGAS_AbilitySystemComponent>(OwnerController->GetTargetHero()->GetAbilitySystemComponent());
 	}
 
-	FStateInitParams StateInitParams = FStateInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, 
-		EnemyTagDelegatesComponent, BehaviorDecisionComponent, OwnerController->GetTargetActor(), TargetASC, this);
+	FStateInitParams StateInitParams;
+	StateInitParams.Enemy = OwnerEnemyBase;
+	StateInitParams.EnemyController = OwnerController;
+	StateInitParams.EnemyASC = OwnerEnemyASC;
+	StateInitParams.EnemyTagDelegatesComp = EnemyTagDelegatesComponent;
+	StateInitParams.BehaviorDecisionComponent = BehaviorDecisionComponent;
+	StateInitParams.HeroTarget = OwnerController->GetTargetActor();
+	StateInitParams.HeroTargetASC = TargetASC;
+	StateInitParams.StateManager = this;
 
 	for (TSubclassOf<UStateBase> StateClass : StateClassArray)
 	{

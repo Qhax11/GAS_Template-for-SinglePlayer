@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-#include "Gameplay/AI/DataTypes/AttackData.h"
+#include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "BDS_GetBestAttack.generated.h"
 
 

@@ -34,6 +34,6 @@ protected:
 
 	class AAIControllerBase* OwnerController;
 	class AGAS_EnemyBase* OwnerEnemyBase;
-	class UAbilitySystemComponent* OwnerEnemyASC;
+	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
 	class AGAS_HeroBase* HeroBase;
 };

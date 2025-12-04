@@ -29,7 +29,7 @@ void UAC_AIControllerBase::BeginPlay()
         return;
     }
 
-    OwnerEnemyASC = OwnerEnemyBase->GetAbilitySystemComponent();
+    OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
     if (!OwnerEnemyASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());

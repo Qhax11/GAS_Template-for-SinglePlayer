@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
+#include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
-#include "Gameplay/AI/DataTypes/AttackData.h"
 #include "AC_StateManager.generated.h"
 
 class UStateBase;
@@ -75,23 +75,9 @@ protected:
 	TArray<UStateBase*> StateInstances;
 
 	UPROPERTY()
-	TObjectPtr<AGAS_EnemyBase> OwnerEnemy = nullptr;
-
-	UPROPERTY()
-	class AAIControllerBase* OwnerController;
-
-	UPROPERTY()
-	class AGAS_EnemyBase* OwnerEnemyBase;
-
-	UPROPERTY()
 	class UAC_BehaviorDecision* BehaviorDecisionComponent;
 
 	UPROPERTY()
 	class UAC_TagDelegates* EnemyTagDelegatesComponent;
 
-	UPROPERTY()
-	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
-
-	UPROPERTY()
-	class AGAS_HeroBase* HeroBase;
 };

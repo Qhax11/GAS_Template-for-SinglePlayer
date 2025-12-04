@@ -4,7 +4,7 @@
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
 #include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
-#include "Gameplay/AI/DataTypes/AttackData.h"
+#include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "AC_BehaviorDecision.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBehaviorDecisionInitialized);

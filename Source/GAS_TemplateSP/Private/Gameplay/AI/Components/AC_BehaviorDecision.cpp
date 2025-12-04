@@ -81,7 +81,7 @@ void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
     if (BehaviorDecisionConfigAsset->MovementChainServiceClass)
     {
         GetBestMovementChainService = NewObject<UBDS_GetBestMovementChain>(this, BehaviorDecisionConfigAsset->MovementChainServiceClass);
-        GetBestAttackService->Initialize(ServiceInitData);
+        GetBestMovementChainService->Initialize(ServiceInitData);
     }
 
     if (BehaviorDecisionConfigAsset->ComingAttackReactionServiceClass)

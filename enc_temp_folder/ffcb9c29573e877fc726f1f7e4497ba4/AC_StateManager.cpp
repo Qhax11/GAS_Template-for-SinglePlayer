@@ -281,22 +281,16 @@ void UAC_StateManager::HandleStateExit(const FGameplayTag& ExitedState)
 
 bool UAC_StateManager::IsCurrentState(const FGameplayTag& StateTag)
 {
-	if (!StateTag.IsValid()) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: StateTag is null!"));
-		return false;
-	}
-
 	UStateBase* FindedState = GetStateWithTag(StateTag);
 	if (!FindedState)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: FindedState is null!"), *StateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: FindedState is null!"), *FindedState->GetName());
 		return false;
 	}
 
 	if (FindedState != CurrentState)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is not current state!"), *StateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is not current state!"), *FindedState->GetName());
 		return false;
 	}
 

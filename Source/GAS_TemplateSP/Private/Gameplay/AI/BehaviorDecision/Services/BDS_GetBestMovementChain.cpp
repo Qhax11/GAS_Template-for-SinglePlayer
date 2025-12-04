@@ -89,7 +89,7 @@ float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetDistanc
 {
     float Score = 0.0f;
 
-    if (!HeroMovementListenerComp) 
+    if (!HeroMovementListenerComp || !EnemyController)
     {
         return Score;
     }
@@ -117,6 +117,11 @@ float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetDistanc
 float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset)
 {
     float Score = 0.0f;
+
+    if (!EnemyController) 
+    {
+		return Score;
+    }
 
     if (MovementChainAsset->DistanceScoreCurve)
     {
@@ -146,11 +151,12 @@ float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnBehaviorState
 
 bool UBDS_GetBestMovementChain::ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset)
 {
-    if (!SelectedMovementChainAsset)
+    if (!SelectedMovementChainAsset || !HeroMovementListenerComp)
     {
         UE_LOG(LogTemp, Warning, TEXT("SelectedMovementChainAsset is null in: %s"), *GetName());
         return false;
     }
+
     bool bChanged = false;
 
     FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListenerComp->GetHeroLastMovementDirectionTagByLastInput();

@@ -2,14 +2,16 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
-#include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/AI/Components/AC_AIControllerBase.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
+#include "Gameplay/AI/DataTypes/AttackData.h"
 #include "AC_StateManager.generated.h"
 
+class UStateBase;
+struct FStatePayloadBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GAS_TEMPLATESP_API UAC_StateManager : public UActorComponent
+class GAS_TEMPLATESP_API UAC_StateManager : public UAC_AIControllerBase
 {
 	GENERATED_BODY()
 

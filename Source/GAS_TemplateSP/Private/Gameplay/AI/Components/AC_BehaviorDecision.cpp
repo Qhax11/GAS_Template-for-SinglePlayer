@@ -20,7 +20,7 @@ void UAC_BehaviorDecision::BeginPlay()
 {
 	Super::BeginPlay();
 
-    if(OwnerController || OwnerEnemyBase || OwnerEnemyASC || HeroBase)
+    if(!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase)
     {
         UE_LOG(LogTemp, Warning, TEXT("Some owner variables are already set in: %s !"), *GetName());
         return;

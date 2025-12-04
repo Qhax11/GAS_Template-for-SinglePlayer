@@ -5,6 +5,8 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 
 UAC_StateManager::UAC_StateManager()

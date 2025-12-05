@@ -167,7 +167,7 @@ bool UAC_BehaviorDecision::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilit
     }
 
     UGAS_GameplayAbilityBase* AbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-    if (!AbilityCDO) // ✅ Null check ekle
+    if (!AbilityCDO) 
     {
         UE_LOG(LogTemp, Warning, TEXT("AbilityCDO is null in: %s"), *GetName());
         return false;

@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "AttackData.generated.h"
 

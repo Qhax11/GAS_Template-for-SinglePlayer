@@ -11,6 +11,10 @@
 #include "AIControllerBase.generated.h"
 
 class UAISenseConfig_Sight;
+class UAC_StateManager;
+class UAC_SequenceExecutor;
+class UAC_BehaviorDecision;
+class UST_Base;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, DetectedTarget);
 
@@ -23,25 +27,30 @@ class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
 public:
 	AAIControllerBase(const FObjectInitializer& ObjectInitializer);
 
-	FORCEINLINE class UST_Base* GetStateTreeComponent() const { return StateTreeAIComponent; }
+	FORCEINLINE UST_Base* GetStateTreeComponent() const { return StateTreeAIComponent; }
 
-	FORCEINLINE class UAC_BehaviorDecision* GetBehaviorDecisionComponent() const { return BehaviorDecisionComponent; }
+	FORCEINLINE UAC_BehaviorDecision* GetBehaviorDecisionComponent() const { return BehaviorDecisionComponent; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE class UAC_StateManager* GetEnemyStateManagerComponent() const { return EnemyStateManagerComponent; }
+	FORCEINLINE UAC_StateManager* GetEnemyStateManagerComponent() const { return EnemyStateManagerComponent; }
+
+	FORCEINLINE UAC_SequenceExecutor* GetSequenceExecutorComponent() const { return SequenceExecutorComponent; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<class UST_Base> StateTreeAIComponent;
+	TObjectPtr<UST_Base> StateTreeAIComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<class UAC_BehaviorDecision> BehaviorDecisionComponent;
+	TObjectPtr<UAC_BehaviorDecision> BehaviorDecisionComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
-	class UAC_StateManager* EnemyStateManagerComponent;
+	UAC_StateManager* EnemyStateManagerComponent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
+	UAC_SequenceExecutor* SequenceExecutorComponent;
 
 protected:
 	virtual void BeginPlay();

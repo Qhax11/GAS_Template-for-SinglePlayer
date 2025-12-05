@@ -6,10 +6,12 @@
 #include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Gameplay/AI/Components/AC_SequenceExecutor.h"
 #include "Gameplay/Components/AC_Team.h"
 #include <Kismet/GameplayStatics.h>
 #include "Gameplay/AI/Components/AC_StateManager.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
@@ -32,7 +34,7 @@ AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer
 
 	BehaviorDecisionComponent = CreateDefaultSubobject<UAC_BehaviorDecision>(TEXT("BehaviorDecisionComponent"));
 
-	EnemyStateManagerComponent = CreateDefaultSubobject<UAC_StateManager>(TEXT("EnemyStateManagerComponent"));
+	SequenceExecutorComponent = CreateDefaultSubobject<UAC_SequenceExecutor>(TEXT("SequenceExecutorComponent"));
 }
 
 void AAIControllerBase::BeginPlay()

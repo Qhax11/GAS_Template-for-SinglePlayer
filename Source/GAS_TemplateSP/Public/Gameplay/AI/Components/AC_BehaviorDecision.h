@@ -7,8 +7,6 @@
 #include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "AC_BehaviorDecision.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBehaviorDecisionInitialized);
-
 class UComingAttackReactionData;
 class UBDS_ComingAttackReactionBase;
 class UBDS_GetBestAttack;
@@ -78,9 +76,6 @@ public:
     FAttackData LastSelectedAttackData;
 
     UGAS_GameplayAbilityBase* LastSelectedAttackAbilityCDO = nullptr;
-
-    UPROPERTY(BlueprintAssignable, Category = "AI|Behavior Decision")
-    FOnBehaviorDecisionInitialized OnBehaviorDecisionInitialized;
 
 protected:
     UPROPERTY(EditDefaultsOnly)

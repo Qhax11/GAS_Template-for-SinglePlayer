@@ -8,6 +8,15 @@
 
 class UGAS_GameplayAbilityBase;
 
+struct FAttackStateStatePayload : public FStatePayloadBase
+{
+	FAttackData AttackData;
+
+	FAttackStateStatePayload(FAttackData IAttackData)
+		: AttackData(IAttackData) {
+	}
+};
+
 UCLASS()
 class GAS_TEMPLATESP_API UAttackStateBase : public UStateBase
 {
@@ -21,16 +30,14 @@ public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 protected:
-	virtual bool SelectAndMakeAttack();
+	virtual bool SelectAndMakeAttack(TSharedPtr<FAttackStateStatePayload> AttackStatePayload);
 
-	void MakeAttack();
+	void MakeAttack(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass);
 
 	UFUNCTION()
 	void OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	UGAS_GameplayAbilityBase* LastUsedAttack;
-
-	TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass;
 
 public:
 	virtual void OnExit_Implementation() override;

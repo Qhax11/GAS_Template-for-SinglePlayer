@@ -73,7 +73,6 @@ void UMovementState::TryEnterToAttackState()
 
 	if (IsAttackInRange(BehaviorDecisionComponent->LastSelectedAttackData.AbilityClass))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: attack ability is in range, exit from movement state"));
 		MovementManagerComponent->StopMovementAbilities();
 		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack);
 	}

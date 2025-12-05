@@ -34,7 +34,7 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 	TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
 	if (!InComingAttackStatePayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MyPayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("InComingAttackStatePayload is invalid in: %s"), *GetName());
 		return false;
 	}
 

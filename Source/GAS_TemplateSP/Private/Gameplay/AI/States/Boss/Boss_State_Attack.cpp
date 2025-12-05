@@ -9,9 +9,9 @@ void UBoss_State_Attack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	Super::OnEnter(EnterPayload);
 }
 
-bool UBoss_State_Attack::SelectAndMakeAttack()
+bool UBoss_State_Attack::SelectAndMakeAttack(TSharedPtr<FAttackStateStatePayload> AttackStatePayload)
 {
-	SelectedAttackClass = GetSelectedAttackAbilityData().AbilityClass;
+	TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass = AttackStatePayload->AttackData.AbilityClass;
 	if (!SelectedAttackClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectedAttackClass is null in: %s"), *GetName());
@@ -24,7 +24,7 @@ bool UBoss_State_Attack::SelectAndMakeAttack()
 		return true;
 	}
 	
-	if (Super::SelectAndMakeAttack())
+	if (Super::SelectAndMakeAttack(AttackStatePayload))
 	{
 		return true;
 	}
@@ -34,6 +34,7 @@ bool UBoss_State_Attack::SelectAndMakeAttack()
 
 void UBoss_State_Attack::MakeShadowAttack()
 {
+	/*
 	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(SelectedAttackClass);
 
 	UGA_BossShadowAttack* ShadowAttack = Cast<UGA_BossShadowAttack>(ActivatedAbility);
@@ -49,6 +50,7 @@ void UBoss_State_Attack::MakeShadowAttack()
 
 		LastUsedShadowAttack = ShadowAttack;
 	}
+	*/
 }
 
 void UBoss_State_Attack::ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData)

@@ -27,9 +27,6 @@ public:
 	UFUNCTION()
 	void OnMovementChainEnded();
 
-	FAttackData SelectedAttack;
-	UGAS_GameplayAbilityBase* SelectedAttackCDO;
-
 private:
 	class UAC_EnemyMovementManager* MovementManagerComponent;
 };

@@ -21,16 +21,21 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	Super::OnEnter();
 
-	SelectedAttack = SelectNewAttackAbility();
-	if (!SelectedAttack.AbilityClass)
+	if (!BehaviorDecisionComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
+		return;
+	}
+
+	FAttackData NewAttack = BehaviorDecisionComponent->GetBestAttack();
+	if (!NewAttack.AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: No valid BestAttack selected."));
 		ExitRequest("SelectedAttack ability class is null");
 		return;
 	}
 
-	SelectedAttackCDO = SelectedAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	StartMovementChain(SelectedAttack.AbilityClass);
+	StartMovementChain(NewAttack.AbilityClass);
 }
 
 void UMovementState::OnExit_Implementation()
@@ -50,14 +55,15 @@ void UMovementState::OnTick_Implementation(float DeltaTime)
 
 void UMovementState::TryEnterToAttackState()
 {
-	if (!SelectedAttackCDO)
+	if (!BehaviorDecisionComponent)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
 		return;
 	}
 
 	if (GetSelectedAttackAbilityCDO()->MinRange > EnemyController->GetTargetHeroDistance())
 	{
-		FAttackData NewAttack = SelectNewAttackAbility();
+		FAttackData NewAttack = BehaviorDecisionComponent->GetBestAttack();
 		if (NewAttack.AbilityClass) 
 		{
 			StartMovementChain(NewAttack.AbilityClass);
@@ -65,7 +71,7 @@ void UMovementState::TryEnterToAttackState()
 		}
 	}
 
-	if (IsAttackInRange(SelectedAttack.AbilityClass))
+	if (IsAttackInRange(BehaviorDecisionComponent->LastSelectedAttackData.AbilityClass))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: attack ability is in range, exit from movement state"));
 		MovementManagerComponent->StopMovementAbilities();

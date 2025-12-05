@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/AI/States/MovementState.h"
 #include "CrowdEnemy_MovementState.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UCrowdEnemy_MovementState : public UStateBase
+class GAS_TEMPLATESP_API UCrowdEnemy_MovementState : public UMovementState
 {
 	GENERATED_BODY()
 
@@ -26,7 +26,6 @@ public:
 
 	void StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackAbilityClass);
 
-	UFUNCTION()
 	void OnMovementChainEnded();
 
 	void MakeStrafingAbility();
@@ -35,9 +34,6 @@ public:
 	void OnStrafingAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	void OnWaitTimeFinished();
-
-	FAttackData SelectedAttack;
-	UGAS_GameplayAbilityBase* SelectedAttackCDO;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGAS_GameplayAbilityBase> StrafingAbilityClass;

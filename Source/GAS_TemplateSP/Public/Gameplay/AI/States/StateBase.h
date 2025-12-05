@@ -88,8 +88,6 @@ protected:
 
     UGAS_GameplayAbilityBase* GetSelectedAttackAbilityCDO() const;
 
-    FAttackData SelectNewAttackAbility() const;
-
 protected:
     UPROPERTY(BlueprintReadOnly)
     AGAS_EnemyBase* Enemy;

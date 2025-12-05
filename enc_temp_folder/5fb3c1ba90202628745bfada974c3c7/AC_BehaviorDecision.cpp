@@ -68,6 +68,7 @@ void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
         ComingAttackReactionService = NewObject<UBDS_ComingAttackReactionBase>(this, BehaviorDecisionConfigAsset->ComingAttackReactionServiceClass);
         ComingAttackReactionService->Initialize(ServiceInitData);
     }
+
 }
 
 FAttackData UAC_BehaviorDecision::GetBestAttack()

@@ -26,22 +26,23 @@ void UCrowdEnemy_MovementState::StateInitalize(const FStateInitParams& StateInit
 
 void UCrowdEnemy_MovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	Super::OnEnter();
+	Super::OnEnter(EnterPayload);
 
 	if (!BehaviorDecisionComponent)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
 		return;
 	}
 
-	SelectedAttack = SelectNewAttackAbility();
-	if (!SelectedAttack.AbilityClass)
+	FAttackData NewAttack = BehaviorDecisionComponent->GetBestAttack();
+	if (!NewAttack.AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No valid BestAttack selected."));
 		ExitRequest("SelectedAttack is null", GAS_Tags::TAG_AI_State_Movement);
 		return;
 	}
 
-	SelectedAttackCDO = SelectedAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+	NewAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	SelectMovement();
 }
 
@@ -70,17 +71,7 @@ void UCrowdEnemy_MovementState::OnTick_Implementation(float DeltaTime)
 
 void UCrowdEnemy_MovementState::TryEnterToAttackState()
 {
-	if (!SelectedAttackCDO)
-	{
-		return;
-	}
-
-	if (IsAttackInRange(SelectedAttack.AbilityClass))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("attack ability is in range, exit from movement state"));
-		MovementManagerComponent->StopMovementAbilities();
-		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack);
-	}
+	Super::TryEnterToAttackState();
 }
 
 void UCrowdEnemy_MovementState::SelectMovement()
@@ -95,7 +86,7 @@ void UCrowdEnemy_MovementState::SelectMovement()
 	if (IsAttackIntender)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("StartMovementChain"));
-		StartMovementChain(SelectedAttack.AbilityClass);
+		StartMovementChain(BehaviorDecisionComponent->LastSelectedAttackData.AbilityClass);
 	}
 	else
 	{

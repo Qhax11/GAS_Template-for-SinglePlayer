@@ -56,18 +56,30 @@ protected:
     bool EnableAllDataDebug = false;
 
 public:
-    UFUNCTION(BlueprintCallable)
+    // Core Decision Functions
+    UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     FAttackData GetBestAttack();
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);
 
-    FAttackData LastSelectedAttackAbilityData;
+    // Utility Functions
+    UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
+    float GetTargetDistance() const;
 
-    UPROPERTY(BlueprintAssignable)
+    UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
+    bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass) const;
+
+    // State
+    UPROPERTY(BlueprintReadOnly, Category = "AI|Behavior Decision")
+    FAttackData LastSelectedAttackData;
+
+    UGAS_GameplayAbilityBase* LastSelectedAttackAbilityCDO = nullptr;
+
+    UPROPERTY(BlueprintAssignable, Category = "AI|Behavior Decision")
     FOnBehaviorDecisionInitialized OnBehaviorDecisionInitialized;
 
 protected:

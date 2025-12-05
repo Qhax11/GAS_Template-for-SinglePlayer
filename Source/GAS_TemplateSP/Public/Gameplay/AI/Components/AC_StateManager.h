@@ -40,13 +40,6 @@ public:
 
 	bool IsCurrentState(const FGameplayTag& StateTag);
 
-	float GetTargetDistance() const;
-
-	bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass);
-
-	FAttackData SelectNewBestAttack();
-	FAttackData LastSelectedAttackData;
-
 	UPROPERTY(EditDefaultsOnly)
 	bool bEnableDebug = false;
 
@@ -59,6 +52,8 @@ protected:
 	void HandleStateExit(const FGameplayTag& ExitedState);
 
 	void HandleTargetDetected();
+
+	void  DecideNextStateBasedOnAttackRange();
 
 	// Find the instance of the requested state
 	UStateBase* GetStateWithTag(const FGameplayTag& StateTag) const;

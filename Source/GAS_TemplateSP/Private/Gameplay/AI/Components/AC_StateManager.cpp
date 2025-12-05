@@ -6,7 +6,6 @@
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
-
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
@@ -156,23 +155,33 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag, TS
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Unhandled StateEventTag: %s"), *StateEventTag.ToString());
 	}
-
 }
 
 void UAC_StateManager::HandleTargetDetected()
 {
-	if (!CurrentState) 
+	if (!CurrentState || !BehaviorDecisionComponent)
 	{
 		return;
 	}
 
-	if (CurrentState->StateTag == GAS_Tags::TAG_AI_State_InComingAttack) 
+	if (CurrentState->StateTag == GAS_Tags::TAG_AI_State_InComingAttack)
 	{
 		return;
 	}
 
-	FAttackData NewSelectedAttack = SelectNewBestAttack();
-	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
+	DecideNextStateBasedOnAttackRange();
+}
+
+void UAC_StateManager::DecideNextStateBasedOnAttackRange()
+{
+	if (!BehaviorDecisionComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
+		return;
+	}
+
+	FAttackData SelectedAttack = BehaviorDecisionComponent->GetBestAttack();
+	if (BehaviorDecisionComponent->IsAttackInRange(SelectedAttack.AbilityClass))
 	{
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
 	}
@@ -268,15 +277,7 @@ bool UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const 
 
 void UAC_StateManager::HandleStateExit(const FGameplayTag& ExitedState)
 {
-	FAttackData NewSelectedAttack = SelectNewBestAttack();
-	if (IsAttackInRange(NewSelectedAttack.AbilityClass))
-	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack);
-	}
-	else
-	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
-	}
+	DecideNextStateBasedOnAttackRange();
 }
 
 bool UAC_StateManager::IsCurrentState(const FGameplayTag& StateTag)
@@ -301,40 +302,6 @@ bool UAC_StateManager::IsCurrentState(const FGameplayTag& StateTag)
 	}
 
 	return true;
-}
-
-float UAC_StateManager::GetTargetDistance() const
-{
-	if (!OwnerController)
-	{
-		return -1.0f;
-	}
-
-	return OwnerController->GetTargetHeroDistance();
-}
-
-bool UAC_StateManager::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)
-{
-	if (!AbilityClass) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability Class is null in: %s"), *GetName());
-		return false;
-	}
-
-	UGAS_GameplayAbilityBase* AbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	if (AbilityCDO->MaxRange > GetTargetDistance() && AbilityCDO->MinRange < GetTargetDistance())
-	{
-		return true;
-	}
-
-	return false;
-}
-
-FAttackData UAC_StateManager::SelectNewBestAttack()
-{
-	FAttackData NewAttackData = BehaviorDecisionComponent->GetBestAttack();
-	LastSelectedAttackData = NewAttackData;
-	return NewAttackData;
 }
 
 UStateBase* UAC_StateManager::GetStateWithTag(const FGameplayTag& StateTag) const

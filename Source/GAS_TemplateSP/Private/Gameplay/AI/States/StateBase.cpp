@@ -57,35 +57,32 @@ bool UStateBase::ExitRequest(FString Reason, const FGameplayTag& TransactionTag)
 
 bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)
 {
-	if (!StateManager)
+	if (!BehaviorDecisionComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
 		return false;
 	}
 
-	return StateManager->IsAttackInRange(AbilityClass);
+	return BehaviorDecisionComponent->IsAttackInRange(AbilityClass);
 }
 
 FAttackData UStateBase::GetSelectedAttackAbilityData() const
 {
-	return StateManager->LastSelectedAttackData;
+	if (!BehaviorDecisionComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
+		return FAttackData();
+	}
+
+	return BehaviorDecisionComponent->LastSelectedAttackData;
 }
-/*
-FComingAttackReactionData UStateBase::GetSelectedReactionData() const
-{
-	return StateManager->SelectedReactionData;
-}
-*/
+
 UGAS_GameplayAbilityBase* UStateBase::GetSelectedAttackAbilityCDO() const
 {
 	FAttackData SelectedAttackData = GetSelectedAttackAbilityData();
 	return SelectedAttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 }
 
-FAttackData UStateBase::SelectNewAttackAbility() const
-{
-	return StateManager->SelectNewBestAttack();
-}
 
 
 

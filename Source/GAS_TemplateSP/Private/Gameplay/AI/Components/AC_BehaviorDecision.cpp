@@ -5,8 +5,9 @@
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 #include "Gameplay/AI/BehaviorDecision/Services/GetBestAttack/BDS_GetBestAttack.h"
-#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
+#include "Gameplay/AI/BehaviorDecision/Services/GetBestSequence/BDS_GetBestSequence.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 
@@ -67,6 +68,12 @@ void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
     {
         ComingAttackReactionService = NewObject<UBDS_ComingAttackReactionBase>(this, BehaviorDecisionConfigAsset->ComingAttackReactionServiceClass);
         ComingAttackReactionService->Initialize(ServiceInitData);
+    }
+
+    if (BehaviorDecisionConfigAsset->GetBestSequenceServiceClass)
+    {
+        GetBestSequenceService = NewObject<UBDS_GetBestSequence>(this, BehaviorDecisionConfigAsset->GetBestSequenceServiceClass);
+        GetBestSequenceService->Initialize(ServiceInitData);
     }
 }
 

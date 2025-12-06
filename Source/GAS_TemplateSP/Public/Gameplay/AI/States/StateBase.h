@@ -10,6 +10,8 @@
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
+class UAC_SequenceExecutor;
+
 USTRUCT()
 struct FStateInitParams
 {
@@ -39,6 +41,9 @@ public:
 
     UPROPERTY()
     UAC_StateManager* StateManager = nullptr;
+
+    UPROPERTY()
+    UAC_SequenceExecutor* SequenceExecutor = nullptr;
 
     FStateInitParams() = default;
 };
@@ -110,5 +115,9 @@ protected:
     UPROPERTY(BlueprintReadOnly)
     UGAS_AbilitySystemComponent* HeroTargetASC;
 
+    UPROPERTY()
     class UAC_StateManager* StateManager;
+
+    UPROPERTY()
+    UAC_SequenceExecutor* SequenceExecutor;
 };

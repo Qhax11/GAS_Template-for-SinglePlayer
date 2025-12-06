@@ -14,6 +14,7 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 	HeroTarget = StateInitParams.HeroTarget;
 	HeroTargetASC = StateInitParams.HeroTargetASC;
 	StateManager = StateInitParams.StateManager;
+	SequenceExecutor = StateInitParams.SequenceExecutor;
 }
 
 void UStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)

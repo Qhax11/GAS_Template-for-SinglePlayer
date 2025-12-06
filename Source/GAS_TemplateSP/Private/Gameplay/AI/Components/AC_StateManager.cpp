@@ -2,16 +2,17 @@
 
 
 #include "Gameplay/AI/Components/AC_StateManager.h"
-#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
-#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-#include "Gameplay/Components/AC_AbilitySet.h"
-#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/AI/States/StateBase.h"
 #include "Gameplay/AI/States/AttackStateBase.h"
+#include "Gameplay/Components/AC_AbilitySet.h"
+#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+
 
 UAC_StateManager::UAC_StateManager()
 {
@@ -78,6 +79,7 @@ void UAC_StateManager::CreateStates()
 	StateInitParams.HeroTarget = OwnerController->GetTargetActor();
 	StateInitParams.HeroTargetASC = TargetASC;
 	StateInitParams.StateManager = this;
+	StateInitParams.SequenceExecutor = OwnerController->GetSequenceExecutorComponent();
 
 	for (TSubclassOf<UStateBase> StateClass : StateClassArray)
 	{

@@ -11,6 +11,7 @@ class UComingAttackReactionData;
 class UBDS_ComingAttackReactionBase;
 class UBDS_GetBestAttack;
 class UBDS_GetBestMovementChain;
+class UBDS_GetBestSequence;
 struct FComingAttackPayload;
 
 UCLASS(BlueprintType)
@@ -27,6 +28,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
     TSubclassOf<UBDS_ComingAttackReactionBase> ComingAttackReactionServiceClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
+    TSubclassOf<UBDS_GetBestSequence> GetBestSequenceServiceClass;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -95,4 +99,7 @@ private:
 
     UPROPERTY()
     UBDS_ComingAttackReactionBase* ComingAttackReactionService;
+
+    UPROPERTY()
+    UBDS_GetBestSequence* GetBestSequenceService;
 };

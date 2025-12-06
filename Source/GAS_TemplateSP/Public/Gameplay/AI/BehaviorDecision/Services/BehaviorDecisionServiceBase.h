@@ -66,11 +66,22 @@ public:
     virtual void InitializeAfterSelection();
 
 protected:
+	UPROPERTY()
     AGAS_EnemyBase* Enemy;
+
+    UPROPERTY()
     AAIControllerBase* EnemyController;
+
+    UPROPERTY()
     UAbilitySystemComponent* EnemyASC;
+
+    UPROPERTY()
     AGAS_HeroBase* Hero;
+
+    UPROPERTY()
 	UAC_HeroMovementListener* HeroMovementListenerComp;
+
+    UPROPERTY()
 	EBehaviorState BehaviorState;
 
 protected:

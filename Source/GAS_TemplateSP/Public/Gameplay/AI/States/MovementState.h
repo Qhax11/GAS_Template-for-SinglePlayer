@@ -3,8 +3,19 @@
 #pragma once
 
 #include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "MovementState.generated.h"
 
+struct FMovementStatePayload : public FStatePayloadBase
+{
+	UMovementChainAsset* MovementChainAsset = nullptr;
+
+	TSubclassOf<UGAS_GameplayAbilityBase> TargetAttackClass = nullptr; // Range check için
+
+	FMovementStatePayload(UMovementChainAsset* InMovementChainAsset, TSubclassOf<UGAS_GameplayAbilityBase> InTargetAttackClass)
+		: MovementChainAsset(InMovementChainAsset), TargetAttackClass(InTargetAttackClass) {
+	}
+};
 
 UCLASS()
 class GAS_TEMPLATESP_API UMovementState : public UStateBase
@@ -22,11 +33,15 @@ public:
 
 	void TryEnterToAttackState();
 
-	void StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackAbilityClass);
+	bool IsInRangeForAttack() const;
+
+	void StartMovementChain(TSharedPtr<FMovementStatePayload> MovementStatePayload);
 
 	UFUNCTION()
 	void OnMovementChainEnded();
 
 private:
 	class UAC_EnemyMovementManager* MovementManagerComponent;
+
+	UGAS_GameplayAbilityBase* SelectedAttackCDO;
 };

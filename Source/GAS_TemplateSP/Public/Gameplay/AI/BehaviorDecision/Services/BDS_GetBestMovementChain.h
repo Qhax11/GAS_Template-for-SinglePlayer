@@ -8,7 +8,6 @@
 
 struct FMovementAbilityData;
 
-
 UCLASS(BlueprintType)
 class UAttackAbilityMovementChainMapAsset : public UPrimaryDataAsset
 {

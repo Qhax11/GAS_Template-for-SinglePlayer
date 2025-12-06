@@ -12,6 +12,7 @@ class UBDS_ComingAttackReactionBase;
 class UBDS_GetBestAttack;
 class UBDS_GetBestMovementChain;
 class UBDS_GetBestSequence;
+class UAttackSequenceAsset;
 struct FComingAttackPayload;
 
 UCLASS(BlueprintType)
@@ -58,6 +59,9 @@ protected:
     bool EnableAllDataDebug = false;
 
 public:
+    UFUNCTION(BlueprintCallable, Category = "Behavior Decision")
+    UAttackSequenceAsset* GetBestSequence();
+
     // Core Decision Functions
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     FAttackData GetBestAttack();

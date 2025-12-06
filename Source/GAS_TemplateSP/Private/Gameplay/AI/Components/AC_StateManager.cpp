@@ -8,10 +8,12 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/States/StateBase.h"
 #include "Gameplay/AI/States/AttackStateBase.h"
+#include "Gameplay/AI/States/MovementState.h"
 #include "Gameplay/Components/AC_AbilitySet.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/AI/DataTypes/Behavior/AttackSequenceData.h"
 
 
 UAC_StateManager::UAC_StateManager()
@@ -178,33 +180,37 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 {
 	if (!BehaviorDecisionComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
 		return;
 	}
 
-	FAttackData SelectedAttack = BehaviorDecisionComponent->GetBestAttack();
-	if (!SelectedAttack.AbilityClass)
+	// ONLY talks to BehaviorDecision
+	UAttackSequenceAsset* SelectedSequence = BehaviorDecisionComponent->GetBestSequence();
+
+	if (!SelectedSequence || SelectedSequence->Steps.Num() == 0)
 	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
+		UE_LOG(LogTemp, Log, TEXT("No valid sequence, using fallback"));
 		return;
 	}
 
-	TSharedPtr<FAttackStateStatePayload> AttackPayload = MakeShared<FAttackStateStatePayload>(SelectedAttack);
-	if (!AttackPayload)
+	// Check if first step is in range
+	const FSequenceStep& FirstStep = SelectedSequence->Steps[0];
+	if (!FirstStep.AttackToExecute.AbilityClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AttackPayload couldn't created in: %s"), *GetName());
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
 		return;
 	}
 
-	if (BehaviorDecisionComponent->IsAttackInRange(SelectedAttack.AbilityClass))
+	if (BehaviorDecisionComponent->IsAttackInRange(FirstStep.AttackToExecute.AbilityClass))
 	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack, AttackPayload);
+		TSharedPtr<FAttackStateStatePayload> AttackStatePayload = MakeShared<FAttackStateStatePayload>(FirstStep.AttackToExecute);
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack, AttackStatePayload);
 	}
 	else
 	{
-		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement);
+		TSharedPtr<FMovementStatePayload> MovementStatePayload = 
+			MakeShared<FMovementStatePayload>(FirstStep.OverrideMovementChain, FirstStep.AttackToExecute.AbilityClass);
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement, MovementStatePayload);
 	}
+
 }
 
 bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag, TSharedPtr<FStatePayloadBase> EnterPayload)

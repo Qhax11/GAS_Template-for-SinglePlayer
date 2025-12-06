@@ -77,6 +77,29 @@ void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
     }
 }
 
+UAttackSequenceAsset* UAC_BehaviorDecision::GetBestSequence() 
+{
+    if (!GetBestSequenceService)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("GetBestSequenceService is null in: %s"), *GetName());
+        return nullptr;
+    }
+
+    UAttackSequenceAsset* BestSequence = GetBestSequenceService->GetBestSequence();
+
+#if WITH_EDITOR
+    if (GEngine && EnableSelectedDebug && BestSequence)
+    {
+        GEngine->AddOnScreenDebugMessage(9, 3.5f, FColor::Yellow,
+            FString::Printf(TEXT(">> Selected Sequence: %s (%d steps)"),
+                *BestSequence->SequenceName.ToString(),
+                BestSequence->Steps.Num()));
+    }
+#endif
+
+    return BestSequence;
+}
+
 FAttackData UAC_BehaviorDecision::GetBestAttack()
 {
     if (!GetBestAttackService) 

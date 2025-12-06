@@ -7,7 +7,7 @@
 #include "BDS_GetBestSequence.generated.h"
 
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class GAS_TEMPLATESP_API UBDS_GetBestSequence : public UBehaviorDecisionServiceBase
 {
 	GENERATED_BODY()

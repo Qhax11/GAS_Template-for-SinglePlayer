@@ -21,21 +21,83 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	Super::OnEnter();
 
-	if (!BehaviorDecisionComponent)
+	TSharedPtr<FMovementStatePayload> MovementStatePayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
+	if (!MovementStatePayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttackStatePayload is invalid in: %s"), *GetName());
+		return;
+	}
+
+	SelectedAttackCDO = MovementStatePayload->TargetAttackClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+
+	StartMovementChain(MovementStatePayload);
+}
+
+
+void UMovementState::OnTick_Implementation(float DeltaTime)
+{
+	TryEnterToAttackState();
+}
+
+void UMovementState::TryEnterToAttackState()
+{
+	if (!SelectedAttackCDO)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
 		return;
 	}
 
-	FAttackData NewAttack = BehaviorDecisionComponent->GetBestAttack();
-	if (!NewAttack.AbilityClass)
+	if (IsInRangeForAttack()) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: No valid BestAttack selected."));
-		ExitRequest("SelectedAttack ability class is null");
+		MovementManagerComponent->StopMovementAbilities();
+		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack);
+	}
+
+	/*
+	if (SelectedAttackCDO->MinRange > EnemyController->GetTargetHeroDistance())
+	{
+		FAttackData NewAttack = BehaviorDecisionComponent->GetBestAttack();
+		if (NewAttack.AbilityClass) 
+		{
+			StartMovementChain(NewAttack.AbilityClass);
+			return;
+		}
+	}
+	*/
+}
+
+bool UMovementState::IsInRangeForAttack() const
+{
+	if (!SelectedAttackCDO || !EnemyController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability Class is null in: %s"), *GetName());
+		return false;
+	}
+
+	float Distance = EnemyController->GetTargetHeroDistance();
+	return (SelectedAttackCDO->MaxRange > Distance && SelectedAttackCDO->MinRange < Distance);
+}
+
+void UMovementState::StartMovementChain(TSharedPtr<FMovementStatePayload> MovementStatePayload)
+{
+	if (!MovementStatePayload.IsValid() || !MovementStatePayload->MovementChainAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MovementStatePayload is invalid in: %s"), *GetName());
 		return;
 	}
 
-	StartMovementChain(NewAttack.AbilityClass);
+	/*
+	MovementManagerComponent->StartMovementChain(SelectedAttackAbilityClass);
+	*/
+	if (!MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded)) 
+	{
+		MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
+	}
+}
+
+void UMovementState::OnMovementChainEnded()
+{
+	ExitRequest("MovementChain is ended", GAS_Tags::TAG_AI_State_Movement);
 }
 
 void UMovementState::OnExit_Implementation()
@@ -46,49 +108,4 @@ void UMovementState::OnExit_Implementation()
 	{
 		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
 	}
-}
-
-void UMovementState::OnTick_Implementation(float DeltaTime)
-{
-	TryEnterToAttackState();
-}
-
-void UMovementState::TryEnterToAttackState()
-{
-	if (!BehaviorDecisionComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
-		return;
-	}
-
-	if (GetSelectedAttackAbilityCDO()->MinRange > EnemyController->GetTargetHeroDistance())
-	{
-		FAttackData NewAttack = BehaviorDecisionComponent->GetBestAttack();
-		if (NewAttack.AbilityClass) 
-		{
-			StartMovementChain(NewAttack.AbilityClass);
-			return;
-		}
-	}
-
-	if (IsAttackInRange(BehaviorDecisionComponent->LastSelectedAttackData.AbilityClass))
-	{
-		MovementManagerComponent->StopMovementAbilities();
-		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack);
-	}
-}
-
-void UMovementState::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackAbilityClass)
-{
-	MovementManagerComponent->StartMovementChain(SelectedAttackAbilityClass);
-
-	if (!MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded)) 
-	{
-		MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
-	}
-}
-
-void UMovementState::OnMovementChainEnded()
-{
-	ExitRequest("MovementChain is ended", GAS_Tags::TAG_AI_State_Movement);
 }

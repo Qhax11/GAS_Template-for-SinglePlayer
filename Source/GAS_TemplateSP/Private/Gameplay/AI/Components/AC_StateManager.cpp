@@ -14,6 +14,7 @@
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/AI/DataTypes/Behavior/AttackSequenceData.h"
+#include "Gameplay/AI/Components/AC_SequenceExecutor.h"
 
 
 UAC_StateManager::UAC_StateManager()
@@ -37,6 +38,13 @@ void UAC_StateManager::BeginPlay()
 	if (!BehaviorDecisionComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
+		return;
+	}
+
+	SequenceExecutorComponent = OwnerController->GetSequenceExecutorComponent();
+	if (!SequenceExecutorComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SequenceExecutorComponent is null in: %s"), *GetName());
 		return;
 	}
 
@@ -178,36 +186,46 @@ void UAC_StateManager::HandleTargetDetected()
 
 void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 {
-	if (!BehaviorDecisionComponent)
+	if (!BehaviorDecisionComponent || !SequenceExecutorComponent)
 	{
 		return;
 	}
 
-	// ONLY talks to BehaviorDecision
-	UAttackSequenceAsset* SelectedSequence = BehaviorDecisionComponent->GetBestSequence();
 
-	if (!SelectedSequence || SelectedSequence->Steps.Num() == 0)
+	// Check if we need new sequence
+	if (!SequenceExecutorComponent->HasActiveSequence() || SequenceExecutorComponent->IsSequenceComplete())
 	{
-		UE_LOG(LogTemp, Log, TEXT("No valid sequence, using fallback"));
+		// Get new sequence from behavior decision
+		UAttackSequenceAsset* NewSequence = BehaviorDecisionComponent->GetBestSequence();
+
+		if (!NewSequence || NewSequence->Steps.Num() == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No valid sequence"));
+			return;
+		}
+
+		// Give to executor
+		SequenceExecutorComponent->BeginSequence(NewSequence);
+	}
+
+
+	// Get current step from executor
+	const FSequenceStep* CurrentStep = SequenceExecutorComponent->GetCurrentStep();
+	if (!CurrentStep || !CurrentStep->AttackToExecute.AbilityClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid current step"));
 		return;
 	}
 
-	// Check if first step is in range
-	const FSequenceStep& FirstStep = SelectedSequence->Steps[0];
-	if (!FirstStep.AttackToExecute.AbilityClass)
+	if (BehaviorDecisionComponent->IsAttackInRange(CurrentStep->AttackToExecute.AbilityClass))
 	{
-		return;
-	}
-
-	if (BehaviorDecisionComponent->IsAttackInRange(FirstStep.AttackToExecute.AbilityClass))
-	{
-		TSharedPtr<FAttackStateStatePayload> AttackStatePayload = MakeShared<FAttackStateStatePayload>(FirstStep.AttackToExecute);
+		TSharedPtr<FAttackStateStatePayload> AttackStatePayload = MakeShared<FAttackStateStatePayload>(CurrentStep->AttackToExecute);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack, AttackStatePayload);
 	}
 	else
 	{
 		TSharedPtr<FMovementStatePayload> MovementStatePayload = 
-			MakeShared<FMovementStatePayload>(FirstStep.OverrideMovementChain, FirstStep.AttackToExecute.AbilityClass);
+			MakeShared<FMovementStatePayload>(CurrentStep->OverrideMovementChain, CurrentStep->AttackToExecute.AbilityClass);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement, MovementStatePayload);
 	}
 

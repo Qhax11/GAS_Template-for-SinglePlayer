@@ -68,10 +68,10 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 		MovementChainTracker.ResetChain();
 	}
 
-	const TArray<FMovementAbilityData> MovementData = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
-	if (MovementData.Num() > 0)
+	UMovementChainAsset* MovementChainAsset = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
+	if (MovementChainAsset->MovementChain.Num() > 0)
 	{
-		MovementChainTracker.StartChain(MovementData);
+		MovementChainTracker.StartChain(MovementChainAsset->MovementChain);
 		TryExecuteNextMovementAbilityInChain();
 	}
 }

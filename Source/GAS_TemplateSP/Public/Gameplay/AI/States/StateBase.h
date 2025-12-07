@@ -42,9 +42,6 @@ public:
     UPROPERTY()
     UAC_StateManager* StateManager = nullptr;
 
-    UPROPERTY()
-    UAC_SequenceExecutor* SequenceExecutor = nullptr;
-
     FStateInitParams() = default;
 };
 
@@ -118,6 +115,4 @@ protected:
     UPROPERTY()
     class UAC_StateManager* StateManager;
 
-    UPROPERTY()
-    UAC_SequenceExecutor* SequenceExecutor;
 };

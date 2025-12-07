@@ -5,7 +5,6 @@
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 #include "Gameplay/AI/BehaviorDecision/Services/GetBestAttack/BDS_GetBestAttack.h"
-#include "Gameplay/AI/BehaviorDecision/Services/GetBestSequence/BDS_GetBestSequence.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
@@ -70,34 +69,6 @@ void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
         ComingAttackReactionService->Initialize(ServiceInitData);
     }
 
-    if (BehaviorDecisionConfigAsset->GetBestSequenceServiceClass)
-    {
-        GetBestSequenceService = NewObject<UBDS_GetBestSequence>(this, BehaviorDecisionConfigAsset->GetBestSequenceServiceClass);
-        GetBestSequenceService->Initialize(ServiceInitData);
-    }
-}
-
-UAttackSequenceAsset* UAC_BehaviorDecision::GetBestSequence() 
-{
-    if (!GetBestSequenceService)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("GetBestSequenceService is null in: %s"), *GetName());
-        return nullptr;
-    }
-
-    UAttackSequenceAsset* BestSequence = GetBestSequenceService->GetBestSequence();
-
-#if WITH_EDITOR
-    if (GEngine && EnableSelectedDebug && BestSequence)
-    {
-        GEngine->AddOnScreenDebugMessage(9, 3.5f, FColor::Yellow,
-            FString::Printf(TEXT(">> Selected Sequence: %s (%d steps)"),
-                *BestSequence->SequenceName.ToString(),
-                BestSequence->Steps.Num()));
-    }
-#endif
-
-    return BestSequence;
 }
 
 FAttackData UAC_BehaviorDecision::GetBestAttack()
@@ -128,12 +99,12 @@ FAttackData UAC_BehaviorDecision::GetBestAttack()
     return BestAttack;
 }
 
-TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
+UMovementChainAsset* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
     if (!GetBestMovementChainService)
     {
         UE_LOG(LogTemp, Warning, TEXT("GetBestMovementChainService is null in: %s"), *GetName());
-        return TArray<FMovementAbilityData>();
+        return nullptr;
     }
 
     UMovementChainAsset* BestMovementChainDataAsset = nullptr;
@@ -158,10 +129,10 @@ TArray<FMovementAbilityData> UAC_BehaviorDecision::GetBestMovementChain(TSubclas
     if (!BestMovementChainDataAsset) 
     {
         UE_LOG(LogTemp, Warning, TEXT("BestMovementChainDataAsset is null in: %s"), *GetName());
-        return TArray<FMovementAbilityData>();
+        return nullptr;
     }
 
-    return BestMovementChainDataAsset->MovementChain;
+    return BestMovementChainDataAsset;
 }
 
 UComingAttackReactionData* UAC_BehaviorDecision::GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload)

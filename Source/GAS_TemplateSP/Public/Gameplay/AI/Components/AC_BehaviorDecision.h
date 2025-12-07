@@ -11,8 +11,6 @@ class UComingAttackReactionData;
 class UBDS_ComingAttackReactionBase;
 class UBDS_GetBestAttack;
 class UBDS_GetBestMovementChain;
-class UBDS_GetBestSequence;
-class UAttackSequenceAsset;
 struct FComingAttackPayload;
 
 UCLASS(BlueprintType)
@@ -29,9 +27,6 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
     TSubclassOf<UBDS_ComingAttackReactionBase> ComingAttackReactionServiceClass;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowAbstract = "false"))
-    TSubclassOf<UBDS_GetBestSequence> GetBestSequenceServiceClass;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -59,15 +54,12 @@ protected:
     bool EnableAllDataDebug = false;
 
 public:
-    UFUNCTION(BlueprintCallable, Category = "Behavior Decision")
-    UAttackSequenceAsset* GetBestSequence();
-
     // Core Decision Functions
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     FAttackData GetBestAttack();
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
-    TArray<FMovementAbilityData> GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
+    UMovementChainAsset* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);
@@ -104,6 +96,4 @@ private:
     UPROPERTY()
     UBDS_ComingAttackReactionBase* ComingAttackReactionService;
 
-    UPROPERTY()
-    UBDS_GetBestSequence* GetBestSequenceService;
 };

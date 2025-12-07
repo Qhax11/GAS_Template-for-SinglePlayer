@@ -12,7 +12,6 @@
 
 class UAISenseConfig_Sight;
 class UAC_StateManager;
-class UAC_SequenceExecutor;
 class UAC_BehaviorDecision;
 class UST_Base;
 
@@ -34,8 +33,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UAC_StateManager* GetEnemyStateManagerComponent() const { return EnemyStateManagerComponent; }
 
-	FORCEINLINE UAC_SequenceExecutor* GetSequenceExecutorComponent() const { return SequenceExecutorComponent; }
-
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
@@ -48,9 +45,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	UAC_StateManager* EnemyStateManagerComponent;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
-	UAC_SequenceExecutor* SequenceExecutorComponent;
 
 protected:
 	virtual void BeginPlay();

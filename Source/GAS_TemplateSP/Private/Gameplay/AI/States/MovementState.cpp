@@ -29,10 +29,8 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	}
 
 	SelectedAttackCDO = MovementStatePayload->TargetAttackClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-
 	StartMovementChain(MovementStatePayload);
 }
-
 
 void UMovementState::OnTick_Implementation(float DeltaTime)
 {

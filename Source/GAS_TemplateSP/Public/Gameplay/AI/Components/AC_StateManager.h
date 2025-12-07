@@ -73,9 +73,6 @@ protected:
 	class UAC_BehaviorDecision* BehaviorDecisionComponent;
 
 	UPROPERTY()
-	class UAC_SequenceExecutor* SequenceExecutorComponent;
-
-	UPROPERTY()
 	class UAC_TagDelegates* EnemyTagDelegatesComponent;
 
 };

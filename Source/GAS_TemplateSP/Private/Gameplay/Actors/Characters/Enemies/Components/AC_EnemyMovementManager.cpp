@@ -32,13 +32,6 @@ void UAC_EnemyMovementManager::BeginPlay()
 		return;
 	}
 
-	BehaviorDecisionComp = OwnerController->GetBehaviorDecisionComponent();
-	if (!BehaviorDecisionComp)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComp is null in: %s !"), *GetName());
-		return;
-	}
-
 	OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
 	if (!OwnerEnemyASC)
 	{
@@ -47,9 +40,9 @@ void UAC_EnemyMovementManager::BeginPlay()
 	}
 }
 
-void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAbilityClass)
+void UAC_EnemyMovementManager::StartMovementChain(UMovementChainAsset* MovementChain)
 {
-	if (!BehaviorDecisionComp || !SelectedAbilityClass || !OwnerEnemyASC) 
+	if (!MovementChain || !OwnerEnemyASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComp, SelectedAbilityClass or OwnerEnemyASC is null in: %s!"), *GetName());
 		return;
@@ -68,10 +61,9 @@ void UAC_EnemyMovementManager::StartMovementChain(TSubclassOf<class UGAS_Gamepla
 		MovementChainTracker.ResetChain();
 	}
 
-	UMovementChainAsset* MovementChainAsset = BehaviorDecisionComp->GetBestMovementChain(SelectedAbilityClass);
-	if (MovementChainAsset->MovementChain.Num() > 0)
+	if (MovementChain->MovementChain.Num() > 0)
 	{
-		MovementChainTracker.StartChain(MovementChainAsset->MovementChain);
+		MovementChainTracker.StartChain(MovementChain->MovementChain);
 		TryExecuteNextMovementAbilityInChain();
 	}
 }

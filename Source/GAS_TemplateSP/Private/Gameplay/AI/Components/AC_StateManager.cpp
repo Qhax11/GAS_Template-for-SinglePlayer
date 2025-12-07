@@ -222,11 +222,6 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag, TShar
 
 	if (FindedState->EnterCondition(EnterPayload))
 	{
-		if (CurrentState)
-		{
-			CurrentState->OnExit();
-		}
-
 		FindedState->OnEnter(EnterPayload);
 		CurrentState = FindedState;
 		return true;
@@ -241,47 +236,38 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag, TShar
 	}
 }
 
-bool UAC_StateManager::RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason)
+bool UAC_StateManager::RequestStateTreeExit(const FStateTransitionRequest StateTransitionRequest, FString Reason)
 {
-	if (!StateTag.IsValid() || !bActive)
+	if (!CurrentState || !bActive)
 	{
 		return false;
 	}
 
 	if (bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to exit, reason is: %s"), *StateTag.ToString(), *Reason);
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to exit, reason is: %s"), *CurrentState->GetName(), *Reason);
 	}
 
-	UStateBase* FindedState = GetStateWithTag(StateTag);
-	if (!FindedState)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: FindedState is null!"), *FindedState->GetName());
-		return false;
-	}
-
-	if (!IsCurrentState(StateTag))
-	{
-		return false;
-	}
-
-	if (!FindedState->ExitCondition()) 
+	if (!CurrentState->ExitCondition()) 
 	{
 		if (bEnableDebug)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot exit"), *StateTag.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot exit"), *CurrentState->GetName());
 		}
 		return false;
 	}
 
+	CurrentState->OnExit();
+	CurrentState = nullptr;
+
 	// If request coming with trancastion tag we directly enter
-	if (TransactionTag.IsValid()) 
+	if (StateTransitionRequest.TargetStateTag.IsValid())
 	{
-		RequestStateTreeEnter(TransactionTag);
+		RequestStateTreeEnter(StateTransitionRequest.TargetStateTag, StateTransitionRequest.Payload);
 		return true;
 	}
 
-	HandleStateExit(StateTag);
+	DecideNextStateBasedOnAttackRange();
 	return true;
 }
 

@@ -16,17 +16,7 @@ public:
 
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	virtual void OnExit_Implementation() override;
-
-	virtual void OnTick_Implementation(float DeltaTime) override;
-
-	void TryEnterToAttackState();
-	
-	void SelectMovement();
-
-	void StartMovementChain(TSubclassOf<class UGAS_GameplayAbilityBase> SelectedAttackAbilityClass);
-
-	void OnMovementChainEnded();
+	virtual void ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload) override;
 
 	void MakeStrafingAbility();
 
@@ -34,6 +24,8 @@ public:
 	void OnStrafingAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 	void OnWaitTimeFinished();
+
+	virtual void OnExit_Implementation() override;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGAS_GameplayAbilityBase> StrafingAbilityClass;
@@ -50,7 +42,6 @@ public:
 	float MaxStrafingWaitTime = 3.0f;
 
 private:
-	class UAC_EnemyMovementManager* MovementManagerComponent;
 	FTimerHandle WaitForNextStrafingOrbitTimerHandle;
 
 	class US_AICrowdEventManager* AICrowdEventManager;

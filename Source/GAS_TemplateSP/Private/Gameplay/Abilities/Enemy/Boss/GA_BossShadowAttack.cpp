@@ -51,7 +51,7 @@ void UGA_BossShadowAttack::ExecuteMovementChain()
 {
 	if (UAC_EnemyMovementManager* EnemyMovementManagerComp = BossCharacter->GetEnemyMovementManagerComponent()) 
 	{
-		EnemyMovementManagerComp->StartMovementChain(GetClass());
+		//EnemyMovementManagerComp->StartMovementChain(GetClass());
 	}
 }
 

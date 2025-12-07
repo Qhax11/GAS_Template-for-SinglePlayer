@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "AC_EnemyMovementManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
@@ -67,7 +67,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void StartMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
+	void StartMovementChain(UMovementChainAsset* MovementChain);
 
 	UFUNCTION(BlueprintCallable)
 	void StopMovementAbilities();
@@ -88,7 +88,6 @@ protected:
 private:
 	FMovementChainTracker MovementChainTracker;
 	class AAIControllerBase* OwnerController;
-	class UAC_BehaviorDecision* BehaviorDecisionComp;
 	class AGAS_EnemyBase* OwnerEnemyBase;
 	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
 };

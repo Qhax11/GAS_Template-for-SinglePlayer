@@ -17,6 +17,8 @@ struct FMovementStatePayload : public FStatePayloadBase
 	}
 };
 
+class UAC_EnemyMovementManager;
+
 UCLASS()
 class GAS_TEMPLATESP_API UMovementState : public UStateBase
 {
@@ -27,7 +29,9 @@ public:
 
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	virtual void OnExit_Implementation() override;
+	virtual void ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload);
+
+	void StartMovementChain(UMovementChainAsset* MovementChain);
 
 	virtual void OnTick_Implementation(float DeltaTime) override;
 
@@ -35,13 +39,17 @@ public:
 
 	bool IsInRangeForAttack() const;
 
-	void StartMovementChain(TSharedPtr<FMovementStatePayload> MovementStatePayload);
-
 	UFUNCTION()
 	void OnMovementChainEnded();
 
-private:
-	class UAC_EnemyMovementManager* MovementManagerComponent;
+	virtual void OnExit_Implementation() override;
 
+protected:
+	TSharedPtr<FMovementStatePayload> MovementStateEnterPayload;
+
+	UPROPERTY()
+	UAC_EnemyMovementManager* MovementManagerComponent;
+
+	UPROPERTY()
 	UGAS_GameplayAbilityBase* SelectedAttackCDO;
 };

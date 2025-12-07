@@ -10,7 +10,6 @@
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
-class UAC_SequenceExecutor;
 
 USTRUCT()
 struct FStateInitParams
@@ -79,8 +78,7 @@ public:
     FGameplayTag StateTag;
 
 protected:
-    UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "TransactionTag"))
-    virtual bool ExitRequest(FString Reason, const FGameplayTag& TransactionTag = FGameplayTag());
+    virtual bool ExitRequest(FString Reason, const FGameplayTag& TransactionTag = FGameplayTag(), TSharedPtr<FStatePayloadBase> ExitPayload = nullptr);
 
     bool IsAttackInRange(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass);
 

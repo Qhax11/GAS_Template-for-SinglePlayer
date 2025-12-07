@@ -10,6 +10,12 @@
 class UStateBase;
 struct FStatePayloadBase;
 
+struct FStateTransitionRequest
+{
+	FGameplayTag TargetStateTag;
+	TSharedPtr<FStatePayloadBase> Payload;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_StateManager : public UAC_AIControllerBase
 {
@@ -36,7 +42,7 @@ public:
 
 	void HandleIncomingEvent(const FGameplayTag& StateEventTag, TSharedPtr<FStatePayloadBase> EnterPayload = nullptr);
 
-	bool RequestStateTreeExit(const FGameplayTag& StateTag, const FGameplayTag& TransactionTag, FString Reason);
+	bool RequestStateTreeExit(const FStateTransitionRequest StateTransitionRequest, FString Reason);
 
 	bool IsCurrentState(const FGameplayTag& StateTag);
 

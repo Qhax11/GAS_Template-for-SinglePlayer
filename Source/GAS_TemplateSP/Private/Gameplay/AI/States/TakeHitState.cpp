@@ -14,6 +14,27 @@ void UTakeHitState::StateInitalize(const FStateInitParams& StateInitParams)
 	Super::StateInitalize(StateInitParams);
 }
 
+bool UTakeHitState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
+{
+	if (!EnterPayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnterPayload is invalid in: %s"), *GetName());
+		return false;
+	}
+
+	TSharedPtr<FTakeHitStatePayload> TakeHitPayload = StaticCastSharedPtr<FTakeHitStatePayload>(EnterPayload);
+	if (!TakeHitPayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InComingAttackStatePayload is invalid in: %s"), *GetName());
+		return false;
+	}
+
+	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
+	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
+
+	return !bEnemyUnstoppable && !bHeroCanInterrupt;
+}
+
 void UTakeHitState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	Super::OnEnter(EnterPayload);

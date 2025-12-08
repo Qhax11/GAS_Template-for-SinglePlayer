@@ -142,32 +142,37 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 	return NotifyTime;
 }
 
-void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload ComingAttackPayload)
+void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload EventPayload)
 {
-	UComingAttackReactionData* SelectedReaction = OwnerBehaviorDecisionComp->GetBestComingAttackReaction(ComingAttackPayload);
-	if (!SelectedReaction)
+	UComingAttackReactionData* BestReactionData = OwnerBehaviorDecisionComp->GetBestComingAttackReaction(EventPayload);
+	if (!BestReactionData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BestReaction is null in: %s"), *GetName());
 		return;
 	}
 
+	HandleReactionTiming(BestReactionData, EventPayload);
+}
+
+void UAC_IntendHandlerBase::HandleReactionTiming(UComingAttackReactionData* Reaction, FComingAttackPayload Payload)
+{
 	// TakeDamage event will triggered from OnDamageDealt;
-	if (SelectedReaction->ReactionType == EComingAttackReaction::TakeDamage)
+	if (Reaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		return;
 	}
 
-	const float PreferredDelay = ComingAttackPayload.ComingAttackHitTime - SelectedReaction->PreferredTriggerTimeBeforeHit;
+	const float PreferredDelay = Payload.ComingAttackHitTime - Reaction->PreferredTriggerTimeBeforeHit;
 
 	if (PreferredDelay <= 0.f)
 	{
-		TriggerIncomingAttackReaction(SelectedReaction, ComingAttackPayload);
+		TriggerIncomingAttackReaction(Reaction, Payload);
 	}
 	else
 	{
 		FTimerHandle ReactionDelayTimer;
 		GetWorld()->GetTimerManager().SetTimer(ReactionDelayTimer, FTimerDelegate::CreateUObject(
-			this, &UAC_IntendHandlerBase::TriggerIncomingAttackReaction, SelectedReaction, ComingAttackPayload), PreferredDelay, false);
+			this, &UAC_IntendHandlerBase::TriggerIncomingAttackReaction, Reaction, Payload), PreferredDelay, false);
 
 		UE_LOG(LogTemp, Warning, TEXT("IncomingAttack Reaction delayed by %.2f seconds."), PreferredDelay);
 	}

@@ -132,13 +132,6 @@ void UInComingAttackState::UnBindTargetComingAttackEnd()
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered."));
-
-	if (DamageData.ExecCalculationParameters.SourceActor == Enemy && DamageData.ExecCalculationParameters.TargetActor == HeroTarget)
-	{
-		ExitRequest("Our attack is hit to Hero, exit incoming attack.");
-		return;
-	}
-
 	UnBindTargetComingAttackEnd();
 
 	if (DamageData.bParrySucces)

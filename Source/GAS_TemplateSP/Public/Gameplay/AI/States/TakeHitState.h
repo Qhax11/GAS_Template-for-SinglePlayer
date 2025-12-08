@@ -16,6 +16,8 @@ public:
 
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
+	virtual bool EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload) override;
+
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 	virtual void ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPayload);

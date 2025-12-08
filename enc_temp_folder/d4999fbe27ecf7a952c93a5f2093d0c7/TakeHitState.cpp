@@ -72,7 +72,7 @@ void UTakeHitState::ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPaylo
 	{
 		TakeDamageAbility->OnAbilityEnded.RemoveAll(this);
 		TakeDamageAbility->OnAbilityEnded.AddUObject(this, &UTakeHitState::OnTakeHitAbilityEnded);
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageAbility executed from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageAbility executed."));
 	}
 
 	LastUsedTakeDamageAbility = TakeDamageAbility;

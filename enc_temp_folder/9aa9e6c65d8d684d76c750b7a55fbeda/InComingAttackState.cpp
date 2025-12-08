@@ -92,7 +92,13 @@ bool UInComingAttackState::SelectAndExecuteReaction(UComingAttackReactionData* S
 		return false;
 	}
 
-	if (SelectedReactionData->ReactionType == EComingAttackReaction::Parry)
+	if (SelectedReactionData->ReactionType == EComingAttackReaction::TakeDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeTakeDamage entered."));
+		BindTargetComingAttackEnd();
+		return true;
+	}
+	else if (SelectedReactionData->ReactionType == EComingAttackReaction::Parry)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
 		BindTargetComingAttackEnd();
@@ -128,7 +134,7 @@ void UInComingAttackState::UnBindTargetComingAttackEnd()
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered from: %s"), *GetClass()->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered."));
 	UnBindTargetComingAttackEnd();
 
 	if (DamageData.bParrySucces)
@@ -148,7 +154,7 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 				ParryKnocbackAbility->OnAbilityEnded.RemoveAll(this);
 			}
 			ParryKnockbackEndHandle = ParryKnocbackAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
-			UE_LOG(LogTemp, Warning, TEXT("State Manager: ParryKnocbackAbility executed from: %s"), *GetClass()->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("State Manager: ParryKnocbackAbility executed."));
 		}
 		LastUsedParryKnocbackAbility = ParryKnocbackAbility;
 	}
@@ -167,7 +173,7 @@ void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* Bes
 
 	if (LastUsedParryAbility && LastUsedParryAbility->IsActive())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: LastUsedParryAbility is active from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: LastUsedParryAbility is active."));
 		if (LastUsedParryAbility)
 		{
 			EnemyASC->CancelAbilityHandle(LastUsedParryAbility->GetCurrentAbilitySpecHandle());
@@ -183,7 +189,7 @@ void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* Bes
 			ActivatedParryAbility->OnAbilityEnded.RemoveAll(this);
 		}
 		ParryEndHandle = ActivatedParryAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryAbilityEnded);
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility executed from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility executed."));
 	}
 
 	LastUsedParryAbility = ActivatedParryAbility;
@@ -193,7 +199,7 @@ void UInComingAttackState::OnParryAbilityEnded(const FCustomAbilityEndedData& Do
 {
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback don't exit the state from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback don't exit the state"));
 		return;
 	}
 	else

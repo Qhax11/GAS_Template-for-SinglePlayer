@@ -181,11 +181,6 @@ void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UComingAttackReactionD
 
 void UAC_IntendHandlerBase::OnDamageDealt(const FDamageData& DamageData)
 {
-	if (DamageData.bParrySucces) 
-	{
-		return;
-	}
-
 	// If the damage is from Hero to Enemy, trigger the event
 	if (DamageData.ExecCalculationParameters.SourceActor == HeroBase && DamageData.ExecCalculationParameters.TargetActor == OwnerEnemyBase)
 	{

@@ -43,6 +43,8 @@ protected:
 
     bool PassesChanceRollBasedOnPosture(UComingAttackReactionData* ComingReactionData);
 
+    FGameplayTag GetRandomDirectionTag();
+
     UPROPERTY(EditDefaultsOnly)
     UComingAttackReactionAsset* ComingAttackReactionAsset;
 };

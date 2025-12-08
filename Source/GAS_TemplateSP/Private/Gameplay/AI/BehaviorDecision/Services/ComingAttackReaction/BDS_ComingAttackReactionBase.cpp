@@ -4,6 +4,7 @@
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include <Gameplay/Attributes/AS_Base.h>
+#include <Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionDataDodge.h>
 
 void UBDS_ComingAttackReactionBase::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {
@@ -38,6 +39,12 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
             BestReaction = Reaction;
         }
     }
+
+    if(BestReaction->ReactionType == EComingAttackReaction::Dodge)
+    {
+        UComingAttackReactionDataDodge* ComingAttackReactionDataDodge = Cast<UComingAttackReactionDataDodge>(BestReaction);
+        ComingAttackReactionDataDodge->ApplyDirectionPoliciesToMovementAbility(HeroMovementListenerComp);
+	}
 
     return BestReaction;
 }
@@ -111,4 +118,6 @@ bool UBDS_ComingAttackReactionBase::PassesChanceRollBasedOnPosture(UComingAttack
 
     return bPassed;
 }
+
+
 

@@ -39,6 +39,8 @@ protected:
 
     bool ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset);
 
+    FGameplayTag GetRandomDirectionTag();
+
     UPROPERTY(EditDefaultsOnly)
     UAttackAbilityMovementChainMapAsset* AttackAbilityMovementChainMapAsset;
 };

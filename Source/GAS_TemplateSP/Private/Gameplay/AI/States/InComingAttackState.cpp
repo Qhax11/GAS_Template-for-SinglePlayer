@@ -35,19 +35,22 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 		return false;
 	}
 
+	// NEW: If enemy is in ActivePhase, never enter this state.
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active))
+	{
+		return false;
+	}
+
 	FComingAttackPayload ComingAttackPayload = InComingAttackStatePayload->AttackPayload;
-	float ComingAttackMaxRange = ComingAttackPayload.ComingAttack->MaxRange;
+	const float AttackRange = ComingAttackPayload.ComingAttack->MaxRange;
 
 	const float Distance = HeroTarget->GetDistanceTo(Enemy);
-	const bool bIsInRange = Distance < ComingAttackMaxRange + 50.0f; // 50.0f is margin of error
+	const bool bIsInRange = Distance < AttackRange + 50.0f;
 
 	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
 	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
 
-	// Mantık:
-	// 1. Eğer düşman unstoppable ise ama kahraman interrupt edebiliyorsa => izin ver
-	// 2. Eğer düşman unstoppable ve kahraman edemiyorsa => girme
-	// 3. Eğer düşman unstoppable değilse => normal şekilde distance'a göre değerlendir
+	// Unstoppable logic
 	if (bEnemyUnstoppable && !bHeroCanInterrupt)
 	{
 		return false;

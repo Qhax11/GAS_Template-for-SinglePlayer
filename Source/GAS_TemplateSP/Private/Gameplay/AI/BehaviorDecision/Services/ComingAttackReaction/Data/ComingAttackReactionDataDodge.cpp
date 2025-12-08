@@ -2,13 +2,8 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionDataDodge.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 
-/*
-void UComingAttackReactionDataDodge::InitializeAfterSelection()
-{
-    //ApplyDirectionPoliciesToMovementAbility(DodgeMovementAbilityData);
-}
-*/
 
 UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 {
@@ -17,6 +12,10 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
     MinimumTimeBeforeHitToReact = 0.15f;    
     PreferredTriggerTimeBeforeHit = 0.25f;    
     BaseChance = 0.6f;
+
+    // Dash distance
+    DodgeMovementAbilityData.AbilityEventMagnitude = 300.0f;
+    DodgeMovementAbilityData.ResolvedDirectionTag = GAS_Tags::TAG_AI_Direction_Resolved_Backward;
 }
 
 bool UComingAttackReactionDataDodge::IsEnable(FComingAttackPayload ComingAttackPayload) const
@@ -25,3 +24,38 @@ bool UComingAttackReactionDataDodge::IsEnable(FComingAttackPayload ComingAttackP
     return Super::IsEnable(ComingAttackPayload) && !bIsUnDodgeableAttack;
 }
 
+FGameplayTag UComingAttackReactionDataDodge::GetRandomDirectionTag()
+{
+    static const TArray<FGameplayTag> PossibleDirections =
+    {
+        //GAS_Tags::TAG_AI_Direction_Resolved_Forward,
+        GAS_Tags::TAG_AI_Direction_Resolved_Backward,
+        GAS_Tags::TAG_AI_Direction_Resolved_Left,
+        GAS_Tags::TAG_AI_Direction_Resolved_Right
+    };
+
+    int32 RandomIndex = FMath::RandRange(0, PossibleDirections.Num() - 1);
+    return PossibleDirections[RandomIndex];
+}
+
+void UComingAttackReactionDataDodge::ApplyDirectionPoliciesToMovementAbility(UAC_HeroMovementListener* HeroMovementListener)
+{
+    if (!DodgeMovementAbilityData.DirectionPolicyTag.IsValid())
+    {
+        return;
+    }
+
+    FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
+
+    if (DodgeMovementAbilityData.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
+    {
+        if (HeroLastDirectionGameplayTag.IsValid())
+        {
+            DodgeMovementAbilityData.ResolvedDirectionTag = HeroLastDirectionGameplayTag;
+        }
+    }
+    else if (DodgeMovementAbilityData.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random)
+    {
+        DodgeMovementAbilityData.ResolvedDirectionTag = GetRandomDirectionTag();
+    }
+}

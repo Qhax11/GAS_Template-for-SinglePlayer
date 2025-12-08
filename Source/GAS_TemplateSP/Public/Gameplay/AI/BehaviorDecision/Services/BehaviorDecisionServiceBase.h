@@ -84,10 +84,4 @@ protected:
     UPROPERTY()
 	EBehaviorState BehaviorState;
 
-protected:
-    // Movement
-    FGameplayTag GetRandomDirectionTag();
-
-    void ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbilityData);
-
 };

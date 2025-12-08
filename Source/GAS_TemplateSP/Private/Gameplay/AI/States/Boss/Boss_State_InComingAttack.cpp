@@ -48,9 +48,15 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UComingAttackReactio
 	}
 
 	const UComingAttackReactionDataDodge* DodgeReactionData = Cast<UComingAttackReactionDataDodge>(SelectedBestReaction);
-	if (!DodgeReactionData) 
+	if (!DodgeReactionData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: DodgeReactionData is null."));
+		return;
+	}
+
+	if (!DodgeReactionData->DodgeMovementAbilityData.MovementAbilityClass) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: Dodge MovementAbilityClass is null."));
 		return;
 	}
 

@@ -5,6 +5,7 @@
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 #include "ComingAttackReactionDataDodge.generated.h"
 
+class UAC_HeroMovementListener;
 
 UCLASS()
 class GAS_TEMPLATESP_API UComingAttackReactionDataDodge : public UComingAttackReactionData
@@ -14,10 +15,13 @@ class GAS_TEMPLATESP_API UComingAttackReactionDataDodge : public UComingAttackRe
 public:
 	UComingAttackReactionDataDodge(); 
 
-	//virtual void InitializeAfterSelection() override;
-
 	virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const override;
+
+	void ApplyDirectionPoliciesToMovementAbility(UAC_HeroMovementListener* HeroMovementListener);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMovementAbilityData DodgeMovementAbilityData;
+
+private:
+	FGameplayTag GetRandomDirectionTag();
 };

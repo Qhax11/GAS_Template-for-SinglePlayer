@@ -25,14 +25,16 @@ bool UTakeHitState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 	TSharedPtr<FTakeHitStatePayload> TakeHitPayload = StaticCastSharedPtr<FTakeHitStatePayload>(EnterPayload);
 	if (!TakeHitPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("InComingAttackStatePayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TakeHitPayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
 	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
 	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
 
-	return !bEnemyUnstoppable && !bHeroCanInterrupt;
+	// Eðer unstoppable deðilse ? gir
+	// Eðer unstoppable ama hero interrupt ediyorsa ? yine gir
+	return !bEnemyUnstoppable || bHeroCanInterrupt;
 }
 
 void UTakeHitState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)

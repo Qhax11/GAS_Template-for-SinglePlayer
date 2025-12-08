@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
+#include "Gameplay/StaticDelegates/S_DamageDelegates.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 
 class UAC_EnemyMovementManager;
@@ -42,6 +43,15 @@ struct FIncomingAttackStatePayload : public FStatePayloadBase
 
 	FIncomingAttackStatePayload(FComingAttackPayload InPayload, UComingAttackReactionData* InReaction)
 		: AttackPayload(InPayload), ReactionData(InReaction) {
+	}
+};
+
+struct FTakeHitStatePayload : public FStatePayloadBase
+{
+	FDamageData DamageData;
+
+	FTakeHitStatePayload(FDamageData InDamageData)
+		: DamageData(InDamageData) {
 	}
 };
 

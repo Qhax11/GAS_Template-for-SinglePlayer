@@ -21,50 +21,22 @@ void UAC_IntendHandlerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerController = Cast<AAIControllerBase>(GetOwner());
-	if (!OwnerController)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s, can not initialize"), *GetName());
-		return;
-	}
+	checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 
 	OwnerStateManager = OwnerController->GetEnemyStateManagerComponent();
-	if (!OwnerStateManager)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerStateManager is null in: %s, can not initialize"), *GetName());
-		return;
-	}
+	checkf(OwnerStateManager, TEXT("OwnerStateManager is null in %s"), *GetClass()->GetName());
 
 	OwnerBehaviorDecisionComp = OwnerController->GetBehaviorDecisionComponent();
-	if (!OwnerBehaviorDecisionComp)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerBehaviorDecisionComp is null in: %s, can not initialize"), *GetName());
-		return;
-	}
-
-	ControlledEnemy = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
-	if (!ControlledEnemy)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ControlledEnemy is null in: %s, can not initialize"), *GetName());
-		return;
-	}
-
-	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	TargetHero = Cast<AGAS_HeroBase>(PlayerPawn);
-	if (!TargetHero) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetHero is null in: %s, can not initialize"), *GetName());
-		return;
-	}
+	checkf(OwnerBehaviorDecisionComp, TEXT("OwnerBehaviorDecisionComp is null in %s"), *GetClass()->GetName());
 
 	US_AICrowdEventManager* AICrowdEventManager = GetWorld()->GetGameInstance()->GetSubsystem<US_AICrowdEventManager>();
-	if (!AICrowdEventManager)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AICrowdEventManager is null in: %s, can not initialize"), *GetName());
-		return;
-	}
+	checkf(AICrowdEventManager, TEXT("AICrowdEventManager is null in %s"), *GetClass()->GetName());
 
-	RegisterTags(TargetHero);
+	DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>();
+	checkf(DamageSubsystem, TEXT("DamageSubsystem is null in %s"), *GetClass()->GetName());
+
+	RegisterTags();
+	DamageSubsystem->OnDamageDealt.AddDynamic(this, &UAC_IntendHandlerBase::OnDamageDealt);
 	OwnerController->OnTargetDetected.AddDynamic(this, &UAC_IntendHandlerBase::OnTargetDetected);
 	AICrowdEventManager->OnRequestEnemyBackupReaction.AddDynamic(this, &UAC_IntendHandlerBase::OnRequestEnemyBackupReaction);
 }
@@ -72,7 +44,7 @@ void UAC_IntendHandlerBase::BeginPlay()
 void UAC_IntendHandlerBase::OnTargetDetected(AActor* DetectedTarget)
 {
 	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_TargetDetected);
-	TargetHero->GetAbilitySystemComponent()->AbilityActivatedCallbacks.AddUObject(this, &UAC_IntendHandlerBase::OnTargetAbilityActivated);
+	HeroBase->GetAbilitySystemComponent()->AbilityActivatedCallbacks.AddUObject(this, &UAC_IntendHandlerBase::OnTargetAbilityActivated);
 }
 
 void UAC_IntendHandlerBase::OnRequestEnemyBackupReaction()
@@ -80,27 +52,14 @@ void UAC_IntendHandlerBase::OnRequestEnemyBackupReaction()
 	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_BackupReaction);
 }
 
-bool UAC_IntendHandlerBase::RegisterTags(AGAS_CharacterBase* TargetCharacter)
+void UAC_IntendHandlerBase::RegisterTags()
 {
-	if (!ControlledEnemy || !TargetCharacter)
-	{
-		return false;
-	}
+	checkf(OwnerEnemyBase, TEXT("OwnerEnemyBase is null in %s"), *GetClass()->GetName());
 
-	UAC_TagDelegates* ControlledCharacterTagDelegatesComp = ControlledEnemy->GetTagDelegatesComponent();
-	if (!ControlledCharacterTagDelegatesComp)
-	{
-		return false;
-	}
-
-	UAC_TagDelegates* TargetCharacterTagDelegatesComp = TargetCharacter->GetTagDelegatesComponent();
-	if (!TargetCharacterTagDelegatesComp)
-	{
-		return false;
-	}
+	UAC_TagDelegates* ControlledCharacterTagDelegatesComp = OwnerEnemyBase->GetTagDelegatesComponent();
+	checkf(ControlledCharacterTagDelegatesComp, TEXT("ControlledCharacterTagDelegatesComp is null in %s"), *GetClass()->GetName());
 
 	ControlledCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable, EListenMode::OnAdded).BindDynamic(this, &UAC_IntendHandlerBase::OnVulnerableTagAdded);
-	return true;
 }
 
 void UAC_IntendHandlerBase::OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -221,7 +180,17 @@ void UAC_IntendHandlerBase::HandleReactionTiming(UComingAttackReactionData* Reac
 
 void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UComingAttackReactionData* Reaction, FComingAttackPayload Payload)
 {
-	TSharedPtr<FIncomingAttackStatePayload> AttackStateData = MakeShared<FIncomingAttackStatePayload>(Payload, Reaction);
-	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_InComingAttack, AttackStateData);
+	TSharedPtr<FIncomingAttackStatePayload> IncomingAttackStatePayload = MakeShared<FIncomingAttackStatePayload>(Payload, Reaction);
+	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_InComingAttack, IncomingAttackStatePayload);
+}
+
+void UAC_IntendHandlerBase::OnDamageDealt(const FDamageData& DamageData)
+{
+	// If the damage is from Hero to Enemy, trigger the event
+	if (DamageData.ExecCalculationParameters.SourceActor == HeroBase && DamageData.ExecCalculationParameters.TargetActor == OwnerEnemyBase)
+	{
+		TSharedPtr<FTakeHitStatePayload> TakeHitStatePayload = MakeShared<FTakeHitStatePayload>(DamageData);
+		OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_TakeHit, TakeHitStatePayload);
+	}
 }
 

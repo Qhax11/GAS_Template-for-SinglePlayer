@@ -137,7 +137,11 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag, TS
 		return;
 	}
 
-	if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_VulnerableTagAdded) 
+	if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_TakeHit)
+	{
+		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_TakeHit, EnterPayload);
+	}
+	else if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_VulnerableTagAdded)
 	{
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Vulnerable, EnterPayload);
 	}

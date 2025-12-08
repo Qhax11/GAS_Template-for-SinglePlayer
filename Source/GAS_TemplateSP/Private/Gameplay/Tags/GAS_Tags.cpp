@@ -392,6 +392,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent, "AI.StateEvent");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_VulnerableTagAdded, "AI.StateEvent.VulnerableTagAdded");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_InComingAttack, "AI.StateEvent.InComingAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_TakeHit, "AI.StateEvent.TakeHit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_TargetDetected, "AI.StateEvent.TargetDetected");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_StateEvent_BackupReaction, "AI.StateEvent.BackupReaction");
 
@@ -404,6 +405,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Movement, "AI.State.Movement");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Attack, "AI.State.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_InComingAttack, "AI.State.InComingAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_TakeHit, "AI.State.TakeHit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Vulnerable, "AI.State.Vulnerable");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_BackupReaction, "AI.State.BackupReaction");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_HeroFinisher, "AI.State.HeroFinisher");

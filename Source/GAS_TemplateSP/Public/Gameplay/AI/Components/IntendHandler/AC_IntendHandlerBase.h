@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "Gameplay/AI/Components/AC_AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/StaticDelegates/S_DamageDelegates.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "AC_IntendHandlerBase.generated.h"
 
@@ -17,11 +18,13 @@
  * It processes external stimuli and triggers state transitions via the State Manager.
  */
 
+class UAC_StateManager;
+class UAC_BehaviorDecision;
 class UComingAttackReactionData;
 struct FComingAttackPayload;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GAS_TEMPLATESP_API UAC_IntendHandlerBase : public UActorComponent
+class GAS_TEMPLATESP_API UAC_IntendHandlerBase : public UAC_AIControllerBase
 {
 	GENERATED_BODY()
 
@@ -38,25 +41,12 @@ protected:
 	void OnRequestEnemyBackupReaction();
 
 	UPROPERTY()
-	class AAIControllerBase* OwnerController;
+	UAC_StateManager* OwnerStateManager;
 
 	UPROPERTY()
-	class UAC_StateManager* OwnerStateManager;
+	UAC_BehaviorDecision* OwnerBehaviorDecisionComp;
 
-	UPROPERTY()
-	class UAC_BehaviorDecision* OwnerBehaviorDecisionComp;
-
-	UPROPERTY()
-	AGAS_EnemyBase* ControlledEnemy;
-
-	UPROPERTY()
-	UAbilitySystemComponent* ControlledEnemyASC;
-
-	UPROPERTY()
-	class AGAS_HeroBase* TargetHero;
-
-	// Listening own tags and target tag's
-	virtual bool RegisterTags(AGAS_CharacterBase* TargetCharacter);
+	US_DamageDelegates* DamageSubsystem;
 
 	UFUNCTION()
 	void OnVulnerableTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
@@ -71,4 +61,10 @@ protected:
 	void HandleReactionTiming(UComingAttackReactionData* Reaction, FComingAttackPayload Payload);
 
 	void TriggerIncomingAttackReaction(UComingAttackReactionData* Reaction, FComingAttackPayload Payload);
+
+private:
+	UFUNCTION()	
+	void OnDamageDealt(const FDamageData& DamageData);
+
+	virtual void RegisterTags();
 };

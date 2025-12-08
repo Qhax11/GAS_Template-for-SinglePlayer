@@ -7,6 +7,7 @@
 #include "Gameplay/Abilities/InCombat/GA_TakeDamageBase.h"
 #include "Gameplay/AI/Components/IntendHandler/AC_IntendHandlerBase.h"
 #include <Gameplay/StaticDelegates/S_DamageDelegates.h>
+#include "Gameplay/AI/Components/AC_StateManager.h"
 
 
 UInComingAttackState::UInComingAttackState()

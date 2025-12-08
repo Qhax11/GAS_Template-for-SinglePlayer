@@ -6,7 +6,6 @@
 #include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 
-
 class UAC_EnemyMovementManager;
 class UMovementChainAsset;
 class UGAS_GameplayAbilityBase;
@@ -44,4 +43,16 @@ struct FIncomingAttackStatePayload : public FStatePayloadBase
 	FIncomingAttackStatePayload(FComingAttackPayload InPayload, UComingAttackReactionData* InReaction)
 		: AttackPayload(InPayload), ReactionData(InReaction) {
 	}
+};
+
+struct FStateTransitionRequest
+{
+	FGameplayTag TargetStateTag;
+	TSharedPtr<FStatePayloadBase> Payload;
+
+	FStateTransitionRequest(FGameplayTag InTargetTag, TSharedPtr<FStatePayloadBase> InPayload)
+		: TargetStateTag(InTargetTag), Payload(InPayload) {
+	}
+
+	FStateTransitionRequest() = default;
 };

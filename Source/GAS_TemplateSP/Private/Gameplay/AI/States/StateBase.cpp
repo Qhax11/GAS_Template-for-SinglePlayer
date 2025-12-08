@@ -59,7 +59,7 @@ void UStateBase::OnExit_Implementation()
 	}
 }
 
-bool UStateBase::ExitRequest(FString Reason, const FGameplayTag& TransactionTag, TSharedPtr<FStatePayloadBase> ExitPayload)
+bool UStateBase::ExitRequest(FString Reason, FStateTransitionRequest StateTransitionRequest)
 {
 	if (!StateManager)
 	{
@@ -67,7 +67,7 @@ bool UStateBase::ExitRequest(FString Reason, const FGameplayTag& TransactionTag,
 		return false; 
 	}
 
-	return StateManager->RequestStateTreeExit(FStateTransitionRequest(TransactionTag, ExitPayload), Reason);
+	return StateManager->RequestStateTreeExit(StateTransitionRequest, Reason);
 }
 
 bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)

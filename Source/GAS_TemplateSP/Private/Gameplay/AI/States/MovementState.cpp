@@ -20,7 +20,7 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	MovementStateEnterPayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
 	if (!MovementStateEnterPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AttackStatePayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("MovementStateEnterPayload is invalid in: %s"), *GetName());
 		return;
 	}
 
@@ -76,7 +76,8 @@ void UMovementState::TryEnterToAttackState()
 		AttackData.AbilityClass = SelectedAttackCDO->GetClass();
 		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(AttackData);
 
-		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack, AttackPayload);
+		FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest(GAS_Tags::TAG_AI_State_Attack, AttackPayload);
+		ExitRequest("Target is in range", StateTransitionRequest);
 	}
 
 	/*
@@ -106,7 +107,7 @@ bool UMovementState::IsInRangeForAttack() const
 
 void UMovementState::OnMovementChainEnded()
 {
-	ExitRequest("MovementChain is ended", GAS_Tags::TAG_AI_State_Movement);
+	ExitRequest("MovementChain is ended");
 }
 
 void UMovementState::OnExit_Implementation()

@@ -3,18 +3,12 @@
 #pragma once
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
+#include "Gameplay/AI/DataTypes/State/StatePayloads.h"
 #include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "AC_StateManager.generated.h"
 
 class UStateBase;
-struct FStatePayloadBase;
-
-struct FStateTransitionRequest
-{
-	FGameplayTag TargetStateTag;
-	TSharedPtr<FStatePayloadBase> Payload;
-};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_StateManager : public UAC_AIControllerBase

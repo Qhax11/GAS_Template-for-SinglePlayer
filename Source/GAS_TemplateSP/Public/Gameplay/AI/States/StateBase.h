@@ -11,7 +11,6 @@
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
-
 USTRUCT()
 struct FStateInitParams
 {
@@ -45,7 +44,6 @@ public:
     FStateInitParams() = default;
 };
 
-
 UCLASS(Blueprintable, BlueprintType)
 class GAS_TEMPLATESP_API UStateBase : public UObject
 {
@@ -74,7 +72,7 @@ public:
     FGameplayTag StateTag;
 
 protected:
-    virtual bool ExitRequest(FString Reason, const FGameplayTag& TransactionTag = FGameplayTag(), TSharedPtr<FStatePayloadBase> ExitPayload = nullptr);
+    virtual bool ExitRequest(FString Reason, FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest());
 
     bool IsAttackInRange(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass);
 

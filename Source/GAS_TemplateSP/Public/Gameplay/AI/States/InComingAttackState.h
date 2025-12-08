@@ -8,20 +8,9 @@
 #include "Gameplay/Abilities/InCombat/GA_ParryKnockbackBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 #include "InComingAttackState.generated.h"
 
 struct FDamageData;
-
-struct FIncomingAttackStatePayload : public FStatePayloadBase
-{
-	FComingAttackPayload AttackPayload;
-	UComingAttackReactionData* ReactionData = nullptr;
-
-	FIncomingAttackStatePayload(FComingAttackPayload InPayload, UComingAttackReactionData* InReaction)
-		: AttackPayload(InPayload), ReactionData(InReaction) {
-	}
-};
 
 UCLASS()
 class GAS_TEMPLATESP_API UInComingAttackState : public UStateBase
@@ -40,15 +29,17 @@ public:
 	virtual void OnExit_Implementation() override;
 
 protected:
+	TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload;
+
 	class US_DamageDelegates* DamageSubsystem;
 
 	FTimerHandle DelayedReactionTimerHandle;
 
-	virtual bool SelectAndExecuteReaction(TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload);
+	virtual bool SelectAndExecuteReaction(UComingAttackReactionData* SelectedReactionData);
 
 	//********************* TAKE DAMAGE *********************/
 
-	void BindTargetComingAttackEnd(TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload);
+	void BindTargetComingAttackEnd();
 
 	void UnBindTargetComingAttackEnd();
 

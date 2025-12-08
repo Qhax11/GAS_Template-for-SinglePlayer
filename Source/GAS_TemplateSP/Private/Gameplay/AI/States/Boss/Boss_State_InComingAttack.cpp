@@ -15,26 +15,45 @@ void UBoss_State_InComingAttack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayl
 	Super::OnEnter(EnterPayload);
 }
 
-bool UBoss_State_InComingAttack::SelectAndExecuteReaction(TSharedPtr<FIncomingAttackStatePayload> AttackStatePayload)
+bool UBoss_State_InComingAttack::SelectAndExecuteReaction(UComingAttackReactionData* SelectedReactionData)
 {
-	if (Super::SelectAndExecuteReaction(AttackStatePayload))
+	// If its success on Super we don't have to do anything.
+	if (Super::SelectAndExecuteReaction(SelectedReactionData))
 	{
 		return true;
 	}
-	/*
-	UComingAttackReactionData* SelectedBestReaction = BehaviorDecisionComponent->LastSelectedComingAttackReaction;
-	if (SelectedBestReaction->ReactionType == EComingAttackReaction::Dodge) 
+
+	if (!SelectedReactionData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SelectedBestReaction is null in: %s"), *GetName());
+		return false;
+	}
+
+	if (SelectedReactionData->ReactionType == EComingAttackReaction::Dodge)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: ActivateDodgeAbility entered."));
-		ActivateDodgeAbility(SelectedBestReaction);
+		ActivateDodgeAbility(SelectedReactionData);
 		return true;
 	}
-	*/
+
 	return false;
 }
 
-void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction)
+void UBoss_State_InComingAttack::ActivateDodgeAbility(const UComingAttackReactionData* SelectedBestReaction)
 {
+	if (!SelectedBestReaction) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: SelectedBestReaction is null."));
+		return;
+	}
+
+	const UComingAttackReactionDataDodge* DodgeReactionData = Cast<UComingAttackReactionDataDodge>(SelectedBestReaction);
+	if (!DodgeReactionData) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: DodgeReactionData is null."));
+		return;
+	}
+
 	/*
 	if (Enemy && HeroTarget)
 	{
@@ -48,17 +67,17 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 
 		Enemy->SetActorRotation(LookAtRotation);
 	}
-
+	*/
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	FGameplayEventData GameplayEventData = FGameplayEventData();
-	//GameplayEventData.InstigatorTags.AddTag(BDS_Dodge->DodgeMovementAbilityData.ResolvedDirectionTag);
-	//GameplayEventData.EventTag = BDS_Dodge->DodgeMovementAbilityData.AbilityTriggerTag;
-	//GameplayEventData.EventMagnitude = BDS_Dodge->DodgeMovementAbilityData.AbilityEventMagnitude;
+	GameplayEventData.InstigatorTags.AddTag(DodgeReactionData->DodgeMovementAbilityData.ResolvedDirectionTag);
+	GameplayEventData.EventTag = DodgeReactionData->DodgeMovementAbilityData.AbilityTriggerTag;
+	GameplayEventData.EventMagnitude = DodgeReactionData->DodgeMovementAbilityData.AbilityEventMagnitude;
 
 	UGAS_GameplayAbilityBase* ActivatedDodgeAbility =
-		EnemyASC->TryActivateAbilityByClassWithEventData(BDS_Dodge->DodgeMovementAbilityData.MovementAbilityClass, GameplayEventData);
+		EnemyASC->TryActivateAbilityByClassWithEventData(DodgeReactionData->DodgeMovementAbilityData.MovementAbilityClass, GameplayEventData);
 	if (ActivatedDodgeAbility && ActivatedDodgeAbility->IsActive())
 	{
 		ActivatedDodgeAbility->OnAbilityEnded.RemoveAll(this);
@@ -74,7 +93,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UBDS_ComingAttackRea
 			BindTargetComingAttackEnd();
 		}
 	}
-	*/
+
 }
 
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)

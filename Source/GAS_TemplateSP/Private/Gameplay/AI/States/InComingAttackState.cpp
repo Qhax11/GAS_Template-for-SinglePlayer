@@ -29,9 +29,7 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 		return false;
 	}
 
-	// StaticCastSharedPtr is fast and safe if we trust the logic flow.
-	// Since we know InComingAttackState expects FIncomingAttackStatePayload.
-	TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
+	InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
 	if (!InComingAttackStatePayload.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("InComingAttackStatePayload is invalid in: %s"), *GetName());
@@ -63,22 +61,13 @@ void UInComingAttackState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	Super::OnEnter(EnterPayload);
 
-	if (!EnterPayload.IsValid()) 
+	if (!EnterPayload.IsValid() || !InComingAttackStatePayload.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EnterPayload is invalid in: %s"), *GetName());
 		return;
 	}
 
-	// StaticCastSharedPtr is fast and safe if we trust the logic flow.
-	// Since we know InComingAttackState expects FIncomingAttackStatePayload.
-	TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
-	if (!InComingAttackStatePayload.IsValid())
-	{	
-		UE_LOG(LogTemp, Warning, TEXT("MyPayload is invalid in: %s"), *GetName());
-		return;
-	}
-
-	SelectAndExecuteReaction(InComingAttackStatePayload);
+	SelectAndExecuteReaction(InComingAttackStatePayload->ReactionData);
 
 	// Always bind to DamageSubsystem here so that the state can respond to any incoming damage
 	// regardless of the reaction type (take damage, parry, dodge). This ensures the state
@@ -93,39 +82,32 @@ void UInComingAttackState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	}
 }
 
-bool UInComingAttackState::SelectAndExecuteReaction(TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload)
+bool UInComingAttackState::SelectAndExecuteReaction(UComingAttackReactionData* SelectedReactionData)
 {
-	if (!InComingAttackStatePayload.IsValid())
+	if (!SelectedReactionData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MyPayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("SelectedReactionData is invalid in: %s"), *GetName());
 		return false;
 	}
 
-	UComingAttackReactionData* SelectedBestReaction = InComingAttackStatePayload->ReactionData;
-	if (!SelectedBestReaction)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SelectedBestReaction is null in: %s"), *GetName());
-		return false;
-	}
-
-	if (SelectedBestReaction->ReactionType == EComingAttackReaction::TakeDamage)
+	if (SelectedReactionData->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeTakeDamage entered."));
-		BindTargetComingAttackEnd(InComingAttackStatePayload);
+		BindTargetComingAttackEnd();
 		return true;
 	}
-	else if (SelectedBestReaction->ReactionType == EComingAttackReaction::Parry)
+	else if (SelectedReactionData->ReactionType == EComingAttackReaction::Parry)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
-		BindTargetComingAttackEnd(InComingAttackStatePayload);
-		MakeParryAbility(SelectedBestReaction);
+		BindTargetComingAttackEnd();
+		MakeParryAbility(SelectedReactionData);
 		return true;
 	}
 
 	return false;
 }
 
-void UInComingAttackState::BindTargetComingAttackEnd(TSharedPtr<FIncomingAttackStatePayload> InComingAttackStatePayload)
+void UInComingAttackState::BindTargetComingAttackEnd()
 {
 	UGAS_GameplayAbilityBase* ComingAttack = InComingAttackStatePayload->AttackPayload.ComingAttack;
 	if (ComingAttack)

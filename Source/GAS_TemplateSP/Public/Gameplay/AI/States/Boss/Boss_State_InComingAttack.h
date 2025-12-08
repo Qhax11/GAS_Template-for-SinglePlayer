@@ -16,9 +16,9 @@ public:
 
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	virtual bool SelectAndExecuteReaction(TSharedPtr<FIncomingAttackStatePayload> AttackStatePayload) override;
+	virtual bool SelectAndExecuteReaction(UComingAttackReactionData* SelectedReactionData) override;
 
-	void ActivateDodgeAbility(const UBDS_ComingAttackReactionBase* BestComingAttackReaction);
+	void ActivateDodgeAbility(const UComingAttackReactionData* SelectedBestReaction);
 
 	UFUNCTION()
 	void OnDodgeAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);

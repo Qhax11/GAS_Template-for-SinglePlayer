@@ -190,7 +190,7 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 
 	if (BehaviorDecisionComponent->IsAttackInRange(BestAttack.AbilityClass))
 	{
-		TSharedPtr<FAttackStateStatePayload> AttackStatePayload = MakeShared<FAttackStateStatePayload>(BestAttack);
+		TSharedPtr<FAttackStatePayload> AttackStatePayload = MakeShared<FAttackStatePayload>(BestAttack);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack, AttackStatePayload);
 	}
 	else
@@ -201,36 +201,41 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 	}
 }
 
-bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& StateTag, TSharedPtr<FStatePayloadBase> EnterPayload)
+bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& TargetStateTag, TSharedPtr<FStatePayloadBase> EnterPayload)
 {
-	if (!StateTag.IsValid() || !bActive)
+	if (!TargetStateTag.IsValid() || !bActive)
 	{
 		return false;
 	}
 
 	if (bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to enter"), *StateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to enter"), *TargetStateTag.ToString());
 	}
 
-	UStateBase* FindedState = GetStateWithTag(StateTag);
-	if (!IsValid(FindedState)) 
+	UStateBase* TargetState = GetStateWithTag(TargetStateTag);
+	if (!IsValid(TargetState))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s TargetState is null!"));
 		return false;
 	}
 
-	if (FindedState->EnterCondition(EnterPayload))
+	if (TargetState->EnterCondition(EnterPayload))
 	{
-		FindedState->OnEnter(EnterPayload);
-		CurrentState = FindedState;
+		if (CurrentState)
+		{
+			CurrentState->OnExit();
+		}
+
+		TargetState->OnEnter(EnterPayload);
+		CurrentState = TargetState;
 		return true;
 	}
 	else
 	{
 		if (bEnableDebug)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot enter"), *FindedState->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot enter"), *TargetState->GetName());
 		}
 		return false;
 	}
@@ -263,40 +268,10 @@ bool UAC_StateManager::RequestStateTreeExit(const FStateTransitionRequest StateT
 	// If request coming with trancastion tag we directly enter
 	if (StateTransitionRequest.TargetStateTag.IsValid())
 	{
-		RequestStateTreeEnter(StateTransitionRequest.TargetStateTag, StateTransitionRequest.Payload);
-		return true;
+		return RequestStateTreeEnter(StateTransitionRequest.TargetStateTag, StateTransitionRequest.Payload);	
 	}
 
 	DecideNextStateBasedOnAttackRange();
-	return true;
-}
-
-void UAC_StateManager::HandleStateExit(const FGameplayTag& ExitedState)
-{
-	DecideNextStateBasedOnAttackRange();
-}
-
-bool UAC_StateManager::IsCurrentState(const FGameplayTag& StateTag)
-{
-	if (!StateTag.IsValid()) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: StateTag is null!"));
-		return false;
-	}
-
-	UStateBase* FindedState = GetStateWithTag(StateTag);
-	if (!FindedState)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: FindedState is null!"), *StateTag.ToString());
-		return false;
-	}
-
-	if (FindedState != CurrentState)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s FindedState is not current state!"), *StateTag.ToString());
-		return false;
-	}
-
 	return true;
 }
 

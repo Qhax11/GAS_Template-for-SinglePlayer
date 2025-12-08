@@ -44,8 +44,6 @@ public:
 
 	bool RequestStateTreeExit(const FStateTransitionRequest StateTransitionRequest, FString Reason);
 
-	bool IsCurrentState(const FGameplayTag& StateTag);
-
 	UPROPERTY(EditDefaultsOnly)
 	bool bEnableDebug = false;
 
@@ -53,9 +51,7 @@ public:
 	UStateBase* CurrentState = nullptr;
 
 protected:
-	bool RequestStateTreeEnter(const FGameplayTag& StateTag, TSharedPtr<FStatePayloadBase> EnterPayload = nullptr);
-
-	void HandleStateExit(const FGameplayTag& ExitedState);
+	bool RequestStateTreeEnter(const FGameplayTag& TargetStateTag, TSharedPtr<FStatePayloadBase> EnterPayload = nullptr);
 
 	void HandleTargetDetected();
 

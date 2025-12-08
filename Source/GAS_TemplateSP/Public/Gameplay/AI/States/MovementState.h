@@ -6,18 +6,6 @@
 #include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "MovementState.generated.h"
 
-struct FMovementStatePayload : public FStatePayloadBase
-{
-	UMovementChainAsset* MovementChainAsset = nullptr;
-
-	TSubclassOf<UGAS_GameplayAbilityBase> TargetAttackClass = nullptr; // Range check için
-
-	FMovementStatePayload(UMovementChainAsset* InMovementChainAsset, TSubclassOf<UGAS_GameplayAbilityBase> InTargetAttackClass)
-		: MovementChainAsset(InMovementChainAsset), TargetAttackClass(InTargetAttackClass) {
-	}
-};
-
-class UAC_EnemyMovementManager;
 
 UCLASS()
 class GAS_TEMPLATESP_API UMovementState : public UStateBase

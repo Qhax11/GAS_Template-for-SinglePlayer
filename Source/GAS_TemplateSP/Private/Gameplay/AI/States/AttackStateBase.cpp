@@ -21,7 +21,7 @@ void UAttackStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	Super::OnEnter();
 
 	// StaticCastSharedPtr is fast and safe if we trust the logic flow.
-	TSharedPtr<FAttackStateStatePayload> AttackStatePayload = StaticCastSharedPtr<FAttackStateStatePayload>(EnterPayload);
+	TSharedPtr<FAttackStatePayload> AttackStatePayload = StaticCastSharedPtr<FAttackStatePayload>(EnterPayload);
 	if (!AttackStatePayload.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AttackStatePayload is invalid in: %s"), *GetName());
@@ -32,7 +32,7 @@ void UAttackStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	SelectAndMakeAttack(AttackStatePayload);
 }
 
-bool UAttackStateBase::SelectAndMakeAttack(TSharedPtr<FAttackStateStatePayload> AttackStatePayload)
+bool UAttackStateBase::SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> AttackStatePayload)
 {
 	MakeAttack(AttackStatePayload->AttackData.AbilityClass);
 	return true;

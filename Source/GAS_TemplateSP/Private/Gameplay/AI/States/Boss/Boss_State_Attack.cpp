@@ -9,7 +9,7 @@ void UBoss_State_Attack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	Super::OnEnter(EnterPayload);
 }
 
-bool UBoss_State_Attack::SelectAndMakeAttack(TSharedPtr<FAttackStateStatePayload> AttackStatePayload)
+bool UBoss_State_Attack::SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> AttackStatePayload)
 {
 	TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass = AttackStatePayload->AttackData.AbilityClass;
 	if (!SelectedAttackClass)

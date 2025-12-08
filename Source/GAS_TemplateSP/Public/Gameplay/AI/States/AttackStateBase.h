@@ -6,16 +6,6 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AttackStateBase.generated.h"
 
-class UGAS_GameplayAbilityBase;
-
-struct FAttackStateStatePayload : public FStatePayloadBase
-{
-	FAttackData AttackData;
-
-	FAttackStateStatePayload(FAttackData IAttackData)
-		: AttackData(IAttackData) {
-	}
-};
 
 UCLASS()
 class GAS_TEMPLATESP_API UAttackStateBase : public UStateBase
@@ -30,7 +20,7 @@ public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 protected:
-	virtual bool SelectAndMakeAttack(TSharedPtr<FAttackStateStatePayload> AttackStatePayload);
+	virtual bool SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> AttackStatePayload);
 
 	void MakeAttack(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass);
 

@@ -71,7 +71,12 @@ void UMovementState::TryEnterToAttackState()
 	if (IsInRangeForAttack())
 	{
 		MovementManagerComponent->StopMovementAbilities();
-		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack, MovementStateEnterPayload);
+
+		FAttackData AttackData;
+		AttackData.AbilityClass = SelectedAttackCDO->GetClass();
+		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(AttackData);
+
+		ExitRequest("Target is in range", GAS_Tags::TAG_AI_State_Attack, AttackPayload);
 	}
 
 	/*
@@ -113,3 +118,4 @@ void UMovementState::OnExit_Implementation()
 		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
 	}
 }
+

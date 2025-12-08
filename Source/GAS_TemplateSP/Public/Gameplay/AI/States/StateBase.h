@@ -7,6 +7,7 @@
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/AI/DataTypes/State/StatePayloads.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
@@ -44,11 +45,6 @@ public:
     FStateInitParams() = default;
 };
 
-// 1. BASE STRUCT (Polymorphic)
-struct FStatePayloadBase
-{
-    virtual ~FStatePayloadBase() {} // Virtual destructor is essential!
-};
 
 UCLASS(Blueprintable, BlueprintType)
 class GAS_TEMPLATESP_API UStateBase : public UObject

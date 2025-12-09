@@ -95,10 +95,15 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Debuff_Slow);
 
 	// Action Phase States (Animation Flow & Cancel Windows)
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase); 
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Startup); // Wind-up phase where the action can still be canceled by defensive moves like block or parry.
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active); // Committed impact phase where damage occurs and voluntary ca nceling is strictly disabled.
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Recovery); // Cooldown phase that allows input buffering to seamlessly chain into the next combo or movement.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase);
+	// Startup (Wind-up): attack preparation, cancellable by defensive moves.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Startup);
+	// Active Hit: impact frames where trace/damage occurs, no voluntary canceling allowed.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_Hit);
+	// Active PostHit: impact is finished but the attack is still transitioning trace is disabled, combo buffering is enabled.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_PostHit);
+	// Recovery: the cooldown section of the attack; if no combo is buffered, the ability naturally ends here.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Recovery);
 
 	// Movement States
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Moving);

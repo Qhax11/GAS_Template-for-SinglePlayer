@@ -13,6 +13,9 @@
 
 UGA_MontageAbility::UGA_MontageAbility()
 {
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostHit);
+
 	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping);
 }
 

@@ -13,7 +13,6 @@ UGA_MeleeAttackBase::UGA_MeleeAttackBase()
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeAttack);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher);
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
 
 	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start);
 	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Continue);

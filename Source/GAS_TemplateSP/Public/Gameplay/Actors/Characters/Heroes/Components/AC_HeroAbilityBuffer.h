@@ -22,7 +22,7 @@ protected:
 	void OnAbilityFailed(const UGameplayAbility* FailedAbility, const FGameplayTagContainer& TagExplaining);
 
 	UFUNCTION()
-	void OnHeroPhaseActiveTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnHeroPhaseActivePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input Buffer")
 	float BufferWindowDuration = 0.2f;

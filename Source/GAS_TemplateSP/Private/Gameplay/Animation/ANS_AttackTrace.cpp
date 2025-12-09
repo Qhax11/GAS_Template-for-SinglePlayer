@@ -1,19 +1,19 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Animation/ANS_SendGameplayEvent.h"
+#include "Gameplay/Animation/ANS_AttackTrace.h"
 #include "AbilitySystemComponent.h"
 #include <AbilitySystemGlobals.h>
 #include "Gameplay/Tags/GAS_Tags.h"
 
-UANS_SendGameplayEvent::UANS_SendGameplayEvent()
+UANS_AttackTrace::UANS_AttackTrace()
 {
 	EventTagStart = GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start;
 	EventTagContinue = GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Continue;
 	EventTagEnd = GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_End;
 }
 
-void UANS_SendGameplayEvent::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
+void UANS_AttackTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
@@ -32,7 +32,7 @@ void UANS_SendGameplayEvent::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 	ASC->HandleGameplayEvent(EventTagStart, &EventData);
 }
 
-void UANS_SendGameplayEvent::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
+void UANS_AttackTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
 
@@ -51,7 +51,7 @@ void UANS_SendGameplayEvent::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 	ASC->HandleGameplayEvent(EventTagContinue, &EventData);
 }
 
-void UANS_SendGameplayEvent::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
+void UANS_AttackTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
@@ -70,7 +70,7 @@ void UANS_SendGameplayEvent::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSe
 	ASC->HandleGameplayEvent(EventTagEnd, &EventData);
 }
 
-FString UANS_SendGameplayEvent::GetNotifyName_Implementation() const
+FString UANS_AttackTrace::GetNotifyName_Implementation() const
 {
 	TArray<FGameplayTag> TagsToShow;
 	if (EventTagStart.IsValid())   TagsToShow.Add(EventTagStart);
@@ -79,14 +79,14 @@ FString UANS_SendGameplayEvent::GetNotifyName_Implementation() const
 
 	if (TagsToShow.Num() == 0)
 	{
-		return TEXT("ANS_SendGameplayEvent: TAGS MISSING!");
+		return TEXT("ANS_AttackTrace: TAGS MISSING!");
 	}
 
-	FString Result = TEXT("ANS_SendGameplayEvent: ");
+	FString Result = TEXT("ANS_AttackTrace: ");
 	for (int32 i = 0; i < TagsToShow.Num(); ++i)
 	{
 		FString TagString = TagsToShow[i].ToString();
-		const FString Prefix = TEXT("Gameplay.Event.AnimNotify.");
+		const FString Prefix = TEXT("AnimNotify.");
 		if (TagString.StartsWith(Prefix))
 		{
 			TagString = TagString.RightChop(Prefix.Len());

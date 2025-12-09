@@ -4,16 +4,16 @@
 
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "GameplayTagContainer.h"
-#include "ANS_SendGameplayEvent.generated.h"
+#include "ANS_AttackTrace.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UANS_SendGameplayEvent : public UAnimNotifyState
+class GAS_TEMPLATESP_API UANS_AttackTrace : public UAnimNotifyState
 {
 	GENERATED_BODY()
 
 public:
-	UANS_SendGameplayEvent();
+	UANS_AttackTrace();
 
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 

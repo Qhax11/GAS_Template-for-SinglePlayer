@@ -8,7 +8,7 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
-#include "Gameplay/Animation/AN_SendGameplayEvent.h"
+#include "Gameplay/Animation/ANS_AttackTrace.h"
 #include "Gameplay/AI/States/InComingAttackState.h"
 #include <Kismet/GameplayStatics.h>
 
@@ -106,21 +106,21 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 	const UAnimMontage* Montage = Ability->AnimMontage;
 
 	// 1. TraceStart notify'inin süresini bul
-	float NotifyTime = -1.0f;
+	float NotifyStartTime = -1.0f;
 
 	for (const FAnimNotifyEvent& Notify : Montage->Notifies)
 	{
-		if (const UAN_SendGameplayEvent* TagNotify = Cast<UAN_SendGameplayEvent>(Notify.Notify))
+		if (const UANS_AttackTrace* TagNotify = Cast<UANS_AttackTrace>(Notify.Notify))
 		{
-			if (TagNotify->EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart)
+			if (TagNotify->EventTagStart == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start)
 			{
-				NotifyTime = Notify.GetTriggerTime();
+				NotifyStartTime = Notify.GetTime();
 				break;
 			}
 		}
 	}
 
-	if (NotifyTime < 0.f)
+	if (NotifyStartTime < 0.f)
 	{
 		return -1.0f;
 	}
@@ -134,12 +134,12 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 		if (Montage->CompositeSections.IsValidIndex(SectionIndex))
 		{
 			const float SectionStartTime = Montage->CompositeSections[SectionIndex].GetTime();
-			return FMath::Max(NotifyTime - SectionStartTime, 0.0f);
+			return FMath::Max(NotifyStartTime - SectionStartTime, 0.0f);
 		}
 	}
 
 	// 3. Normal durumda NotifyTime döner
-	return NotifyTime;
+	return NotifyStartTime;
 }
 
 void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload ComingAttackPayload)

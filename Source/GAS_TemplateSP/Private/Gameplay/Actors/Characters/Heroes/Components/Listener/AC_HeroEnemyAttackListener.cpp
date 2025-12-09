@@ -3,7 +3,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/Listener/AC_HeroEnemyAttackListener.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
-#include "Gameplay/Animation/AN_SendGameplayEvent.h"
+#include "Gameplay/Animation/ANS_AttackTrace.h"
 #include "AbilitySystemComponent.h"
 #include "TimerManager.h"
 
@@ -169,21 +169,22 @@ float UAC_HeroEnemyAttackListener::GetAttackNotifyTriggerTime(UGA_MeleeAttackBas
     }
 
     const UAnimMontage* Montage = Ability->AnimMontage;
+    float NotifyStartTime = -1.0f;
 
-    float NotifyTime = -1.0f;
-    for (const FAnimNotifyEvent& Notify : Montage->Notifies)
+    for (const FAnimNotifyEvent& NotifyEvent : Montage->Notifies)
     {
-        if (const UAN_SendGameplayEvent* TagNotify = Cast<UAN_SendGameplayEvent>(Notify.Notify))
+        if (NotifyEvent.NotifyStateClass && NotifyEvent.NotifyStateClass->IsA<UANS_AttackTrace>())
         {
-            if (TagNotify->EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart)
+            const UANS_AttackTrace* StateNotify = Cast<UANS_AttackTrace>(NotifyEvent.NotifyStateClass);
+            if (StateNotify->EventTagStart == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start)
             {
-                NotifyTime = Notify.GetTriggerTime();
+                NotifyStartTime = NotifyEvent.GetTime(); // NotifyBegin zamanı
                 break;
             }
         }
     }
 
-    return NotifyTime >= 0.f ? NotifyTime : -1.f;
+    return NotifyStartTime >= 0.f ? NotifyStartTime : -1.f;
 }
 
 void UAC_HeroEnemyAttackListener::CleanupAbilityTimers(UGameplayAbility* Ability)

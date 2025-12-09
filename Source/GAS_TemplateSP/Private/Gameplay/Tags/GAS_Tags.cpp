@@ -43,8 +43,6 @@ namespace GAS_Tags
 	
 	// Attack Notifies
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack, "Gameplay.Event.AnimNotify.Attack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_TraceStart, "Gameplay.Event.AnimNotify.Attack.TraceStart");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_TraceEnd, "Gameplay.Event.AnimNotify.Attack.TraceEnd");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_CanActivateNextAttack, "Gameplay.Event.AnimNotify.Attack.CanActivateNextAttack");
 
 	// Rotation Notifies

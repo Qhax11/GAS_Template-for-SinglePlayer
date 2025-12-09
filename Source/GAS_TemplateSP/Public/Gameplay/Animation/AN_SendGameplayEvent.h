@@ -19,5 +19,4 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (Categories = "Gameplay.Event.AnimNotify"))
 	FGameplayTag EventTag;
-
 };

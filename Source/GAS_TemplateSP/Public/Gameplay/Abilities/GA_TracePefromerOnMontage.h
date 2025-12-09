@@ -12,32 +12,39 @@ class GAS_TEMPLATESP_API UGA_TracePefromerOnMontage : public UGA_MontageAbility
 {
 	GENERATED_BODY()
 	
-public:
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+protected:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
-	void TraceTick();
-
-	/**
-    * Provides the start/end/rotation data for the trace.
-    * Default implementation uses weapon-based trace points.
-    * Abilities that require custom trace origins (e.g., kicks, punches, bone-based attacks)
-    * should override this and supply their own socket or bone data.
-    */
 	virtual void GetTracePoints(FVector& OutStart, FVector& OutEnd, FRotator& OutRot);
-
-	bool TraceForHostileUnits(TArray<FHitResult>& OutHitResults);
 
 	virtual void OnTraceHitResults(const TArray<FHitResult>& HitResults);
 
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "TracePefromerOnMontage")
-	float TraceTickValue = 0.01f;
-
-	FTimerHandle TimerHandle_TraceTick;
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	UPROPERTY()
-	AWeaponBase* CharacterWeapon;
+	TObjectPtr<class AWeaponBase> CharacterWeapon;
+	// Interpolated trace settings
+	UPROPERTY(EditDefaultsOnly, Category = "Trace", meta = (ClampMin = "20.0", ClampMax = "50.0"))
+	float MaxStepSize = 20.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	float MinDistanceThreshold = 1.0f; 
+
+	// Previous frame positions
+	FVector PrevTraceStart;
+	FVector PrevTraceEnd;
+	bool bIsFirstTraceTick = true;
+
+	// Hit tracking
+	UPROPERTY()
+	TSet<TObjectPtr<AActor>> HitActorsThisSwing;
+
+private:
+	// Interpolated trace logic
+	void PerformInterpolatedTrace();
+
+	// Trace helper
+	bool TraceForHostileUnits(const FVector& Start, const FVector& End, TArray<FHitResult>& OutHitResults);
 };

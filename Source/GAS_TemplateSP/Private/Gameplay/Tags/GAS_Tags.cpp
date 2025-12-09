@@ -60,6 +60,12 @@ namespace GAS_Tags
 	// Misc Notifies
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Footstep, "Gameplay.Event.AnimNotify.Footstep");
 
+	// Notify States
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotifyState_AttackTrace, "Gameplay.Event.AnimNotifyState.AttackTrace");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start, "Gameplay.Event.AnimNotifyState.AttackTrace.Start");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Continue, "Gameplay.Event.AnimNotifyState.AttackTrace.Continue");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotifyState_AttackTrace_End, "Gameplay.Event.AnimNotifyState.AttackTrace.End");
+
 
 	// ============================================================
 	// ABILITY TRIGGER EVENTS

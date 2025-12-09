@@ -31,24 +31,27 @@ void UGA_TracePefromerOnMontage::OnEventReceived(FGameplayTag EventTag, FGamepla
 {
 	Super::OnEventReceived(EventTag, EventData);
 
-	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceStart)
+	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start)
 	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle_TraceTick, this, &UGA_TracePefromerOnMontage::TraceTick, TraceTickValue, true, 0);
-	}
-	else if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Attack_TraceEnd)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
-	}
-}
+		bIsFirstTraceTick = true;
+		HitActorsThisSwing.Empty();
 
-void UGA_TracePefromerOnMontage::TraceTick()
-{
-	TArray<FHitResult> OutHitResults;
-	if (TraceForHostileUnits(OutHitResults))
-	{
-		OnTraceHitResults(OutHitResults);
+		// Ýlk pozisyonu al
+		FVector Start, End;
+		FRotator Rot;
+		GetTracePoints(Start, End, Rot);
 
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_TraceTick);
+		PrevTraceStart = Start;
+		PrevTraceEnd = End;
+	}
+	else if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Continue)
+	{
+		PerformInterpolatedTrace();
+	}
+	else if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_End)
+	{
+		bIsFirstTraceTick = true;
+		HitActorsThisSwing.Empty();
 	}
 }
 
@@ -60,30 +63,105 @@ void UGA_TracePefromerOnMontage::GetTracePoints(FVector& OutStart, FVector& OutE
 		OutEnd = CharacterWeapon->GetTraceEnd();
 		OutRot = CharacterWeapon->GetTraceEndRotation();
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetTracePoints: CharacterWeapon is null. Override this function for bone-based trace!"));
+		OutStart = FVector::ZeroVector;
+		OutEnd = FVector::ZeroVector;
+		OutRot = FRotator::ZeroRotator;
+	}
 }
 
-bool UGA_TracePefromerOnMontage::TraceForHostileUnits(TArray<FHitResult>& OutHitResults)
+void UGA_TracePefromerOnMontage::PerformInterpolatedTrace()
 {
-	if (!TraceData)
+	if (!TraceData || !TraceData->Trace)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TraceData is null in: %s"), *GetName());
-		return false;
+		return;
 	}
 
-	FVector Start;
-	FVector End;
+	// Þimdiki pozisyonlarý al (override edilmiþ GetTracePoints kullanýlýr)
+	FVector CurrStart, CurrEnd;
 	FRotator Rot;
+	GetTracePoints(CurrStart, CurrEnd, Rot);
 
-	GetTracePoints(Start, End, Rot);
+	// Ýlk tick'te sadece pozisyonu kaydet
+	if (bIsFirstTraceTick)
+	{
+		PrevTraceStart = CurrStart;
+		PrevTraceEnd = CurrEnd;
+		bIsFirstTraceTick = false;
+		return;
+	}
+
+	// Hareket mesafesini hesapla
+	const float DistanceMoved = FVector::Distance(PrevTraceEnd, CurrEnd);
+
+	// Çok az hareket varsa trace yapma
+	if (DistanceMoved < MinDistanceThreshold)
+	{
+		return;
+	}
+
+	// Interpolated trace sayýsýný hesapla
+	const int32 NumSteps = FMath::Max(1, FMath::CeilToInt(DistanceMoved / MaxStepSize));
+
+	// Önceki ve þimdiki pozisyon arasýnda interpolate ederek trace yap
+	for (int32 i = 0; i <= NumSteps; i++)
+	{
+		const float Alpha = (float)i / (float)NumSteps;
+
+		FVector InterpStart = FMath::Lerp(PrevTraceStart, CurrStart, Alpha);
+		FVector InterpEnd = FMath::Lerp(PrevTraceEnd, CurrEnd, Alpha);
+
+		// Bu ara pozisyonda trace yap
+		TArray<FHitResult> HitResults;
+		if (TraceForHostileUnits(InterpStart, InterpEnd, HitResults))
+		{
+			// Hit'leri filtrele - ayný actor'a bu swing'de birden fazla hasar verme
+			TArray<FHitResult> FilteredHits;
+			for (const FHitResult& Hit : HitResults)
+			{
+				AActor* HitActor = Hit.GetActor();
+				if (HitActor && !HitActorsThisSwing.Contains(HitActor))
+				{
+					FilteredHits.Add(Hit);
+					HitActorsThisSwing.Add(HitActor);
+				}
+			}
+
+			if (FilteredHits.Num() > 0)
+			{
+				OnTraceHitResults(FilteredHits);
+			}
+		}
+	}
+
+	// Þimdiki pozisyonu kaydet
+	PrevTraceStart = CurrStart;
+	PrevTraceEnd = CurrEnd;
+}
+
+bool UGA_TracePefromerOnMontage::TraceForHostileUnits(const FVector& Start, const FVector& End, TArray<FHitResult>& OutHitResults)
+{
+	if (!TraceData || !TraceData->Trace)
+	{
+		return false;
+	}
 
 	FTraceRequest TraceRequest;
 	TraceRequest.StartLocation = Start;
 	TraceRequest.EndLocation = End;
-	TraceRequest.Direction = Rot;
+	TraceRequest.Direction = (End - Start).Rotation();
 
-	TraceData->Trace->CreateTraceWithTeamFilter(GetWorld(), GetAvatarActorFromActorInfo(), ETeamAttitude::Hostile, OutHitResults, TraceRequest);
+	TraceData->Trace->CreateTraceWithTeamFilter(
+		GetWorld(),
+		GetAvatarActorFromActorInfo(),
+		ETeamAttitude::Hostile,
+		OutHitResults,
+		TraceRequest
+	);
 
-	return OutHitResults.IsValidIndex(0);
+	return OutHitResults.Num() > 0;
 }
 
 void UGA_TracePefromerOnMontage::OnTraceHitResults(const TArray<FHitResult>& HitResults)
@@ -96,7 +174,12 @@ void UGA_TracePefromerOnMontage::EndAbility(const FGameplayAbilitySpecHandle Han
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
+	// Cleanup
+	bIsFirstTraceTick = true;
+	HitActorsThisSwing.Empty();
+
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

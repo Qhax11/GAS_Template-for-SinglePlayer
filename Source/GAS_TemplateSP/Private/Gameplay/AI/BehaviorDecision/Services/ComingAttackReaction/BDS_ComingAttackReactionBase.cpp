@@ -40,11 +40,14 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
         }
     }
 
-    if(BestReaction->ReactionType == EComingAttackReaction::Dodge)
+    if (BestReaction) 
     {
-        UComingAttackReactionDataDodge* ComingAttackReactionDataDodge = Cast<UComingAttackReactionDataDodge>(BestReaction);
-        ComingAttackReactionDataDodge->ApplyDirectionPoliciesToMovementAbility(HeroMovementListenerComp);
-	}
+        if (BestReaction->ReactionType == EComingAttackReaction::Dodge)
+        {
+            UComingAttackReactionDataDodge* ComingAttackReactionDataDodge = Cast<UComingAttackReactionDataDodge>(BestReaction);
+            ComingAttackReactionDataDodge->ApplyDirectionPoliciesToMovementAbility(HeroMovementListenerComp);
+        }
+    }
 
     return BestReaction;
 }

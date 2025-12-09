@@ -28,7 +28,7 @@ FString UAN_SendGameplayEvent::GetNotifyName_Implementation() const
 {
 	if (!EventTag.IsValid())
 	{
-		return TEXT("SendGameplayEvent: TAG MISSING!");
+		return TEXT("AN_SendGameplayEvent: TAG MISSING!");
 	}
 
 	const FString Full = EventTag.ToString();
@@ -38,9 +38,9 @@ FString UAN_SendGameplayEvent::GetNotifyName_Implementation() const
 	if (Full.StartsWith(Prefix))
 	{
 		FString Trimmed = Full.RightChop(Prefix.Len());
-		return TEXT("SendGameplayEvent: ") + Trimmed;
+		return TEXT("AN_SendGameplayEvent: ") + Trimmed;
 	}
 
 	// Fallback: return whole tag after prefix
-	return TEXT("SendGameplayEvent: ") + Full;
+	return TEXT("AN_SendGameplayEvent: ") + Full;
 }

@@ -47,6 +47,7 @@ void UANS_AttackTrace::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("notify tick!"));
 	FGameplayEventData EventData;
 	ASC->HandleGameplayEvent(EventTagContinue, &EventData);
 }

@@ -22,8 +22,6 @@ protected:
 
 	void ChangeComboSet();
 
-	void OnHeroAbilityActivated(UGameplayAbility* Ability);
-
 public:
 	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
 

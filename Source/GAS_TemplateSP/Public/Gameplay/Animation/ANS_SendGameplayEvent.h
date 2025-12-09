@@ -13,6 +13,8 @@ class GAS_TEMPLATESP_API UANS_SendGameplayEvent : public UAnimNotifyState
 	GENERATED_BODY()
 
 public:
+	UANS_SendGameplayEvent();
+
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference) override;

@@ -4,6 +4,14 @@
 #include "Gameplay/Animation/ANS_SendGameplayEvent.h"
 #include "AbilitySystemComponent.h"
 #include <AbilitySystemGlobals.h>
+#include "Gameplay/Tags/GAS_Tags.h"
+
+UANS_SendGameplayEvent::UANS_SendGameplayEvent()
+{
+	EventTagStart = GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start;
+	EventTagContinue = GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Continue;
+	EventTagEnd = GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_End;
+}
 
 void UANS_SendGameplayEvent::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {

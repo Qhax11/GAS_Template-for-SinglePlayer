@@ -27,24 +27,6 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagRemoved);
 
 	InitComboChainTracker(EComboType::GroundCombo);
-
-	CharacterBaseASC->AbilityActivatedCallbacks.AddUObject(this, &UAC_HeroMeleeComboManager::OnHeroAbilityActivated);
-}
-
-void UAC_HeroMeleeComboManager::OnHeroAbilityActivated(UGameplayAbility* Ability)
-{
-	if (!Ability)
-	{
-		return;
-	}
-
-	/*
-	if (!Ability->IsA<UGA_ComboMeleeAttack>() || !Ability->IsA<UGA_HeroShadowAttack>())
-	{
-		ActiveComboChainTracker.Reset();
-		OnComboEnded.Broadcast();
-	}
-	*/
 }
 
 UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)

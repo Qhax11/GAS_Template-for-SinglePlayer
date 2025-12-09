@@ -27,7 +27,7 @@ protected:
 	TObjectPtr<class AWeaponBase> CharacterWeapon;
 	// Interpolated trace settings
 	UPROPERTY(EditDefaultsOnly, Category = "Trace", meta = (ClampMin = "20.0", ClampMax = "50.0"))
-	float MaxStepSize = 50.0f;
+	float MaxStepSize = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	float MinDistanceThreshold = 1.0f; 

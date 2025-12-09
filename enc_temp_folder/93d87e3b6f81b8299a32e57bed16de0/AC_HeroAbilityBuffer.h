@@ -24,11 +24,11 @@ protected:
 	UFUNCTION()
 	void OnHeroPhaseActivePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input Buffer")
+	float BufferWindowDuration = 0.2f;
+
 	UPROPERTY()
 	TSubclassOf<UGameplayAbility> BufferedAbilityClass;
-
-	UPROPERTY(EditDefaultsOnly)
-	float BufferLifetime = 0.25f;
 
 	FTimerHandle BufferTimerHandle;
 

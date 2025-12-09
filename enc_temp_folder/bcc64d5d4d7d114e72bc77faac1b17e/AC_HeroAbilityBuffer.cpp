@@ -37,23 +37,20 @@ void UAC_HeroAbilityBuffer::OnAbilityFailed(const UGameplayAbility* FailedAbilit
         return;
     }
 
-    // Only buffer during relevant phases
-    if (!TagExplaining.HasTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit) &&
-        !TagExplaining.HasTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostHit))
+    if (!TagExplaining.HasTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit))
     {
         return;
     }
 
-    // Save ability
     BufferedAbilityClass = FailedAbility->GetClass();
 
-    // Reset timeout
     GetWorld()->GetTimerManager().ClearTimer(BufferTimerHandle);
+
     GetWorld()->GetTimerManager().SetTimer(
         BufferTimerHandle,
         this,
         &UAC_HeroAbilityBuffer::ClearBuffer,
-        BufferLifetime,
+        BufferWindowDuration,
         false
     );
 }
@@ -79,6 +76,7 @@ void UAC_HeroAbilityBuffer::TryActivateBufferedAbility()
 void UAC_HeroAbilityBuffer::ClearBuffer()
 {
     BufferedAbilityClass = nullptr;
+
     if (UWorld* World = GetWorld())
     {
         World->GetTimerManager().ClearTimer(BufferTimerHandle);

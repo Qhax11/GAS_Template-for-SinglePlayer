@@ -32,6 +32,9 @@ protected:
 
 	FTimerHandle BufferTimerHandle;
 
+	UPROPERTY()
+	class UAC_HeroMeleeComboManager* HeroMeleeComboManager;
+
 	void TryActivateBufferedAbility();
 
 	void ClearBuffer();

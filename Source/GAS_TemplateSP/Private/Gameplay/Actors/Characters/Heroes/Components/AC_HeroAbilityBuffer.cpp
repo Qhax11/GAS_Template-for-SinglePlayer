@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAbilityBuffer.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Tags/GAS_Tags.h"
@@ -20,6 +21,9 @@ void UAC_HeroAbilityBuffer::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("HeroBase, HeroASC or HeroTagDelegatesComp is null in: %s)"), *GetName());
         return;
     }
+
+    HeroMeleeComboManager = HeroBase->GetHeroMeleeComboManagerComponent();
+    checkf(HeroMeleeComboManager, TEXT("HeroMeleeComboManager is null in %s"), *GetClass()->GetName());
 
     if (!HeroASC->AbilityFailedCallbacks.IsBoundToObject(this))
     {
@@ -72,6 +76,15 @@ void UAC_HeroAbilityBuffer::TryActivateBufferedAbility()
 
     TSubclassOf<UGameplayAbility> AbilityToActivate = BufferedAbilityClass;
     ClearBuffer(); 
+
+    if (AbilityToActivate->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
+    {
+        if (HeroMeleeComboManager) 
+        {
+            HeroMeleeComboManager->ActivateComboMeleeAttackAbility();
+            return;
+        }
+    }
 
     HeroASC->TryActivateAbilityByClass(AbilityToActivate);
 }

@@ -17,9 +17,6 @@ protected:
 
 	void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData) override;
 
-	UFUNCTION()
-	void OnCanActivateNextAttack();
-
 	void ChangeComboSet();
 
 public:
@@ -36,5 +33,8 @@ private:
 
 	UFUNCTION()
 	void OnInAirTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnPhaseActiveHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 };

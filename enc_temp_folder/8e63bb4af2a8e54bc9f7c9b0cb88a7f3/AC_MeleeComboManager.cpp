@@ -128,15 +128,12 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 
 void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
 {
-	if (ComboAbilityEndedData.AbilityThatEnded)
+	if (!LastActivatedCombo) 
 	{
-		ComboAbilityEndedData.AbilityThatEnded->OnAbilityEnded.RemoveAll(this);
+		return;
 	}
 
-	if (LastActivatedCombo == ComboAbilityEndedData.AbilityThatEnded)
-	{
-		LastActivatedCombo = nullptr;
-	}
+	LastActivatedCombo->OnAbilityEnded.RemoveAll(this);
 }
 
 FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)

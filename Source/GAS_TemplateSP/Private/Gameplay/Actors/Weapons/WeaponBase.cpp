@@ -5,6 +5,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+
 
 AWeaponBase::AWeaponBase()
 {
@@ -31,6 +34,47 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AGAS_CharacterBase* OwnerCharacter = Cast<AGAS_CharacterBase>(GetAttachParentActor());
+	if (!OwnerCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerCharacter is null in: %s"), *GetClass()->GetName());
+		return;
+	}
+
+	UAC_TagDelegates* OwnerTagDelegateComp = OwnerCharacter->GetTagDelegatesComponent();
+	if (!OwnerTagDelegateComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerTagDelegateComp is null in: %s"), *GetClass()->GetName());
+		return;
+	}
+
+	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit, EListenMode::OnAdded).BindDynamic(this, &AWeaponBase::OnPhaseActivePostHitTagAdded);
+	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit, EListenMode::OnRemoved).BindDynamic(this, &AWeaponBase::OnPhaseActivePostHitTagRemoved);
+}
+
+void AWeaponBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (!bIsTracking)
+		return;
+
+	const FVector Mid = GetTraceMid();
+
+	// First valid frame
+	if (PreviousMid.IsZero())
+	{
+		PreviousMid = Mid;
+		SwingDirection = FVector::ZeroVector;
+		return;
+	}
+
+	// Calculate movement direction
+	FVector Delta = Mid - PreviousMid;
+	SwingDirection = Delta.GetSafeNormal();
+
+	PreviousMid = Mid;
 }
 
 FVector AWeaponBase::GetTraceStart() const
@@ -53,17 +97,43 @@ FRotator AWeaponBase::GetTraceEndRotation() const
 	return TraceEnd ? TraceEnd->GetComponentRotation() : FRotator::ZeroRotator;
 }
 
-void AWeaponBase::UpdatePreviousLocation()
+void AWeaponBase::OnPhaseActivePostHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	PreviousLocation = GetTraceMid();
-	/*
-	DrawDebugPoint(
-		GetWorld(),
-		PreviousLocation, // World location
-		10.f,                     // Point size
-		FColor::Blue,              // Color
-		false,                    // Persistent lines (true = stays until cleared)
-		12.f                       // Life time (seconds)
-	);
-	*/
+	EnableTracking();
+}
+
+void AWeaponBase::OnPhaseActivePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	DisableTracking();
+}
+
+void AWeaponBase::EnableTracking()
+{
+	if (bIsTracking)
+		return;
+
+	bIsTracking = true;
+
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	SetActorTickEnabled(true);
+	RegisterAllActorTickFunctions(true, false);
+
+	// Reset
+	PreviousMid = FVector::ZeroVector;
+	SwingDirection = FVector::ZeroVector;
+}
+
+void AWeaponBase::DisableTracking()
+{
+	if (!bIsTracking)
+		return;
+
+	bIsTracking = false;
+
+	SetActorTickEnabled(false);
+	RegisterAllActorTickFunctions(false, false);
+
+	SwingDirection = FVector::ZeroVector;
 }

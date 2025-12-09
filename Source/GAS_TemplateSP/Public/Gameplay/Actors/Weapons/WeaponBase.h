@@ -3,7 +3,10 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "Gameplay/Tags/GAS_Tags.h"
 #include "WeaponBase.generated.h"
+
+class UAC_TagDelegates;
 
 UCLASS()
 class GAS_TEMPLATESP_API AWeaponBase : public AActor
@@ -14,8 +17,9 @@ public:
 	AWeaponBase();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 
 public:
 	// Trace start and end getters
@@ -30,13 +34,20 @@ public:
 
 	FRotator GetTraceEndRotation() const;
 
-	// Called from melee attack animation notify to capture the weapon's position each frame for momentum calculations.
-	void UpdatePreviousLocation();
+	// Frame-to-frame swing direction
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Tracking")
+	FVector GetSwingDirection() const { return SwingDirection; }
 
-	// Stores the weapon's world-space location from the previous frame for calculating swing direction or momentum.
-	// Currently used for determining FX spawn direction during hit or slash effects.
-	UPROPERTY(BlueprintReadOnly)
-	FVector PreviousLocation;
+
+protected:
+	UFUNCTION()
+	void OnPhaseActivePostHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	UFUNCTION()
+	void OnPhaseActivePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	void EnableTracking();
+	void DisableTracking();
 
 protected:
 	// Weapon mesh
@@ -55,4 +66,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Trace")
 	USceneComponent* TraceEnd;
 
+	// Tracking state
+	UPROPERTY()
+	bool bIsTracking;
+
+	// Previous frame trace mid position
+	FVector PreviousMid = FVector::ZeroVector;
+
+	// Current computed swing direction
+	UPROPERTY(BlueprintReadOnly)
+	FVector SwingDirection = FVector::ZeroVector;
 };

@@ -43,11 +43,6 @@ void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 void UGA_MeleeAttackBase::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnEventReceived(EventTag, EventData);
-
-	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Weapon_StoreLocation)
-	{
-		CharacterWeapon->UpdatePreviousLocation();
-	}
 }
 
 void UGA_MeleeAttackBase::OnTraceHitResults(const TArray<FHitResult>& HitResults)

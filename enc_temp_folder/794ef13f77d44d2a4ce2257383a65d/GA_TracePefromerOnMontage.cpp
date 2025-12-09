@@ -35,8 +35,8 @@ void UGA_TracePefromerOnMontage::OnEventReceived(FGameplayTag EventTag, FGamepla
 	{
 		bIsFirstTraceTick = true;
 		HitActorsThisSwing.Empty();
-		TraceAccumulator = 0.f;
 
+		// Ýlk pozisyonu al
 		FVector Start, End;
 		FRotator Rot;
 		GetTracePoints(Start, End, Rot);
@@ -46,20 +46,12 @@ void UGA_TracePefromerOnMontage::OnEventReceived(FGameplayTag EventTag, FGamepla
 	}
 	else if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Continue)
 	{
-		TraceAccumulator += GetWorld()->GetDeltaSeconds();
-		if (TraceAccumulator < TraceInterval)
-		{
-			return;
-		}
-
-		TraceAccumulator = 0.f;
 		PerformInterpolatedTrace();
 	}
 	else if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_End)
 	{
 		bIsFirstTraceTick = true;
 		HitActorsThisSwing.Empty();
-		TraceAccumulator = 0.f;
 	}
 }
 

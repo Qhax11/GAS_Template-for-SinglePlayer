@@ -27,7 +27,7 @@ protected:
 	TObjectPtr<class AWeaponBase> CharacterWeapon;
 	// Interpolated trace settings
 	UPROPERTY(EditDefaultsOnly, Category = "Trace", meta = (ClampMin = "20.0", ClampMax = "50.0"))
-	float MaxStepSize = 100.0f;
+	float MaxStepSize = 20.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Trace")
 	float MinDistanceThreshold = 1.0f; 
@@ -36,10 +36,6 @@ protected:
 	FVector PrevTraceStart;
 	FVector PrevTraceEnd;
 	bool bIsFirstTraceTick = true;
-
-	// Minimum aralýk: saniyede 50 trace (0.02f)
-	float TraceInterval = 0.02f;
-	float TraceAccumulator = 0.f;
 
 	// Hit tracking
 	UPROPERTY()

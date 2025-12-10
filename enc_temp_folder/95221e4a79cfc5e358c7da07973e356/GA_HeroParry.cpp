@@ -74,7 +74,8 @@ void UGA_HeroParry::OnInputReleased(float TimeHeld)
 
 void UGA_HeroParry::OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
-	GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(GetClass());
+	CreatePlayMontageWaitForEvent();
+	//GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(GetClass());
 }
 
 void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle, 

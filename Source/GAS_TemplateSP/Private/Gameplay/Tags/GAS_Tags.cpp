@@ -41,19 +41,12 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_Trigger_Perfect_Dodge, "Gameplay.Event.Trigger.Perfect.Dodge");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_Trigger_Perfect_Parry, "Gameplay.Event.Trigger.Perfect.Parry");
 	
-	// Attack Notifies
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack, "Gameplay.Event.AnimNotify.Attack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Attack_CanActivateNextAttack, "Gameplay.Event.AnimNotify.Attack.CanActivateNextAttack");
-
 	// Rotation Notifies
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Rotation_Lock, "Gameplay.Event.AnimNotify.Rotation.Lock");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Rotation_Unlock, "Gameplay.Event.AnimNotify.Rotation.Unlock");
 
 	// Movement
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping, "Gameplay.Event.AnimNotify.Movement.MotionWarping");
-
-	// Weapon Notifies
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Weapon_StoreLocation, "Gameplay.Event.AnimNotify.Weapon.StoreLocation");
 
 	// Misc Notifies
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Event_AnimNotify_Footstep, "Gameplay.Event.AnimNotify.Footstep");

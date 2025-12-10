@@ -17,7 +17,6 @@ UGA_MeleeAttackBase::UGA_MeleeAttackBase()
 	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start);
 	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Continue);
 	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_End);
-	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Weapon_StoreLocation);
 }
 
 void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

@@ -5,7 +5,6 @@
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 #include "GA_ComboMeleeAttack.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCanExecuteNextAttack);
 
 UCLASS()
 class GAS_TEMPLATESP_API UGA_ComboMeleeAttack : public UGA_MeleeAttackBase
@@ -16,8 +15,6 @@ public:
 	UGA_ComboMeleeAttack();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
-
-	FCanExecuteNextAttack OnCanExecuteNextAttack;
 
 protected:
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;

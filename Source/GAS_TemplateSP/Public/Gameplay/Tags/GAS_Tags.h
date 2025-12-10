@@ -44,19 +44,12 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_Trigger_Perfect_Dodge);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_Trigger_Perfect_Parry);
 	
-	// Attack Notifies
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Attack);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Attack_CanActivateNextAttack);
-
 	// Rotation Notifies
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Rotation_Lock);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Rotation_Unlock);
 
 	// Movement 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping);
-
-	// Weapon Notifies
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Weapon_StoreLocation);
 
 	// Misc Notifies
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_Event_AnimNotify_Footstep);

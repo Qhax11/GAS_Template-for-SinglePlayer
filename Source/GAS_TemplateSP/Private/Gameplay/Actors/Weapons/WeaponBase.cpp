@@ -68,8 +68,8 @@ void AWeaponBase::Tick(float DeltaSeconds)
 	const FVector Mid = GetTraceMid();
 
 	// Debug points
-	DrawDebugPoint(GetWorld(), Mid, 8.f, FColor::Green, false, 0.05f);
-	DrawDebugPoint(GetWorld(), PreviousMid, 8.f, FColor::Red, false, 0.05f);
+	//DrawDebugPoint(GetWorld(), Mid, 8.f, FColor::Green, false, 0.05f);
+	//DrawDebugPoint(GetWorld(), PreviousMid, 8.f, FColor::Red, false, 0.05f);
 
 	// First valid frame
 	if (PreviousMid.IsZero())

@@ -80,8 +80,8 @@ void UGA_ParryKnockbackBase::ActivateAbility(const FGameplayAbilitySpecHandle Ha
     // which interrupts or cancels the vulnerable montage.
 	InstigatorASC->ApplyGameplayEffectSpecToTarget(*ParryKnockbackSpecHandle.Data, GetAbilitySystemComponentFromActorInfo());
 
-	UGameplayEffect* GE_ParryKnockbackCost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GE_ParryKnockbackCostClass);
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_ParryKnockbackCost, 1, FGameplayEffectContextHandle());
+	UGameplayEffect* GE_ParryKnockback = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GE_ParryKnockbackCostClass);
+	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_ParryKnockback, 1, FGameplayEffectContextHandle());
 }
 
 FGameplayTag UGA_ParryKnockbackBase::GetAttackTypeTagFromMeleeAttack(const UGA_MeleeAttackBase* MeleeAttack)

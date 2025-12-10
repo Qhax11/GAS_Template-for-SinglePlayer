@@ -86,6 +86,26 @@ void AWeaponBase::Tick(float DeltaSeconds)
 	PreviousMid = Mid;
 }
 
+FVector AWeaponBase::GetTraceStart() const
+{
+	return TraceStart ? TraceStart->GetComponentLocation() : FVector::ZeroVector;
+}
+
+FVector AWeaponBase::GetTraceMid() const
+{
+	return TraceMid ? TraceMid->GetComponentLocation() : FVector::ZeroVector;
+}
+
+FVector AWeaponBase::GetTraceEnd() const
+{
+	return TraceEnd ? TraceEnd->GetComponentLocation() : FVector::ZeroVector;
+}
+
+FRotator AWeaponBase::GetTraceEndRotation() const
+{
+	return TraceEnd ? TraceEnd->GetComponentRotation() : FRotator::ZeroRotator;
+}
+
 void AWeaponBase::OnPhaseActivePostHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	EnableTracking();
@@ -119,24 +139,3 @@ void AWeaponBase::DisableTracking()
 	bIsTracking = false;
 	SetActorTickEnabled(false);
 }
-
-FVector AWeaponBase::GetTraceStart() const
-{
-	return TraceStart ? TraceStart->GetComponentLocation() : FVector::ZeroVector;
-}
-
-FVector AWeaponBase::GetTraceMid() const
-{
-	return TraceMid ? TraceMid->GetComponentLocation() : FVector::ZeroVector;
-}
-
-FVector AWeaponBase::GetTraceEnd() const
-{
-	return TraceEnd ? TraceEnd->GetComponentLocation() : FVector::ZeroVector;
-}
-
-FRotator AWeaponBase::GetTraceEndRotation() const
-{
-	return TraceEnd ? TraceEnd->GetComponentRotation() : FRotator::ZeroRotator;
-}
-

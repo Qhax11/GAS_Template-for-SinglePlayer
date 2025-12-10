@@ -38,7 +38,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Tracking")
 	FVector GetSwingDirection() const { return SwingDirection; }
 
-
 protected:
 	UFUNCTION()
 	void OnPhaseActivePostHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
@@ -68,7 +67,7 @@ protected:
 
 	// Tracking state
 	UPROPERTY()
-	bool bIsTracking;
+	bool bIsTracking = false;
 
 	// Previous frame trace mid position
 	FVector PreviousMid = FVector::ZeroVector;

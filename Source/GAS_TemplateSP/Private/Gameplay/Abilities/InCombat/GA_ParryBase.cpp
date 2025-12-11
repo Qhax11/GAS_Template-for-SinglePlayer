@@ -6,6 +6,7 @@
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
 
+
 UGA_ParryBase::UGA_ParryBase()
 {
 	FGameplayTagContainer AbiltiyTags;

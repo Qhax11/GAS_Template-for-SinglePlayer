@@ -28,6 +28,9 @@ public:
 
 	virtual void OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData) override;
 
+	UFUNCTION()
+	virtual void OnHeroInAirTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
 	UPROPERTY()
 	class UAbilityTask_WaitInputRelease* WaitRelease;
 

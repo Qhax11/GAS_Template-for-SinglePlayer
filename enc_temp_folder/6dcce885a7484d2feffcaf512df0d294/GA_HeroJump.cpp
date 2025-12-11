@@ -20,7 +20,8 @@ void UGA_HeroJump::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
-	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
 	if (!CharacterBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
@@ -45,13 +46,9 @@ void UGA_HeroJump::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack);
 	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Parry);
 	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Knocback);
-
-	// Cancel relevant abilities before playing the montage to prevent them from overriding it.
 	GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
 
 	HeroMovement = HeroBase->GetCharacterMovement();
-
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	float JumpStartAnimLenght = AnimMontage->GetPlayLength();
 	GetWorld()->GetTimerManager().SetTimer(JumpTimerHandle, [this]()
@@ -62,6 +59,7 @@ void UGA_HeroJump::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void UGA_HeroJump::JumpLogic() 
 {
+	// Kamera yönünü al (Controller'ýn rotation'ý)
 	APlayerController* PC = Cast<APlayerController>(HeroBase->GetController());
 	if (!PC)
 	{

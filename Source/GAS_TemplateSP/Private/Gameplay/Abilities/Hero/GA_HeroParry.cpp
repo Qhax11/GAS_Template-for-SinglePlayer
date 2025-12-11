@@ -4,10 +4,14 @@
 #include "Gameplay/Abilities/Hero/GA_HeroParry.h"
 #include "Abilities/Tasks/AbilityTask_WaitInputRelease.h"
 #include "Gameplay/Abilities/InCombat/GA_ParryKnockbackBase.h"
+#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+
 
 UGA_HeroParry::UGA_HeroParry()
 {
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
+
+	MontageEndPolicy = EMontageEndPolicy::Never;
 }
 
 void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -35,6 +39,8 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	{
 		DamageSubsystem->OnDamageDealt.AddDynamic(this, &UGA_HeroParry::OnDamageDealt);
 	}
+
+	TargetCharacterTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnAdded).BindDynamic(this, &UGA_HeroParry::OnHeroInAirTagAdded);
 }
 
 void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
@@ -85,6 +91,11 @@ void UGA_HeroParry::OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& D
 	}
 
 	CreatePlayMontageWaitForEvent();
+}
+
+void UGA_HeroParry::OnHeroInAirTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, true);
 }
 
 void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle, 

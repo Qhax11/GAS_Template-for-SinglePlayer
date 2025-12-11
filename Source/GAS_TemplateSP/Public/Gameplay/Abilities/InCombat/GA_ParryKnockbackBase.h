@@ -74,4 +74,6 @@ public:
 
     UPROPERTY(EditDefaultsOnly, Category = "ParryKnockback")
     UAttackTypeToKnockbackAsset* KnockbackDataAsset;
+
+    virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 };

@@ -91,12 +91,6 @@ void UAC_HeroMeleeComboManager::StartShadowCombo(FName MontageSection, FGameplay
 
 void UAC_HeroMeleeComboManager::OnPhaseActiveHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	// We need listen only combo abilitie's PhaseActiveHit Tag
-	if (!CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo))
-	{
-		return;
-	}
-
 	ActiveComboChainTracker.Advance();
 
 	if (ActiveComboChainTracker.IsChainFinished())

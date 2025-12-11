@@ -82,7 +82,6 @@ namespace GAS_Tags
 	// Action Phase States
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase, "Gameplay.State.Phase");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Startup, "Gameplay.State.Phase.Startup");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Active, "Gameplay.State.Phase.Active");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Active_Hit, "Gameplay.State.Phase.Active.Hit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Active_PostHit, "Gameplay.State.Phase.Active.PostHit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Recovery, "Gameplay.State.Phase.Recovery");

@@ -91,7 +91,6 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase);
 	// Startup (Wind-up): attack preparation, cancellable by defensive moves.
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Startup);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active);
 	// Active Hit: impact frames where trace/damage occurs, no voluntary canceling allowed.
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_Hit);
 	// Active PostHit: impact is finished but the attack is still transitioning trace is disabled, combo buffering is enabled.

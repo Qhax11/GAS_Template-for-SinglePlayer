@@ -42,7 +42,8 @@ void UAC_HeroAbilityBuffer::OnAbilityFailed(const UGameplayAbility* FailedAbilit
     }
 
     // Only buffer during relevant phases
-    if (!TagExplaining.HasTag(GAS_Tags::TAG_Gameplay_State_Phase_Active))
+    if (!TagExplaining.HasTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit) &&
+        !TagExplaining.HasTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostHit))
     {
         return;
     }

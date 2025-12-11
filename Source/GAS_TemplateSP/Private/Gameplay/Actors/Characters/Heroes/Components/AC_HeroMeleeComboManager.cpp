@@ -58,6 +58,7 @@ void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData&
 		// It is mean Interrupted by any ability that doesen't combo, so we need a reset
 		if (!CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("ComboMeleeAttack: Combo Interreptued from non-combo ability"));
 			ActiveComboChainTracker.Reset();
 			OnComboEnded.Broadcast();
 		}

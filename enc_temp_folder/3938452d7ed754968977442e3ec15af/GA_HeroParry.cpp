@@ -49,10 +49,17 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 		return;
 	}
 
-	// Ability is PerActor, so we must end the previous activation before triggering it again.
-	if (ActivatedKnockbackAbility && ActivatedKnockbackAbility->IsActive())
+	if (ActivatedKnocbackAbility)
 	{
-		ActivatedKnockbackAbility->EndAbilityManually();
+		ActivatedKnocbackAbility->OnAbilityEnded.RemoveAll(this);
+
+		// Ability is PerActor, so we must end the previous activation before triggering it again.
+		if (ActivatedKnocbackAbility->IsActive())
+		{
+			//GetAbilitySystemComponentFromActorInfo()->CancelAbilityHandle(ActivatedKnocbackAbility->GetCurrentAbilitySpecHandle());
+			ActivatedKnocbackAbility->EndAbilityManually();
+			UE_LOG(LogTemp, Warning, TEXT("UGA_ParryKnockbackBase is ended as manually"));
+		}
 	}
 
 	FGameplayEventData Payload;
@@ -62,11 +69,11 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
 	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
 
-	ActivatedKnockbackAbility = GetASC()->TryActivateAbilityByClassWithEventData(ParryKnockbackAbilityClass, Payload);
-	if (ActivatedKnockbackAbility)
+	ActivatedKnocbackAbility = GetASC()->TryActivateAbilityByClassWithEventData(ParryKnockbackAbilityClass, Payload);
+	if (ActivatedKnocbackAbility)
 	{
-		ActivatedKnockbackAbility->OnAbilityEnded.RemoveAll(this);
-		ActivatedKnockbackAbility->OnAbilityEnded.AddUObject(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded);
+		UE_LOG(LogTemp, Warning, TEXT("UGA_ParryKnockbackBase is activated as succes"));
+		ActivatedKnocbackAbility->OnAbilityEnded.AddUObject(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded);
 	}
 }
 
@@ -85,6 +92,7 @@ void UGA_HeroParry::OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& D
 	}
 
 	CreatePlayMontageWaitForEvent();
+	UE_LOG(LogTemp, Warning, TEXT("UGA_ParryKnockbackBase is ended, trigger montage"));
 }
 
 void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle, 
@@ -95,6 +103,11 @@ void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	if (WaitRelease && IsValid(WaitRelease)) 
 	{
 		WaitRelease->EndTask();
+	}
+
+	if (ActivatedKnocbackAbility)
+	{
+		ActivatedKnocbackAbility->OnAbilityEnded.RemoveAll(this);
 	}
 
 	if (US_DamageDelegates* DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>())

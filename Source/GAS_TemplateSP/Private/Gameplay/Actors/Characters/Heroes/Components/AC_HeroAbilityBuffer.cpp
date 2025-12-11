@@ -85,6 +85,7 @@ void UAC_HeroAbilityBuffer::TryActivateBufferedAbility()
         }
     }
 
+    UE_LOG(LogTemp, Warning, TEXT("UAC_HeroAbilityBuffer: TryActivateAbilityByClass: %s"), *AbilityToActivate->GetName());
     HeroASC->TryActivateAbilityByClass(AbilityToActivate);
 }
 

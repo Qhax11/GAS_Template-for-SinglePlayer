@@ -28,6 +28,7 @@ public:
 
 	virtual void OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData) override;
 
+	UPROPERTY()
 	class UAbilityTask_WaitInputRelease* WaitRelease;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);

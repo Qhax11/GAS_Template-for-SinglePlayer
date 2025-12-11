@@ -24,43 +24,32 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 {
 	if (!AbilityClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassWithEventData: AbilityClass invalid"));
+		UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: AbilityClass is invalid!"));
 		return nullptr;
 	}
 
-	UGameplayAbility* CDO = AbilityClass->GetDefaultObject<UGameplayAbility>();
+	UGAS_GameplayAbilityBase* const InAbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
 	{
-		if (Spec.Ability == CDO)
+		if (Spec.Ability == InAbilityCDO)
 		{
 			TryActivateAbilityByEventData(EventData);
-
-			if (!Spec.IsActive())
+			UGameplayAbility* Instance = Spec.GetPrimaryInstance();
+			if (Instance) 
 			{
-				UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassWithEventData: Activation BLOCKED for %s"), *AbilityClass->GetName());
-				return nullptr;
+				return CastChecked<UGAS_GameplayAbilityBase>(Instance);
 			}
-
-			if (UGameplayAbility* Primary = Spec.GetPrimaryInstance())
+			else
 			{
-				return Cast<UGAS_GameplayAbilityBase>(Primary);
-			}
-
-			const TArray<UGameplayAbility*>& InstanceList = Spec.GetAbilityInstances();
-			for (UGameplayAbility* Inst : InstanceList)
-			{
-				if (Inst && Inst->IsActive())
+				if (Spec.GetAbilityInstances().IsValidIndex(0)) 
 				{
-					return Cast<UGAS_GameplayAbilityBase>(Inst);
+					return CastChecked<UGAS_GameplayAbilityBase>(Spec.GetAbilityInstances()[0]);
 				}
 			}
-
-			UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassWithEventData: Activated but no valid instance found for %s"), *AbilityClass->GetName());
-			return nullptr;
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassWithEventData: No spec found for %s"), *AbilityClass->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: No ability found for class %s!"), *AbilityClass->GetName());
 	return nullptr;
 }
 

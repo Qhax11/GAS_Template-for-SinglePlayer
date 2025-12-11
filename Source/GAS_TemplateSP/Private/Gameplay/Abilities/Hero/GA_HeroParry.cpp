@@ -49,6 +49,12 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 		return;
 	}
 
+	// Ability is PerActor, so we must end the previous activation before triggering it again.
+	if (ActivatedKnocbackAbility && ActivatedKnocbackAbility->IsActive())
+	{
+		ActivatedKnocbackAbility->EndAbilityManually();
+	}
+
 	FGameplayEventData Payload;
 	Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback;
 	Payload.Instigator = DamageData.ExecCalculationParameters.SourceActor;
@@ -56,14 +62,11 @@ void UGA_HeroParry::OnDamageDealt(const FDamageData& DamageData)
 	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
 	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
 
-	if (UGAS_AbilitySystemComponent* HeroASC = GetASC())
+	ActivatedKnocbackAbility = GetASC()->TryActivateAbilityByClassWithEventData(ParryKnockbackAbilityClass, Payload);
+	if (ActivatedKnocbackAbility)
 	{
-		UGAS_GameplayAbilityBase* ActivatedAbility = HeroASC->TryActivateAbilityByClassWithEventData(ParryKnockbackAbilityClass, Payload);
-		if (ActivatedAbility)
-		{
-			ActivatedAbility->OnAbilityEnded.RemoveAll(this);
-			ActivatedAbility->OnAbilityEnded.AddUObject(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded);
-		}
+		ActivatedKnocbackAbility->OnAbilityEnded.RemoveAll(this);
+		ActivatedKnocbackAbility->OnAbilityEnded.AddUObject(this, &UGA_HeroParry::OnParryKnocbackAbilityEnded);
 	}
 }
 

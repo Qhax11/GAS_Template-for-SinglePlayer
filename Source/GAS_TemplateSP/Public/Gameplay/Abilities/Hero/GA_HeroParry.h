@@ -31,5 +31,7 @@ public:
 	UPROPERTY()
 	class UAbilityTask_WaitInputRelease* WaitRelease;
 
+	class UGAS_GameplayAbilityBase* ActivatedKnocbackAbility;
+
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 };

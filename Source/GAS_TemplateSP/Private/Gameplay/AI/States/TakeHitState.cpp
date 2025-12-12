@@ -81,7 +81,7 @@ void UTakeHitState::ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPaylo
 	LastUsedTakeDamageAbility = TakeDamageAbility;
 }
 
-void UTakeHitState::OnTakeHitAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
+void UTakeHitState::OnTakeHitAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)
 {
 	bAbilityEnded = true;
 	TryExitState();
@@ -104,6 +104,11 @@ void UTakeHitState::TryExitState()
 void UTakeHitState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();	
+
+	if (EnemyTagDelegatesComp)
+	{
+		EnemyTagDelegatesComp->UnregisterAllDelegatesForObject(this);
+	}
 
 	if (IsValid(LastUsedTakeDamageAbility))
 	{

@@ -28,6 +28,8 @@ void UAttackStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return;
 	}
 
+	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostHit, EListenMode::OnRemoved).BindDynamic(this, &UAttackStateBase::OnActivePhasePostHitTagRemoved);
+
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 	SelectAndMakeAttack(AttackStatePayload);
 }
@@ -57,14 +59,34 @@ void UAttackStateBase::MakeAttack(TSubclassOf<UGAS_GameplayAbilityBase> Selected
 
 void UAttackStateBase::OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
-	ExitRequest("OnAttackAbilityEnded");
+	bAbilityEnded = true;
+	TryExitState();
+}
+
+void UAttackStateBase::OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+{
+	bPhaseTagCleared = true;
+	TryExitState();
+}
+
+void UAttackStateBase::TryExitState()
+{
+	if (bAbilityEnded && bPhaseTagCleared)
+	{
+		ExitRequest("TakeHitFinished");
+	}
 }
 
 void UAttackStateBase::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
 
-	if (LastUsedAttack)
+	if (EnemyTagDelegatesComp) 
+	{
+		EnemyTagDelegatesComp->UnregisterAllDelegatesForObject(this);
+	}
+
+	if (IsValid(LastUsedAttack))
 	{
 		LastUsedAttack->OnAbilityEnded.RemoveAll(this);
 		LastUsedAttack = nullptr;

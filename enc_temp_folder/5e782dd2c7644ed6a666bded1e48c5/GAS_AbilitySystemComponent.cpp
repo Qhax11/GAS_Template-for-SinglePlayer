@@ -37,7 +37,7 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 
 			if (!Spec.IsActive())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassWithEventData: Ability %s found but activation FAILED (cooldown / cost / etc)"), *AbilityClass->GetName());
+				UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassWithEventData: Activation BLOCKED for %s"), *AbilityClass->GetName());
 				return nullptr;
 			}
 
@@ -60,7 +60,7 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassWithEventData: Ability couldn't activate %s"), *AbilityClass->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassWithEventData: No spec found for %s"), *AbilityClass->GetName());
 	return nullptr;
 }
 
@@ -79,33 +79,19 @@ UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::TryActivateAbilityByClass
 		{
 			if (TryActivateAbility(Spec.Handle))
 			{
-				if (!Spec.IsActive())
+				if (UGAS_GameplayAbilityBase* PrimaryInstance = Cast<UGAS_GameplayAbilityBase>(Spec.GetPrimaryInstance()))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: Ability %s found but activation FAILED (cooldown / cost / etc)"), *AbilityClass->GetName());
-					return nullptr;
+					return PrimaryInstance;
 				}
-
-				if (UGameplayAbility* Primary = Spec.GetPrimaryInstance())
+				else
 				{
-					return Cast<UGAS_GameplayAbilityBase>(Primary);
+					return InAbilityCDO;
 				}
-
-				const TArray<UGameplayAbility*>& InstanceList = Spec.GetAbilityInstances();
-				for (UGameplayAbility* Inst : InstanceList)
-				{
-					if (Inst && Inst->IsActive())
-					{
-						return Cast<UGAS_GameplayAbilityBase>(Inst);
-					}
-				}
-
-				UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: Activated but no valid instance found for %s"), *AbilityClass->GetName());
-				return nullptr;
 			}
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: Ability couldn't activate %s"), *AbilityClass->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByClassAndReturnInstance: No ability found for class %s!"), *AbilityClass->GetName());
 	return nullptr;
 }
 

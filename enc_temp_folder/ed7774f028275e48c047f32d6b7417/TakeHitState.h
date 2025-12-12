@@ -24,19 +24,10 @@ public:
 
 	void OnTakeHitAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
-	UFUNCTION()
-	void OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	void TryExitState();
-
 	virtual void OnExit_Implementation() override;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGA_EnemyTakeDamage> EnemyTakeDamageAbilityClass;
 
-	UPROPERTY()
 	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility;
-
-	bool bAbilityEnded = false;
-	bool bPhaseTagCleared = false;
 };

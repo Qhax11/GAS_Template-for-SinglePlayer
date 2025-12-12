@@ -3,7 +3,6 @@
 
 #include "Gameplay/AI/States/TakeHitState.h"
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
-#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 
 UTakeHitState::UTakeHitState()
 {
@@ -49,8 +48,6 @@ void UTakeHitState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return;
 	}
 
-	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostHit, EListenMode::OnRemoved).BindDynamic(this, &UTakeHitState::OnActivePhasePostHitTagRemoved);
-
 	ExecuteTakeHit(TakeHitPayload);
 }
 
@@ -83,22 +80,7 @@ void UTakeHitState::ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPaylo
 
 void UTakeHitState::OnTakeHitAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
-	bAbilityEnded = true;
-	TryExitState();
-}
-
-void UTakeHitState::OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	bPhaseTagCleared = true;
-	TryExitState();
-}
-
-void UTakeHitState::TryExitState()
-{
-	if (bAbilityEnded && bPhaseTagCleared)
-	{
-		ExitRequest("TakeHitFinished");
-	}
+	ExitRequest("OnTakeDamageAbilityEnded");
 }
 
 void UTakeHitState::OnExit_Implementation()

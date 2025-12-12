@@ -8,8 +8,6 @@ UGA_DeathBase::UGA_DeathBase()
 {
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
-
-	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
 }
 
 void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 

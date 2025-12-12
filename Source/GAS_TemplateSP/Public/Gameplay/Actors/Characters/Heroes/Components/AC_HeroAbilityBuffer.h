@@ -22,7 +22,7 @@ protected:
 	void OnAbilityFailed(const UGameplayAbility* FailedAbility, const FGameplayTagContainer& TagExplaining);
 
 	UFUNCTION()
-	void OnHeroPhaseActivePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnHeroPhaseActiveTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	UPROPERTY()
 	TSubclassOf<UGameplayAbility> BufferedAbilityClass;

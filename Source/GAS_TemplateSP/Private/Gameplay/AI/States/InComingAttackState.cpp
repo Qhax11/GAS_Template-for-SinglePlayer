@@ -35,8 +35,8 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 		return false;
 	}
 
-	// If enemy is in ActiveHitPhase or ActivePostHitPhase, never enter this state.
-	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit) || EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostHit))
+	// If enemy is in ActivePhase never enter this state.
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active))
 	{
 		return false;
 	}

@@ -50,8 +50,8 @@ void AWeaponBase::BeginPlay()
 		return;
 	}
 
-	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit, EListenMode::OnAdded).BindDynamic(this, &AWeaponBase::OnPhaseActivePostHitTagAdded);
-	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit, EListenMode::OnRemoved).BindDynamic(this, &AWeaponBase::OnPhaseActivePostHitTagRemoved);
+	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack, EListenMode::OnAdded).BindDynamic(this, &AWeaponBase::OnPhaseActivePostHitTagAdded);
+	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack, EListenMode::OnRemoved).BindDynamic(this, &AWeaponBase::OnPhaseActivePostHitTagRemoved);
 
 	SetActorTickEnabled(false);      // explicitly off first
 	PrimaryActorTick.bCanEverTick = true;

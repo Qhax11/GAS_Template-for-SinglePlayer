@@ -89,15 +89,13 @@ namespace GAS_Tags
 
 	// Action Phase States (Animation Flow & Cancel Windows)
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase);
-	// Startup (Wind-up): attack preparation, cancellable by defensive moves.
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Startup);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active);
-	// Active Hit: impact frames where trace/damage occurs, no voluntary canceling allowed.
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_Hit);
-	// Active PostHit: impact is finished but the attack is still transitioning trace is disabled, combo buffering is enabled.
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_PostHit);
-	// Recovery: the cooldown section of the attack; if no combo is buffered, the ability naturally ends here.
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Recovery);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Startup); // Startup (Wind-up): attack preparation, cancellable by defensive moves.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active); // Active: character is currently inside an action animation (attack or take hit).
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_Attack); // Active Attack: impact frames where attack trace/damage occurs, no voluntary canceling allowed.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_PostAttack); // Active Post Attack: attack impact finished, animation still transitioning; combo buffering enabled.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_TakeHit); // Active TakeHit: character is reacting to damage (hit reaction), no attack actions allowed.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_Parry); // Active Parry (successful parry window / parry animation)
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Recovery); // Recovery: cooldown / regain control phase after attack or take hit.
 
 	// Movement States
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Moving);

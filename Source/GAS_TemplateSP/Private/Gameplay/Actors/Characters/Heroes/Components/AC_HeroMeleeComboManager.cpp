@@ -23,7 +23,7 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 		return;
 	}
 
-	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Hit, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroMeleeComboManager::OnPhaseActiveHitTagAdded);
+	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroMeleeComboManager::OnPhaseActiveHitTagAdded);
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagAdded);
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagRemoved);
 

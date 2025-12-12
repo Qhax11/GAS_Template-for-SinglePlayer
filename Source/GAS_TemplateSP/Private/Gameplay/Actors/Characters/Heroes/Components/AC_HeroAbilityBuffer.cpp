@@ -30,7 +30,7 @@ void UAC_HeroAbilityBuffer::BeginPlay()
         HeroASC->AbilityFailedCallbacks.AddUObject(this, &UAC_HeroAbilityBuffer::OnAbilityFailed);
     }
 
-    HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostHit, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroAbilityBuffer::OnHeroPhaseActivePostHitTagRemoved);
+    HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroAbilityBuffer::OnHeroPhaseActiveTagRemoved);
 }
 
 void UAC_HeroAbilityBuffer::OnAbilityFailed(const UGameplayAbility* FailedAbility, const FGameplayTagContainer& TagExplaining)
@@ -61,7 +61,7 @@ void UAC_HeroAbilityBuffer::OnAbilityFailed(const UGameplayAbility* FailedAbilit
     );
 }
 
-void UAC_HeroAbilityBuffer::OnHeroPhaseActivePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void UAC_HeroAbilityBuffer::OnHeroPhaseActiveTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
     TryActivateBufferedAbility();
 }

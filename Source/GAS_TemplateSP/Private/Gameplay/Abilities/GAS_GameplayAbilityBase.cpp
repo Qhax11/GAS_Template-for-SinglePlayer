@@ -102,7 +102,10 @@ bool UGAS_GameplayAbilityBase::IsOnCooldown(UAbilitySystemComponent* ASC)
 
 void UGAS_GameplayAbilityBase::EndAbilityManually()
 {
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+	if (IsActive())
+	{
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+	}
 }
 
 void UGAS_GameplayAbilityBase::IncreaseLevel(UAbilitySystemComponent* AbilitySystemComp)

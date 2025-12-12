@@ -28,7 +28,11 @@ void UAttackStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return;
 	}
 
-	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostAttack, EListenMode::OnRemoved).BindDynamic(this, &UAttackStateBase::OnActivePhasePostHitTagRemoved);
+	bPhaseTagCleared = false;
+	bAbilityEnded = false;
+
+	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostAttack, EListenMode::OnRemoved).
+		BindDynamic(this, &UAttackStateBase::OnActivePhasePostHitTagRemoved);
 
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 	SelectAndMakeAttack(AttackStatePayload);
@@ -42,15 +46,23 @@ bool UAttackStateBase::SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> Attac
 
 void UAttackStateBase::MakeAttack(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase:: MakeAttack is entered"));
+
 	if (!SelectedAttackClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectedAttackClass is null in: %s"), *GetName());
 		return;
 	}
 
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_TakeHit))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: TAG_Gameplay_State_Phase_Active_TakeHit is still exist!"));
+	}
+
 	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(SelectedAttackClass);
 	if (ActivatedAbility) 
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase:: ActivatedAbility is valid"));
 		ActivatedAbility->OnAbilityEnded.RemoveAll(this);
 		ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAttackStateBase::OnAttackAbilityEnded);
 		LastUsedAttack = ActivatedAbility;
@@ -59,12 +71,14 @@ void UAttackStateBase::MakeAttack(TSubclassOf<UGAS_GameplayAbilityBase> Selected
 
 void UAttackStateBase::OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase:: OnAttackAbilityEnded entered."))
 	bAbilityEnded = true;
 	TryExitState();
 }
 
 void UAttackStateBase::OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase:: OnActivePhasePostHitTagRemoved entered."))
 	bPhaseTagCleared = true;
 	TryExitState();
 }

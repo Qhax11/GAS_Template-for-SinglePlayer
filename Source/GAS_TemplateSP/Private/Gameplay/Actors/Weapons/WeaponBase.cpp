@@ -50,8 +50,10 @@ void AWeaponBase::BeginPlay()
 		return;
 	}
 
-	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack, EListenMode::OnAdded).BindDynamic(this, &AWeaponBase::OnPhaseActivePostHitTagAdded);
-	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack, EListenMode::OnRemoved).BindDynamic(this, &AWeaponBase::OnPhaseActivePostHitTagRemoved);
+	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack, EListenMode::OnAdded).
+		BindDynamic(this, &AWeaponBase::OnPhaseActiveAttackTagAdded);
+	OwnerTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack, EListenMode::OnRemoved).
+		BindDynamic(this, &AWeaponBase::OnPhaseActiveAttackTagRemoved);
 
 	SetActorTickEnabled(false);      // explicitly off first
 	PrimaryActorTick.bCanEverTick = true;
@@ -86,12 +88,12 @@ void AWeaponBase::Tick(float DeltaSeconds)
 	PreviousMid = Mid;
 }
 
-void AWeaponBase::OnPhaseActivePostHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void AWeaponBase::OnPhaseActiveAttackTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	EnableTracking();
 }
 
-void AWeaponBase::OnPhaseActivePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void AWeaponBase::OnPhaseActiveAttackTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
 	DisableTracking();
 }

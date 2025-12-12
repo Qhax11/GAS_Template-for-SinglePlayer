@@ -24,20 +24,11 @@ protected:
 	// Core execution
 	virtual void ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPayload);
 
+	// Core execution
+	virtual void TriggerTakeHitAbility(TSharedPtr<FTakeHitStatePayload> TakeHitPayload);
+
 	// Callbacks
 	void OnTakeHitAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
-
-	UFUNCTION()
-	void OnActivePhaseTakeHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	// Exit condition for phase-based states:
-	// State exits ONLY when:
-	// 1) The triggered ability has ended (logic lifecycle)
-	// 2) All relevant animation phase tags have been cleared (visual / gameplay lifecycle)
-	//
-	// This prevents early state transitions during montage blend-out
-	// while animation phases are still active.
-	void TryExitState();
 
 public:
 	// State exit / cleanup
@@ -52,6 +43,4 @@ protected:
 	UPROPERTY()
 	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility = nullptr;
 
-	bool bAbilityEnded = false;
-	bool bPhaseTagCleared = false;
 };

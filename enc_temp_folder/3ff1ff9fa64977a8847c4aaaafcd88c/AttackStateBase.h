@@ -27,6 +27,18 @@ protected:
 	// Callbacks
 	void OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
+	UFUNCTION()
+	void OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+
+	// Exit condition for phase-based states:
+    // State exits ONLY when:
+    // 1) The triggered ability has ended (logic lifecycle)
+    // 2) All relevant animation phase tags have been cleared (visual / gameplay lifecycle)
+    //
+    // This prevents early state transitions during montage blend-out
+    // while animation phases are still active.
+	void TryExitState();
+
 public:
 	// State Exit / Cleanup
 	virtual void OnExit_Implementation() override;
@@ -34,5 +46,8 @@ public:
 protected:
 	// Runtime State
 	UGAS_GameplayAbilityBase* LastUsedAttack;
+
+	bool bAbilityEnded = false;
+	bool bPhaseTagCleared = false;
 
 };

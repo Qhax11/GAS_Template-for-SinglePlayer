@@ -3,7 +3,7 @@
 
 #include "Gameplay/AI/States/TakeHitState.h"
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
-#include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
+
 
 UTakeHitState::UTakeHitState()
 {
@@ -49,24 +49,32 @@ void UTakeHitState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return;
 	}
 
-	bPhaseTagCleared = false;
-	bAbilityEnded = false;
-
-	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_TakeHit, EListenMode::OnRemoved).
-		BindDynamic(this, &UTakeHitState::OnActivePhaseTakeHitTagRemoved);
-
 	ExecuteTakeHit(TakeHitPayload);
 }
 
 void UTakeHitState::ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPayload)
 {
-	if (!EnemyTakeDamageAbilityClass) 
+	if (!EnemyASC)
+	{
+		return;
+	}
+
+	if (LastUsedTakeDamageAbility && EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_TakeHit))
+	{
+		LastUsedTakeDamageAbility->EndAbilityManually();
+	}
+
+	TriggerTakeHitAbility(TakeHitPayload);
+}
+
+void UTakeHitState::TriggerTakeHitAbility(TSharedPtr<FTakeHitStatePayload> TakeHitPayload)
+{
+	if (!EnemyTakeDamageAbilityClass || !EnemyASC)
 	{
 		return;
 	}
 
 	FDamageData DamageData = TakeHitPayload->DamageData;
-
 	FGameplayEventData Payload;
 	Payload.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_TakeDamage;
 	Payload.Instigator = DamageData.ExecCalculationParameters.SourceActor;
@@ -87,29 +95,14 @@ void UTakeHitState::ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPaylo
 
 void UTakeHitState::OnTakeHitAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UTakeHitState:: OnTakeHitAbilityEnded entered."))
-	bAbilityEnded = true;
-	TryExitState();
-}
-
-void UTakeHitState::OnActivePhaseTakeHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
-{
-	UE_LOG(LogTemp, Warning, TEXT("UTakeHitState:: OnActivePhaseTakeHitTagRemoved entered."))
-	bPhaseTagCleared = true;
-	TryExitState();
-}
-
-void UTakeHitState::TryExitState()
-{
-	if (bAbilityEnded && bPhaseTagCleared)
-	{
-		ExitRequest("TakeHitFinished");
-	}
+	ExitRequest("OnTakeHitAbilityEnded");
 }
 
 void UTakeHitState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();	
+
+	UE_LOG(LogTemp, Warning, TEXT("UTakeHitState:: OnExit_Implementation entered."));
 
 	if (EnemyTagDelegatesComp)
 	{
@@ -119,7 +112,6 @@ void UTakeHitState::OnExit_Implementation()
 	if (IsValid(LastUsedTakeDamageAbility))
 	{
 		LastUsedTakeDamageAbility->OnAbilityEnded.RemoveAll(this);
-		LastUsedTakeDamageAbility = nullptr;
 	}
 }
 

@@ -215,6 +215,19 @@ void UGA_MontageAbility::CleanupMotionWarping()
 	}
 }
 
+void UGA_MontageAbility::CleanupPhaseTags()
+{
+	FGameplayTagContainer PhaseTagsToRemove;
+	TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Startup);
+	TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
+	TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
+	TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostAttack);
+	TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_TakeHit);
+	TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Parry);
+	TagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Recovery);
+	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTags(TagsToRemove);
+}
+
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: %s is will play."), *AnimMontage->GetName());
@@ -229,6 +242,12 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	PlayMontageWaitForEventTask->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
 
 	PlayMontageWaitForEventTask->ReadyForActivation();
+}
+
+void UGA_MontageAbility::EndAbilityManually()
+{
+	MontageStop(0.0f);
+	Super::EndAbilityManually();
 }
 
 void UGA_MontageAbility::HandleMontageEvent(bool bWasCancelled)
@@ -346,6 +365,8 @@ void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 		}
 		PlayMontageWaitForEventTask = nullptr;
 	}
+
+	CleanupPhaseTags();
 
 	CleanupMotionWarping();
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

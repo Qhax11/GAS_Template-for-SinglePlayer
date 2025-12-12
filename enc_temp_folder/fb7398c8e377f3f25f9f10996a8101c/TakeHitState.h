@@ -24,11 +24,14 @@ protected:
 	// Core execution
 	virtual void ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPayload);
 
+	// Core execution
+	virtual void TriggerTakeHitAbility(TSharedPtr<FTakeHitStatePayload> TakeHitPayload);
+
 	// Callbacks
 	void OnTakeHitAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
 
 	UFUNCTION()
-	void OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnActivePhaseTakeHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	// Exit condition for phase-based states:
 	// State exits ONLY when:
@@ -54,4 +57,5 @@ protected:
 
 	bool bAbilityEnded = false;
 	bool bPhaseTagCleared = false;
+
 };

@@ -38,7 +38,11 @@ public:
 
 	void CleanupMotionWarping();
 
+	void CleanupPhaseTags();
+
 	void CreatePlayMontageWaitForEvent();
+
+	virtual void EndAbilityManually() override;
 
 	class UGAS_Task_PlayMontageWaitForEvent* PlayMontageWaitForEventTask;
 

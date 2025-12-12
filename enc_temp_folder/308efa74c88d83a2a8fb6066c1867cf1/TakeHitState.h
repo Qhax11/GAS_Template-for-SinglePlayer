@@ -28,7 +28,7 @@ protected:
 	void OnTakeHitAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
 
 	UFUNCTION()
-	void OnActivePhaseTakeHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
+	void OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
 	// Exit condition for phase-based states:
 	// State exits ONLY when:

@@ -28,11 +28,7 @@ void UAttackStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return;
 	}
 
-	bPhaseTagCleared = false;
-	bAbilityEnded = false;
-
-	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostAttack, EListenMode::OnRemoved).
-		BindDynamic(this, &UAttackStateBase::OnActivePhasePostHitTagRemoved);
+	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostAttack, EListenMode::OnRemoved).BindDynamic(this, &UAttackStateBase::OnActivePhasePostHitTagRemoved);
 
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 	SelectAndMakeAttack(AttackStatePayload);
@@ -63,14 +59,12 @@ void UAttackStateBase::MakeAttack(TSubclassOf<UGAS_GameplayAbilityBase> Selected
 
 void UAttackStateBase::OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase:: OnAttackAbilityEnded entered."))
 	bAbilityEnded = true;
 	TryExitState();
 }
 
 void UAttackStateBase::OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase:: OnActivePhasePostHitTagRemoved entered."))
 	bPhaseTagCleared = true;
 	TryExitState();
 }

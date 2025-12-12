@@ -49,11 +49,7 @@ void UTakeHitState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return;
 	}
 
-	bPhaseTagCleared = false;
-	bAbilityEnded = false;
-
-	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_TakeHit, EListenMode::OnRemoved).
-		BindDynamic(this, &UTakeHitState::OnActivePhaseTakeHitTagRemoved);
+	EnemyTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostAttack, EListenMode::OnRemoved).BindDynamic(this, &UTakeHitState::OnActivePhasePostHitTagRemoved);
 
 	ExecuteTakeHit(TakeHitPayload);
 }
@@ -87,14 +83,12 @@ void UTakeHitState::ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPaylo
 
 void UTakeHitState::OnTakeHitAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UTakeHitState:: OnTakeHitAbilityEnded entered."))
 	bAbilityEnded = true;
 	TryExitState();
 }
 
-void UTakeHitState::OnActivePhaseTakeHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
+void UTakeHitState::OnActivePhasePostHitTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UTakeHitState:: OnActivePhaseTakeHitTagRemoved entered."))
 	bPhaseTagCleared = true;
 	TryExitState();
 }

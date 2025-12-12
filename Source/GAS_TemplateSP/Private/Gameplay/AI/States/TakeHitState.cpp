@@ -59,11 +59,6 @@ void UTakeHitState::ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPaylo
 		return;
 	}
 
-	if (LastUsedTakeDamageAbility && EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_TakeHit))
-	{
-		LastUsedTakeDamageAbility->EndAbilityManually();
-	}
-
 	TriggerTakeHitAbility(TakeHitPayload);
 }
 

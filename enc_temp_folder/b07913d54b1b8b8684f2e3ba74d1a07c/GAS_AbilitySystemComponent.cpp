@@ -180,36 +180,6 @@ bool UGAS_AbilitySystemComponent::IsAbilityClassActive(TSubclassOf<UGameplayAbil
 	return false;
 }
 
-UGAS_GameplayAbilityBase* UGAS_AbilitySystemComponent::GetActiveAbilityInstanceByClass(TSubclassOf<UGameplayAbility> AbilityClass) const
-{
-	if (!AbilityClass) 
-	{
-		return nullptr;
-	}
-
-	const UGameplayAbility* AbilityCDO = AbilityClass->GetDefaultObject<UGameplayAbility>();
-
-	for (const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
-	{
-		if (Spec.Ability == AbilityCDO && Spec.IsActive())
-		{
-			// PerActor → PrimaryInstance
-			if (UGameplayAbility* Instance = Spec.GetPrimaryInstance())
-			{
-				return Cast<UGAS_GameplayAbilityBase>(Instance);
-			}
-
-			// PerExecution fallback (ilk aktif instance)
-			if (Spec.GetAbilityInstances().Num() > 0)
-			{
-				return Cast<UGAS_GameplayAbilityBase>(Spec.GetAbilityInstances()[0]);
-			}
-		}
-	}
-
-	return nullptr;
-}
-
 void UGAS_AbilitySystemComponent::TryAbilityInputBind(UInputAction* AbilityInput, const FGameplayAbilitySpecHandle& AbilitySpecHandle)
 {
 	if (UAC_AbilityInputBinding* AbilityInputBinding = Cast<UAC_AbilityInputBinding>(GetAvatarActor()->FindComponentByClass(UAC_AbilityInputBinding::StaticClass())))

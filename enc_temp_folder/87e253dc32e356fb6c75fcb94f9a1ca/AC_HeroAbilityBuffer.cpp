@@ -3,7 +3,6 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAbilityBuffer.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMeleeComboManager.h"
-#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "AbilitySystemComponent.h"
 #include "Gameplay/Tags/GAS_Tags.h"
@@ -75,6 +74,8 @@ void UAC_HeroAbilityBuffer::TryActivateBufferedAbility()
     }
 
     TSubclassOf<UGameplayAbility> AbilityToActivate = BufferedAbilityClass;
+    ClearBuffer(); 
+
     if (AbilityToActivate->IsChildOf(UGA_ComboMeleeAttack::StaticClass()))
     {
         if (HeroMeleeComboManager) 
@@ -84,29 +85,8 @@ void UAC_HeroAbilityBuffer::TryActivateBufferedAbility()
         }
     }
 
-    // Its mean tag is removed before end of ability.
-    if (HeroASC->IsAbilityClassActive(AbilityToActivate)) 
-    {
-        UGAS_GameplayAbilityBase* ActiveAbility = HeroASC->GetActiveAbilityInstanceByClass(AbilityToActivate);
-        if (ActiveAbility) 
-        {
-            ActiveAbility->OnAbilityEnded.Clear();
-            ActiveAbility->OnAbilityEnded.AddUObject(this, &UAC_HeroAbilityBuffer::OnBufferAbilityEnd);
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("UAC_HeroAbilityBuffer: TryActivateAbilityByClass: %s"), *AbilityToActivate->GetName());
-        HeroASC->TryActivateAbilityByClass(AbilityToActivate);
-        ClearBuffer();
-    }
-}
-
-void UAC_HeroAbilityBuffer::OnBufferAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
-{
-    UE_LOG(LogTemp, Warning, TEXT("UAC_HeroAbilityBuffer: OnBufferAbilityEnd: %s"));
-    HeroASC->TryActivateAbilityByClass(BufferedAbilityClass);
-    ClearBuffer();
+    UE_LOG(LogTemp, Warning, TEXT("UAC_HeroAbilityBuffer: TryActivateAbilityByClass: %s"), *AbilityToActivate->GetName());
+    HeroASC->TryActivateAbilityByClass(AbilityToActivate);
 }
 
 void UAC_HeroAbilityBuffer::ClearBuffer()

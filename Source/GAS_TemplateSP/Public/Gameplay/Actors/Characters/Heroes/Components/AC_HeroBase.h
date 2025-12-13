@@ -6,7 +6,7 @@
 #include "AC_HeroBase.generated.h"
 
 class AGAS_HeroBase;
-class UAbilitySystemComponent;
+class UGAS_AbilitySystemComponent;
 class UAC_TagDelegates;
 
 UCLASS(Abstract)
@@ -24,7 +24,7 @@ protected:
 	AGAS_HeroBase* HeroBase;
 
 	UPROPERTY()
-	UAbilitySystemComponent* HeroASC;
+	UGAS_AbilitySystemComponent* HeroASC;
 
 	UPROPERTY()
 	UAC_TagDelegates* HeroTagDelegatesComp;

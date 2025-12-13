@@ -91,8 +91,6 @@ public:
 
 	bool IsAbilityClassActive(TSubclassOf<UGameplayAbility> AbilityClass);
 
-	UGAS_GameplayAbilityBase* GetActiveAbilityInstanceByClass(TSubclassOf<UGameplayAbility> AbilityClass) const;
-
 	void TryAbilityInputBind(UInputAction* AbilityInput, const FGameplayAbilitySpecHandle& AbilitySpecHandle);
 
 	void GiveAttributes(const UGAS_GameplayAbilitySet* AbilitySet);

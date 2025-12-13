@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroBase.h"
+#include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 
 UAC_HeroBase::UAC_HeroBase()
@@ -20,7 +21,7 @@ void UAC_HeroBase::BeginPlay()
 		return;
 	}
 
-	HeroASC = HeroBase->GetAbilitySystemComponent();
+	HeroASC = Cast<UGAS_AbilitySystemComponent>(HeroBase->GetAbilitySystemComponent());
 	HeroTagDelegatesComp = HeroBase->GetTagDelegatesComponent();
 }
 

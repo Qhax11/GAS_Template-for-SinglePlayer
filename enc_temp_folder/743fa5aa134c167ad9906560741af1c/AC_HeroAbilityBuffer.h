@@ -6,7 +6,6 @@
 #include "AC_HeroAbilityBuffer.generated.h"
 
 struct GameplayTagContainer;
-struct FCustomAbilityEndedData;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_HeroAbilityBuffer : public UAC_HeroBase
@@ -25,23 +24,20 @@ protected:
 	UFUNCTION()
 	void OnHeroPhaseActiveTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
-	void TryActivateBufferedAbility();
-
-	UFUNCTION()
-	virtual void OnBufferAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData);
-
-	void ClearBuffer();
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 	UPROPERTY()
 	TSubclassOf<UGameplayAbility> BufferedAbilityClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	float BufferLifetime = 0.25f;
 
+	FTimerHandle BufferTimerHandle;
+
 	UPROPERTY()
 	class UAC_HeroMeleeComboManager* HeroMeleeComboManager;
 
-	FTimerHandle BufferTimerHandle;
+	void TryActivateBufferedAbility();
+
+	void ClearBuffer();
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

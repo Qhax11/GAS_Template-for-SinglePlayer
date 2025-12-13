@@ -23,7 +23,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 
     for (UComingAttackReactionData* Reaction : ComingAttackReactionAsset->ComingAttackReactions)
     {
-        if (!IsEnable(Reaction, ComingAttackPayload))
+        if (!Reaction->IsEnable(Reaction, ComingAttackPayload))
         {
             continue;
         }
@@ -50,11 +50,6 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
     }
 
     return BestReaction;
-}
-
-bool UBDS_ComingAttackReactionBase::IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) 
-{
-    return PassesFinalChanceRoll(ComingReactionData) && ComingAttackPayload.ComingAttackHitTime > ComingReactionData->MinimumTimeBeforeHitToReact;
 }
 
 float UBDS_ComingAttackReactionBase::CalculateBehaviorStateScore(UComingAttackReactionData* ComingReactionData) 

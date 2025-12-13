@@ -21,7 +21,7 @@ class UComingAttackReactionData : public UObject
     GENERATED_BODY()
 
 public:
-    virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const;
+    virtual bool IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) const;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Coming Attack Reaction. Used for debugging or referencing in logic."))
     FName ComingAttackReactionName;

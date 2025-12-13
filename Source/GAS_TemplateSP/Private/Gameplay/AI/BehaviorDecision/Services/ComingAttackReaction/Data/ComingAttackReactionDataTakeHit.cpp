@@ -12,7 +12,9 @@ UComingAttackReactionDataTakeHit::UComingAttackReactionDataTakeHit()
 	BaseChance = 1.0f;
 }
 
-bool UComingAttackReactionDataTakeHit::IsEnable(FComingAttackPayload ComingAttackPayload) const
+bool UComingAttackReactionDataTakeHit::IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) const
 {
-	return true;
+	return false;
 }
+
+

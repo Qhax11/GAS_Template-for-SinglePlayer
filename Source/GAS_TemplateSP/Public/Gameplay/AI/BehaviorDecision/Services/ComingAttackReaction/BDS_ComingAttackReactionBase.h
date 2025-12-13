@@ -30,8 +30,6 @@ public:
 
     UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);
 
-    virtual bool IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload);
-
 protected:
     float CalculateBehaviorStateScore(UComingAttackReactionData* ComingReactionData);
 

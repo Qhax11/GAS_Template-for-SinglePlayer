@@ -6,32 +6,31 @@
 #include "GA_DodgeBase.generated.h"
 
 USTRUCT(BlueprintType)
-struct FInputDirectionDodgeMontagePair
+struct FDirectionDodgeMontagePair
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = "Gameplay.Direction"))
-	FGameplayTag InputDirectionTag;
+	FGameplayTag DirectionTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UAnimMontage> DodgeMontage;
 };
 
-
 UCLASS(BlueprintType)
-class GAS_TEMPLATESP_API UInputDirectionToDodgeMontageAsset : public UDataAsset
+class GAS_TEMPLATESP_API UDirectionToDodgeMontageAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FInputDirectionDodgeMontagePair> InputDirectionDodgeMontagePair;
+	TArray<FDirectionDodgeMontagePair> DirectionDodgeMontagePair;
 
 	UAnimMontage* FindDodgetMontage(FGameplayTag InComingAttackDirectionTag) const
 	{
-		for (const FInputDirectionDodgeMontagePair& Pair : InputDirectionDodgeMontagePair)
+		for (const FDirectionDodgeMontagePair& Pair : DirectionDodgeMontagePair)
 		{
-			if (Pair.InputDirectionTag == InComingAttackDirectionTag)
+			if (Pair.DirectionTag == InComingAttackDirectionTag)
 			{
 				return Pair.DodgeMontage.LoadSynchronous();
 			}
@@ -53,4 +52,6 @@ protected:
 	virtual FVector CalculateDestination();
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UDirectionToDodgeMontageAsset* DirectionToDodgeMontageAsset;
 };

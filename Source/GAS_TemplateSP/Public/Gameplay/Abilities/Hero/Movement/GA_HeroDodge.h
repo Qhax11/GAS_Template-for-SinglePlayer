@@ -35,9 +35,6 @@ public:
 
     void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    UInputDirectionToDodgeMontageAsset* InputDirectionToDodgeMontageAsset;
-
     UPROPERTY()
     class UAT_WaitOneFrame* WaitOneFrameTask;
 

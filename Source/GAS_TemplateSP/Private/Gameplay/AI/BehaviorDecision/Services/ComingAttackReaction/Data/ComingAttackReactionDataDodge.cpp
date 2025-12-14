@@ -15,7 +15,7 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 
     // Dash distance
     DodgeMovementAbilityData.AbilityEventMagnitude = 300.0f;
-    DodgeMovementAbilityData.ResolvedDirectionTag = GAS_Tags::TAG_AI_Direction_Resolved_Backward;
+    DodgeMovementAbilityData.ResolvedDirectionTag = GAS_Tags::TAG_Gameplay_Direction_Backward;
 }
 
 bool UComingAttackReactionDataDodge::IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) const
@@ -29,9 +29,9 @@ FGameplayTag UComingAttackReactionDataDodge::GetRandomDirectionTag()
     static const TArray<FGameplayTag> PossibleDirections =
     {
         //GAS_Tags::TAG_AI_Direction_Resolved_Forward,
-        GAS_Tags::TAG_AI_Direction_Resolved_Backward,
-        GAS_Tags::TAG_AI_Direction_Resolved_Left,
-        GAS_Tags::TAG_AI_Direction_Resolved_Right
+        GAS_Tags::TAG_Gameplay_Direction_Backward,
+        GAS_Tags::TAG_Gameplay_Direction_Left,
+        GAS_Tags::TAG_Gameplay_Direction_Right
     };
 
     int32 RandomIndex = FMath::RandRange(0, PossibleDirections.Num() - 1);

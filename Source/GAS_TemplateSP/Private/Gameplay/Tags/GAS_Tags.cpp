@@ -87,6 +87,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Active_PostAttack, "Gameplay.State.Phase.Active.PostAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Active_TakeHit, "Gameplay.State.Phase.Active.TakeHit");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Active_Parry, "Gameplay.State.Phase.Active.Parry");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Active_Dodge, "Gameplay.State.Phase.Active.Dodge");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Phase_Recovery, "Gameplay.State.Phase.Recovery");
 
 	// Movement States

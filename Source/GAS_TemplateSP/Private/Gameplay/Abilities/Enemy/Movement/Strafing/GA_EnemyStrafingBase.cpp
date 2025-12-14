@@ -71,11 +71,11 @@ float UGA_EnemyStrafingBase::ConvertStrafeDirectionTagToFloat(FGameplayTag Straf
 {
 	float TagValue = 2.0f; // Default: Both
 
-	if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_AI_Direction_Resolved_Left))
+	if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_Gameplay_Direction_Left))
 	{
 		TagValue = 0.0f;
 	}
-	else if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_AI_Direction_Resolved_Right))
+	else if (StrafeDirectionTag.MatchesTagExact(GAS_Tags::TAG_Gameplay_Direction_Right))
 	{
 		TagValue = 1.0f;
 	}

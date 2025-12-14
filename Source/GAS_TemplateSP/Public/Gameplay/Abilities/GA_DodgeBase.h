@@ -49,9 +49,17 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	virtual FVector CalculateDestination();
+	virtual FVector CalculateMotionWarpingLocation() const override;
 
+	UFUNCTION()
+	void RemoveDamageImmuneTag();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY()
+	class UAbilityTask_WaitDelay* WaitDelayTask;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DodgeDamageImmunityDuration = 0.2f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UDirectionToDodgeMontageAsset* DirectionToDodgeMontageAsset;
 };

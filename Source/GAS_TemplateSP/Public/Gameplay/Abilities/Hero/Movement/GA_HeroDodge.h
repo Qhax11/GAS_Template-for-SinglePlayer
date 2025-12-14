@@ -4,7 +4,6 @@
 
 #include "Gameplay/Abilities/GA_DodgeBase.h"
 #include "Gameplay/Abilities/Tasks/AT_WaitOneFrame.h"
-#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "GA_HeroDodge.generated.h"
 
 
@@ -28,18 +27,12 @@ public:
     UFUNCTION(BlueprintImplementableEvent)
     void OnPerfectDodgeReceivedBP();
 
-    UFUNCTION()
-    void RemoveDamageImmuneTag();
-
     virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
     void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
     UPROPERTY()
     class UAT_WaitOneFrame* WaitOneFrameTask;
-
-    UPROPERTY()
-    class UAbilityTask_WaitDelay* WaitDelayTask;
 
     UPROPERTY()
     class AGAS_HeroBase* HeroBase;

@@ -37,43 +37,26 @@ void UGA_BossDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
-	FGameplayTagContainer CancelAbilityTags;
-	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack);
-	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Knocback);
-	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Parry);
-	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_TakeDamage);
-	GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
-	
+	UAnimMontage* FoundDodgeMontage = DirectionToDodgeMontageAsset->FindDodgetMontage(DirectionTag);
+	if (!FoundDodgeMontage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No montage found for direction tag: %s"), *DirectionTag.ToString());
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("montage found for direction tag: %s"), *DirectionTag.ToString());
+
+	AnimMontage = FoundDodgeMontage;
+
+	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-FVector UGA_BossDodge::CalculateDestination()
+FVector UGA_BossDodge::CalculateMotionWarpingLocation() const
 {
-	AActor* AvatarActor = GetAvatarActorFromActorInfo();
-	if (!AvatarActor)
-	{
-		return FVector::ZeroVector;
-	}
-
-	FVector DirectionVector = FVector::ZeroVector;
-
-	if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Forward)
-	{
-		DirectionVector = AvatarActor->GetActorForwardVector();
-	}
-	else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Backward)
-	{
-		DirectionVector = -AvatarActor->GetActorForwardVector();
-	}
-	else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Left)
-	{
-		DirectionVector = -AvatarActor->GetActorRightVector();
-	}
-	else if (DirectionTag == GAS_Tags::TAG_AI_Direction_Resolved_Right)
-	{
-		DirectionVector = AvatarActor->GetActorRightVector();
-	}
-
-	return AvatarActor->GetActorLocation() + DirectionVector;
+	return Super::CalculateMotionWarpingLocation();
 }
+
+

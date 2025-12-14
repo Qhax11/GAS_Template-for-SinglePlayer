@@ -95,6 +95,7 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_PostAttack); // Active Post Attack: attack impact finished, animation still transitioning; combo buffering enabled.
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_TakeHit); // Active TakeHit: character is reacting to damage (hit reaction), no attack actions allowed.
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_Parry); // Active Parry (successful parry window / parry animation)
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Active_Dodge); // Active Dodge 
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_Gameplay_State_Phase_Recovery); // Recovery: cooldown / regain control phase after attack or take hit.
 
 	// Movement States
@@ -464,14 +465,8 @@ namespace GAS_Tags
 
 
 	// ============================================================
-	// AI DIRECTION TAGS
+	// AI DIRECTION POLICY TAGS
 	// ============================================================
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Resolved);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Resolved_Forward);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Resolved_Backward);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Resolved_Left);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Resolved_Right);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Policy);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Policy_Random);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Policy_PlayerLastDirection);

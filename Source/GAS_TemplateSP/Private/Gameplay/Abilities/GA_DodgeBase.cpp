@@ -3,6 +3,7 @@
 
 #include "Gameplay/Abilities/GA_DodgeBase.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
+#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 
 UGA_DodgeBase::UGA_DodgeBase()
 {
@@ -20,13 +21,26 @@ void UGA_DodgeBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
-
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, DodgeDamageImmunityDuration);
+	if (!WaitDelayTask)
+	{
+		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+	WaitDelayTask->OnFinish.AddDynamic(this, &UGA_DodgeBase::RemoveDamageImmuneTag);
+	WaitDelayTask->ReadyForActivation();
 }
 
-FVector UGA_DodgeBase::CalculateDestination()
+FVector UGA_DodgeBase::CalculateMotionWarpingLocation() const
 {
-	return FVector();
+	return Super::CalculateMotionWarpingLocation();
 }
 
+void UGA_DodgeBase::RemoveDamageImmuneTag()
+{
+	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune, 100);
+}
 

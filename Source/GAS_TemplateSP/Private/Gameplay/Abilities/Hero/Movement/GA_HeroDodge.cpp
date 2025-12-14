@@ -69,16 +69,6 @@ void UGA_HeroDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
     GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
 
-    WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.3f);
-    if (!WaitDelayTask)
-    {
-        GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
-        EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
-        return;
-    }
-    WaitDelayTask->OnFinish.AddDynamic(this, &UGA_HeroDodge::RemoveDamageImmuneTag);
-    WaitDelayTask->ReadyForActivation();
-
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect)) 
     {
         OnPerfectDodgeReceivedBP();
@@ -215,11 +205,6 @@ FVector UGA_HeroDodge::CalculateMotionWarpingLocation() const
     }
 
     return OwnerLocation + Direction * MotionWarpingDistance;
-}
-
-void UGA_HeroDodge::RemoveDamageImmuneTag()
-{
-    GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune, 100);
 }
 
 void UGA_HeroDodge::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)

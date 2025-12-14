@@ -114,13 +114,13 @@ FGameplayTag UAC_HeroMovementListener::GetHeroLastMovementDirectionTagByLastInpu
     switch (Direction)
     {
     case EHeroRelativeDirection::Forward:
-        return GAS_Tags::TAG_AI_Direction_Resolved_Forward;
+        return GAS_Tags::TAG_Gameplay_Direction_Forward;
     case EHeroRelativeDirection::Backward:
-        return GAS_Tags::TAG_AI_Direction_Resolved_Backward;
+        return GAS_Tags::TAG_Gameplay_Direction_Backward;
     case EHeroRelativeDirection::Left:
-        return GAS_Tags::TAG_AI_Direction_Resolved_Left;
+        return GAS_Tags::TAG_Gameplay_Direction_Left;
     case EHeroRelativeDirection::Right:
-        return GAS_Tags::TAG_AI_Direction_Resolved_Right;
+        return GAS_Tags::TAG_Gameplay_Direction_Right;
     default:
         return FGameplayTag();
     }

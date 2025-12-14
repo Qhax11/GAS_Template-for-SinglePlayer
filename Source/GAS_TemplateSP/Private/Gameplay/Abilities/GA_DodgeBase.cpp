@@ -1,10 +1,10 @@
 ﻿// Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/GA_DashBase.h"
+#include "Gameplay/Abilities/GA_DodgeBase.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionMoveToForce.h"
 
-UGA_DashBase::UGA_DashBase()
+UGA_DodgeBase::UGA_DodgeBase()
 {
 	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dash);
 
@@ -15,7 +15,7 @@ UGA_DashBase::UGA_DashBase()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 }
 
-void UGA_DashBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UGA_DodgeBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
@@ -23,7 +23,7 @@ void UGA_DashBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-FVector UGA_DashBase::CalculateDestination()
+FVector UGA_DodgeBase::CalculateDestination()
 {
 	return FVector();
 }

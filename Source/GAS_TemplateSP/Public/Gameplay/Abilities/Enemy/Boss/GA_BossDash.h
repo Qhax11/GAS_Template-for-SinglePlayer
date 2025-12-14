@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "Gameplay/Abilities/GA_DashBase.h"
+#include "Gameplay/Abilities/GA_DodgeBase.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "GA_BossDash.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_BossDash : public UGA_DashBase
+class GAS_TEMPLATESP_API UGA_BossDash : public UGA_DodgeBase
 {
 	GENERATED_BODY()
 	

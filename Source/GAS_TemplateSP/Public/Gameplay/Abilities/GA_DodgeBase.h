@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Gameplay/Abilities/GA_MontageAbility.h"
-#include "GA_DashBase.generated.h"
+#include "GA_DodgeBase.generated.h"
 
 USTRUCT(BlueprintType)
 struct FInputDirectionDodgeMontagePair
@@ -41,12 +41,12 @@ public:
 };
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_DashBase : public UGA_MontageAbility
+class GAS_TEMPLATESP_API UGA_DodgeBase : public UGA_MontageAbility
 {
 	GENERATED_BODY()
 	
 protected:
-	UGA_DashBase();
+	UGA_DodgeBase();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 

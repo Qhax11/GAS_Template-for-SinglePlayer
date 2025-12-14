@@ -23,28 +23,9 @@ void UGA_DashBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UGA_DashBase::BindRootMotionTask()
-{
-	if (DashRootMotionTask)
-	{
-		DashRootMotionTask->OnTimedOut.AddDynamic(this, &UGA_DashBase::OnTaskTimedOut);
-		DashRootMotionTask->OnTimedOutAndDestinationReached.AddDynamic(this, &UGA_DashBase::OnTimedOutAndDestinationReached);
-		DashRootMotionTask->ReadyForActivation();
-	}
-}
-
 FVector UGA_DashBase::CalculateDestination()
 {
 	return FVector();
 }
 
-void UGA_DashBase::OnTaskTimedOut()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-}
-
-void UGA_DashBase::OnTimedOutAndDestinationReached()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-}
 

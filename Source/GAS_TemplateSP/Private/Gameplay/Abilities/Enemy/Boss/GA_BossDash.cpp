@@ -5,8 +5,6 @@
 
 UGA_BossDash::UGA_BossDash()
 {
-	FinishVelocityMode = ERootMotionFinishVelocityMode::SetVelocity;
-
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
 
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
@@ -39,11 +37,6 @@ void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
-	if (TriggerEventData->EventMagnitude > 0) 
-	{
-		DistanceMultiplier = TriggerEventData->EventMagnitude;
-	}
-
 	FGameplayTagContainer CancelAbilityTags;
 	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack);
 	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Knocback);
@@ -51,24 +44,6 @@ void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	CancelAbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_TakeDamage);
 	GetAbilitySystemComponentFromActorInfo()->CancelAbilities(&CancelAbilityTags);
 	
-	// Set the final velocity after root motion ends to match the dash direction and magnitude.
-    // This prevents a sudden stop and avoids unintended animation transitions caused by zero velocity.
-	FinishSetVelocity = CalculateDestination();
-
-	DashRootMotionTask = UAbilityTask_ApplyRootMotionMoveToForce::ApplyRootMotionMoveToForce(
-		this,
-		TEXT("DashRootMotionTask"),
-		CalculateDestination(),
-		Duration,
-		bSetNewMovementMode,
-		NewMovementMode,
-		bRestrictSpeedToExpected,
-		DashCurve,
-		FinishVelocityMode,
-		FinishSetVelocity,
-		FinishClampVelocity);
-
-	BindRootMotionTask();
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
@@ -100,5 +75,5 @@ FVector UGA_BossDash::CalculateDestination()
 		DirectionVector = AvatarActor->GetActorRightVector();
 	}
 
-	return AvatarActor->GetActorLocation() + DirectionVector * DistanceMultiplier;
+	return AvatarActor->GetActorLocation() + DirectionVector;
 }

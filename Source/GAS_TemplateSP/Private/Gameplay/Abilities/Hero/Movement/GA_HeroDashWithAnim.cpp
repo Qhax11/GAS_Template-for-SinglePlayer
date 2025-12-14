@@ -91,7 +91,6 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
             return;
         }
     }
-
 }
 
 void UGA_HeroDashWithAnim::OnAfterFrame()

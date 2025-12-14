@@ -1,9 +1,9 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Enemy/Boss/GA_BossDash.h"
+#include "Gameplay/Abilities/Enemy/Boss/GA_BossDodge.h"
 
-UGA_BossDash::UGA_BossDash()
+UGA_BossDodge::UGA_BossDodge()
 {
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
 
@@ -14,7 +14,7 @@ UGA_BossDash::UGA_BossDash()
 	AbilityTriggers.Add(TriggerData);
 }
 
-void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UGA_BossDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
@@ -48,7 +48,7 @@ void UGA_BossDash::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-FVector UGA_BossDash::CalculateDestination()
+FVector UGA_BossDodge::CalculateDestination()
 {
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if (!AvatarActor)

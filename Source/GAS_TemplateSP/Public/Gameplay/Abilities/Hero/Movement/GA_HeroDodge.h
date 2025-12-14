@@ -5,16 +5,16 @@
 #include "Gameplay/Abilities/GA_DashBase.h"
 #include "Gameplay/Abilities/Tasks/AT_WaitOneFrame.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
-#include "GA_HeroDashWithAnim.generated.h"
+#include "GA_HeroDodge.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UGA_HeroDashWithAnim : public UGA_DashBase
+class GAS_TEMPLATESP_API UGA_HeroDodge : public UGA_DashBase
 {
 	GENERATED_BODY()
 
 public:
-    UGA_HeroDashWithAnim();
+    UGA_HeroDodge();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 

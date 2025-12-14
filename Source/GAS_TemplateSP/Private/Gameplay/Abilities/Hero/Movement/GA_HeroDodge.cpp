@@ -1,14 +1,14 @@
 ﻿// Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/Abilities/Hero/Movement/GA_HeroDashWithAnim.h"
+#include "Gameplay/Abilities/Hero/Movement/GA_HeroDodge.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroControl.h"
 #include "Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/Abilities/Tasks/AT_WaitOneFrame.h"
 
-UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
+UGA_HeroDodge::UGA_HeroDodge()
 {
     AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dash);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
@@ -29,7 +29,7 @@ UGA_HeroDashWithAnim::UGA_HeroDashWithAnim()
     //MontageEndPolicy = EMontageEndPolicy::EndWithDelay;
 }
 
-void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UGA_HeroDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
@@ -64,7 +64,7 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
         return;
     }
-    WaitOneFrameTask->OnFinished.AddDynamic(this, &UGA_HeroDashWithAnim::OnAfterFrame);
+    WaitOneFrameTask->OnFinished.AddDynamic(this, &UGA_HeroDodge::OnAfterFrame);
     WaitOneFrameTask->ReadyForActivation();
 
     GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
@@ -76,7 +76,7 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
         EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
         return;
     }
-    WaitDelayTask->OnFinish.AddDynamic(this, &UGA_HeroDashWithAnim::RemoveDamageImmuneTag);
+    WaitDelayTask->OnFinish.AddDynamic(this, &UGA_HeroDodge::RemoveDamageImmuneTag);
     WaitDelayTask->ReadyForActivation();
 
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect)) 
@@ -93,7 +93,7 @@ void UGA_HeroDashWithAnim::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     }
 }
 
-void UGA_HeroDashWithAnim::OnAfterFrame()
+void UGA_HeroDodge::OnAfterFrame()
 {
     if (!HeroBase || !HeroControlComponent || !InputDirectionToDodgeMontageAsset)
     {
@@ -134,7 +134,7 @@ void UGA_HeroDashWithAnim::OnAfterFrame()
     Super::ActivateAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), nullptr);
 }
 
-FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Input) const
+FGameplayTag UGA_HeroDodge::GetDirectionTagFromInput(const FVector2D& Input) const
 {
     const float X = Input.X;
     const float Y = Input.Y;
@@ -181,7 +181,7 @@ FGameplayTag UGA_HeroDashWithAnim::GetDirectionTagFromInput(const FVector2D& Inp
     }
 }
 
-FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
+FVector UGA_HeroDodge::CalculateMotionWarpingLocation() const
 {
     if (!HeroBase)
     {
@@ -217,12 +217,12 @@ FVector UGA_HeroDashWithAnim::CalculateMotionWarpingLocation() const
     return OwnerLocation + Direction * MotionWarpingDistance;
 }
 
-void UGA_HeroDashWithAnim::RemoveDamageImmuneTag()
+void UGA_HeroDodge::RemoveDamageImmuneTag()
 {
     GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune, 100);
 }
 
-void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGA_HeroDodge::OnEventReceived(FGameplayTag EventTag, FGameplayEventData EventData)
 {
     Super::OnEventReceived(EventTag, EventData);
 
@@ -235,7 +235,7 @@ void UGA_HeroDashWithAnim::OnEventReceived(FGameplayTag EventTag, FGameplayEvent
     }
 }
 
-void UGA_HeroDashWithAnim::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+void UGA_HeroDodge::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
     GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune, 100);
 

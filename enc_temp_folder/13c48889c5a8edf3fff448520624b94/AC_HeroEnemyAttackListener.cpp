@@ -85,8 +85,6 @@ void UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated(UGameplayAbility* Abil
                 if (ThisWeak->ActivePerfectWindows == 0)
                 {
                     ASCWeak->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
-                    ASCWeak->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect_Dodge);
-                    ASCWeak->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect_Parry);
                 }
                 ThisWeak->ActivePerfectWindows++;
 
@@ -110,8 +108,6 @@ void UAC_HeroEnemyAttackListener::OnEnemyAbilityActivated(UGameplayAbility* Abil
                 {
                     ThisWeak->ActivePerfectWindows = 0; // Güvenlik için
                     ASCWeak->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect);
-                    ASCWeak->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect_Dodge);
-                    ASCWeak->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_Window_Perfect_Parry);
                 }
 
                 if (AbilityWeak.IsValid())

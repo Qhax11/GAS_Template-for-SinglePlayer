@@ -42,63 +42,152 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	CreatePlayMontageWaitForEvent();
 }
 
+void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
+{
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: %s is will play."), *AnimMontage->GetName());
+
+	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
+		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
+
+	PlayMontageWaitForEventTask->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
+	PlayMontageWaitForEventTask->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
+	PlayMontageWaitForEventTask->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
+	PlayMontageWaitForEventTask->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
+	PlayMontageWaitForEventTask->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
+
+	PlayMontageWaitForEventTask->ReadyForActivation();
+}
+
 void UGA_MontageAbility::ActivateMotionWarping()
 {
+	if (!bEnableMotionWarping)
+	{
+		return;
+	}
+
 	if (!CharacterBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, ability cannot motion warping"), *GetName());
 		return;
 	}
 
-	UMotionWarpingComponent* CharacterMotionWarpingComp = CharacterBase->GetMotionWarpingComponent();
-	if (!CharacterMotionWarpingComp)
+	UMotionWarpingComponent* OwnerMotionWarping = CharacterBase->GetMotionWarpingComponent();
+	if (!OwnerMotionWarping)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterMotionWarpingComp is null in: %s, ability cannot motion warping"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("OwnerMotionWarping is null in: %s, ability cannot motion warping"), *GetName());
 		return;
 	}
 
 	FVector TargetLocation;
-	bool bShouldUseTargetReach = false;
+	bool bHasValidTarget = false;
 
-	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
+	if (ShouldUseTargetReach())
 	{
-		const AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
-		if (Hero && Hero->GetTargetLockSystemComponent())
-		{
-			AActor* Target = Hero->GetTargetLockSystemComponent()->CurrentTarget;
-			if (Target && bUseTargetReachDistance)
-			{
-				const FVector OwnerLocation = Hero->GetActorLocation();
-				const float DistanceToTarget = FVector::Dist(OwnerLocation, Target->GetActorLocation());
-				if (DistanceToTarget <= MaxRange)
-				{
-					bShouldUseTargetReach = true;
-				}
-			}
-		}
-	}
-	else if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Enemy))
-	{
-		bShouldUseTargetReach = bUseTargetReachDistance;
-	}
-
-	if (bShouldUseTargetReach)
-	{
-		TargetLocation = CalculateReachLocationToTarget();
+		bHasValidTarget = TryCalculateReachLocationToTarget(TargetLocation);
 	}
 	else
 	{
 		TargetLocation = CalculateMotionWarpingLocation();
+		bHasValidTarget = !TargetLocation.IsNearlyZero();
 	}
 
-#if WITH_EDITOR
-	if (bDebugPointMotionWarping)
+	if (!bHasValidTarget)
 	{
-		DrawDebugPoint(GetWorld(), TargetLocation, 10.0f, FColor::Red, false, 3);
+		OwnerMotionWarping->RemoveWarpTarget(MotionWarpingName);
+		return;
 	}
-#endif
 
-	CharacterMotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
+	const FVector OwnerLocation = CharacterBase->GetActorLocation();
+
+	// 🔴 SkewWarp safety guard
+	constexpr float MinWarpDist = 5.f;
+	if (FVector::DistSquared(OwnerLocation, TargetLocation) <= FMath::Square(MinWarpDist))
+	{
+		OwnerMotionWarping->RemoveWarpTarget(MotionWarpingName);
+		return;
+	}
+
+	OwnerMotionWarping->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
+}
+
+bool UGA_MontageAbility::ShouldUseTargetReach() const
+{
+	if (!bUseTargetReachDistance)
+	{
+		return false;
+	}
+
+	AActor* Target = GetCurrentTargetActor();
+	if (!Target)
+	{
+		return false;
+	}
+
+	const FVector OwnerLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+	const float Distance = FVector::Dist(OwnerLocation, Target->GetActorLocation());
+
+	return Distance <= MaxRange;
+}
+
+bool UGA_MontageAbility::TryCalculateReachLocationToTarget(FVector& OutTargetLocation) const
+{
+	const AActor* Avatar = GetAvatarActorFromActorInfo();
+	AActor* Target = GetCurrentTargetActor();
+
+	if (!Avatar || !Target)
+	{
+		return false;
+	}
+
+	const FVector OwnerLocation = Avatar->GetActorLocation();
+	const FVector ToTarget = Target->GetActorLocation() - OwnerLocation;
+
+	const float Distance = ToTarget.Size();
+	if (Distance <= KINDA_SMALL_NUMBER)
+	{
+		return false;
+	}
+
+	if (Distance > TargetReachDistance)
+	{
+		OutTargetLocation = Target->GetActorLocation() -
+			ToTarget.GetSafeNormal() * TargetReachDistance;
+		return true;
+	}
+
+	return false;
+}
+
+FVector UGA_MontageAbility::CalculateMotionWarpingLocation() const
+{
+	const AActor* Avatar = GetAvatarActorFromActorInfo();
+	if (!Avatar)
+	{
+		return FVector::ZeroVector;
+	}
+
+	const FVector OwnerLocation = Avatar->GetActorLocation();
+	const FVector Forward = Avatar->GetActorForwardVector();
+	const FVector Right = Avatar->GetActorRightVector();
+
+	FVector Direction = Forward;
+
+	if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardLeft)
+		Direction = (Forward - Right).GetSafeNormal();
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardRight)
+		Direction = (Forward + Right).GetSafeNormal();
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Backward)
+		Direction = -Forward;
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardLeft)
+		Direction = (-Forward - Right).GetSafeNormal();
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardRight)
+		Direction = (-Forward + Right).GetSafeNormal();
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Left)
+		Direction = -Right;
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Right)
+		Direction = Right;
+
+	return OwnerLocation + Direction * MotionWarpingDistance;
 }
 
 FVector UGA_MontageAbility::CalculateReachLocationToTarget() const
@@ -147,53 +236,33 @@ FVector UGA_MontageAbility::CalculateReachLocationToTarget() const
 	return OwnerLocation;
 }
 
-FVector UGA_MontageAbility::CalculateMotionWarpingLocation() const
+AActor* UGA_MontageAbility::GetCurrentTargetActor() const
 {
-	FVector OwnerLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
-	FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
-	FVector Right = GetAvatarActorFromActorInfo()->GetActorRightVector();
-
-	FVector TargetLocation = OwnerLocation;
-
-	if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Forward)
+	const AActor* Avatar = GetAvatarActorFromActorInfo();
+	if (!Avatar)
 	{
-		TargetLocation += Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardLeft)
-	{
-		TargetLocation += Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardRight)
-	{
-		TargetLocation += Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Backward)
-	{
-		TargetLocation -= Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardLeft)
-	{
-		TargetLocation -= Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardRight)
-	{
-		TargetLocation -= Forward * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Right)
-	{
-		TargetLocation += Right * MotionWarpingDistance;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Left)
-	{
-		TargetLocation -= Right * MotionWarpingDistance;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Unknown DirectionTag in: %s, defaulting to forward motion"), *GetName());
-		TargetLocation += Forward * MotionWarpingDistance;
+		return nullptr;
 	}
 
-	return TargetLocation;
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(
+		GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
+	{
+		const AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(Avatar);
+		return Hero && Hero->GetTargetLockSystemComponent()
+			? Hero->GetTargetLockSystemComponent()->CurrentTarget
+			: nullptr;
+	}
+
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(
+		GAS_Tags::TAG_Gameplay_Entity_Character_Enemy))
+	{
+		const AGAS_EnemyBase* Enemy = Cast<AGAS_EnemyBase>(Avatar);
+		return Enemy && Enemy->GetEnemyController()
+			? Enemy->GetEnemyController()->GetTargetActor()
+			: nullptr;
+	}
+
+	return nullptr;
 }
 
 void UGA_MontageAbility::CleanupMotionWarping()
@@ -228,22 +297,6 @@ void UGA_MontageAbility::CleanupPhaseTags()
 	PhaseTagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Dodge);
 	PhaseTagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Recovery);
 	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTags(PhaseTagsToRemove);
-}
-
-void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
-{
-	UE_LOG(LogTemp, Warning, TEXT("State Manager: %s is will play."), *AnimMontage->GetName());
-
-	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
-		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
-
-	PlayMontageWaitForEventTask->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
-	PlayMontageWaitForEventTask->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
-	PlayMontageWaitForEventTask->OnInterrupted.AddDynamic(this, &UGA_MontageAbility::OnMontageInterrupted);
-	PlayMontageWaitForEventTask->OnCancelled.AddDynamic(this, &UGA_MontageAbility::OnMontageCancelled);
-	PlayMontageWaitForEventTask->EventReceived.AddDynamic(this, &UGA_MontageAbility::OnEventReceived);
-
-	PlayMontageWaitForEventTask->ReadyForActivation();
 }
 
 void UGA_MontageAbility::EndAbilityManually()

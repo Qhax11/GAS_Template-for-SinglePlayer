@@ -30,17 +30,23 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	void CreatePlayMontageWaitForEvent();
+
 	void ActivateMotionWarping();
 
-	FVector CalculateReachLocationToTarget() const;
+	bool ShouldUseTargetReach() const;
+
+	bool TryCalculateReachLocationToTarget(FVector& OutTargetLocation) const;
 
 	virtual FVector CalculateMotionWarpingLocation() const;
+
+	virtual FVector CalculateReachLocationToTarget() const;
+
+	AActor* GetCurrentTargetActor() const;
 
 	void CleanupMotionWarping();
 
 	void CleanupPhaseTags();
-
-	void CreatePlayMontageWaitForEvent();
 
 	virtual void EndAbilityManually() override;
 

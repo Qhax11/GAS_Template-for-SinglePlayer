@@ -107,17 +107,6 @@ void UGA_MontageAbility::ActivateMotionWarping()
 		return;
 	}
 
-	if (bDebugPointMotionWarping) 
-	{
-		DrawDebugPoint(
-			GetWorld(),
-			TargetLocation,
-			15.f,              // size
-			FColor::Red,
-			false,             // persistent
-			2.f);          // lifetime
-	}
-
 	OwnerMotionWarping->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, TargetLocation);
 }
 

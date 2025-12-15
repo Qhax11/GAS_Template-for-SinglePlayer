@@ -36,7 +36,7 @@ void UAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 
 	// Only update speed if the character is not dashing.
     // This prevents sudden speed drops during dash animations, which could negatively affect animation blending.
-	if (DoesOwnerHaveTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash))
+	if (DoesOwnerHaveTag(GAS_Tags::TAG_Gameplay_State_Moving_Dodge))
 	{
 		// During dash, use cached speed
 		Speed = LastSpeed;

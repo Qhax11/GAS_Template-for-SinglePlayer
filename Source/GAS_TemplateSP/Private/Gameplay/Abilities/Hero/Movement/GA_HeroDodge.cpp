@@ -10,11 +10,9 @@
 
 UGA_HeroDodge::UGA_HeroDodge()
 {
-    AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dash);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
     ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InAir);
-    ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
 
     WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Rotation_Lock);
 

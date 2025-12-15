@@ -7,13 +7,13 @@
 
 UGA_DodgeBase::UGA_DodgeBase()
 {
-	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dash);
+	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement_Dodge);
 
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Basic);
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
 
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dash);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dodge);
 }
 
 void UGA_DodgeBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

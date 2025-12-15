@@ -97,6 +97,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Walking, "Gameplay.State.Moving.Walking");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Jogging, "Gameplay.State.Moving.Jogging");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Running, "Gameplay.State.Moving.Running");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Dodge, "Gameplay.State.Moving.Dodge");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Dash, "Gameplay.State.Moving.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_Moving_Jumping, "Gameplay.State.Moving.Jumping");
 
@@ -192,6 +193,8 @@ namespace GAS_Tags
 	// Movement Abilities
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement, "Gameplay.Ability.Movement");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Strafing, "Gameplay.Ability.Movement.Strafing");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dodge, "Gameplay.Ability.Movement.Dodge");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dodge_Cooldown, "Gameplay.Ability.Movement.Dodge.Cooldown");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash, "Gameplay.Ability.Movement.Dash");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_Ability_Movement_Dash_Cooldown, "Gameplay.Ability.Movement.Dash.Cooldown");
 

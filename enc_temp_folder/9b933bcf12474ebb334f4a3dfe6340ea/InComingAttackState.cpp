@@ -35,21 +35,23 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 		return false;
 	}
 
+	// If enemy is in ActivePhase never enter this state.
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active))
+	{
+		return false;
+	}
+
 	FComingAttackPayload ComingAttackPayload = InComingAttackStatePayload->AttackPayload;
 	const float AttackRange = ComingAttackPayload.ComingAttack->MaxRange;
 
 	const float Distance = HeroTarget->GetDistanceTo(Enemy);
 	const bool bIsInRange = Distance < AttackRange + 50.0f;
 
-	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
 	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
+	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
 
-	if (bHeroCanInterrupt)
-	{
-		return true;
-	}
-
-	if (bEnemyUnstoppable)
+	// Unstoppable logic
+	if (bEnemyUnstoppable && !bHeroCanInterrupt)
 	{
 		return false;
 	}

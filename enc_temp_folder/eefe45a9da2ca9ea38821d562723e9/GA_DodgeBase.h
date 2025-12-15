@@ -58,7 +58,7 @@ protected:
 	class UAbilityTask_WaitDelay* WaitDelayTask;
 
 	UPROPERTY(EditDefaultsOnly)
-	float DodgeDamageImmunityDuration = 0.3f;
+	float DodgeDamageImmunityDuration = 0.2f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UDirectionToDodgeMontageAsset* DirectionToDodgeMontageAsset;

@@ -2,11 +2,11 @@
 
 #include "Gameplay/Actors/Characters/Heroes/Components/Listener/AC_HeroEnemyAttackListener.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
-#include <Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h>
 #include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "Gameplay/Animation/ANS_AttackTrace.h"
 #include "AbilitySystemComponent.h"
 #include "TimerManager.h"
+#include <Gameplay/Effects/GAS_EffectBlueprintFunctionLibary.h>
 
 UAC_HeroEnemyAttackListener::UAC_HeroEnemyAttackListener()
 {

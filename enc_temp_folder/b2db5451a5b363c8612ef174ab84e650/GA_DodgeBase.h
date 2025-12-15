@@ -54,8 +54,6 @@ protected:
 	UFUNCTION()
 	void RemoveDamageImmuneTag();
 
-	void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
-
 	UPROPERTY()
 	class UAbilityTask_WaitDelay* WaitDelayTask;
 

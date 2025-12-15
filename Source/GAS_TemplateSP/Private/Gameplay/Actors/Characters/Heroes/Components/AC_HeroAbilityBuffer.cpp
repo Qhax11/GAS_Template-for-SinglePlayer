@@ -104,7 +104,6 @@ void UAC_HeroAbilityBuffer::TryActivateBufferedAbility()
 
 void UAC_HeroAbilityBuffer::OnBufferAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
 {
-    UE_LOG(LogTemp, Warning, TEXT("UAC_HeroAbilityBuffer: OnBufferAbilityEnd: %s"));
     HeroASC->TryActivateAbilityByClass(BufferedAbilityClass);
     ClearBuffer();
 }

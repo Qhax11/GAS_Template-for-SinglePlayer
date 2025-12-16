@@ -7,8 +7,9 @@ UComingAttackReactionDataParry::UComingAttackReactionDataParry()
 {
 	ComingAttackReactionName = FName("Parry");
 	ReactionType = EComingAttackReaction::Parry;
-	MinimumTimeBeforeHitToReact = 0.2f;	
-	PreferredTriggerTimeBeforeHit = 0.3f;	
+
+	MinimumTimeBeforeHitToReact = 0.f;	
+	PreferredTriggerTimeBeforeHit = 0.2f;	
 
 	BaseChance = 0.5f;   
 	MinChance = 0.15f;  

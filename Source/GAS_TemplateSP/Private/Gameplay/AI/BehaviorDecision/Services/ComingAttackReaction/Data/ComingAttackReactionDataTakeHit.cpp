@@ -8,8 +8,9 @@ UComingAttackReactionDataTakeHit::UComingAttackReactionDataTakeHit()
 {
 	ComingAttackReactionName = FName("TakeHit");
 	ReactionType = EComingAttackReaction::TakeDamage;
+
 	MinimumTimeBeforeHitToReact = 0.0f;	
-	PreferredTriggerTimeBeforeHit = 0.1f;	
+	PreferredTriggerTimeBeforeHit = 0.f;	
 
 	BaseChance = 1.0f;
 	MinChance = 1.0f;

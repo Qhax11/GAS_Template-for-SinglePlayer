@@ -9,8 +9,9 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 {
     ComingAttackReactionName = FName("Dodge");
     ReactionType = EComingAttackReaction::Dodge;
-    MinimumTimeBeforeHitToReact = 0.15f;    
-    PreferredTriggerTimeBeforeHit = 0.25f;    
+
+    MinimumTimeBeforeHitToReact = 0.f;    
+    PreferredTriggerTimeBeforeHit = 0.2f;    
 
 	BaseChance = 0.65f;
 	MinChance = 0.35f;

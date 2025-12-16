@@ -9,7 +9,10 @@ UComingAttackReactionDataParry::UComingAttackReactionDataParry()
 	ReactionType = EComingAttackReaction::Parry;
 	MinimumTimeBeforeHitToReact = 0.2f;	
 	PreferredTriggerTimeBeforeHit = 0.3f;	
-	BaseChance = 0.7f;
+
+	BaseChance = 0.5f;   
+	MinChance = 0.15f;  
+	MaxChance = 0.95f;  
 }
 
 bool UComingAttackReactionDataParry::IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug) const
@@ -42,7 +45,7 @@ bool UComingAttackReactionDataParry::PassesChanceRoll(const UAbilitySystemCompon
 
     const float Posture = BaseAttributes->GetPosture();
     const float MaxPosture = BaseAttributes->GetMaxPosture();
-	const float Threshold = 1.f - (Posture / MaxPosture);
+	const float Threshold = FMath::Clamp(Posture / MaxPosture, 0.15f, 0.95f);
 	const float Roll = FMath::FRandRange(0.f, 1.f);
 
 	const bool bPassed = Roll <= Threshold;
@@ -53,7 +56,7 @@ bool UComingAttackReactionDataParry::PassesChanceRoll(const UAbilitySystemCompon
 		OutDebug->Threshold = Threshold;
 		OutDebug->Reason = bPassed
 			? EReactionChanceFailReason::None
-			: EReactionChanceFailReason::PostureTooHigh;
+			: EReactionChanceFailReason::PostureRollFailed;
 	}
 
 	return bPassed;

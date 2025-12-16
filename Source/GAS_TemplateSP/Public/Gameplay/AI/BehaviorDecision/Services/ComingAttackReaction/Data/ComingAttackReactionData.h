@@ -42,7 +42,7 @@ enum class EReactionChanceFailReason : uint8
 {
     None,
     RandomRollFailed,
-    PostureTooHigh,   // parry gibi özel durumlar için
+    PostureRollFailed,
 };
 
 struct FReactionChanceDebug
@@ -59,6 +59,57 @@ struct FReactionScoreDebug
     float Bias = 0.f;
     float Total = 0.f;
 };
+
+/**
+ * UComingAttackReactionData
+ *
+ * Represents a single defensive reaction option (e.g. Parry, Dodge, TakeDamage)
+ * that can be evaluated by the AI when responding to an incoming attack.
+ *
+ * Reactions are evaluated in THREE sequential steps:
+ *
+ * 1) Enable (IsEnable)
+ *    - Hard, deterministic gating.
+ *    - Answers: "Is this reaction even allowed right now?"
+ *    - Examples:
+ *        - Too late to react
+ *        - Attack is unparryable / undodgeable
+ *        - Defender is unstoppable
+ *        - Cooldown or state restrictions
+ *
+ * 2) Chance (PassesChanceRoll)
+ *    - Probabilistic eligibility check.
+ *    - Answers: "Even if allowed, does the AI commit to this reaction right now?"
+ *    - Used to introduce controlled uncertainty and avoid perfectly deterministic behavior.
+ *
+ * 3) Score (GetScore)
+ *    - Deterministic prioritization among the remaining valid reactions.
+ *    - Answers: "Which of the remaining reactions is the best choice?"
+ *    - Influenced by:
+ *        - Current behavior state
+ *        - Incoming attack tags
+ *        - Flat score bias
+ *        - (Later) combat memory and context modifiers
+ *
+ * IMPORTANT:
+ * - Chance does NOT compare reactions against each other.
+ * - It only filters out reactions before scoring.
+ * - The final selection is ALWAYS driven by score.
+ *
+ * Conceptual model:
+ *   Enable -> Chance -> Score -> Selection
+ *
+ * This separation allows the AI to:
+ * - Prefer aggressive reactions like Parry
+ * - Fall back to safer options like Dodge
+ * - Occasionally fail or hesitate, creating believable behavior
+ *
+ * This class is designed to be:
+ * - Data-driven (tunable via DataAssets)
+ * - Extensible (reaction-specific overrides)
+ * - Debuggable (explicit enable, chance, and score breakdowns)
+ */
+
 
 UCLASS(Blueprintable, DefaultToInstanced, EditInLineNew, Abstract)
 class UComingAttackReactionData : public UObject
@@ -93,9 +144,25 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))
     float PreferredTriggerTimeBeforeHit = 0.2f;
 
-    // Base chance to select this reaction (0.0 to 1.0)
+    // Base success probability used by PassesChanceRoll() when this reaction is selected.
+    // This value represents how reliable the reaction is by default, before posture,
+    // combat context, or memory-based modifiers are applied.
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float BaseChance = 0.5f;
+
+    // Minimum allowed success probability for this reaction.
+    // Acts as a safety floor during PassesChanceRoll() so that penalties
+    // (low posture, memory debuffs, bad context) never make the reaction impossible.
+    // This prevents the AI from feeling "broken" or completely helpless.
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float MinChance = 0.1f;
+
+    // Maximum allowed success probability for this reaction.
+    // Acts as a safety ceiling during PassesChanceRoll() so that bonuses
+    // (high posture, favorable context, memory buffs) never make the reaction guaranteed.
+    // This preserves uncertainty and prevents deterministic AI behavior.
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float MaxChance = 0.95f;
 
     // +X score if AI is in this state
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

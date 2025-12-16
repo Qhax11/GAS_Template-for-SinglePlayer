@@ -10,7 +10,10 @@ UComingAttackReactionDataTakeHit::UComingAttackReactionDataTakeHit()
 	ReactionType = EComingAttackReaction::TakeDamage;
 	MinimumTimeBeforeHitToReact = 0.0f;	
 	PreferredTriggerTimeBeforeHit = 0.1f;	
+
 	BaseChance = 1.0f;
+	MinChance = 1.0f;
+	MaxChance = 1.0f;
 }
 
 bool UComingAttackReactionDataTakeHit::IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug) const

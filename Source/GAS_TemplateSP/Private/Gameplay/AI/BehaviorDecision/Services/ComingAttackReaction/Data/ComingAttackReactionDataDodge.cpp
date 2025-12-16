@@ -11,7 +11,10 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
     ReactionType = EComingAttackReaction::Dodge;
     MinimumTimeBeforeHitToReact = 0.15f;    
     PreferredTriggerTimeBeforeHit = 0.25f;    
-    BaseChance = 0.6f;
+
+	BaseChance = 0.65f;
+	MinChance = 0.35f;
+	MaxChance = 0.90f;
 
     // Dash distance
     DodgeMovementAbilityData.AbilityTriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;
@@ -40,5 +43,50 @@ bool UComingAttackReactionDataDodge::IsEnable(FComingAttackPayload ComingAttackP
 	}
 
 	return true;
+}
+
+bool UComingAttackReactionDataDodge::PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug) const
+{
+	const float BaseDodgeChance = BaseChance;      
+	const float MinDodgeChance  = MinChance;      
+	const float MaxDodgeChance  = MaxChance;     
+
+	float DodgeChance = BaseDodgeChance;
+
+	// Posture bilgisi varsa posture'a göre ayarla
+	if (ASC)
+	{
+		if (const UAS_Base* BaseAttributes = ASC->GetSet<UAS_Base>())
+		{
+			const float Posture = BaseAttributes->GetPosture();
+			const float MaxPosture = BaseAttributes->GetMaxPosture();
+
+			if (MaxPosture > 0.f)
+			{
+				// Posture düþtükçe dodge daha güvenli
+				const float NormalizedPosture = FMath::Clamp(Posture / MaxPosture, 0.f, 1.f);
+
+				// Posture düþük ? bonus yüksek
+				const float LowPostureBonus = (1.f - NormalizedPosture) * 0.25f;
+				DodgeChance += LowPostureBonus;
+			}
+		}
+	}
+
+	DodgeChance = FMath::Clamp(DodgeChance, MinDodgeChance, MaxDodgeChance);
+
+	const float Roll = FMath::FRandRange(0.f, 1.f);
+	const bool bPassed = Roll <= DodgeChance;
+
+	if (OutDebug)
+	{
+		OutDebug->Roll = Roll;
+		OutDebug->Threshold = DodgeChance;
+		OutDebug->Reason = bPassed
+			? EReactionChanceFailReason::None
+			: EReactionChanceFailReason::RandomRollFailed;
+	}
+
+	return bPassed;
 }
 

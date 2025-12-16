@@ -153,7 +153,7 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload& ComingAttac
 		return;
 	}
 
-	// TakeDamage event will triggered from UAC_IntendHandlerBase::OnDamageDealt;
+	// TakeDamage event will triggered from OnDamageDealt;
 	if (SelectedReaction->ReactionType == EComingAttackReaction::TakeDamage)
 	{
 		return;

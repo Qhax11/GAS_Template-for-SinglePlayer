@@ -47,10 +47,13 @@ float UComingAttackReactionData::GetScore(const FComingAttackPayload& ComingAtta
 	float TagScore = CalculateTagScore(ComingAttackPayload);
 	float Total = BehaviorStateScore + TagScore + ScoreBias;
 
-	OutDebug->BehaviorStateScore = BehaviorStateScore;
-	OutDebug->TagScore = TagScore;
-	OutDebug->Bias = ScoreBias;
-	OutDebug->Total = Total;
+	if (OutDebug) 
+	{
+		OutDebug->BehaviorStateScore = BehaviorStateScore;
+		OutDebug->TagScore = TagScore;
+		OutDebug->Bias = ScoreBias;
+		OutDebug->Total = Total;
+	}
 
 	return Total;
 }

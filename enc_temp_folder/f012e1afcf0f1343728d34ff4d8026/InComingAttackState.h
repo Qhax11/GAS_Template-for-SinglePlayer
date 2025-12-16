@@ -54,8 +54,6 @@ protected:
 
 	void MakeParryAbility(const UComingAttackReactionData* BestComingAttackReaction);
 
-	void FaceTargetBeforeParry();
-
 	UFUNCTION()
 	void OnParryAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 

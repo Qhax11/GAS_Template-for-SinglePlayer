@@ -16,6 +16,15 @@ bool UComingAttackReactionData::IsEnable(FComingAttackPayload ComingAttackPayloa
 		return false;
 	}
 
+	if (!CheckDistance(ComingAttackPayload))
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EReactionDisableReason::InvalidDistance;
+		}
+		return false;
+	}
+
 	if (OutDebug)
 	{
 		OutDebug->Reason = EReactionDisableReason::None;
@@ -81,4 +90,29 @@ float UComingAttackReactionData::CalculateTagScore(const FComingAttackPayload& C
 	}
 
 	return Score;
+}
+
+bool UComingAttackReactionData::CheckDistance(const FComingAttackPayload& ComingAttackPayload) const
+{
+	if (!ComingAttackPayload.ComingAttack)
+	{
+		return false;
+	}
+
+	AActor* Attacker = ComingAttackPayload.Attacker;
+	AActor* Defender = ComingAttackPayload.Defender;
+
+	if (!IsValid(Attacker) || !IsValid(Defender))
+	{
+		return false;
+	}
+
+	const float AttackRange = ComingAttackPayload.ComingAttack->MaxRange;
+
+	const float Distance = FVector::Dist(
+		Attacker->GetActorLocation(),
+		Defender->GetActorLocation()
+	);
+
+	return Distance <= (AttackRange + 50.f);
 }

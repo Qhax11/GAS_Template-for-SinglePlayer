@@ -24,6 +24,7 @@ void UAC_IntendHandlerBase::BeginPlay()
 	checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 	checkf(OwnerEnemyBase, TEXT("OwnerEnemyBase is null in %s"), *GetClass()->GetName());
 	checkf(OwnerEnemyASC, TEXT("OwnerEnemyASC is null in %s"), *GetClass()->GetName());
+	checkf(HeroBase, TEXT("HeroBase is null in %s"), *GetClass()->GetName());
 
 	OwnerStateManager = OwnerController->GetEnemyStateManagerComponent();
 	checkf(OwnerStateManager, TEXT("OwnerStateManager is null in %s"), *GetClass()->GetName());
@@ -95,7 +96,18 @@ void UAC_IntendHandlerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 	FGameplayTag AttackDirectionTag = MeleeAttackAbility->GetAttackDirectionTagFromAbilityTags();
 	float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility, CombinedTags);
 
-	FComingAttackPayload Payload(MeleeAttackAbility, AttackTime, CombinedTags, AttackTypeTag, AttackDirectionTag, OwnerEnemyASC);
+	FComingAttackPayload Payload(
+		MeleeAttackAbility, 
+		AttackTime, 
+		CombinedTags, 
+		AttackTypeTag, 
+		AttackDirectionTag, 
+		HeroBase, 
+		HeroBase->GetAbilitySystemComponent(),
+		OwnerEnemyBase,
+		OwnerEnemyASC
+	);
+
 	SendEventToDefense(Payload);
 }
 

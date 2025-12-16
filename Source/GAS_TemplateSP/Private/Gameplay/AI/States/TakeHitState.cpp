@@ -30,12 +30,7 @@ bool UTakeHitState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return false;
 	}
 
-	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
-	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
-
-	// Eðer unstoppable deðilse ? gir
-	// Eðer unstoppable ama hero interrupt ediyorsa ? yine gir
-	return !bEnemyUnstoppable || bHeroCanInterrupt;
+	return true;
 }
 
 void UTakeHitState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)

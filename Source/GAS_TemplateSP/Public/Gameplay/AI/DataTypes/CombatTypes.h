@@ -46,7 +46,17 @@ public:
 	FGameplayTag AttackDirectionTag;
 
 	UPROPERTY(BlueprintReadOnly)
+	AActor* Attacker;
+
+	UPROPERTY(BlueprintReadOnly)
+	UAbilitySystemComponent* AttackerASC;
+
+	UPROPERTY(BlueprintReadOnly)
+	AActor* Defender;
+
+	UPROPERTY(BlueprintReadOnly)
 	UAbilitySystemComponent* DefenderASC;
+
 
 	FComingAttackPayload()
 		: ComingAttack(nullptr)
@@ -57,6 +67,9 @@ public:
 		FGameplayTagContainer InComingAttackTags,
 		FGameplayTag InAttackTypeTag,
 		FGameplayTag InAttackDirectionTag,
+		AActor* InAttacker,
+		UAbilitySystemComponent* InAttackerASC,
+		AActor* InDefender,
 		UAbilitySystemComponent* InDefenderASC)
 		:
 		ComingAttack(InComingAttack), 
@@ -64,6 +77,9 @@ public:
 		ComingAttackTags(InComingAttackTags),
 		AttackTypeTag(InAttackTypeTag) ,
 		AttackDirectionTag(InAttackDirectionTag),
+		Attacker(InAttacker),
+		AttackerASC(InAttackerASC),
+		Defender(InDefender),
 		DefenderASC(InDefenderASC)
 	{}
 };

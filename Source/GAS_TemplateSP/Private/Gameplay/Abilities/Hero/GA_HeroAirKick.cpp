@@ -19,7 +19,6 @@ UGA_HeroAirKick::UGA_HeroAirKick()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_AirKick);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnparryableAttack);
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnDodgebleAttack);
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
 
 	MontageEndPolicy = EMontageEndPolicy::Never;
 }

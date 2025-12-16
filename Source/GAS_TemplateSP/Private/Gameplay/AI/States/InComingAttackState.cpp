@@ -24,37 +24,21 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 {
 	if (!EnterPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EnterPayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
 	InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
 	if (!InComingAttackStatePayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("InComingAttackStatePayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
-	FComingAttackPayload ComingAttackPayload = InComingAttackStatePayload->AttackPayload;
-	const float AttackRange = ComingAttackPayload.ComingAttack->MaxRange;
-
-	const float Distance = HeroTarget->GetDistanceTo(Enemy);
-	const bool bIsInRange = Distance < AttackRange + 50.0f;
-
-	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack);
-	const bool bEnemyUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
-
-	if (bHeroCanInterrupt)
-	{
-		return true;
-	}
-
-	if (bEnemyUnstoppable)
+	if (!InComingAttackStatePayload->AttackPayload.ComingAttack)
 	{
 		return false;
 	}
 
-	return bIsInRange;
+	return true;
 }
 
 void UInComingAttackState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
@@ -159,9 +143,6 @@ void UInComingAttackState::OnComingAttackAbilityEnded(const FCustomAbilityEndedD
 
 void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* BestComingAttackReaction)
 {
-	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
-
 	UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
 
 	if (LastUsedParryAbility && LastUsedParryAbility->IsActive())
@@ -180,6 +161,8 @@ void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* Bes
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: bIsInActiveAttackPhase TRUE."));
 	}
 
+	FaceTargetBeforeParry();
+
 	UGAS_GameplayAbilityBase* ActivatedParryAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(EnemyParryAbilityClass);
 	if (ActivatedParryAbility && ActivatedParryAbility->IsActive())
 	{
@@ -192,6 +175,26 @@ void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* Bes
 	}
 
 	LastUsedParryAbility = ActivatedParryAbility;
+}
+
+void UInComingAttackState::FaceTargetBeforeParry()
+{
+	if (!Enemy || !HeroTarget)
+	{
+		return;
+	}
+
+	const FVector ToTarget = HeroTarget->GetActorLocation() - Enemy->GetActorLocation();
+	FVector FlatDir = FVector(ToTarget.X, ToTarget.Y, 0.f);
+
+	if (FlatDir.IsNearlyZero())
+	{
+		return;
+	}
+
+	const FRotator TargetRotation = FlatDir.Rotation();
+
+	Enemy->SetActorRotation(TargetRotation);
 }
 
 void UInComingAttackState::OnParryAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
@@ -228,14 +231,12 @@ void UInComingAttackState::OnExit_Implementation()
 
 	Super::OnExit_Implementation();
 
-	// Hemen cleanup yap, sorun yok artık!
 	CleanupDelegates();
 	UnBindTargetComingAttackEnd();
 }
 
 void UInComingAttackState::CleanupDelegates()
 {
-	// Bu fonksiyon defer edildiği için güvenli şekilde RemoveAll kullanabilir
 	if (IsValid(DamageSubsystem))
 	{
 		DamageSubsystem->OnDamageDealt.RemoveAll(this);
@@ -246,7 +247,6 @@ void UInComingAttackState::CleanupDelegates()
 		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 	}
 
-	// Parry
 	if (IsValid(LastUsedParryAbility) && ParryEndHandle.IsValid())
 	{
 		LastUsedParryAbility->OnAbilityEnded.Remove(ParryEndHandle);
@@ -254,7 +254,6 @@ void UInComingAttackState::CleanupDelegates()
 		LastUsedParryAbility = nullptr;
 	}
 
-	// ParryKnockback
 	if (IsValid(LastUsedParryKnocbackAbility) && ParryKnockbackEndHandle.IsValid())
 	{
 		LastUsedParryKnocbackAbility->OnAbilityEnded.Remove(ParryKnockbackEndHandle);

@@ -112,7 +112,6 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnparryableAttack, "Gameplay.State.InCombat.UnparryableAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnDodgebleAttack, "Gameplay.State.InCombat.UnDodgebleAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnstoppableAttack, "Gameplay.State.InCombat.UnstoppableAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_CanInterruptUnstoppableAttack, "Gameplay.State.InCombat.CanInterruptUnstoppableAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_TakeDamage, "Gameplay.State.InCombat.TakeDamage");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_Parry, "Gameplay.State.InCombat.Parry");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_ParryKnockback, "Gameplay.State.InCombat.ParryKnockback");

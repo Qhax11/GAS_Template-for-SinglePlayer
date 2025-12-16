@@ -129,6 +129,8 @@ protected:
 
     virtual float CalculateTagScore(const FComingAttackPayload& ComingAttackPayload) const;
 
+    virtual bool CheckDistance(const FComingAttackPayload& ComingAttackPayload) const;
+
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Coming Attack Reaction. Used for debugging or referencing in logic."))
     FName ComingAttackReactionName;

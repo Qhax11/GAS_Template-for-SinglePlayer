@@ -2,9 +2,9 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include <Gameplay/Attributes/AS_Base.h>
+#include <Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionDataDodge.h>
 
 void UBDS_ComingAttackReactionBase::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {
@@ -36,8 +36,8 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason = %s |"),
-					*Reaction->ComingAttackReactionName.ToString(),
+					TEXT("UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason=%s"),
+					*Reaction->GetName(),
 					*UEnum::GetValueAsString(EnableDebug.Reason)
 				);
 			}
@@ -51,8 +51,8 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Reason = %s | Roll = %.2 Threshold = %.2f |"),
-					*Reaction->ComingAttackReactionName.ToString(),
+					TEXT("UBDS_ComingAttackReactionBase: ReactionChanceFailed = %s | Reason=%s | Roll=%.2f Threshold=%.2f"),
+					*Reaction->GetName(),
 					*UEnum::GetValueAsString(ChanceDebug.Reason),
 					ChanceDebug.Roll,
 					ChanceDebug.Threshold
@@ -67,8 +67,8 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 		if (bEnableDebug)
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
-				*Reaction->ComingAttackReactionName.ToString(),
+				TEXT("UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior=%.2f Tag=%.2f Bias=%.2f Total=%.2f"),
+				*Reaction->GetName(),
 				ScoreDebug.BehaviorStateScore,
 				ScoreDebug.TagScore,
 				ScoreDebug.Bias,
@@ -93,8 +93,8 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 	if (bEnableDebug && BestReaction)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("UBDS_ComingAttackReactionBase: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
-			*BestReaction->ComingAttackReactionName.ToString(),
+			TEXT("UBDS_ComingAttackReactionBase: WINNER = %s | Behavior=%.2f Tag=%.2f Bias=%.2f Total=%.2f"),
+			*BestReaction->GetName(),
 			BestScoreDebug.BehaviorStateScore,
 			BestScoreDebug.TagScore,
 			BestScoreDebug.Bias,

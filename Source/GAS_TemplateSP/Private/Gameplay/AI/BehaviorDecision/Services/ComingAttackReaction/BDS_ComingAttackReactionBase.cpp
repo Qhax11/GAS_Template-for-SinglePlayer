@@ -51,7 +51,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Reason = %s | Roll = %.2 Threshold = %.2f |"),
+					TEXT("UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
 					*Reaction->ComingAttackReactionName.ToString(),
 					*UEnum::GetValueAsString(ChanceDebug.Reason),
 					ChanceDebug.Roll,
@@ -81,11 +81,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 		{
 			BestScore = Score;
 			BestReaction = Reaction;
-
-			if (bEnableDebug)
-			{
-				BestScoreDebug = ScoreDebug;
-			}
+			BestScoreDebug = ScoreDebug;
 		}
 	}
 

@@ -178,5 +178,4 @@ public:
     // Flat score bias to encourage/discourage selection
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float ScoreBias = 0.f;
-
 };

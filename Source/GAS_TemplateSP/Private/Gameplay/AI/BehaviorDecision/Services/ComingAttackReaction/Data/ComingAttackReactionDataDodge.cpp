@@ -17,6 +17,8 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 	MinChance = 0.35f;
 	MaxChance = 0.90f;
 
+	ScoreBias = 0.1f;
+
     // Dash distance
     DodgeMovementAbilityData.AbilityTriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;
 	DodgeMovementAbilityData.EnableDirectionPolicy = true;

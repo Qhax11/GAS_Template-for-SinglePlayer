@@ -15,7 +15,7 @@ class GAS_TEMPLATESP_API UComingAttackReactionDataDodge : public UComingAttackRe
 public:
 	UComingAttackReactionDataDodge(); 
 
-	virtual bool IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) const override;
+	virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMovementAbilityData DodgeMovementAbilityData;

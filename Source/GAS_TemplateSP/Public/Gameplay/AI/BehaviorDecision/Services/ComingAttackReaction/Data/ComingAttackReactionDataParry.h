@@ -14,6 +14,10 @@ class GAS_TEMPLATESP_API UComingAttackReactionDataParry : public UComingAttackRe
 public:
 	UComingAttackReactionDataParry();
 
-	virtual bool IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) const override;
+	virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const override;
+
+	virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC) const override;
+
+	virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const override;
 
 };

@@ -5,6 +5,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
+#include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "ComingAttackReactionData.generated.h"
 
 UENUM(BlueprintType)
@@ -21,8 +22,18 @@ class UComingAttackReactionData : public UObject
     GENERATED_BODY()
 
 public:
-    virtual bool IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) const;
+    virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const;
 
+    virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC) const;
+
+    virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const;
+
+protected:
+    virtual float CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const;
+
+    virtual float CalculateTagScore(const FComingAttackPayload& ComingAttackPayload) const;
+
+public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Coming Attack Reaction. Used for debugging or referencing in logic."))
     FName ComingAttackReactionName;
 

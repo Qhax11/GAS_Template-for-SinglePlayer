@@ -28,21 +28,9 @@ class GAS_TEMPLATESP_API UBDS_ComingAttackReactionBase : public UBehaviorDecisio
 public:
     virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
 
-    UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);
+    UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload& ComingAttackPayload);
 
 protected:
-    float CalculateBehaviorStateScore(UComingAttackReactionData* ComingReactionData);
-
-    float CalculateTagScore(UComingAttackReactionData* ComingReactionData, const FComingAttackPayload ComingAttackPayload);
-
-    bool PassesFinalChanceRoll(UComingAttackReactionData* ComingReactionData);
-
-    bool PassesChanceRoll(UComingAttackReactionData* ComingReactionData);
-
-    bool PassesChanceRollBasedOnPosture(UComingAttackReactionData* ComingReactionData);
-
-    FGameplayTag GetRandomDirectionTag();
-
     UPROPERTY(EditDefaultsOnly)
     UComingAttackReactionAsset* ComingAttackReactionAsset;
 };

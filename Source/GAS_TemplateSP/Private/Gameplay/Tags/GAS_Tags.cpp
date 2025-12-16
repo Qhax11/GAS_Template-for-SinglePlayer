@@ -442,6 +442,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Strafing_AttackIntend, "AI.AbilityTriggerEvent.Movement.Strafing.AttackIntend");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_ChaseTarget, "AI.AbilityTriggerEvent.Movement.ChaseTarget");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Dash, "AI.AbilityTriggerEvent.Movement.Dash");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_AbilityTriggerEvent_Movement_Dodge, "AI.AbilityTriggerEvent.Movement.Dodge");
 
 
 	// ============================================================
@@ -456,6 +457,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy, "AI.Direction.Policy");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_Random, "AI.Direction.Policy.Random");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_PlayerLastDirection, "AI.Direction.Policy.LastPlayerDirection");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_EscapeFromAttack, "AI.Direction.Policy.EscapeFromAttack");
 
 
 

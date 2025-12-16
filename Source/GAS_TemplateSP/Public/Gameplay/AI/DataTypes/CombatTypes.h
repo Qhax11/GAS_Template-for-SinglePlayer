@@ -36,11 +36,26 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FGameplayTagContainer ComingAttackTags;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FGameplayTag AttackTypeTag;
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag AttackDirectionTag;
+
 	FComingAttackPayload()
 		: ComingAttack(nullptr)
 	{}
 
-	FComingAttackPayload(UGAS_GameplayAbilityBase* InComingAttack, float InComingAttackHitTime, FGameplayTagContainer InComingAttackTags)
-		: ComingAttack(InComingAttack), ComingAttackHitTime(InComingAttackHitTime), ComingAttackTags(InComingAttackTags)
+	FComingAttackPayload(UGAS_GameplayAbilityBase* InComingAttack, 
+		float InComingAttackHitTime,
+		FGameplayTagContainer InComingAttackTags,
+		FGameplayTag InAttackTypeTag,
+		FGameplayTag InAttackDirectionTag)
+		:
+		ComingAttack(InComingAttack), 
+		ComingAttackHitTime(InComingAttackHitTime), 
+		ComingAttackTags(InComingAttackTags),
+		AttackTypeTag(InAttackTypeTag) ,
+		AttackDirectionTag(InAttackDirectionTag)
 	{}
 };

@@ -91,8 +91,11 @@ void UAC_IntendHandlerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 		CombinedTags.AppendTags(Spec->DynamicAbilityTags);
 	}
 
+	FGameplayTag AttackTypeTag = MeleeAttackAbility->GetAttackTypeTagFromAbilityTags();
+	FGameplayTag AttackDirectionTag = MeleeAttackAbility->GetAttackDirectionTagFromAbilityTags();
+
 	float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility, CombinedTags);
-	FComingAttackPayload Payload(MeleeAttackAbility, AttackTime, CombinedTags);
+	FComingAttackPayload Payload(MeleeAttackAbility, AttackTime, CombinedTags, AttackTypeTag, AttackDirectionTag);
 	SendEventToDefense(Payload);
 }
 

@@ -9,7 +9,7 @@ UGA_BossDodge::UGA_BossDodge()
 
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
-	TriggerData.TriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dash;
+	TriggerData.TriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;
 
 	AbilityTriggers.Add(TriggerData);
 }

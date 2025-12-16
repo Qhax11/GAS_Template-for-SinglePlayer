@@ -128,26 +128,42 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 	}
 }
 
-void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbility)
+void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbility, FGameplayTag AttackDirection)
 {
 	if (!MovementAbility.DirectionPolicyTag.IsValid())
 	{
 		return;
 	}
 
-	FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
+	FGameplayTag ResolvedDirectionTag;
 
-	if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
+	if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack)
 	{
+		ResolvedDirectionTag = ResolveAttackDirection(AttackDirection);
+		if (!ResolvedDirectionTag.IsValid())
+		{
+			ResolvedDirectionTag = GetRandomDirectionTag();
+		}
+	}
+	else if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
+	{
+		FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
 		if (HeroLastDirectionGameplayTag.IsValid())
 		{
-			MovementAbility.ResolvedDirectionTag = HeroLastDirectionGameplayTag;
+			ResolvedDirectionTag = HeroLastDirectionGameplayTag;
 		}
 	}
 	else if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random)
 	{
-		MovementAbility.ResolvedDirectionTag = GetRandomDirectionTag();
+		ResolvedDirectionTag = GetRandomDirectionTag();
 	}
+
+	if (!ResolvedDirectionTag.IsValid())
+	{
+		ResolvedDirectionTag = GetRandomDirectionTag();
+	}
+	
+	MovementAbility.ResolvedDirectionTag = ResolvedDirectionTag;
 }
 
 FGameplayTag UAC_EnemyMovementManager::GetRandomDirectionTag()
@@ -162,6 +178,33 @@ FGameplayTag UAC_EnemyMovementManager::GetRandomDirectionTag()
 
 	int32 RandomIndex = FMath::RandRange(0, PossibleDirections.Num() - 1);
 	return PossibleDirections[RandomIndex];
+}
+
+FGameplayTag UAC_EnemyMovementManager::ResolveAttackDirection(FGameplayTag AttackDirectionTag)
+{
+	if (!AttackDirectionTag.IsValid())
+	{
+		return FGameplayTag();
+	}
+
+	if (AttackDirectionTag == GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Direction_RightToLeft)
+	{
+		return GAS_Tags::TAG_Gameplay_Direction_Right;
+	}
+	else if (AttackDirectionTag == GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Direction_LeftToRight)
+	{
+		return GAS_Tags::TAG_Gameplay_Direction_Left;
+	}
+	else if (AttackDirectionTag == GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Direction_BottomToTop)
+	{
+		return GAS_Tags::TAG_Gameplay_Direction_Backward;
+	}
+	else if (AttackDirectionTag == GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Direction_TopToBottom)
+	{
+		return GAS_Tags::TAG_Gameplay_Direction_Backward;
+	}
+
+	return FGameplayTag();
 }
 
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)

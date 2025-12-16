@@ -76,7 +76,7 @@ public:
 
 	void CancelMovementAbilities();
 
-	void ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbility);
+	void ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbility, FGameplayTag AttackDirection = FGameplayTag());
 
 	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;
@@ -87,6 +87,12 @@ protected:
 	void TryActivateMovementAbilityWithEventData(FMovementAbilityData MovementChainData);
 
 	FGameplayTag GetRandomDirectionTag();
+
+	// Resolves the final movement direction based on the incoming attack direction.
+    // Applies attack-direction–specific rules (e.g. horizontal vs vertical attacks)
+    // and returns a single, safe direction tag to be used by movement abilities.
+    // May return an invalid tag if the input is invalid and no fallback is applied.
+	FGameplayTag ResolveAttackDirection(FGameplayTag AttackDirectionTag);
 
 	UFUNCTION()
 	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);

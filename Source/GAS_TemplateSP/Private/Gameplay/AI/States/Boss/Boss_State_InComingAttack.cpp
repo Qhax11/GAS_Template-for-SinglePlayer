@@ -4,6 +4,7 @@
 #include "Gameplay/AI/States/Boss/Boss_State_InComingAttack.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionDataDodge.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 
 void UBoss_State_InComingAttack::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -62,23 +63,9 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 
 	if (DodgeReactionData->DodgeMovementAbilityData.EnableDirectionPolicy) 
 	{
-		MovementManager->ApplyDirectionPoliciesToMovementAbility(DodgeReactionData->DodgeMovementAbilityData);
+		MovementManager->ApplyDirectionPoliciesToMovementAbility(DodgeReactionData->DodgeMovementAbilityData, InComingAttackStatePayload->AttackPayload.AttackDirectionTag);
 	}
 
-	/*
-	if (Enemy && HeroTarget)
-	{
-		FVector StartLocation = Enemy->GetActorLocation();
-		FVector TargetLocation = HeroTarget->GetActorLocation();
-
-		// Yalnýzca yaw (yatay) rotasyonu hesapla, pitch ve roll sabit kalsýn
-		FRotator LookAtRotation = (TargetLocation - StartLocation).Rotation();
-		LookAtRotation.Pitch = 0.f;
-		LookAtRotation.Roll = 0.f;
-
-		Enemy->SetActorRotation(LookAtRotation);
-	}
-	*/
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
@@ -116,31 +103,6 @@ void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FCustomAbilityEndedDa
 
 void UBoss_State_InComingAttack::OnExit_Implementation()
 {
-	/*
-	// Ýþ parçacýðý kontrolünü daha güvenli hale getirelim:
-	if (!IsInGameThread())
-	{
-		TWeakObjectPtr<UInComingAttackState> WeakThis(this);
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([WeakThis]()
-				{
-					if (UInComingAttackState* Self = WeakThis.Get())
-					{
-						// Game Thread'de OnExit'i güvenle tekrar çaðýr.
-						UE_LOG(LogTemp, Warning, TEXT("State Manager: OnExit deferred to Game Thread."));
-						Self->OnExit_Implementation();
-					}
-				}),
-			TStatId(),
-			nullptr,
-			ENamedThreads::GameThread
-		);
-		return; // Worker Thread'den hemen çýk.
-	}
-
-	// ----------- BURADAN SONRA SADECE GAME THREAD'DEYÝZ -----------
-	*/
-
 	if (!IsInGameThread())
 	{
 		AsyncTask(ENamedThreads::GameThread, [WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()

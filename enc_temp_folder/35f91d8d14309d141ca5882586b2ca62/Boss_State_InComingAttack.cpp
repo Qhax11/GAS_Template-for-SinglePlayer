@@ -18,7 +18,7 @@ void UBoss_State_InComingAttack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayl
 
 bool UBoss_State_InComingAttack::SelectAndExecuteReaction(UComingAttackReactionData* SelectedReactionData)
 {
-	// If it's success on Super we don't have to do anything.
+	// If its success on Super we don't have to do anything.
 	if (Super::SelectAndExecuteReaction(SelectedReactionData))
 	{
 		return true;

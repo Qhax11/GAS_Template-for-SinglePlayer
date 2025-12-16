@@ -18,7 +18,7 @@ public:
 
 	virtual bool SelectAndExecuteReaction(UComingAttackReactionData* SelectedReactionData) override;
 
-	void ActivateDodgeAbility(const UComingAttackReactionData* SelectedBestReaction);
+	void ActivateDodgeAbility(UComingAttackReactionData* SelectedBestReaction);
 
 	UFUNCTION()
 	void OnDodgeAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);

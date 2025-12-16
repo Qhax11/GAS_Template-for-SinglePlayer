@@ -30,22 +30,13 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 
         float BehaviorScore = CalculateBehaviorStateScore(Reaction);
         float TagScore = CalculateTagScore(Reaction, ComingAttackPayload);
+        float ScoreBias = Reaction->ScoreBias;
 
-        float ComingAttackReactionScore = BehaviorScore + TagScore + Reaction->ScoreBias;
-
+        float ComingAttackReactionScore = BehaviorScore + TagScore + ScoreBias;
         if (ComingAttackReactionScore > BestScore)
         {
             BestScore = ComingAttackReactionScore;
             BestReaction = Reaction;
-        }
-    }
-
-    if (BestReaction) 
-    {
-        if (BestReaction->ReactionType == EComingAttackReaction::Dodge)
-        {
-            UComingAttackReactionDataDodge* ComingAttackReactionDataDodge = Cast<UComingAttackReactionDataDodge>(BestReaction);
-            ComingAttackReactionDataDodge->ApplyDirectionPoliciesToMovementAbility(HeroMovementListenerComp);
         }
     }
 
@@ -87,7 +78,6 @@ bool UBDS_ComingAttackReactionBase::PassesFinalChanceRoll(UComingAttackReactionD
     {
         return PassesChanceRollBasedOnPosture(ComingReactionData);
     }
-    // ReactionType == EComingAttackReaction::TakeDamage
     else 
     {
         return true;

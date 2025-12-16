@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Components/ActorComponent.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyBase.h"
 #include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_EnemyMovementManager.generated.h"
@@ -55,8 +55,10 @@ public:
 	}
 };
 
+class UAC_HeroMovementListener;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GAS_TEMPLATESP_API UAC_EnemyMovementManager : public UActorComponent
+class GAS_TEMPLATESP_API UAC_EnemyMovementManager : public UAC_EnemyBase
 {
 	GENERATED_BODY()
 
@@ -74,6 +76,8 @@ public:
 
 	void CancelMovementAbilities();
 
+	void ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbility);
+
 	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;
 
@@ -82,12 +86,14 @@ protected:
 
 	void TryActivateMovementAbilityWithEventData(FMovementAbilityData MovementChainData);
 
+	FGameplayTag GetRandomDirectionTag();
+
 	UFUNCTION()
 	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
 
 private:
 	FMovementChainTracker MovementChainTracker;
-	class AAIControllerBase* OwnerController;
-	class AGAS_EnemyBase* OwnerEnemyBase;
-	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
+
+	UPROPERTY()
+	UAC_HeroMovementListener* HeroMovementListener;
 };

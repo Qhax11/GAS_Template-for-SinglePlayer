@@ -66,9 +66,9 @@ void UCrowdEnemy_MovementState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
 
-	if (MovementManagerComponent && MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UCrowdEnemy_MovementState::OnMovementChainEnded))
+	if (MovementManager && MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UCrowdEnemy_MovementState::OnMovementChainEnded))
 	{
-		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UCrowdEnemy_MovementState::OnMovementChainEnded);
+		MovementManager->OnMovementChainEnded.RemoveDynamic(this, &UCrowdEnemy_MovementState::OnMovementChainEnded);
 	}
 
 	if (LastUsedStrafingAbility && LastUsedStrafingAbility->IsValidLowLevel())

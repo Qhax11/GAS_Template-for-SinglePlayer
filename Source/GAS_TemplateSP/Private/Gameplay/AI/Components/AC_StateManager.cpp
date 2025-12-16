@@ -80,6 +80,7 @@ void UAC_StateManager::CreateStates()
 	StateInitParams.HeroTarget = OwnerController->GetTargetActor();
 	StateInitParams.HeroTargetASC = TargetASC;
 	StateInitParams.StateManager = this;
+	StateInitParams.MovementManager = OwnerEnemyBase->GetEnemyMovementManagerComponent();
 
 	for (TSubclassOf<UStateBase> StateClass : StateClassArray)
 	{

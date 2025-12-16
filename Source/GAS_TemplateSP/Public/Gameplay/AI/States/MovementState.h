@@ -36,8 +36,5 @@ protected:
 	TSharedPtr<FMovementStatePayload> MovementStateEnterPayload;
 
 	UPROPERTY()
-	UAC_EnemyMovementManager* MovementManagerComponent;
-
-	UPROPERTY()
 	UGAS_GameplayAbilityBase* SelectedAttackCDO;
 };

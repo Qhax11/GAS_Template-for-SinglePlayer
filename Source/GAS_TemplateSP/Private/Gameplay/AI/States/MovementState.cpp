@@ -8,9 +8,6 @@
 void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 {
 	Super::StateInitalize(StateInitParams);
-
-	MovementManagerComponent = Enemy->GetEnemyMovementManagerComponent();
-	checkf(MovementManagerComponent, TEXT("MovementManagerComponent is null in %s"), *GetClass()->GetName());
 }
 
 void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
@@ -41,17 +38,17 @@ void UMovementState::ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementS
 
 void UMovementState::StartMovementChain(UMovementChainAsset* MovementChain)
 {
-	if (!MovementChain || !MovementManagerComponent)
+	if (!MovementChain || !MovementManager)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MovementStatePayload is invalid in: %s"), *GetName());
 		return;
 	}
 
-	MovementManagerComponent->StartMovementChain(MovementChain);
+	MovementManager->StartMovementChain(MovementChain);
 
-	if (!MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded)) 
+	if (!MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
 	{
-		MovementManagerComponent->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
+		MovementManager->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
 	}
 }
 
@@ -70,7 +67,7 @@ void UMovementState::TryEnterToAttackState()
 
 	if (IsInRangeForAttack())
 	{
-		MovementManagerComponent->StopMovementAbilities();
+		MovementManager->StopMovementAbilities();
 
 		FAttackData AttackData;
 		AttackData.AbilityClass = SelectedAttackCDO->GetClass();
@@ -114,9 +111,9 @@ void UMovementState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
 
-	if (MovementManagerComponent && MovementManagerComponent->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
+	if (MovementManager && MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
 	{
-		MovementManagerComponent->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
+		MovementManager->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
 	}
 }
 

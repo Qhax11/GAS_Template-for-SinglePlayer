@@ -8,7 +8,6 @@
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/AI/DataTypes/State/StatePayloads.h"
-#include "Gameplay/AI/StateTree/ST_Base.h"
 #include "StateBase.generated.h"
 
 USTRUCT()
@@ -41,8 +40,14 @@ public:
     UPROPERTY()
     UAC_StateManager* StateManager = nullptr;
 
+    UPROPERTY()
+    UAC_EnemyMovementManager* MovementManager = nullptr;
+
     FStateInitParams() = default;
 };
+
+class UAC_StateManager;
+class UAC_EnemyMovementManager;
 
 UCLASS(Blueprintable, BlueprintType)
 class GAS_TEMPLATESP_API UStateBase : public UObject
@@ -105,6 +110,8 @@ protected:
     UGAS_AbilitySystemComponent* HeroTargetASC;
 
     UPROPERTY()
-    class UAC_StateManager* StateManager;
+    UAC_StateManager* StateManager;
 
+    UPROPERTY()
+    UAC_EnemyMovementManager* MovementManager;
 };

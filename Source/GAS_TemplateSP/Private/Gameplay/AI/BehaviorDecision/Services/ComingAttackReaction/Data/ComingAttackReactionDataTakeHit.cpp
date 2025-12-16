@@ -14,7 +14,7 @@ UComingAttackReactionDataTakeHit::UComingAttackReactionDataTakeHit()
 
 bool UComingAttackReactionDataTakeHit::IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) const
 {
-	return false;
+	return true;
 }
 
 

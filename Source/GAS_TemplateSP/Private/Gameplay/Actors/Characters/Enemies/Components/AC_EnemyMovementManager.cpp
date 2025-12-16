@@ -2,6 +2,8 @@
 
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
@@ -18,26 +20,16 @@ void UAC_EnemyMovementManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerEnemyBase = Cast<AGAS_EnemyBase>(GetOwner());
-	if (!OwnerEnemyBase)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
-		return;
-	}
+	// Parent's check
+	checkf(OwnerEnemy, TEXT("OwnerEnemy is null in %s"), *GetClass()->GetName());
+	checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
+	checkf(OwnerEnemyASC, TEXT("OwnerEnemyASC is null in %s"), *GetClass()->GetName());
 
-	OwnerController = Cast<AAIControllerBase>(OwnerEnemyBase->GetController());
-	if (!OwnerController)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
-		return;
-	}
+	AGAS_HeroBase* Hero = OwnerController->GetTargetHero();
+	checkf(Hero, TEXT("Hero is null in %s"), *GetClass()->GetName());
 
-	OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
-	if (!OwnerEnemyASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
-		return;
-	}
+	HeroMovementListener = Hero->GetMovementListenerComponent();
+	checkf(HeroMovementListener, TEXT("HeroMovementListener is null in %s"), *GetClass()->GetName());
 }
 
 void UAC_EnemyMovementManager::StartMovementChain(UMovementChainAsset* MovementChain)
@@ -111,6 +103,11 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 		UE_LOG(LogTemp, Log, TEXT("MovementAbilityClass or TriggerTag is null in: %s!"), *GetName());
 	}
 
+	if (MovementChainData.EnableDirectionPolicy) 
+	{
+		ApplyDirectionPoliciesToMovementAbility(MovementChainData);
+	}
+
 	FGameplayEventData MovementAbilityEventData;
 	MovementAbilityEventData.EventTag = MovementChainData.AbilityTriggerTag;
 	MovementAbilityEventData.InstigatorTags.AddTag(MovementChainData.ResolvedDirectionTag);
@@ -129,6 +126,42 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 		MovementChainTracker.Advance();
 		TryExecuteNextMovementAbilityInChain();
 	}
+}
+
+void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbility)
+{
+	if (!MovementAbility.DirectionPolicyTag.IsValid())
+	{
+		return;
+	}
+
+	FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
+
+	if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
+	{
+		if (HeroLastDirectionGameplayTag.IsValid())
+		{
+			MovementAbility.ResolvedDirectionTag = HeroLastDirectionGameplayTag;
+		}
+	}
+	else if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random)
+	{
+		MovementAbility.ResolvedDirectionTag = GetRandomDirectionTag();
+	}
+}
+
+FGameplayTag UAC_EnemyMovementManager::GetRandomDirectionTag()
+{
+	static const TArray<FGameplayTag> PossibleDirections =
+	{
+		//GAS_Tags::TAG_AI_Direction_Resolved_Forward,
+		GAS_Tags::TAG_Gameplay_Direction_Backward,
+		GAS_Tags::TAG_Gameplay_Direction_Left,
+		GAS_Tags::TAG_Gameplay_Direction_Right
+	};
+
+	int32 RandomIndex = FMath::RandRange(0, PossibleDirections.Num() - 1);
+	return PossibleDirections[RandomIndex];
 }
 
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)

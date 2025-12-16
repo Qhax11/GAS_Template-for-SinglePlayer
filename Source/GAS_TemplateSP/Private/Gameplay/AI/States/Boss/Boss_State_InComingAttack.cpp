@@ -39,7 +39,7 @@ bool UBoss_State_InComingAttack::SelectAndExecuteReaction(UComingAttackReactionD
 	return false;
 }
 
-void UBoss_State_InComingAttack::ActivateDodgeAbility(const UComingAttackReactionData* SelectedBestReaction)
+void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData* SelectedBestReaction)
 {
 	if (!SelectedBestReaction) 
 	{
@@ -47,7 +47,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UComingAttackReactio
 		return;
 	}
 
-	const UComingAttackReactionDataDodge* DodgeReactionData = Cast<UComingAttackReactionDataDodge>(SelectedBestReaction);
+	UComingAttackReactionDataDodge* DodgeReactionData = Cast<UComingAttackReactionDataDodge>(SelectedBestReaction);
 	if (!DodgeReactionData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: DodgeReactionData is null."));
@@ -58,6 +58,11 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(const UComingAttackReactio
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: Dodge MovementAbilityClass is null."));
 		return;
+	}
+
+	if (DodgeReactionData->DodgeMovementAbilityData.EnableDirectionPolicy) 
+	{
+		MovementManager->ApplyDirectionPoliciesToMovementAbility(DodgeReactionData->DodgeMovementAbilityData);
 	}
 
 	/*

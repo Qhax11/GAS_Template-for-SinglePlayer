@@ -17,11 +17,6 @@ public:
 
 	virtual bool IsEnable(UComingAttackReactionData* ComingReactionData, FComingAttackPayload ComingAttackPayload) const override;
 
-	void ApplyDirectionPoliciesToMovementAbility(UAC_HeroMovementListener* HeroMovementListener);
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMovementAbilityData DodgeMovementAbilityData;
-
-private:
-	FGameplayTag GetRandomDirectionTag();
 };

@@ -29,6 +29,9 @@ void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
     
     StateManager = StateInitParams.StateManager;
     checkf(StateManager, TEXT("StateManager is null in %s"), *GetClass()->GetName());
+
+	MovementManager = StateInitParams.MovementManager;
+	checkf(MovementManager, TEXT("MovementManager is null in %s"), *GetClass()->GetName());
 }
 
 void UStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)

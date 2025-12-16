@@ -92,6 +92,7 @@ bool UInComingAttackState::SelectAndExecuteReaction(UComingAttackReactionData* S
 
 	if (SelectedReactionData->ReactionType == EComingAttackReaction::Parry)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
 		BindTargetComingAttackEnd();
 		MakeParryAbility(SelectedReactionData);
 		return true;
@@ -162,8 +163,6 @@ void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* Bes
 	//Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	//Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
-	UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
-
 	if (LastUsedParryAbility && LastUsedParryAbility->IsActive())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: LastUsedParryAbility is active from: %s"), *GetClass()->GetName());
@@ -172,12 +171,6 @@ void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* Bes
 			EnemyASC->CancelAbilityHandle(LastUsedParryAbility->GetCurrentAbilitySpecHandle());
 			//LastUsedParryAbility->EndAbilityManually();
 		}
-	}
-
-	const bool bIsInActiveAttackPhase = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
-	if (bIsInActiveAttackPhase)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: bIsInActiveAttackPhase TRUE."));
 	}
 
 	UGAS_GameplayAbilityBase* ActivatedParryAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(EnemyParryAbilityClass);

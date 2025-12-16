@@ -23,6 +23,16 @@ bool UComingAttackReactionDataParry::IsEnable(FComingAttackPayload ComingAttackP
 		return false; // reason base tarafýndan yazýldý
 	}
 
+	const bool bIsInActiveAttackPhase = ComingAttackPayload.DefenderASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
+	if (bIsInActiveAttackPhase)
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EReactionDisableReason::InActiveAttackPhase;
+		}
+		return false;
+	}
+
 	const bool bIsUnparryable = ComingAttackPayload.ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Unparryable);
 	if (bIsUnparryable)
 	{

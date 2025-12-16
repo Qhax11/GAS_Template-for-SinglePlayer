@@ -33,6 +33,16 @@ bool UComingAttackReactionDataDodge::IsEnable(FComingAttackPayload ComingAttackP
 		return false;
 	}
 
+	const bool bIsInActiveAttackPhase = ComingAttackPayload.DefenderASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
+	if (bIsInActiveAttackPhase)
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EReactionDisableReason::InActiveAttackPhase;
+		}
+		return false;
+	}
+
 	const bool bIsUndodgeable = ComingAttackPayload.ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Undodgeable);
 	if (bIsUndodgeable)
 	{

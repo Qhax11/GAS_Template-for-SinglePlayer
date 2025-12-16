@@ -176,24 +176,6 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload& ComingAttac
 
 void UAC_IntendHandlerBase::TriggerIncomingAttackReaction(UComingAttackReactionData* Reaction, FComingAttackPayload Payload)
 {
-	if (!Reaction)
-	{
-		return;
-	}
-
-	FReactionEnableDebug EnableDebug;
-	if (!Reaction->IsEnable(Payload, &EnableDebug))
-	{
-#if !UE_BUILD_SHIPPING
-		UE_LOG(LogTemp, Warning,
-			TEXT("IncomingAttack Reaction cancelled before execution: %s | Reason=%s"),
-			*Reaction->GetName(),
-			*UEnum::GetValueAsString(EnableDebug.Reason)
-		);
-#endif
-		return;
-	}
-
 	TSharedPtr<FIncomingAttackStatePayload> IncomingAttackStatePayload = MakeShared<FIncomingAttackStatePayload>(Payload, Reaction);
 	OwnerStateManager->HandleIncomingEvent(GAS_Tags::TAG_AI_StateEvent_InComingAttack, IncomingAttackStatePayload);
 }

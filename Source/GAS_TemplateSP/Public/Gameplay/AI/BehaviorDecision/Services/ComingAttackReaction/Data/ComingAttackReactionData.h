@@ -28,6 +28,7 @@ enum class EReactionDisableReason : uint8
     UndodgeableAttack,
     Unstoppable,
     CanInterruptUnstoppable,
+    InActiveAttackPhase,
     Cooldown,
 };
 

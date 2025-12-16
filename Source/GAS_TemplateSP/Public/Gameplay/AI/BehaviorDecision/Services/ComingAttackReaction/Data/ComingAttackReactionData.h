@@ -8,6 +8,14 @@
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "ComingAttackReactionData.generated.h"
 
+struct FReactionScoreDebug
+{
+    float BehaviorStateScore = 0.f;
+    float TagScore = 0.f;
+    float Bias = 0.f;
+    float Total = 0.f;
+};
+
 UENUM(BlueprintType)
 enum class EComingAttackReaction : uint8
 {
@@ -26,7 +34,7 @@ public:
 
     virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC) const;
 
-    virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const;
+    virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug = nullptr) const;
 
 protected:
     virtual float CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const;
@@ -64,4 +72,5 @@ public:
     // Flat score bias to encourage/discourage selection
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float ScoreBias = 0.f;
+
 };

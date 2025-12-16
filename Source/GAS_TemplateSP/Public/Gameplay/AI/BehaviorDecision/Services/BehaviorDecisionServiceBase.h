@@ -84,4 +84,6 @@ protected:
     UPROPERTY()
 	EBehaviorState BehaviorState;
 
+    UPROPERTY(EditDefaultsOnly)
+    bool bEnableDebug = false;
 };

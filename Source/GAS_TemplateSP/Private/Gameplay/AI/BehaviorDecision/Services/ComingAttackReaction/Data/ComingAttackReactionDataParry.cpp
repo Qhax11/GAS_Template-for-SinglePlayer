@@ -37,7 +37,7 @@ bool UComingAttackReactionDataParry::PassesChanceRoll(const UAbilitySystemCompon
     return Roll <= FinalChance;
 }
 
-float UComingAttackReactionDataParry::GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const
+float UComingAttackReactionDataParry::GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug) const
 {
     float Score = Super::GetScore(ComingAttackPayload, BehaviorState);
 

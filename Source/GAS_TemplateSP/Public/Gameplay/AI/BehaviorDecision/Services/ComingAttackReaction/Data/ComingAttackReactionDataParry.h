@@ -18,6 +18,6 @@ public:
 
 	virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC) const override;
 
-	virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const override;
+	virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug = nullptr) const override;
 
 };

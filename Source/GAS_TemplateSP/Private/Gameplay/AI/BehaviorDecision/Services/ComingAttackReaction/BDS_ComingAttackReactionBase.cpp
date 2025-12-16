@@ -38,12 +38,26 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
             continue;
         }
 
-        const float Score = Reaction->GetScore(ComingAttackPayload, BehaviorState);
+        FReactionScoreDebug Debug;
+        const float Score = Reaction->GetScore(ComingAttackPayload, BehaviorState, &Debug);
         if (Score > BestScore)
         {
             BestScore = Score;
             BestReaction = Reaction;
         }
+
+        if (bEnableDebug)
+        {
+            UE_LOG(LogTemp, Warning,
+                TEXT("[ReactionScore] %s | Behavior=%.2f Tag=%.2f Bias=%.2f Total=%.2f"),
+                *Reaction->GetName(),
+                Debug.BehaviorStateScore,
+                Debug.TagScore,
+                Debug.Bias,
+                Debug.Total
+            );
+        }
+
     }
 
     return BestReaction;

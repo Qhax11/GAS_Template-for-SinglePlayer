@@ -15,11 +15,18 @@ bool UComingAttackReactionData::PassesChanceRoll(const UAbilitySystemComponent* 
 	return Roll <= BaseChance;
 }
 
-float UComingAttackReactionData::GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const
+float UComingAttackReactionData::GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug) const
 {
 	float BehaviorStateScore = CalculateBehaviorStateScore(ComingAttackPayload, BehaviorState);
 	float TagScore = CalculateTagScore(ComingAttackPayload);
-	return BehaviorStateScore + TagScore + ScoreBias;
+	float Total = BehaviorStateScore + TagScore + ScoreBias;
+
+	OutDebug->BehaviorStateScore = BehaviorStateScore;
+	OutDebug->TagScore = TagScore;
+	OutDebug->Bias = ScoreBias;
+	OutDebug->Total = Total;
+
+	return Total;
 }
 
 float UComingAttackReactionData::CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const

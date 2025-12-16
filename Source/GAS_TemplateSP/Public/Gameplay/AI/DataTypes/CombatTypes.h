@@ -21,26 +21,32 @@
  * runtime combat state, independent of AI decision-making or behavior logic.
  */
 
+class UGAS_GameplayAbilityBase;
+class UAbilitySystemComponent;
+
 USTRUCT(BlueprintType)
 struct FComingAttackPayload
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UGAS_GameplayAbilityBase* ComingAttack;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UGAS_GameplayAbilityBase* ComingAttack;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float ComingAttackHitTime;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FGameplayTagContainer ComingAttackTags;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FGameplayTag AttackTypeTag;
 
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag AttackDirectionTag;
+
+	UPROPERTY(BlueprintReadOnly)
+	UAbilitySystemComponent* DefenderASC;
 
 	FComingAttackPayload()
 		: ComingAttack(nullptr)
@@ -50,12 +56,14 @@ public:
 		float InComingAttackHitTime,
 		FGameplayTagContainer InComingAttackTags,
 		FGameplayTag InAttackTypeTag,
-		FGameplayTag InAttackDirectionTag)
+		FGameplayTag InAttackDirectionTag,
+		UAbilitySystemComponent* InDefenderASC)
 		:
 		ComingAttack(InComingAttack), 
 		ComingAttackHitTime(InComingAttackHitTime), 
 		ComingAttackTags(InComingAttackTags),
 		AttackTypeTag(InAttackTypeTag) ,
-		AttackDirectionTag(InAttackDirectionTag)
+		AttackDirectionTag(InAttackDirectionTag),
+		DefenderASC(InDefenderASC)
 	{}
 };

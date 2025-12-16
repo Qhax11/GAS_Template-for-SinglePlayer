@@ -22,6 +22,8 @@ void UAC_IntendHandlerBase::BeginPlay()
 	Super::BeginPlay();
 
 	checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
+	checkf(OwnerEnemyBase, TEXT("OwnerEnemyBase is null in %s"), *GetClass()->GetName());
+	checkf(OwnerEnemyASC, TEXT("OwnerEnemyASC is null in %s"), *GetClass()->GetName());
 
 	OwnerStateManager = OwnerController->GetEnemyStateManagerComponent();
 	checkf(OwnerStateManager, TEXT("OwnerStateManager is null in %s"), *GetClass()->GetName());
@@ -54,8 +56,6 @@ void UAC_IntendHandlerBase::OnRequestEnemyBackupReaction()
 
 void UAC_IntendHandlerBase::RegisterTags()
 {
-	checkf(OwnerEnemyBase, TEXT("OwnerEnemyBase is null in %s"), *GetClass()->GetName());
-
 	UAC_TagDelegates* ControlledCharacterTagDelegatesComp = OwnerEnemyBase->GetTagDelegatesComponent();
 	checkf(ControlledCharacterTagDelegatesComp, TEXT("ControlledCharacterTagDelegatesComp is null in %s"), *GetClass()->GetName());
 
@@ -93,9 +93,9 @@ void UAC_IntendHandlerBase::OnTargetAbilityActivated(UGameplayAbility* Ability)
 
 	FGameplayTag AttackTypeTag = MeleeAttackAbility->GetAttackTypeTagFromAbilityTags();
 	FGameplayTag AttackDirectionTag = MeleeAttackAbility->GetAttackDirectionTagFromAbilityTags();
-
 	float AttackTime = GetAttackNotifyTriggerTime(MeleeAttackAbility, CombinedTags);
-	FComingAttackPayload Payload(MeleeAttackAbility, AttackTime, CombinedTags, AttackTypeTag, AttackDirectionTag);
+
+	FComingAttackPayload Payload(MeleeAttackAbility, AttackTime, CombinedTags, AttackTypeTag, AttackDirectionTag, OwnerEnemyASC);
 	SendEventToDefense(Payload);
 }
 
@@ -107,17 +107,16 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 	}
 
 	const UAnimMontage* Montage = Ability->AnimMontage;
-
-	// 1. TraceStart notify'inin süresini bul
 	float NotifyStartTime = -1.0f;
 
-	for (const FAnimNotifyEvent& Notify : Montage->Notifies)
+	for (const FAnimNotifyEvent& NotifyEvent : Montage->Notifies)
 	{
-		if (const UANS_AttackTrace* TagNotify = Cast<UANS_AttackTrace>(Notify.Notify))
+		if (NotifyEvent.NotifyStateClass && NotifyEvent.NotifyStateClass->IsA<UANS_AttackTrace>())
 		{
-			if (TagNotify->EventTagStart == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start)
+			const UANS_AttackTrace* StateNotify = Cast<UANS_AttackTrace>(NotifyEvent.NotifyStateClass);
+			if (StateNotify->EventTagStart == GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start)
 			{
-				NotifyStartTime = Notify.GetTime();
+				NotifyStartTime = NotifyEvent.GetTime(); // NotifyBegin zamaný
 				break;
 			}
 		}
@@ -145,7 +144,7 @@ float UAC_IntendHandlerBase::GetAttackNotifyTriggerTime(UGA_MeleeAttackBase* Abi
 	return NotifyStartTime;
 }
 
-void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload ComingAttackPayload)
+void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload& ComingAttackPayload)
 {
 	UComingAttackReactionData* SelectedReaction = OwnerBehaviorDecisionComp->GetBestComingAttackReaction(ComingAttackPayload);
 	if (!SelectedReaction)
@@ -161,7 +160,6 @@ void UAC_IntendHandlerBase::SendEventToDefense(FComingAttackPayload ComingAttack
 	}
 
 	const float PreferredDelay = ComingAttackPayload.ComingAttackHitTime - SelectedReaction->PreferredTriggerTimeBeforeHit;
-
 	if (PreferredDelay <= 0.f)
 	{
 		TriggerIncomingAttackReaction(SelectedReaction, ComingAttackPayload);

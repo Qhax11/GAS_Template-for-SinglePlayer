@@ -21,6 +21,11 @@
  * - Access cached references (OwnerController, OwnerEnemyBase, etc.) directly without additional casting
  */
 
+class AAIControllerBase;
+class AGAS_EnemyBase;
+class UGAS_AbilitySystemComponent;
+class AGAS_HeroBase;
+
 UCLASS(Abstract, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_AIControllerBase : public UActorComponent
 {
@@ -32,8 +37,15 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	class AAIControllerBase* OwnerController;
-	class AGAS_EnemyBase* OwnerEnemyBase;
-	class UGAS_AbilitySystemComponent* OwnerEnemyASC;
-	class AGAS_HeroBase* HeroBase;
+	UPROPERTY()
+	AAIControllerBase* OwnerController;
+
+	UPROPERTY()
+	AGAS_EnemyBase* OwnerEnemyBase;
+
+	UPROPERTY()
+	UGAS_AbilitySystemComponent* OwnerEnemyASC;
+
+	UPROPERTY()
+	AGAS_HeroBase* HeroBase;
 };

@@ -22,9 +22,23 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
     DodgeMovementAbilityData.ResolvedDirectionTag = GAS_Tags::TAG_Gameplay_Direction_Backward;
 }
 
-bool UComingAttackReactionDataDodge::IsEnable(FComingAttackPayload ComingAttackPayload) const
+bool UComingAttackReactionDataDodge::IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug) const
 {
-    bool bIsUnDodgeableAttack = ComingAttackPayload.ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Undodgeable);
-    return Super::IsEnable(ComingAttackPayload) && !bIsUnDodgeableAttack;
+	if (!Super::IsEnable(ComingAttackPayload, OutDebug))
+	{
+		return false;
+	}
+
+	const bool bIsUndodgeable = ComingAttackPayload.ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Undodgeable);
+	if (bIsUndodgeable)
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EReactionDisableReason::UndodgeableAttack;
+		}
+		return false;
+	}
+
+	return true;
 }
 

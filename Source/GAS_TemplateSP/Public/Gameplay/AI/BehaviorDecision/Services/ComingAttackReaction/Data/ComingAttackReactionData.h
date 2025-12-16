@@ -8,14 +8,6 @@
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "ComingAttackReactionData.generated.h"
 
-struct FReactionScoreDebug
-{
-    float BehaviorStateScore = 0.f;
-    float TagScore = 0.f;
-    float Bias = 0.f;
-    float Total = 0.f;
-};
-
 UENUM(BlueprintType)
 enum class EComingAttackReaction : uint8
 {
@@ -24,15 +16,59 @@ enum class EComingAttackReaction : uint8
     Dodge     UMETA(DisplayName = "Dodge"),
 };
 
+UENUM()
+enum class EReactionDisableReason : uint8
+{
+    None,
+    TooLate,
+    InvalidDistance,
+    PostureTooHigh,
+    AttackTagBlocked,
+    UnparryableAttack,
+    UndodgeableAttack,
+    Unstoppable,
+    CanInterruptUnstoppable,
+    Cooldown,
+};
+
+struct FReactionEnableDebug
+{
+    bool bEnabled = true;
+    EReactionDisableReason Reason = EReactionDisableReason::None;
+};
+
+UENUM()
+enum class EReactionChanceFailReason : uint8
+{
+    None,
+    RandomRollFailed,
+    PostureTooHigh,   // parry gibi özel durumlar için
+};
+
+struct FReactionChanceDebug
+{
+    EReactionChanceFailReason Reason = EReactionChanceFailReason::None;
+    float Roll = 0.f;
+    float Threshold = 0.f;
+};
+
+struct FReactionScoreDebug
+{
+    float BehaviorStateScore = 0.f;
+    float TagScore = 0.f;
+    float Bias = 0.f;
+    float Total = 0.f;
+};
+
 UCLASS(Blueprintable, DefaultToInstanced, EditInLineNew, Abstract)
 class UComingAttackReactionData : public UObject
 {
     GENERATED_BODY()
 
 public:
-    virtual bool IsEnable(FComingAttackPayload ComingAttackPayload) const;
+    virtual bool IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug = nullptr) const;
 
-    virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC) const;
+    virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug = nullptr) const;
 
     virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug = nullptr) const;
 

@@ -4,15 +4,41 @@
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
 
 
-bool UComingAttackReactionData::IsEnable(FComingAttackPayload ComingAttackPayload) const
+bool UComingAttackReactionData::IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug) const
 {
+	// Too late to react
+	if (ComingAttackPayload.ComingAttackHitTime < MinimumTimeBeforeHitToReact)
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EReactionDisableReason::TooLate;
+		}
+		return false;
+	}
+
+	if (OutDebug)
+	{
+		OutDebug->Reason = EReactionDisableReason::None;
+	}
+
 	return true;
 }
 
-bool UComingAttackReactionData::PassesChanceRoll(const UAbilitySystemComponent* ASC) const
+bool UComingAttackReactionData::PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug) const
 {
 	const float Roll = FMath::FRandRange(0.f, 1.f);
-	return Roll <= BaseChance;
+	const bool bPassed = Roll <= BaseChance;
+
+	if (OutDebug)
+	{
+		OutDebug->Roll = Roll;
+		OutDebug->Threshold = BaseChance;
+		OutDebug->Reason = bPassed
+			? EReactionChanceFailReason::None
+			: EReactionChanceFailReason::RandomRollFailed;
+	}
+
+	return bPassed;
 }
 
 float UComingAttackReactionData::GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug) const

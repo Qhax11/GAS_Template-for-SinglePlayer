@@ -13,54 +13,96 @@ void UBDS_ComingAttackReactionBase::Initialize(const FBehaviorServiceInitParams&
 
 UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackReaction(FComingAttackPayload& ComingAttackPayload)
 {
-    if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack || !EnemyASC)
-    {
-        return nullptr;
-    }
+	if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack || !EnemyASC)
+	{
+		return nullptr;
+	}
 
-    UComingAttackReactionData* BestReaction = nullptr;
-    float BestScore = -FLT_MAX;
+	UComingAttackReactionData* BestReaction = nullptr;
+	FReactionScoreDebug BestScoreDebug;
+	float BestScore = -FLT_MAX;
 
-    for (UComingAttackReactionData* Reaction : ComingAttackReactionAsset->ComingAttackReactions)
-    {
-        if (!IsValid(Reaction))
-        {
-            continue;
-        }
+	for (UComingAttackReactionData* Reaction : ComingAttackReactionAsset->ComingAttackReactions)
+	{
+		if (!IsValid(Reaction))
+		{
+			continue;
+		}
 
-        if (!Reaction->IsEnable(ComingAttackPayload))
-        {
-            continue;
-        }
+		// ---------------- ENABLE CHECK ----------------
+		FReactionEnableDebug EnableDebug;
+		if (!Reaction->IsEnable(ComingAttackPayload, bEnableDebug ? &EnableDebug : nullptr))
+		{
+			if (bEnableDebug)
+			{
+				UE_LOG(LogTemp, Warning,
+					TEXT("UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason=%s"),
+					*Reaction->GetName(),
+					*UEnum::GetValueAsString(EnableDebug.Reason)
+				);
+			}
+			continue;
+		}
 
-        if (!Reaction->PassesChanceRoll(EnemyASC))
-        {
-            continue;
-        }
+		// ---------------- CHANCE CHECK ----------------
+		FReactionChanceDebug ChanceDebug;
+		if (!Reaction->PassesChanceRoll(EnemyASC, bEnableDebug ? &ChanceDebug : nullptr))
+		{
+			if (bEnableDebug)
+			{
+				UE_LOG(LogTemp, Warning,
+					TEXT("UBDS_ComingAttackReactionBase: ReactionChanceFailed = %s | Reason=%s | Roll=%.2f Threshold=%.2f"),
+					*Reaction->GetName(),
+					*UEnum::GetValueAsString(ChanceDebug.Reason),
+					ChanceDebug.Roll,
+					ChanceDebug.Threshold
+				);
+			}
+			continue;
+		}
 
-        FReactionScoreDebug Debug;
-        const float Score = Reaction->GetScore(ComingAttackPayload, BehaviorState, &Debug);
-        if (Score > BestScore)
-        {
-            BestScore = Score;
-            BestReaction = Reaction;
-        }
+		// ---------------- SCORE ----------------
+		FReactionScoreDebug ScoreDebug;
+		const float Score = Reaction->GetScore(ComingAttackPayload, BehaviorState, bEnableDebug ? &ScoreDebug : nullptr);
+		if (bEnableDebug)
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior=%.2f Tag=%.2f Bias=%.2f Total=%.2f"),
+				*Reaction->GetName(),
+				ScoreDebug.BehaviorStateScore,
+				ScoreDebug.TagScore,
+				ScoreDebug.Bias,
+				ScoreDebug.Total
+			);
+		}
 
-        if (bEnableDebug)
-        {
-            UE_LOG(LogTemp, Warning,
-                TEXT("[ReactionScore] %s | Behavior=%.2f Tag=%.2f Bias=%.2f Total=%.2f"),
-                *Reaction->GetName(),
-                Debug.BehaviorStateScore,
-                Debug.TagScore,
-                Debug.Bias,
-                Debug.Total
-            );
-        }
+		// ---------------- BEST PICK ----------------
+		if (Score > BestScore)
+		{
+			BestScore = Score;
+			BestReaction = Reaction;
 
-    }
+			if (bEnableDebug)
+			{
+				BestScoreDebug = ScoreDebug;
+			}
+		}
+	}
 
-    return BestReaction;
+	// ---------------- WINNER DEBUG ----------------
+	if (bEnableDebug && BestReaction)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("UBDS_ComingAttackReactionBase: WINNER = %s | Behavior=%.2f Tag=%.2f Bias=%.2f Total=%.2f"),
+			*BestReaction->GetName(),
+			BestScoreDebug.BehaviorStateScore,
+			BestScoreDebug.TagScore,
+			BestScoreDebug.Bias,
+			BestScoreDebug.Total
+		);
+	}
+
+	return BestReaction;
 }
 
 

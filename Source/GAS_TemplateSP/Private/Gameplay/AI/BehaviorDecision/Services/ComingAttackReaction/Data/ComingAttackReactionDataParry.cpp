@@ -12,13 +12,27 @@ UComingAttackReactionDataParry::UComingAttackReactionDataParry()
 	BaseChance = 0.7f;
 }
 
-bool UComingAttackReactionDataParry::IsEnable(FComingAttackPayload ComingAttackPayload) const
+bool UComingAttackReactionDataParry::IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug) const
 {
-	bool bIsUnparryableAttack = ComingAttackPayload.ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Unparryable);
-	return Super::IsEnable(ComingAttackPayload) && !bIsUnparryableAttack;
+	if (!Super::IsEnable(ComingAttackPayload, OutDebug))
+	{
+		return false; // reason base tarafýndan yazýldý
+	}
+
+	const bool bIsUnparryable = ComingAttackPayload.ComingAttackTags.HasTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_Unparryable);
+	if (bIsUnparryable)
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EReactionDisableReason::UnparryableAttack;
+		}
+		return false;
+	}
+
+	return true;
 }
 
-bool UComingAttackReactionDataParry::PassesChanceRoll(const UAbilitySystemComponent* ASC) const
+bool UComingAttackReactionDataParry::PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug) const
 {
     const UAS_Base* BaseAttributes = ASC ? ASC->GetSet<UAS_Base>() : nullptr;
     if (!BaseAttributes)
@@ -28,13 +42,21 @@ bool UComingAttackReactionDataParry::PassesChanceRoll(const UAbilitySystemCompon
 
     const float Posture = BaseAttributes->GetPosture();
     const float MaxPosture = BaseAttributes->GetMaxPosture();
-    const float NormalizedPosture = FMath::Clamp(Posture / MaxPosture, 0.f, 1.f);
+	const float Threshold = 1.f - (Posture / MaxPosture);
+	const float Roll = FMath::FRandRange(0.f, 1.f);
 
-    // Sekiro mantýðý: posture yükseldikçe parry zorlaþýr
-    const float FinalChance = BaseChance * (1.f - NormalizedPosture);
+	const bool bPassed = Roll <= Threshold;
 
-    const float Roll = FMath::FRandRange(0.f, 1.f);
-    return Roll <= FinalChance;
+	if (OutDebug)
+	{
+		OutDebug->Roll = Roll;
+		OutDebug->Threshold = Threshold;
+		OutDebug->Reason = bPassed
+			? EReactionChanceFailReason::None
+			: EReactionChanceFailReason::PostureTooHigh;
+	}
+
+	return bPassed;
 }
 
 float UComingAttackReactionDataParry::GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug) const

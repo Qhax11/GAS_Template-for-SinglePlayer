@@ -56,7 +56,7 @@ protected:
 
 	float GetAttackNotifyTriggerTime(class UGA_MeleeAttackBase* Ability, const FGameplayTagContainer& AbilityTags);
 
-	void SendEventToDefense(FComingAttackPayload ComingAttackPayload);
+	void SendEventToDefense(FComingAttackPayload& ComingAttackPayload);
 
 	void TriggerIncomingAttackReaction(UComingAttackReactionData* Reaction, FComingAttackPayload Payload);
 

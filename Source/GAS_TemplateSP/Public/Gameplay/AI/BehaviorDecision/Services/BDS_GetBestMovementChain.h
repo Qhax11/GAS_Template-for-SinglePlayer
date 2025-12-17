@@ -41,7 +41,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FName MovementChainName;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowedClasses = "MovementSingleData"))
     TArray<UMovementDataBase*> MovementAbilitiesData;
 };
 

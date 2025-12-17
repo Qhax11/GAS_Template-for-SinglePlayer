@@ -3,6 +3,7 @@
 
 #include "Gameplay/AI/States/Boss/Boss_State_Attack.h"
 #include "Gameplay/Abilities/Enemy/Boss/GA_BossShadowAttack.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 
 void UBoss_State_Attack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
@@ -11,7 +12,7 @@ void UBoss_State_Attack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 
 bool UBoss_State_Attack::SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> AttackStatePayload)
 {
-	TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass = AttackStatePayload->AttackData.AbilityClass;
+	TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass = AttackStatePayload->AttackData->AbilityClass;
 	if (!SelectedAttackClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SelectedAttackClass is null in: %s"), *GetName());

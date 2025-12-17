@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/StaticDelegates/S_DamageDelegates.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
 
+class UAttackDataBase;
 class UAC_EnemyMovementManager;
 class UMovementChainAsset;
 class UGAS_GameplayAbilityBase;
@@ -29,9 +30,9 @@ struct FMovementStatePayload : public FStatePayloadBase
 
 struct FAttackStatePayload : public FStatePayloadBase
 {
-	FAttackData AttackData;
+	UAttackDataBase* AttackData;
 
-	FAttackStatePayload(FAttackData InAttackData)
+	FAttackStatePayload(UAttackDataBase* InAttackData)
 		: AttackData(InAttackData) {
 	}
 };

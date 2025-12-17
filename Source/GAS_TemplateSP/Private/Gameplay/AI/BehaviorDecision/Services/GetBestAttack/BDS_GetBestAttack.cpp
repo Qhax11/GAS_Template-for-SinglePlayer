@@ -9,104 +9,77 @@ void UBDS_GetBestAttack::Initialize(const FBehaviorServiceInitParams& BehaviorSe
     Super::Initialize(BehaviorServiceInitParams);
 }
 
-FAttackData UBDS_GetBestAttack::GetBestAttack()
+UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 {
     if (!IsValid(AttackAbilityAsset) || !EnemyASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("AttackAbilityAsset or OwnerEnemyASC is null in: %s !"), *GetName());
-        return FAttackData();
+        return nullptr;
     }
 
-    float BestScore = -FLT_MAX;
-    FAttackData BestAttack;
-    float BestAttackDistanceScore = 0.f;
+	float BestScore = -FLT_MAX;
+	FAttackScoreDebug BestScoreDebug;
+	UAttackDataBase* BestAttackData = nullptr;
+	FAttackDecisionContext AttackDecisionContext = FAttackDecisionContext();
 
-    for (const FAttackData& Attack : AttackAbilityAsset->AttackAbilities)
+    for (UAttackDataBase* AttackData : AttackAbilityAsset->OptionalAttacks)
     {
-        if (!Attack.AbilityClass)
-        {
-            continue;
-        }
+		// ---------------- ENABLE CHECK ----------------
+		FAttackEnableDebug EnableDebug;
+		if (!AttackData->IsEnable(AttackDecisionContext, bEnableDebug ? &EnableDebug : nullptr))
+		{
+			if (bEnableDebug)
+			{
+				UE_LOG(LogTemp, Warning,
+					TEXT("UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason = %s |"),
+					*AttackData->AttackName.ToString(),
+					*UEnum::GetValueAsString(EnableDebug.Reason)
+				);
+			}
+			continue;
+		}
 
-        bool IsInCooldown = Attack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->IsOnCooldown(EnemyASC);
-        if (IsInCooldown)
-        {
-            continue;
-        }
+		// ---------------- CHANCE CHECK ----------------
+		FAttackChanceDebug ChanceDebug;
+		if (!AttackData->PassesChance(AttackDecisionContext, bEnableDebug ? &ChanceDebug : nullptr))
+		{
+			if (bEnableDebug)
+			{
+				UE_LOG(LogTemp, Warning,
+					TEXT("UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Roll = %.2f Threshold = %.2f |"),
+					*AttackData->AttackName.ToString(),
+					ChanceDebug.Roll,
+					ChanceDebug.Threshold
+				);
+			}
+			continue;
+		}
 
-        float DistanceScore = CalculateAttackAbilityScoreBasedOnTargetDistance(Attack, EnemyController->GetTargetHeroDistance());
+		// ---------------- SCORE ----------------
+		FAttackScoreDebug ScoreDebug;
+		const float Score = AttackData->GetScore(AttackDecisionContext, bEnableDebug ? &ScoreDebug : nullptr);
+		if (bEnableDebug)
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+				*AttackData->AttackName.ToString(),
+				ScoreDebug.BehaviorScore,
+				ScoreDebug.ComboScore,
+				ScoreDebug.Bias,
+				ScoreDebug.Total
+			);
+		}
 
-        float ComboScore = CalculateComboScore(Attack);
-
-        float TotalScore = Attack.ScoreBias + DistanceScore + ComboScore;
-
-        if (TotalScore > BestScore)
-        {
-            BestScore = TotalScore;
-            BestAttack = Attack;
-        }
+		// ---------------- BEST PICK ----------------
+		if (Score > BestScore)
+		{
+			BestScore = Score;
+			BestAttackData = AttackData;
+			BestScoreDebug = ScoreDebug;
+		}
     }
 
-    /*
-    if (GEngine && EnableSelectedDebug)
-    {
-        GEngine->AddOnScreenDebugMessage(9, 3.5f, FColor::Red,
-            FString::Printf(TEXT(">> Selected Attack: %s | DistanceScore: %.1f"),
-                *BestAttack.AbilityClass->GetName(), BestAttackDistanceScore));
-    }
-    */
-
-    LastSelectedAttackAbilityData = BestAttack;
-    return BestAttack;
+	return BestAttackData;
 }
 
-float UBDS_GetBestAttack::CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget)
-{
-    float AbilityMinRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MinRange;
-    float AbilityMaxRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
-    if (AbilityMaxRange <= 0.f)
-    {
-        return 0.0f;
-    }
-
-    // Saldırının ideal noktası: MaxRange
-    float DistanceFromIdeal = FMath::Abs(DistanceToTarget - AbilityMaxRange);
-
-    // Skoru mesafeye göre ters orantılı olarak hesapla
-    float Score = 1.f - (DistanceFromIdeal / AbilityMaxRange);
-
-    // Minimum Range'in ALTINDA mesafedeyse ekstra ceza uygula (isteğe bağlı)
-    if (DistanceToTarget < AbilityMinRange)
-    {
-        Score = -100; // Çok yakınsa etkisizleştir
-    }
-
-    return Score;
-}
-
-float UBDS_GetBestAttack::CalculateComboScore(FAttackData AttackData)
-{
-    // If there is no valid last attack or it wasn't part of a combo chain
-    if (!LastSelectedAttackAbilityData.AbilityClass || !LastSelectedAttackAbilityData.bIsComboAttack)
-    {
-        return 0.0f;
-    }
-
-    // If the current candidate isn't a combo attack, skip
-    if (!AttackData.bIsComboAttack)
-    {
-        return 0.0f;
-    }
-
-    // Expected combo index is always the next step after the last selected
-    int32 ExpectedNextIndex = LastSelectedAttackAbilityData.ComboIndex + 1;
-
-    // If this attack matches the expected combo step, give it a strong score
-    if (AttackData.ComboIndex == ExpectedNextIndex)
-    {
-        return 3.0f;
-    }
-    
-    return 0.0f;
-}
 

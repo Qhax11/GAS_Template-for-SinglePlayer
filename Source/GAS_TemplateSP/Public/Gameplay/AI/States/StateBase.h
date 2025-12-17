@@ -81,7 +81,7 @@ protected:
 
     bool IsAttackInRange(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass);
 
-    FAttackData GetSelectedAttackAbilityData() const;
+    UAttackDataBase* GetSelectedAttackAbilityData() const;
 
     //FComingAttackReactionData GetSelectedReactionData() const;
 

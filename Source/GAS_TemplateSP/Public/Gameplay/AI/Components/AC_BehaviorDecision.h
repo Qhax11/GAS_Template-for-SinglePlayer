@@ -4,9 +4,9 @@
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
 #include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
-#include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "AC_BehaviorDecision.generated.h"
 
+class UAttackDataBase;
 class UComingAttackReactionData;
 class UBDS_ComingAttackReactionBase;
 class UBDS_GetBestAttack;
@@ -56,7 +56,7 @@ protected:
 public:
     // Core Decision Functions
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
-    FAttackData GetBestAttack();
+    UAttackDataBase* GetBestAttack();
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     UMovementChainAsset* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
@@ -73,7 +73,7 @@ public:
 
     // State
     UPROPERTY(BlueprintReadOnly, Category = "AI|Behavior Decision")
-    FAttackData LastSelectedAttackData;
+    UAttackDataBase* LastSelectedAttackData;
 
     UGAS_GameplayAbilityBase* LastSelectedAttackAbilityCDO = nullptr;
 

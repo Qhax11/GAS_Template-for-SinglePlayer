@@ -4,7 +4,6 @@
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
 #include "Gameplay/AI/DataTypes/State/StatePayloads.h"
-#include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "AC_StateManager.generated.h"
 
@@ -70,5 +69,4 @@ protected:
 
 	UPROPERTY()
 	class UAC_TagDelegates* EnemyTagDelegatesComponent;
-
 };

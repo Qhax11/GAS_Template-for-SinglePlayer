@@ -3,6 +3,7 @@
 
 #include "Gameplay/AI/States/StateBase.h"
 #include "Gameplay/AI/Components/AC_StateManager.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 
 void UStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -84,12 +85,12 @@ bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> Abi
 	return BehaviorDecisionComponent->IsAttackInRange(AbilityClass);
 }
 
-FAttackData UStateBase::GetSelectedAttackAbilityData() const
+UAttackDataBase* UStateBase::GetSelectedAttackAbilityData() const
 {
 	if (!BehaviorDecisionComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
-		return FAttackData();
+		return nullptr;
 	}
 
 	return BehaviorDecisionComponent->LastSelectedAttackData;
@@ -97,8 +98,8 @@ FAttackData UStateBase::GetSelectedAttackAbilityData() const
 
 UGAS_GameplayAbilityBase* UStateBase::GetSelectedAttackAbilityCDO() const
 {
-	FAttackData SelectedAttackData = GetSelectedAttackAbilityData();
-	return SelectedAttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+	UAttackDataBase* SelectedAttackData = GetSelectedAttackAbilityData();
+	return SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 }
 
 

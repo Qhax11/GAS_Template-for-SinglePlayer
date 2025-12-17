@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/AI/Components/AC_StateManager.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
@@ -186,22 +187,22 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 		return;
 	}
 
-	FAttackData BestAttack = BehaviorDecisionComponent->GetBestAttack();
-	if(!BestAttack.AbilityClass)
+	UAttackDataBase* BestAttack = BehaviorDecisionComponent->GetBestAttack();
+	if(!BestAttack->AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: BestAttack.AbilityClass is null!"));
 		return;
 	}	
 
-	if (BehaviorDecisionComponent->IsAttackInRange(BestAttack.AbilityClass))
+	if (BehaviorDecisionComponent->IsAttackInRange(BestAttack->AbilityClass))
 	{
 		TSharedPtr<FAttackStatePayload> AttackStatePayload = MakeShared<FAttackStatePayload>(BestAttack);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack, AttackStatePayload);
 	}
 	else
 	{
-		UMovementChainAsset* BestMovementChain = BehaviorDecisionComponent->GetBestMovementChain(BestAttack.AbilityClass);
-		TSharedPtr<FMovementStatePayload> MovementStatePayload = MakeShared<FMovementStatePayload>(BestMovementChain, BestAttack.AbilityClass);
+		UMovementChainAsset* BestMovementChain = BehaviorDecisionComponent->GetBestMovementChain(BestAttack->AbilityClass);
+		TSharedPtr<FMovementStatePayload> MovementStatePayload = MakeShared<FMovementStatePayload>(BestMovementChain, BestAttack->AbilityClass);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement, MovementStatePayload);
 	}
 }

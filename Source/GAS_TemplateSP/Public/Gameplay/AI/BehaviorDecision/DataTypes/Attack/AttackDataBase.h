@@ -108,8 +108,14 @@ public:
 	virtual float GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug = nullptr) const;
 
 protected:
+	//float CalculateScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);
+
+	//float CalculateComboScore(FAttackData AttackData);
 
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Attack. Used for debugging or referencing in logic."))
+	FName AttackName;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Ability class that defines the actual gameplay logic and range values"))
     TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass;
 

@@ -2,10 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-#include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "BDS_GetBestAttack.generated.h"
 
 
@@ -16,7 +15,7 @@ class UAttackAbilityAsset : public UPrimaryDataAsset
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<FAttackData> AttackAbilities;
+    TArray<UAttackDataBase*> OptionalAttacks;
 };
 
 UCLASS()
@@ -27,15 +26,11 @@ class GAS_TEMPLATESP_API UBDS_GetBestAttack : public UBehaviorDecisionServiceBas
 public:
     virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
 
-    FAttackData GetBestAttack();
+    UAttackDataBase* GetBestAttack();
 
 protected:
-    float CalculateAttackAbilityScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);
-
-    float CalculateComboScore(FAttackData AttackData);
-
     UPROPERTY(EditDefaultsOnly)
     UAttackAbilityAsset* AttackAbilityAsset;
 
-    FAttackData LastSelectedAttackAbilityData;
+    UAttackDataBase* LastSelectedAttackAbilityData;
 };

@@ -9,7 +9,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
-
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 
 UAC_BehaviorDecision::UAC_BehaviorDecision()
 {
@@ -68,32 +68,22 @@ void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
         ComingAttackReactionService = NewObject<UBDS_ComingAttackReactionBase>(this, BehaviorDecisionConfigAsset->ComingAttackReactionServiceClass);
         ComingAttackReactionService->Initialize(ServiceInitData);
     }
-
 }
 
-FAttackData UAC_BehaviorDecision::GetBestAttack()
+UAttackDataBase* UAC_BehaviorDecision::GetBestAttack()
 {
     if (!GetBestAttackService) 
     {
         UE_LOG(LogTemp, Warning, TEXT("GetBestAttackService is null in: %s"), *GetName());
-        return FAttackData();
+        return nullptr;
     }
 
-    FAttackData BestAttack = GetBestAttackService->GetBestAttack();
-
-#if WITH_EDITOR
-    if (GEngine && EnableSelectedDebug && BestAttack.AbilityClass)
-    {
-        GEngine->AddOnScreenDebugMessage(9, 3.5f, FColor::Red,
-            FString::Printf(TEXT(">> Selected Attack: %s"),
-                *BestAttack.AbilityClass->GetName()));
-    }
-#endif // WITH_EDITOR
+    UAttackDataBase* BestAttack = GetBestAttackService->GetBestAttack();
 
     LastSelectedAttackData = BestAttack;
-    if (BestAttack.AbilityClass)
+    if (BestAttack->AbilityClass)
     {
-        LastSelectedAttackAbilityCDO = BestAttack.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+        LastSelectedAttackAbilityCDO = BestAttack->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
     }
 
     return BestAttack;

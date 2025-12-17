@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/AI/States/AttackStateBase.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_ComboMeleeAttack.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
@@ -35,7 +36,7 @@ void UAttackStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 
 bool UAttackStateBase::SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> AttackStatePayload)
 {
-	MakeAttack(AttackStatePayload->AttackData.AbilityClass);
+	MakeAttack(AttackStatePayload->AttackData->AbilityClass);
 	return true;
 }
 

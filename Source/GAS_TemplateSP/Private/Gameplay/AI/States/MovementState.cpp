@@ -4,6 +4,7 @@
 #include "Gameplay/AI/States/MovementState.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 
 void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -69,8 +70,8 @@ void UMovementState::TryEnterToAttackState()
 	{
 		MovementManager->StopMovementAbilities();
 
-		FAttackData AttackData;
-		AttackData.AbilityClass = SelectedAttackCDO->GetClass();
+		UAttackDataBase* AttackData = NewObject<UAttackDataBase>(this, SelectedAttackCDO->GetClass());
+		AttackData->AbilityClass = SelectedAttackCDO->GetClass();
 		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(AttackData);
 
 		FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest(GAS_Tags::TAG_AI_State_Attack, AttackPayload);

@@ -77,3 +77,56 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 
 	return TotalScore;
 }
+
+/*
+float UAttackDataBase::CalculateScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget)
+{
+	float AbilityMinRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MinRange;
+	float AbilityMaxRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
+	if (AbilityMaxRange <= 0.f)
+	{
+		return 0.0f;
+	}
+
+	// Saldýrýnýn ideal noktasý: MaxRange
+	float DistanceFromIdeal = FMath::Abs(DistanceToTarget - AbilityMaxRange);
+
+	// Skoru mesafeye göre ters orantýlý olarak hesapla
+	float Score = 1.f - (DistanceFromIdeal / AbilityMaxRange);
+
+	// Minimum Range'in ALTINDA mesafedeyse ekstra ceza uygula (isteðe baðlý)
+	if (DistanceToTarget < AbilityMinRange)
+	{
+		Score = -100; // Çok yakýnsa etkisizleþtir
+	}
+
+	return Score;
+}
+
+float UAttackDataBase::CalculateComboScore(FAttackData AttackData)
+{
+	// If there is no valid last attack or it wasn't part of a combo chain
+	if (!LastSelectedAttackAbilityData.AbilityClass || !LastSelectedAttackAbilityData.bIsComboAttack)
+	{
+		return 0.0f;
+	}
+
+	// If the current candidate isn't a combo attack, skip
+	if (!AttackData.bIsComboAttack)
+	{
+		return 0.0f;
+	}
+
+	// Expected combo index is always the next step after the last selected
+	int32 ExpectedNextIndex = LastSelectedAttackAbilityData.ComboIndex + 1;
+
+	// If this attack matches the expected combo step, give it a strong score
+	if (AttackData.ComboIndex == ExpectedNextIndex)
+	{
+		return 3.0f;
+	}
+
+	return 0.0f;
+}
+
+*/

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Gameplay/AI/States/StateBase.h"
-#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h" // TODO: Try forward declaration.
 #include "AttackStateBase.generated.h"
 
 UCLASS()
@@ -34,5 +34,4 @@ public:
 protected:
 	// Runtime State
 	UGAS_GameplayAbilityBase* LastUsedAttack;
-
 };

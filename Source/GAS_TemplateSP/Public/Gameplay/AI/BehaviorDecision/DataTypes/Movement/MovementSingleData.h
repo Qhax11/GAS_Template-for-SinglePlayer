@@ -9,7 +9,7 @@
 class UGAS_GameplayAbilityBase;
 class UAbilitySystemComponent;
 
-UCLASS()
+UCLASS(EditInlineNew, DefaultToInstanced)
 class GAS_TEMPLATESP_API UMovementSingleData : public UMovementDataBase
 {
 	GENERATED_BODY()

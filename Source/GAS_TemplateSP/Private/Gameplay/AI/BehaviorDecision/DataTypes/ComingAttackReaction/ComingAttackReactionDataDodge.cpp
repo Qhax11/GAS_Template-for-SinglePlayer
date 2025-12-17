@@ -3,7 +3,6 @@
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionDataDodge.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
-#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 
 UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 {
@@ -18,6 +17,8 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 	MaxChance = 0.90f;
 
 	ScoreBias = 0.1f;
+
+	DodgeMovementAbilityData = CreateDefaultSubobject<UMovementSingleData>(TEXT("DodgeMovementAbilityData"));
 
     // Dash distance
     DodgeMovementAbilityData->AbilityTriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;

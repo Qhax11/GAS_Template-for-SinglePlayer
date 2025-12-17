@@ -43,6 +43,8 @@ void UMovementState::ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementS
 		return;
 	}
 
+	MovementManager->ExecuteMovement(MovementStatePayload->SelectedMovementData);
+
 	UMovementDataBase* SelectedMovementData = MovementStatePayload->SelectedMovementData;
 	if (!SelectedMovementData) 
 	{
@@ -80,7 +82,7 @@ void UMovementState::ActivateMovementChain(UMovementChainDataa* MovementChainDat
 		return;
 	}
 
-	MovementManager->StartMovementChain(MovementChainData);
+	MovementManager->ExecuteMovement(MovementChainData);
 
 	if (!MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
 	{

@@ -9,7 +9,6 @@
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
-#include "Gameplay/AI/StateTree/ST_Base.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 
 UAC_EnemyMovementManager::UAC_EnemyMovementManager()
@@ -33,9 +32,21 @@ void UAC_EnemyMovementManager::BeginPlay()
 	checkf(HeroMovementListener, TEXT("HeroMovementListener is null in %s"), *GetClass()->GetName());
 }
 
-void UAC_EnemyMovementManager::StartMovementChain(UMovementChainDataa* MovementChainData)
+void UAC_EnemyMovementManager::ExecuteMovement(UMovementDataBase* Movement)
 {
-	if (!MovementChainData || !OwnerEnemyASC)
+	if (Movement->IsChain())
+	{
+		ExecuteChain(CastChecked<UMovementChainDataa>(Movement));
+	}
+	else
+	{
+		ExecuteSingle(CastChecked<UMovementSingleData>(Movement));
+	}
+}
+
+void UAC_EnemyMovementManager::ExecuteChain(UMovementChainDataa* ChainData)
+{
+	if (!ChainData || !OwnerEnemyASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MovementChainData or OwnerEnemyASC is null in: %s!"), *GetName());
 		return;
@@ -54,11 +65,16 @@ void UAC_EnemyMovementManager::StartMovementChain(UMovementChainDataa* MovementC
 		MovementChainTracker.ResetChain();
 	}
 
-	if (MovementChainData->MovementChain.Num() > 0)
+	if (ChainData->MovementChain.Num() > 0)
 	{
-		MovementChainTracker.StartChain(MovementChainData->MovementChain);
+		MovementChainTracker.StartChain(ChainData->MovementChain);
 		TryExecuteNextMovementAbilityInChain();
 	}
+}
+
+void UAC_EnemyMovementManager::ExecuteSingle(UMovementSingleData* SingleData)
+{
+
 }
 
 void UAC_EnemyMovementManager::StopMovementAbilities()

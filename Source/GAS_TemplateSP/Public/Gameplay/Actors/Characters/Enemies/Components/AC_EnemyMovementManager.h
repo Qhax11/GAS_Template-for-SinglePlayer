@@ -8,8 +8,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
 
+class UMovementDataBase;
 class UMovementSingleData;
-class UMovementChainAsset;
 class UMovementChainDataa;
 
 USTRUCT()
@@ -72,17 +72,23 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void StartMovementChain(UMovementChainDataa* MovementChainData);
+	void ExecuteMovement(UMovementDataBase* Movement); 
 
+	UPROPERTY(BlueprintAssignable)
+	FOnMovementChainEnded OnMovementChainEnded;
+
+private:
+	void ExecuteChain(UMovementChainDataa* ChainData);
+
+	void ExecuteSingle(UMovementSingleData* SingleData);
+
+public:
 	UFUNCTION(BlueprintCallable)
 	void StopMovementAbilities();
 
 	void CancelMovementAbilities();
 
 	void ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, FGameplayTag AttackDirection = FGameplayTag());
-
-	UPROPERTY(BlueprintAssignable)
-	FOnMovementChainEnded OnMovementChainEnded;
 
 protected:
 	void TryExecuteNextMovementAbilityInChain();

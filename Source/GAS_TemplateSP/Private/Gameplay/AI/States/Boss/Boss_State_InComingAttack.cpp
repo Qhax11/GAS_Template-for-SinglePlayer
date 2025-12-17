@@ -69,7 +69,6 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 	}
 
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	FGameplayEventData GameplayEventData = FGameplayEventData();
 	GameplayEventData.InstigatorTags.AddTag(DodgeMovementAbilityData->ResolvedDirectionTag);

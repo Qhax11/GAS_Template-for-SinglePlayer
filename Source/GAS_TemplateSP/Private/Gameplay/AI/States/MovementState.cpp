@@ -18,11 +18,17 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	MovementStateEnterPayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
 	if (!MovementStateEnterPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MovementStateEnterPayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStateEnterPayload is invalid in: %s"), *GetName());
 		return;
 	}
 
-	SelectedAttackCDO = MovementStateEnterPayload->TargetAttackClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+	if (!MovementStateEnterPayload->SelectedAttackData->AbilityClass) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedAttackData->AbilityClass is invalid in: %s"), *GetName());
+		return;
+	}
+
+	SelectedAttackCDO = MovementStateEnterPayload->SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	ExecuteMovement(MovementStateEnterPayload);
 }
 
@@ -30,7 +36,7 @@ void UMovementState::ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementS
 {
 	if (!MovementStatePayload.IsValid() || !MovementStatePayload->MovementChainAsset)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MovementStatePayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStatePayload is invalid in: %s"), *GetName());
 		return;
 	}
 
@@ -41,7 +47,7 @@ void UMovementState::StartMovementChain(UMovementChainAsset* MovementChain)
 {
 	if (!MovementChain || !MovementManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MovementStatePayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStatePayload is invalid in: %s"), *GetName());
 		return;
 	}
 
@@ -62,7 +68,7 @@ void UMovementState::TryEnterToAttackState()
 {
 	if (!SelectedAttackCDO)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: BehaviorDecisionComponent is null in: %s"), *GetName());
 		return;
 	}
 
@@ -70,9 +76,8 @@ void UMovementState::TryEnterToAttackState()
 	{
 		MovementManager->StopMovementAbilities();
 
-		UAttackDataBase* AttackData = NewObject<UAttackDataBase>(this, SelectedAttackCDO->GetClass());
-		AttackData->AbilityClass = SelectedAttackCDO->GetClass();
-		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(AttackData);
+		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
+		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(SelectedAttackData);
 
 		FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest(GAS_Tags::TAG_AI_State_Attack, AttackPayload);
 		ExitRequest("Target is in range", StateTransitionRequest);
@@ -95,7 +100,7 @@ bool UMovementState::IsInRangeForAttack() const
 {
 	if (!SelectedAttackCDO || !EnemyController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability Class is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: Ability Class is null in: %s"), *GetName());
 		return false;
 	}
 

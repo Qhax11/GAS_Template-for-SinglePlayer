@@ -418,20 +418,26 @@ namespace GAS_Tags
 
 
 	// ============================================================
-	// AI ABILITY TAGS
+	// AI ABILITY TAGS (IDENTITY)
 	// ============================================================
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash, "AI.Ability.PhantomDash");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash_Cooldown, "AI.Ability.PhantomDash.Cooldown");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_TwinSlashUp, "AI.Ability.TwinSlashUp");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_TwinSlashUp_Cooldown, "AI.Ability.TwinSlashUp.Cooldown");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_LineBreaker, "AI.Ability.LineBreaker");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_LineBreaker_Cooldown, "AI.Ability.LineBreaker.Cooldown");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_ShadowAttack, "AI.Ability.ShadowAttack");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_ShadowAttack_Cooldown, "AI.Ability.ShadowAttack.Cooldown");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_SpinningExecution, "AI.Ability.SpinningExecution");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash, "AI.Ability.Dash");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_Dash_Cooldown, "AI.Ability.Dash.Cooldown");
 
+	// ============================================================
+    // AI ABILITY COOLDOWN TAGS (METADATA)
+    // ============================================================
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Cooldown_Dash, "AI.Cooldown.Dash");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Cooldown_PhantomDash, "AI.Cooldown.PhantomDash");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Cooldown_TwinSlashUp, "AI.Cooldown.TwinSlashUp");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Cooldown_LineBreaker, "AI.Cooldown.LineBreaker");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Cooldown_ShadowAttack, "AI.Cooldown.ShadowAttack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Cooldown_SpinningExecution, "AI.Cooldown.SpinningExecution");
 
+	
 	// ============================================================
 	// AI ABILITY TRIGGER EVENTS
 	// ============================================================

@@ -15,6 +15,16 @@ bool UAttackDataBase::IsEnable(const FAttackDecisionContext& Context, FAttackEna
 		return false;
 	}
 
+	// Ability cooldown'daysa bu attack seçilemez
+	if(Context.EnemyASC->HasMatchingGameplayTag(AbilityCooldownTag))
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EAttackDisableReason::OnCooldown;
+		}
+		return false;
+	}
+
 	// Target yoksa saldýrý olmaz
 	if (!Context.Target)
 	{
@@ -59,7 +69,7 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 	}
 
 	// Combo bonus
-	if (bIsComboAttack && Context.bIsInCombo)
+	if (bIsComboAttack)
 	{
 		// Base combo mantýðý: zincirdeysen küçük bir teþvik
 		ComboScore = 0.25f;

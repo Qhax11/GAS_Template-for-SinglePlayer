@@ -20,7 +20,11 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 	float BestScore = -FLT_MAX;
 	FAttackScoreDebug BestScoreDebug;
 	UAttackDataBase* BestAttackData = nullptr;
-	FAttackDecisionContext AttackDecisionContext = FAttackDecisionContext();
+
+	FAttackDecisionContext AttackDecisionContext;
+	AttackDecisionContext.BehaviorState = BehaviorState;
+	AttackDecisionContext.EnemyASC = EnemyASC;
+	AttackDecisionContext.Target = Hero;
 
     for (UAttackDataBase* AttackData : AttackAbilityAsset->OptionalAttacks)
     {
@@ -31,7 +35,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason = %s |"),
+					TEXT("UBDS_GetBestAttack: AttackDisabled = %s | Reason = %s |"),
 					*AttackData->AttackName.ToString(),
 					*UEnum::GetValueAsString(EnableDebug.Reason)
 				);
@@ -46,7 +50,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Roll = %.2f Threshold = %.2f |"),
+					TEXT("UBDS_GetBestAttack: AttackPassesChangeFailed = %s | Roll = %.2f Threshold = %.2f |"),
 					*AttackData->AttackName.ToString(),
 					ChanceDebug.Roll,
 					ChanceDebug.Threshold
@@ -61,7 +65,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 		if (bEnableDebug)
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("UBDS_GetBestAttack: AttackScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 				*AttackData->AttackName.ToString(),
 				ScoreDebug.BehaviorScore,
 				ScoreDebug.ComboScore,
@@ -78,6 +82,19 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 			BestScoreDebug = ScoreDebug;
 		}
     }
+
+	// ---------------- WINNER DEBUG ----------------
+	if (bEnableDebug && BestAttackData)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("UBDS_GetBestAttack: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+			*BestAttackData->AttackName.ToString(),
+			BestScoreDebug.BehaviorScore,
+			BestScoreDebug.ComboScore,
+			BestScoreDebug.Bias,
+			BestScoreDebug.Total
+		);
+	}
 
 	return BestAttackData;
 }

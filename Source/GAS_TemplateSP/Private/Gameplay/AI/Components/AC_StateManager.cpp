@@ -184,10 +184,17 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 {
 	if (!BehaviorDecisionComponent)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: BehaviorDecisionComponent is null!"));
 		return;
 	}
 
 	UAttackDataBase* BestAttack = BehaviorDecisionComponent->GetBestAttack();
+	if (!BestAttack) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: BestAttack is null!"));
+		return;
+	}
+
 	if(!BestAttack->AbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: BestAttack.AbilityClass is null!"));
@@ -202,7 +209,7 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 	else
 	{
 		UMovementChainAsset* BestMovementChain = BehaviorDecisionComponent->GetBestMovementChain(BestAttack->AbilityClass);
-		TSharedPtr<FMovementStatePayload> MovementStatePayload = MakeShared<FMovementStatePayload>(BestMovementChain, BestAttack->AbilityClass);
+		TSharedPtr<FMovementStatePayload> MovementStatePayload = MakeShared<FMovementStatePayload>(BestMovementChain, BestAttack);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement, MovementStatePayload);
 	}
 }

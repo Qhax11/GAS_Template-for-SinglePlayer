@@ -89,17 +89,6 @@ float UGAS_GameplayAbilityBase::GetCoolDown(int32 AbilityLevel) const
 	return CooldownDuration;
 }
 
-bool UGAS_GameplayAbilityBase::IsOnCooldown(UAbilitySystemComponent* ASC)
-{
-	if (!ASC) 
-	{
-		return false;
-	}
-
-	const FGameplayTagContainer* CooldownTags = GetCooldownTags();
-	return CooldownTags && ASC->HasAnyMatchingGameplayTags(*CooldownTags);
-}
-
 void UGAS_GameplayAbilityBase::EndAbilityManually()
 {
 	if (IsActive())
@@ -164,35 +153,5 @@ void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handl
 	{
 		OnAbilityEnded.Broadcast(FCustomAbilityEndedData(this, bWasCancelled));
 	}
-
-	/*
-	TWeakObjectPtr<UGAS_GameplayAbilityBase> WeakThis(this);
-	if (GetWorld())
-	{
-		GetWorld()->GetTimerManager().SetTimerForNextTick([WeakThis, bWasCancelled]()
-			{
-				// NULL CHECK!
-				if (!WeakThis.IsValid())
-				{
-					return; 
-				}
-
-				UGAS_GameplayAbilityBase* StrongThis = WeakThis.Get();
-
-				if (StrongThis->GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
-				{
-					UGAS_GameplayAbilityBase* CDO = Cast<UGAS_GameplayAbilityBase>(StrongThis->GetClass()->GetDefaultObject());
-					if (CDO)
-					{
-						CDO->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(StrongThis, bWasCancelled));
-					}
-				}
-				else
-				{
-					StrongThis->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(StrongThis, bWasCancelled));
-				}
-			});
-	}
-	*/
 }
 

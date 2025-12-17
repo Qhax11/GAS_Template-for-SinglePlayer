@@ -21,10 +21,10 @@ struct FMovementStatePayload : public FStatePayloadBase
 {
 	UMovementChainAsset* MovementChainAsset = nullptr;
 
-	TSubclassOf<UGAS_GameplayAbilityBase> TargetAttackClass = nullptr; // Range check için
+	UAttackDataBase* SelectedAttackData = nullptr; 
 
-	FMovementStatePayload(UMovementChainAsset* InMovementChainAsset, TSubclassOf<UGAS_GameplayAbilityBase> InTargetAttackClass)
-		: MovementChainAsset(InMovementChainAsset), TargetAttackClass(InTargetAttackClass) {
+	FMovementStatePayload(UMovementChainAsset* InMovementChainAsset, UAttackDataBase* InSelectedAttackData)
+		: MovementChainAsset(InMovementChainAsset), SelectedAttackData(InSelectedAttackData) {
 	}
 };
 

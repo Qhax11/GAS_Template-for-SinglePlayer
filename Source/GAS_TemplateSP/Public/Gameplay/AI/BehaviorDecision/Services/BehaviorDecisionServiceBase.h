@@ -131,5 +131,5 @@ protected:
 	EBehaviorState BehaviorState;
 
     UPROPERTY(EditDefaultsOnly)
-    bool bEnableDebug = false;
+    bool bEnableDebug = true;
 };

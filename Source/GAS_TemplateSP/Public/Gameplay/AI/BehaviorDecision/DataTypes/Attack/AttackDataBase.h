@@ -7,7 +7,6 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h" // forward declaration doesen't work, so i put include?? 
 #include "AttackDataBase.generated.h"
 
-class UGAS_GameplayAbilityBase;
 class UAbilitySystemComponent;
 
 USTRUCT()
@@ -23,13 +22,7 @@ public:
 	AActor* Target = nullptr;
 
 	UPROPERTY()
-	float TargetDistance = 0.f;
-
-	UPROPERTY()
 	EBehaviorState BehaviorState = EBehaviorState::None;
-
-	UPROPERTY()
-	bool bIsInCombo = false;
 };
 
 UENUM()
@@ -39,7 +32,7 @@ enum class EAttackDisableReason : uint8
 	InvalidAbility,
 	InvalidTarget,
 	OutOfRange,
-	Cooldown,
+	OnCooldown,
 	InvalidState,
 	ComboBlocked,
 };
@@ -118,6 +111,9 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Ability class that defines the actual gameplay logic and range values"))
     TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "AI.Cooldown", ToolTip = "You have to choose spesific CooldownTag"))
+	FGameplayTag AbilityCooldownTag;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;

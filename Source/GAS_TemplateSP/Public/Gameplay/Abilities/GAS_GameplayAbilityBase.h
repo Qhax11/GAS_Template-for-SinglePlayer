@@ -110,10 +110,6 @@ public:
 
 	FOnAbilityEnded OnAbilityEnded;
 
-	// Returns true if any of the ability's cooldown tags are currently active on the given ASC.
-    // NOTE: This function is intended to be used with the CDO of the ability, so a valid ASC must be provided.
-	bool IsOnCooldown(UAbilitySystemComponent* ASC);
-
 	virtual void EndAbilityManually();
 
 protected:

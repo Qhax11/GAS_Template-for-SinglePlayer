@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "UObject/NoExportTypes.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/DecisionOptionData.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
-#include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
+#include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "ComingAttackReactionData.generated.h"
 
 UENUM(BlueprintType)
@@ -64,56 +64,34 @@ struct FReactionScoreDebug
 /**
  * UComingAttackReactionData
  *
- * Represents a single defensive reaction option (e.g. Parry, Dodge, TakeDamage)
- * that can be evaluated by the AI when responding to an incoming attack.
+ * Domain-specific decision data representing a **defensive reaction**
+ * to an incoming enemy attack (e.g. Parry, Dodge, TakeDamage).
  *
- * Reactions are evaluated in THREE sequential steps:
+ * This class specializes the generic AI decision-option model defined in
+ * UDecisionOptionData for the **incoming-attack reaction domain**.
  *
- * 1) Enable (IsEnable)
- *    - Hard, deterministic gating.
- *    - Answers: "Is this reaction even allowed right now?"
- *    - Examples:
- *        - Too late to react
- *        - Attack is unparryable / undodgeable
- *        - Defender is unstoppable
- *        - Cooldown or state restrictions
- *
- * 2) Chance (PassesChanceRoll)
- *    - Probabilistic eligibility check.
- *    - Answers: "Even if allowed, does the AI commit to this reaction right now?"
- *    - Used to introduce controlled uncertainty and avoid perfectly deterministic behavior.
- *
- * 3) Score (GetScore)
- *    - Deterministic prioritization among the remaining valid reactions.
- *    - Answers: "Which of the remaining reactions is the best choice?"
- *    - Influenced by:
- *        - Current behavior state
- *        - Incoming attack tags
- *        - Flat score bias
- *        - (Later) combat memory and context modifiers
+ * Responsibilities of this class:
+ * - Interpreting incoming-attack context (timing, distance, tags, posture, states)
+ * - Defining reaction-specific enable rules (e.g. unparryable / undodgeable attacks)
+ * - Defining reaction-specific chance logic (e.g. posture-based commitment)
+ * - Providing deterministic scoring biases for reaction prioritization
  *
  * IMPORTANT:
- * - Chance does NOT compare reactions against each other.
- * - It only filters out reactions before scoring.
- * - The final selection is ALWAYS driven by score.
+ * - The overall decision pipeline (Enable ? Chance ? Score) is defined in
+ *   UDecisionOptionData and intentionally not redefined here.
+ * - This class only implements **reaction-specific logic** on top of that pipeline.
  *
- * Conceptual model:
- *   Enable -> Chance -> Score -> Selection
+ * Conceptual role:
+ *   "Given an incoming attack, how should the AI respond defensively?"
  *
- * This separation allows the AI to:
- * - Prefer aggressive reactions like Parry
- * - Fall back to safer options like Dodge
- * - Occasionally fail or hesitate, creating believable behavior
- *
- * This class is designed to be:
- * - Data-driven (tunable via DataAssets)
- * - Extensible (reaction-specific overrides)
- * - Debuggable (explicit enable, chance, and score breakdowns)
+ * This separation allows:
+ * - A shared decision model across attack, movement, and reaction systems
+ * - Clear domain boundaries
+ * - Consistent debugging while avoiding duplicated explanations
  */
 
-
 UCLASS(Blueprintable, DefaultToInstanced, EditInLineNew, Abstract)
-class UComingAttackReactionData : public UObject
+class UComingAttackReactionData : public UDecisionOptionData
 {
     GENERATED_BODY()
 

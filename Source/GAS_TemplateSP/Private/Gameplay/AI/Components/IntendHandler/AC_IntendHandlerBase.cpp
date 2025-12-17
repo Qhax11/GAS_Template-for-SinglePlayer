@@ -7,7 +7,7 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
 #include "Gameplay/Animation/ANS_AttackTrace.h"
 #include "Gameplay/AI/States/InComingAttackState.h"
 #include <Kismet/GameplayStatics.h>

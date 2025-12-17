@@ -1,7 +1,7 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionDataTakeHit.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionDataTakeHit.h"
 #include "AbilitySystemGlobals.h"
 
 UComingAttackReactionDataTakeHit::UComingAttackReactionDataTakeHit()

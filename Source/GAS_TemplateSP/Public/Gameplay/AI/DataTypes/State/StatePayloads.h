@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Gameplay/AI/DataTypes/Behavior/AttackData.h"
 #include "Gameplay/StaticDelegates/S_DamageDelegates.h"
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
 
 class UAC_EnemyMovementManager;
 class UMovementChainAsset;

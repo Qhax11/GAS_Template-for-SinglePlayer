@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/Data/ComingAttackReactionData.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
 #include "ComingAttackReactionDataParry.generated.h"
 
 

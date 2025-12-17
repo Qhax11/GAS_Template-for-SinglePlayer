@@ -31,11 +31,5 @@ float UMovementDataBase::GetDistanceScore(const FMovementDecisionContext& Contex
 
 float UMovementDataBase::GetBehaviorStateScore(const FMovementDecisionContext& Context) const
 {
-    float Score = 0.0f;
-
-    if (const float* FoundScore = BehaviorStateModifiers.Find(Context.BehaviorState))
-    {
-        Score += *FoundScore;
-    }
-    return Score;
+    return 0.0f;
 }

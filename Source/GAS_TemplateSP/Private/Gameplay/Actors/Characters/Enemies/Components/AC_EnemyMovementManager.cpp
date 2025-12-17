@@ -148,6 +148,11 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(UMovement
 
 void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, FGameplayTag AttackDirection)
 {
+	if (!MovementAbilityData->EnableDirectionPolicy) 
+	{
+		return;
+	}
+
 	if (!MovementAbilityData->DirectionPolicyTag.IsValid())
 	{
 		return;

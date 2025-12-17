@@ -63,11 +63,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 		return;
 	}
 
-	if (DodgeMovementAbilityData->EnableDirectionPolicy)
-	{
-		MovementManager->ApplyDirectionPoliciesToMovementAbility(DodgeMovementAbilityData, InComingAttackStatePayload->AttackPayload.AttackDirectionTag);
-	}
-
+	MovementManager->ApplyDirectionPoliciesToMovementAbility(DodgeMovementAbilityData, InComingAttackStatePayload->AttackPayload.AttackDirectionTag);
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 
 	FGameplayEventData GameplayEventData = FGameplayEventData();
@@ -92,7 +88,6 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 			BindTargetComingAttackEnd();
 		}
 	}
-
 }
 
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)

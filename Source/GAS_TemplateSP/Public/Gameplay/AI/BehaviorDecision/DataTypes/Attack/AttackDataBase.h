@@ -63,6 +63,38 @@ struct FAttackScoreDebug
 	float Total = 0.f;
 };
 
+/**
+ * UAttackDataBase
+ *
+ * Domain-specific decision data representing a **single attack option**
+ * that the AI can select during behavior evaluation.
+ *
+ * This class specializes the generic decision-option pipeline defined in
+ * UDecisionOptionData for the **attack-selection domain**.
+ *
+ * Responsibilities of this class:
+ * - Describing which gameplay ability represents this attack
+ * - Evaluating whether the attack is currently allowed (IsEnable)
+ * - Optionally applying probabilistic commitment rules (PassesChance)
+ * - Producing a deterministic score used to rank this attack against others
+ *
+ * This class does NOT:
+ * - Execute the attack ability
+ * - Access world state directly (distance, target, combo state are provided via context)
+ * - Manage combo chaining or cooldown timing on its own
+ *
+ * Key concepts:
+ * - Static configuration lives in this data object (biases, combo flags, modifiers)
+ * - Runtime state is provided via FAttackDecisionContext by the decision service
+ * - Final selection is always driven by score, never by chance alone
+ *
+ * Conceptual role:
+ *   "Given the current combat context, how desirable is it for the AI to use this attack?"
+ *
+ * Concrete subclasses (e.g. combo attacks, special attacks) are expected to override
+ * parts of the decision logic to express more specific behavior.
+ */
+
 UCLASS(Abstract, Blueprintable, EditInLineNew, DefaultToInstanced)
 class GAS_TEMPLATESP_API UAttackDataBase : public UDecisionOptionData
 {

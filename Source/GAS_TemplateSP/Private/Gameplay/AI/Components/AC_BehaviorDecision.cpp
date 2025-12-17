@@ -94,7 +94,7 @@ UAttackDataBase* UAC_BehaviorDecision::GetBestAttack()
     return BestAttack;
 }
 
-UMovementChainAsset* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
+UMovementDataBase* UAC_BehaviorDecision::GetBestMovement(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
     if (!GetBestMovementChainService)
     {
@@ -102,32 +102,20 @@ UMovementChainAsset* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS
         return nullptr;
     }
 
-    UMovementChainAsset* BestMovementChainDataAsset = nullptr;
+    UMovementDataBase* BestMovementDataAsset = nullptr;
 
     if (IsValid(GetBestMovementChainService)) 
     {
-        BestMovementChainDataAsset = GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
+        BestMovementDataAsset = GetBestMovementChainService->GetBestMovement(SelectedAbilityClass);
     }
 
-#if WITH_EDITOR
-    if (GEngine && EnableSelectedDebug)
-    {
-        FString ChainNameStr = BestMovementChainDataAsset
-            ? BestMovementChainDataAsset->MovementChainName.ToString()
-            : TEXT("INVALID");
-
-        GEngine->AddOnScreenDebugMessage(10, 3.5f, FColor::Cyan,
-            FString::Printf(TEXT(">> Selected MovementChain: %s"), *ChainNameStr));
-    }
-#endif // WITH_EDITOR
-
-    if (!BestMovementChainDataAsset) 
+    if (!BestMovementDataAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("BestMovementChainDataAsset is null in: %s"), *GetName());
         return nullptr;
     }
 
-    return BestMovementChainDataAsset;
+    return BestMovementDataAsset;
 }
 
 UComingAttackReactionData* UAC_BehaviorDecision::GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload)

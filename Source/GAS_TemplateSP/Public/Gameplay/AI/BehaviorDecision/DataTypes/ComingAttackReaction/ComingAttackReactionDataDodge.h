@@ -6,6 +6,7 @@
 #include "ComingAttackReactionDataDodge.generated.h"
 
 class UAC_HeroMovementListener;
+class UMovementSingleData;
 
 UCLASS()
 class GAS_TEMPLATESP_API UComingAttackReactionDataDodge : public UComingAttackReactionData
@@ -20,5 +21,5 @@ public:
 	bool PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug) const override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FMovementAbilityData DodgeMovementAbilityData;
+	UMovementSingleData* DodgeMovementAbilityData;
 };

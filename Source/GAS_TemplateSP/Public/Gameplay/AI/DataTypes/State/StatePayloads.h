@@ -8,6 +8,7 @@
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
 
 class UAttackDataBase;
+class UMovementDataBase;
 class UAC_EnemyMovementManager;
 class UMovementChainAsset;
 class UGAS_GameplayAbilityBase;
@@ -19,12 +20,16 @@ struct FStatePayloadBase
 
 struct FMovementStatePayload : public FStatePayloadBase
 {
-	UMovementChainAsset* MovementChainAsset = nullptr;
-
+	UMovementDataBase* SelectedMovementData = nullptr;
 	UAttackDataBase* SelectedAttackData = nullptr; 
 
-	FMovementStatePayload(UMovementChainAsset* InMovementChainAsset, UAttackDataBase* InSelectedAttackData)
-		: MovementChainAsset(InMovementChainAsset), SelectedAttackData(InSelectedAttackData) {
+	FMovementStatePayload(
+		UMovementDataBase* InSelectedMovementData, 
+		UAttackDataBase* InSelectedAttackData)
+		: 
+		SelectedMovementData(InSelectedMovementData), 
+		SelectedAttackData(InSelectedAttackData)
+	{
 	}
 };
 

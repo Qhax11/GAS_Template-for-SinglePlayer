@@ -3,10 +3,11 @@
 #pragma once
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
-#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
+#include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "AC_BehaviorDecision.generated.h"
 
 class UAttackDataBase;
+class UMovementDataBase;
 class UComingAttackReactionData;
 class UBDS_ComingAttackReactionBase;
 class UBDS_GetBestAttack;
@@ -59,7 +60,7 @@ public:
     UAttackDataBase* GetBestAttack();
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
-    UMovementChainAsset* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
+    UMovementDataBase* GetBestMovement(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);

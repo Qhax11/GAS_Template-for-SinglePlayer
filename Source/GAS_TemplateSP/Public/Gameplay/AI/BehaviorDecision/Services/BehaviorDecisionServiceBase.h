@@ -9,7 +9,6 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
-#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "BehaviorDecisionServiceBase.generated.h"
 
 

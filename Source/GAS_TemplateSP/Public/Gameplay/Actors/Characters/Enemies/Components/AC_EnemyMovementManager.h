@@ -3,11 +3,14 @@
 #pragma once
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyBase.h"
-#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "AC_EnemyMovementManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
+
+class UMovementSingleData;
+class UMovementChainAsset;
+class UMovementChainDataa;
 
 USTRUCT()
 struct FMovementChainTracker
@@ -15,12 +18,12 @@ struct FMovementChainTracker
 	GENERATED_BODY()
 
 public:
-	TArray<FMovementAbilityData> ActiveChain;
+	TArray<UMovementSingleData*> ActiveChain;
 	UGAS_GameplayAbilityBase* CurrentMovementAbility = nullptr;
 	int32 CurrentIndex = 0;
 	bool bIsActive = false;
 
-	void StartChain(const TArray<FMovementAbilityData>& InChain)
+	void StartChain(const TArray<UMovementSingleData*>& InChain)
 	{
 		ActiveChain = InChain;
 		CurrentIndex = 0;
@@ -44,9 +47,9 @@ public:
 		return bIsActive && CurrentMovementAbility && !CurrentMovementAbility->IsActive();
 	}
 
-	const FMovementAbilityData* GetCurrentMovementAbilityInChain() const
+	UMovementSingleData* GetCurrentMovementAbilityInChain() const
 	{
-		return ActiveChain.IsValidIndex(CurrentIndex) ? &ActiveChain[CurrentIndex] : nullptr;
+		return ActiveChain.IsValidIndex(CurrentIndex) ? ActiveChain[CurrentIndex] : nullptr;
 	}
 
 	void Advance()
@@ -69,14 +72,14 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void StartMovementChain(UMovementChainAsset* MovementChain);
+	void StartMovementChain(UMovementChainDataa* MovementChainData);
 
 	UFUNCTION(BlueprintCallable)
 	void StopMovementAbilities();
 
 	void CancelMovementAbilities();
 
-	void ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbility, FGameplayTag AttackDirection = FGameplayTag());
+	void ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, FGameplayTag AttackDirection = FGameplayTag());
 
 	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;
@@ -84,7 +87,7 @@ public:
 protected:
 	void TryExecuteNextMovementAbilityInChain();
 
-	void TryActivateMovementAbilityWithEventData(FMovementAbilityData MovementChainData);
+	void TryActivateMovementAbilityWithEventData(UMovementSingleData* MovementChainData);
 
 	FGameplayTag GetRandomDirectionTag();
 

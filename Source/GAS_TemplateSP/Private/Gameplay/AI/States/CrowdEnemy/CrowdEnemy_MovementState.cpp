@@ -20,12 +20,12 @@ void UCrowdEnemy_MovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPaylo
 
 void UCrowdEnemy_MovementState::ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload)
 {
-	if (!MovementStatePayload.IsValid() || !MovementStatePayload->MovementChainAsset || !AICrowdEventManager)
+	if (!MovementStatePayload.IsValid() || !MovementStatePayload->SelectedAttackData || !AICrowdEventManager)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AICrowdEventManager is null in: %s"), *GetName());
 		return;
 	}
-
+	/*
 	bool IsAttackIntender = AICrowdEventManager->RequestToBeAttackIntender(EnemyASC);
 	if (IsAttackIntender)
 	{
@@ -37,6 +37,7 @@ void UCrowdEnemy_MovementState::ExecuteMovement(TSharedPtr<FMovementStatePayload
 		UE_LOG(LogTemp, Warning, TEXT("MakeStrafingAbility"));
 		MakeStrafingAbility();
 	}
+	*/
 }
 
 void UCrowdEnemy_MovementState::MakeStrafingAbility()

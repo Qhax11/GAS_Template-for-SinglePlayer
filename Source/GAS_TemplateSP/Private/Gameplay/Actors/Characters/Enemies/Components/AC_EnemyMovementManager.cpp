@@ -3,10 +3,11 @@
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
-#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/AI/StateTree/ST_Base.h"
 #include "Gameplay/Tags/GAS_Tags.h"
@@ -32,11 +33,11 @@ void UAC_EnemyMovementManager::BeginPlay()
 	checkf(HeroMovementListener, TEXT("HeroMovementListener is null in %s"), *GetClass()->GetName());
 }
 
-void UAC_EnemyMovementManager::StartMovementChain(UMovementChainAsset* MovementChain)
+void UAC_EnemyMovementManager::StartMovementChain(UMovementChainDataa* MovementChainData)
 {
-	if (!MovementChain || !OwnerEnemyASC)
+	if (!MovementChainData || !OwnerEnemyASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComp, SelectedAbilityClass or OwnerEnemyASC is null in: %s!"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("MovementChainData or OwnerEnemyASC is null in: %s!"), *GetName());
 		return;
 	}
 
@@ -53,9 +54,9 @@ void UAC_EnemyMovementManager::StartMovementChain(UMovementChainAsset* MovementC
 		MovementChainTracker.ResetChain();
 	}
 
-	if (MovementChain->MovementChain.Num() > 0)
+	if (MovementChainData->MovementChain.Num() > 0)
 	{
-		MovementChainTracker.StartChain(MovementChain->MovementChain);
+		MovementChainTracker.StartChain(MovementChainData->MovementChain);
 		TryExecuteNextMovementAbilityInChain();
 	}
 }
@@ -90,30 +91,31 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 		return;
 	}
 
-	if (const FMovementAbilityData* Data = MovementChainTracker.GetCurrentMovementAbilityInChain())
+	if (UMovementSingleData* Data = MovementChainTracker.GetCurrentMovementAbilityInChain())
 	{
-		TryActivateMovementAbilityWithEventData(*Data);
+		TryActivateMovementAbilityWithEventData(Data);
 	}
 }
 
-void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovementAbilityData MovementChainData)
+void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(UMovementSingleData* MovementChainData)
 {
-	if (!MovementChainData.MovementAbilityClass || !MovementChainData.AbilityTriggerTag.IsValid())
+	if (!MovementChainData->MovementAbilityClass || !MovementChainData->AbilityTriggerTag.IsValid())
 	{
 		UE_LOG(LogTemp, Log, TEXT("MovementAbilityClass or TriggerTag is null in: %s!"), *GetName());
+		return;
 	}
 
-	if (MovementChainData.EnableDirectionPolicy) 
+	if (MovementChainData->EnableDirectionPolicy)
 	{
 		ApplyDirectionPoliciesToMovementAbility(MovementChainData);
 	}
 
 	FGameplayEventData MovementAbilityEventData;
-	MovementAbilityEventData.EventTag = MovementChainData.AbilityTriggerTag;
-	MovementAbilityEventData.InstigatorTags.AddTag(MovementChainData.ResolvedDirectionTag);
-	MovementAbilityEventData.EventMagnitude = MovementChainData.AbilityEventMagnitude;
+	MovementAbilityEventData.EventTag = MovementChainData->AbilityTriggerTag;
+	MovementAbilityEventData.InstigatorTags.AddTag(MovementChainData->ResolvedDirectionTag);
+	MovementAbilityEventData.EventMagnitude = MovementChainData->AbilityEventMagnitude;
 
-	UGAS_GameplayAbilityBase* MovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementChainData.MovementAbilityClass, MovementAbilityEventData);
+	UGAS_GameplayAbilityBase* MovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementChainData->MovementAbilityClass, MovementAbilityEventData);
 	if (MovementAbility) 
 	{
 		MovementChainTracker.CurrentMovementAbility = MovementAbility;
@@ -128,16 +130,16 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(FMovement
 	}
 }
 
-void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(FMovementAbilityData& MovementAbility, FGameplayTag AttackDirection)
+void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, FGameplayTag AttackDirection)
 {
-	if (!MovementAbility.DirectionPolicyTag.IsValid())
+	if (!MovementAbilityData->DirectionPolicyTag.IsValid())
 	{
 		return;
 	}
 
 	FGameplayTag ResolvedDirectionTag;
 
-	if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack)
+	if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack)
 	{
 		ResolvedDirectionTag = ResolveAttackDirection(AttackDirection);
 		if (!ResolvedDirectionTag.IsValid())
@@ -145,7 +147,7 @@ void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(FMovement
 			ResolvedDirectionTag = GetRandomDirectionTag();
 		}
 	}
-	else if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
+	else if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
 	{
 		FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
 		if (HeroLastDirectionGameplayTag.IsValid())
@@ -153,7 +155,7 @@ void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(FMovement
 			ResolvedDirectionTag = HeroLastDirectionGameplayTag;
 		}
 	}
-	else if (MovementAbility.DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random)
+	else if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random)
 	{
 		ResolvedDirectionTag = GetRandomDirectionTag();
 	}
@@ -163,7 +165,7 @@ void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(FMovement
 		ResolvedDirectionTag = GetRandomDirectionTag();
 	}
 	
-	MovementAbility.ResolvedDirectionTag = ResolvedDirectionTag;
+	MovementAbilityData->ResolvedDirectionTag = ResolvedDirectionTag;
 }
 
 FGameplayTag UAC_EnemyMovementManager::GetRandomDirectionTag()

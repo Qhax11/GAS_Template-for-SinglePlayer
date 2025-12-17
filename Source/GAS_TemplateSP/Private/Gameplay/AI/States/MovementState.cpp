@@ -3,8 +3,11 @@
 
 #include "Gameplay/AI/States/MovementState.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
-#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementDataBase.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
+#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 
 void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 {
@@ -34,29 +37,60 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 
 void UMovementState::ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload)
 {
-	if (!MovementStatePayload.IsValid() || !MovementStatePayload->MovementChainAsset)
+	if (!MovementStatePayload.IsValid() || !MovementStatePayload->SelectedAttackData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStatePayload is invalid in: %s"), *GetName());
 		return;
 	}
 
-	StartMovementChain(MovementStatePayload->MovementChainAsset);
+	UMovementDataBase* SelectedMovementData = MovementStatePayload->SelectedMovementData;
+	if (!SelectedMovementData) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedMovementData is invalid in: %s"), *GetName());
+		return;
+	}
+
+	if (SelectedMovementData->IsChain())
+	{
+		UMovementChainDataa* MovementChainData = Cast<UMovementChainDataa>(SelectedMovementData);
+		if (!MovementChainData)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementChainData is invalid in: %s"), *GetName());
+			return;
+		}
+		ActivateMovementChain(MovementChainData);
+	}
+	else
+	{
+		UMovementSingleData* MovementSingleData = Cast<UMovementSingleData>(SelectedMovementData);
+		if(!MovementSingleData)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementSingleData is invalid in: %s"), *GetName());
+			return;
+		}	
+		ActivateMovementSingle(MovementSingleData);
+	}
 }
 
-void UMovementState::StartMovementChain(UMovementChainAsset* MovementChain)
+void UMovementState::ActivateMovementChain(UMovementChainDataa* MovementChainData)
 {
-	if (!MovementChain || !MovementManager)
+	if (!MovementChainData || !MovementManager)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStatePayload is invalid in: %s"), *GetName());
 		return;
 	}
 
-	MovementManager->StartMovementChain(MovementChain);
+	MovementManager->StartMovementChain(MovementChainData);
 
 	if (!MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
 	{
 		MovementManager->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
 	}
+}
+
+void UMovementState::ActivateMovementSingle(UMovementSingleData* MovementSingleData)
+{
+	// TRY ACTÝVATE SÝNGLE MOVEMENT ABÝLÝTY
 }
 
 void UMovementState::OnTick_Implementation(float DeltaTime)

@@ -2,67 +2,111 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementDataBase.h"
 
 void UBDS_GetBestMovementChain::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {
     Super::Initialize(BehaviorServiceInitParams);
 }
 
-UMovementChainAsset* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
+UMovementDataBase* UBDS_GetBestMovementChain::GetBestMovement(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
-    if (!SelectedAbilityClass || !AttackAbilityMovementChainMapAsset)
+    if (!SelectedAbilityClass || !MovementChainAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("SelectedAbilityClass or AttackAbilityMovementChainMapAsset is null in: %s!"), *GetName());
         return nullptr;
     }
 
-    UMovementChainAsset* BestMovementChainDataAsset = nullptr;
-
+    FMovementScoreDebug BestScoreDebug;
+    UMovementDataBase* BestMovementData = nullptr;
     float BestScore = -FLT_MAX;
-    float BestMovementChainDistanceScore = 0.f;
-    float BestMovementChainTargetMovementScore = 0.f;
 
+    /*
     TArray<UMovementChainAsset*> AbilityMovementChainAssets = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
     if (AbilityMovementChainAssets.IsEmpty())
     {
         return nullptr;
     }
+    */
 
-    for (UMovementChainAsset* MovementChainAsset : AbilityMovementChainAssets)
+    FMovementDecisionContext MovementDecisionContext;
+
+    for (UMovementDataBase* Movement : MovementChainAsset->MovementAbilitiesData)
     {
-        if (!MovementChainAsset) 
+        // ---------------- ENABLE CHECK ----------------
+        FMovementEnableDebug EnableDebug;
+        if (!Movement->IsEnable(MovementDecisionContext, bEnableDebug ? &EnableDebug : nullptr))
         {
+            if (bEnableDebug)
+            {
+                UE_LOG(LogTemp, Warning,
+                    TEXT("UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason = %s |"),
+                    *Movement->MovementName.ToString(),
+                    *UEnum::GetValueAsString(EnableDebug.DisableReason)
+                );
+            }
             continue;
         }
 
-        float DistanceScore = CalculateMovementChainScoreBasedOnTargetDistance(MovementChainAsset);
-        float TargetMovementScore = CalculateMovementChainScoreBasedOnTargetMovement(MovementChainAsset);
-        float BehaviorStateScore = CalculateMovementChainScoreBasedOnBehaviorState(MovementChainAsset);
-
-        float TotalScore = MovementChainAsset->ScoreBias + DistanceScore + TargetMovementScore + BehaviorStateScore;
-
-        UE_LOG(LogTemp, Log, TEXT("[AI] MovementChain %s → Score: %.2f"), *MovementChainAsset->MovementChainName.ToString(), TotalScore);
-
-        if (TotalScore > BestScore)
+        // ---------------- CHANCE CHECK ----------------
+        FMovementChanceDebug ChanceDebug;
+        if (!Movement->PassesChance(MovementDecisionContext, bEnableDebug ? &ChanceDebug : nullptr))
         {
-            BestScore = TotalScore;
-            BestMovementChainDistanceScore = DistanceScore;
-            BestMovementChainTargetMovementScore = TargetMovementScore;
-            BestMovementChainDataAsset = MovementChainAsset;
+            if (bEnableDebug)
+            {
+                UE_LOG(LogTemp, Warning,
+                    TEXT("UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
+                    *Movement->MovementName.ToString(),
+                    *UEnum::GetValueAsString(ChanceDebug.ChanceFailReason),
+                    ChanceDebug.Roll,
+                    ChanceDebug.Threshold
+                );
+            }
+            continue;
+        }
+
+        // ---------------- SCORE ----------------
+        FMovementScoreDebug ScoreDebug;
+        const float Score = Movement->GetScore(MovementDecisionContext, bEnableDebug ? &ScoreDebug : nullptr);
+        if (bEnableDebug)
+        {
+            UE_LOG(LogTemp, Warning,
+                TEXT("UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+                *Movement->MovementName.ToString(),
+                ScoreDebug.BaseScore,
+                ScoreDebug.DistanceScore,
+                ScoreDebug.BehaviorStateScore,
+                ScoreDebug.TotalScore
+            );
+        }
+
+        // ---------------- BEST PICK ----------------
+        if (Score > BestScore)
+        {
+            BestScore = Score;
+            BestMovementData = Movement;
+            BestScoreDebug = ScoreDebug;
         }
     }
 
-    ApplyDirectionPoliciesToSelectedMovementChain(BestMovementChainDataAsset);
-    /*
-    if (GEngine && EnableSelectedDebug)
+    // ---------------- WINNER DEBUG ----------------
+    if (bEnableDebug && BestMovementData)
     {
-        GEngine->AddOnScreenDebugMessage(10, 3.5f, FColor::Cyan,
-            FString::Printf(TEXT(">> Selected MovementChain: %s | DistanceScore: %.1f | TargetMovementScore: %.1f "),
-                *BestMovementChainDataAsset->MovementChainName.ToString(), BestMovementChainDistanceScore, BestMovementChainTargetMovementScore));
+        UE_LOG(LogTemp, Warning,
+            TEXT("UBDS_ComingAttackReactionBase: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+            *BestMovementData->MovementName.ToString(),
+            BestScoreDebug.BaseScore,
+            BestScoreDebug.DistanceScore,
+            BestScoreDebug.BehaviorStateScore,
+            BestScoreDebug.TotalScore
+        );
     }
-    */
-    return BestMovementChainDataAsset;
+
+   // ApplyDirectionPoliciesToSelectedMovementChain(BestMovementChainDataAsset);
+
+    return BestMovementData;
 }
+/*
 
 TArray<UMovementChainAsset*> UBDS_GetBestMovementChain::GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const
 {
@@ -73,21 +117,21 @@ TArray<UMovementChainAsset*> UBDS_GetBestMovementChain::GetMovementChainsForSele
         return Result;
     }
 
-    for (const FAttackAbilityMovementChains& Mapping : AttackAbilityMovementChainMapAsset->ChainMappings)
+    for (const FAttackAbilityMovementChains& Mapping : AttackAbilityMovementChainMapAsset->AttackAbilityMovementChainMap)
     {
         if (Mapping.AttackAbilityClass == SelectedAbilityClass)
         {
-            Result.Append(Mapping.MovementChainAssets);
+            Result.Append(Mapping.);
             break;
         }
     }
-
     return Result;
 }
 
 float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset)
 {
     float Score = 0.0f;
+
 
     if (!HeroMovementListenerComp || !EnemyController)
     {
@@ -110,13 +154,14 @@ float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetDistanc
     {
         Score = -100.0f;
     }
-
     return Score;
 }
 
 float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset)
 {
     float Score = 0.0f;
+
+
 
     if (!EnemyController) 
     {
@@ -145,19 +190,20 @@ float UBDS_GetBestMovementChain::CalculateMovementChainScoreBasedOnBehaviorState
     {
         Score += *FoundScore;
     }
-
     return Score;
 }
 
 bool UBDS_GetBestMovementChain::ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset)
 {
+    bool bChanged = false;
+
+
     if (!SelectedMovementChainAsset || !HeroMovementListenerComp)
     {
         UE_LOG(LogTemp, Warning, TEXT("SelectedMovementChainAsset is null in: %s"), *GetName());
         return false;
     }
 
-    bool bChanged = false;
 
     FGameplayTag HeroLastDirectionGameplayTag = HeroMovementListenerComp->GetHeroLastMovementDirectionTagByLastInput();
 
@@ -185,7 +231,7 @@ bool UBDS_GetBestMovementChain::ApplyDirectionPoliciesToSelectedMovementChain(UM
 
     return bChanged;
 }
-
+*/
 FGameplayTag UBDS_GetBestMovementChain::GetRandomDirectionTag()
 {
     static const TArray<FGameplayTag> PossibleDirections =

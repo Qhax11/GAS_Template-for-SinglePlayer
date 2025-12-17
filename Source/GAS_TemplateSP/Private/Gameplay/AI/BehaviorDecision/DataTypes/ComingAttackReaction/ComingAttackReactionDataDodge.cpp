@@ -3,7 +3,7 @@
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionDataDodge.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
-
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 
 UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 {
@@ -20,12 +20,11 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 	ScoreBias = 0.1f;
 
     // Dash distance
-    DodgeMovementAbilityData.AbilityTriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;
-	DodgeMovementAbilityData.EnableDirectionPolicy = true;
-	DodgeMovementAbilityData.DirectionPolicyTag = GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack;
-    DodgeMovementAbilityData.AbilityEventMagnitude = 300.0f;
-    DodgeMovementAbilityData.EnableDirectionPolicy = true;
-    DodgeMovementAbilityData.ResolvedDirectionTag = GAS_Tags::TAG_Gameplay_Direction_Backward;
+    DodgeMovementAbilityData->AbilityTriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;
+	DodgeMovementAbilityData->DirectionPolicyTag = GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack;
+	DodgeMovementAbilityData->ResolvedDirectionTag = GAS_Tags::TAG_Gameplay_Direction_Backward;
+	DodgeMovementAbilityData->EnableDirectionPolicy = true;
+    DodgeMovementAbilityData->AbilityEventMagnitude = 300.0f;
 }
 
 bool UComingAttackReactionDataDodge::IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug) const

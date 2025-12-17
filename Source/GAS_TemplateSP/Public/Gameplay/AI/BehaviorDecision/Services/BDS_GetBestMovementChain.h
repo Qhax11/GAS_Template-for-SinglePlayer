@@ -3,10 +3,24 @@
 #pragma once
 
 #include "Gameplay/AI/BehaviorDecision/Services/BehaviorDecisionServiceBase.h"
-#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "BDS_GetBestMovementChain.generated.h"
 
-struct FMovementAbilityData;
+class UMovementDataBase;
+class UMovementSingleData;
+class UMovementChainDataa;
+
+USTRUCT(BlueprintType)
+struct FAttackAbilityMovementChains
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TSubclassOf<UGAS_GameplayAbilityBase> AttackAbilityClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TArray<UMovementSingleData*> MovementAbility;
+};
 
 UCLASS(BlueprintType)
 class UAttackAbilityMovementChainMapAsset : public UPrimaryDataAsset
@@ -14,8 +28,21 @@ class UAttackAbilityMovementChainMapAsset : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<FAttackAbilityMovementChains> ChainMappings;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<FAttackAbilityMovementChains> AttackAbilityMovementChainMap;
+};
+
+UCLASS(BlueprintType)
+class UMovementChainAsset : public UPrimaryDataAsset
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName MovementChainName;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TArray<UMovementDataBase*> MovementAbilitiesData;
 };
 
 UCLASS()
@@ -26,11 +53,11 @@ class GAS_TEMPLATESP_API UBDS_GetBestMovementChain : public UBehaviorDecisionSer
 public:
     virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
 
-    UMovementChainAsset* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
+    UMovementDataBase* GetBestMovement(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
 protected:
     TArray<UMovementChainAsset*> GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const;
-
+    /*
     float CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset);
 
     float CalculateMovementChainScoreBasedOnTargetMovement(UMovementChainAsset* MovementChainAsset);
@@ -38,8 +65,11 @@ protected:
     float CalculateMovementChainScoreBasedOnBehaviorState(UMovementChainAsset* MovementChainAsset);
 
     bool ApplyDirectionPoliciesToSelectedMovementChain(UMovementChainAsset* SelectedMovementChainAsset);
-
+    */
     FGameplayTag GetRandomDirectionTag();
+
+    UPROPERTY(EditDefaultsOnly)
+    UMovementChainAsset* MovementChainAsset;
 
     UPROPERTY(EditDefaultsOnly)
     UAttackAbilityMovementChainMapAsset* AttackAbilityMovementChainMapAsset;

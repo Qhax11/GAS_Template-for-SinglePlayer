@@ -4,6 +4,7 @@
 #include "Gameplay/AI/States/Boss/Boss_State_InComingAttack.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionDataDodge.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
 
 void UBoss_State_InComingAttack::StateInitalize(const FStateInitParams& StateInitParams)
@@ -55,27 +56,28 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 		return;
 	}
 
-	if (!DodgeReactionData->DodgeMovementAbilityData.MovementAbilityClass) 
+	UMovementSingleData* DodgeMovementAbilityData = DodgeReactionData->DodgeMovementAbilityData;
+	if (!DodgeMovementAbilityData->MovementAbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State Manager: Dodge MovementAbilityClass is null."));
 		return;
 	}
 
-	if (DodgeReactionData->DodgeMovementAbilityData.EnableDirectionPolicy) 
+	if (DodgeMovementAbilityData->EnableDirectionPolicy)
 	{
-		MovementManager->ApplyDirectionPoliciesToMovementAbility(DodgeReactionData->DodgeMovementAbilityData, InComingAttackStatePayload->AttackPayload.AttackDirectionTag);
+		MovementManager->ApplyDirectionPoliciesToMovementAbility(DodgeMovementAbilityData, InComingAttackStatePayload->AttackPayload.AttackDirectionTag);
 	}
 
 	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
 	Enemy->GetEnemyMovementManagerComponent()->StopMovementAbilities();
 
 	FGameplayEventData GameplayEventData = FGameplayEventData();
-	GameplayEventData.InstigatorTags.AddTag(DodgeReactionData->DodgeMovementAbilityData.ResolvedDirectionTag);
-	GameplayEventData.EventTag = DodgeReactionData->DodgeMovementAbilityData.AbilityTriggerTag;
-	GameplayEventData.EventMagnitude = DodgeReactionData->DodgeMovementAbilityData.AbilityEventMagnitude;
+	GameplayEventData.InstigatorTags.AddTag(DodgeMovementAbilityData->ResolvedDirectionTag);
+	GameplayEventData.EventTag = DodgeMovementAbilityData->AbilityTriggerTag;
+	GameplayEventData.EventMagnitude = DodgeMovementAbilityData->AbilityEventMagnitude;
 
 	UGAS_GameplayAbilityBase* ActivatedDodgeAbility =
-		EnemyASC->TryActivateAbilityByClassWithEventData(DodgeReactionData->DodgeMovementAbilityData.MovementAbilityClass, GameplayEventData);
+		EnemyASC->TryActivateAbilityByClassWithEventData(DodgeMovementAbilityData->MovementAbilityClass, GameplayEventData);
 	if (ActivatedDodgeAbility && ActivatedDodgeAbility->IsActive())
 	{
 		ActivatedDodgeAbility->OnAbilityEnded.RemoveAll(this);

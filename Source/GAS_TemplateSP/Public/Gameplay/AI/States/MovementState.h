@@ -3,9 +3,10 @@
 #pragma once
 
 #include "Gameplay/AI/States/StateBase.h"
-#include "Gameplay/AI/DataTypes/Behavior/MovementChainData.h"
 #include "MovementState.generated.h"
 
+class UMovementChainDataa;
+class UMovementSingleData;
 
 UCLASS()
 class GAS_TEMPLATESP_API UMovementState : public UStateBase
@@ -19,7 +20,9 @@ public:
 
 	virtual void ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload);
 
-	void StartMovementChain(UMovementChainAsset* MovementChain);
+	void ActivateMovementChain(UMovementChainDataa* MovementChainData);
+
+	void ActivateMovementSingle(UMovementSingleData* MovementSingleData);
 
 	virtual void OnTick_Implementation(float DeltaTime) override;
 

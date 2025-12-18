@@ -39,7 +39,7 @@ bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload
 	}
 
 	UGAS_GameplayAbilityBase* SelectedAttackCDO = AttackStatePayload->AttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	if (SelectedAttackCDO) 
+	if (!SelectedAttackCDO) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: SelectedAttackCDO is null!"));
 		return false;

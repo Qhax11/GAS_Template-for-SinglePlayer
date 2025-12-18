@@ -14,7 +14,6 @@ enum class EMovementChainDisableReason : uint8
 {
 	None,
 	OnCooldown,
-	DistanceNotAllowed,
 	InvalidContext,
 	BehaviorStateBlocked,
 	CustomConditionFailed,

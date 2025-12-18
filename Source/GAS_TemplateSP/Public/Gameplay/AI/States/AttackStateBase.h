@@ -6,6 +6,44 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h" // TODO: Try forward declaration.
 #include "AttackStateBase.generated.h"
 
+/**
+ * UAttackStateBase
+ *
+ * Base AI state responsible for **executing a selected attack ability**.
+ *
+ * Conceptual role:
+ * This state represents the moment where the AI commits to an attack that has
+ * already been selected by the behavior-decision layer.
+ *
+ * Responsibilities:
+ * - Validate the incoming attack payload (FAttackStatePayload)
+ * - Ensure required runtime context exists (Enemy, HeroTarget, AbilityClass)
+ * - Verify that the target is still within executable attack range
+ * - Activate the selected Gameplay Ability via the Ability System
+ * - Listen for the ability end event and exit the state accordingly
+ *
+ * What this state does NOT do:
+ * - It does NOT select which attack to use (handled by BehaviorDecision)
+ * - It does NOT score or filter attacks (handled by AttackData / services)
+ * - It does NOT manage movement or positioning (handled by MovementState)
+ *
+ * Design notes:
+ * - Range checking here is an execution-time validation, not a selection filter.
+ * - This allows attacks to be chosen independently of distance, while still
+ *   preventing invalid execution.
+ * - The state assumes EnterCondition has already been approved by the StateManager
+ *   before OnEnter is called.
+ *
+ * Typical flow:
+ *   BehaviorDecision ? Attack selected
+ *   StateManager     ? EnterCondition()
+ *   AttackState      ? OnEnter() ? ExecuteAttack()
+ *   Ability ends     ? OnAttackAbilityEnded() ? ExitRequest()
+ *
+ * This class is intended to be subclassed for specialized behaviors
+ * (e.g. boss attacks, combo logic, cinematic attacks),
+ * while keeping the core execution contract consistent.
+ */
 UCLASS()
 class GAS_TEMPLATESP_API UAttackStateBase : public UStateBase
 {

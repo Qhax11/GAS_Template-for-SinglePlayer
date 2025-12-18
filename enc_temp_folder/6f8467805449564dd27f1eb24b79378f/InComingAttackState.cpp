@@ -24,27 +24,17 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 {
 	if (!EnterPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: EnterPayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
-	// StaticCastSharedPtr is fast and safe if we trust the logic flow.
 	InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
 	if (!InComingAttackStatePayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: InComingAttackStatePayload is invalid in: %s"), *GetName());
-		return false;
-	}
-
-	if (!InComingAttackStatePayload->ReactionData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: ReactionData is null in: %s"), *GetName());
 		return false;
 	}
 
 	if (!InComingAttackStatePayload->AttackPayload.ComingAttack)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: ComingAttack is null in: %s"), *GetName());
 		return false;
 	}
 
@@ -55,24 +45,25 @@ void UInComingAttackState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	Super::OnEnter(EnterPayload);
 
-	InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
-	check(InComingAttackStatePayload.IsValid());
-	check(InComingAttackStatePayload->ReactionData);
-	check(InComingAttackStatePayload->AttackPayload.ComingAttack);
+	if (!EnterPayload.IsValid() || !InComingAttackStatePayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnterPayload is invalid in: %s"), *GetName());
+		return;
+	}
+
+	SelectAndExecuteReaction(InComingAttackStatePayload->ReactionData);
 
 	// Always bind to DamageSubsystem here so that the state can respond to any incoming damage
-    // regardless of the reaction type (take damage, parry, dodge). This ensures the state
-    // can exit correctly if the AI takes damage during any reaction.  
+	// regardless of the reaction type (take damage, parry, dodge). This ensures the state
+	// can exit correctly if the AI takes damage during any reaction.  
 	if (DamageSubsystem)
 	{
 		if (!DamageSubsystem->OnDamageDealt.IsAlreadyBound(this, &UInComingAttackState::OnDamageDealt))
 		{
 			DamageSubsystem->OnDamageDealt.AddDynamic(this, &UInComingAttackState::OnDamageDealt);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: DamageSubsystem binded."));
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: DamageSubsystem binded."));
 	}
-
-	SelectAndExecuteReaction(InComingAttackStatePayload->ReactionData);
 }
 
 bool UInComingAttackState::SelectAndExecuteReaction(UComingAttackReactionData* SelectedReactionData)

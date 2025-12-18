@@ -15,15 +15,6 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
         return false;
     }
 
-    if (!IsDistanceAllowed(Context))
-    {
-        if (OutDebug)
-        {
-            OutDebug->DisableReason = EMovementChainDisableReason::DistanceNotAllowed;
-        }
-        return false;
-    }
-
     if (Context.bIsAnyMovementAbilityOnCooldown)
     {
         if (OutDebug)
@@ -41,17 +32,6 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
     return true;
 }
 
-bool UMovementChainDataa::IsDistanceAllowed(const FMovementDecisionContext& Context) const
-{
-    // 0 veya negatif = range kýsýtý yok
-    if (MinRange <= 0.f)
-    {
-        return true;
-    }
-
-    return CombatDistance::IsInRange(Context.Owner, Context.Target, MinRange);
-}
-
 bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug) const
 {
     return true;
@@ -60,13 +40,7 @@ bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, 
 float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
 {
     float DistanceScore = GetDistanceScore(Context);
-    float BehaviorScore = 0.f;
-
-    // Behavior state modifier
-    if (const float* Modifier = BehaviorStateModifiers.Find(Context.BehaviorState))
-    {
-        BehaviorScore = *Modifier;
-    }
+    float BehaviorScore = GetBehaviorStateScore(Context);
 
     const float TotalScore = DistanceScore + BehaviorScore +ScoreBias;
 
@@ -81,23 +55,28 @@ float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMo
     return TotalScore;
 }
 
+float UMovementChainDataa::GetBehaviorStateScore(const FMovementDecisionContext& Context) const
+{
+    float Score = 0.0f;
+
+    if (const float* FoundScore = BehaviorStateModifiers.Find(Context.BehaviorState))
+    {
+        Score += *FoundScore;
+    }
+
+    return Score;
+}
+
 float UMovementChainDataa::GetDistanceScore(const FMovementDecisionContext& Context) const
 {
     float Score = 0.0f;
-    /*
-    Context.
 
-    if (!EnemyController)
+    if (DistanceScoreCurve)
     {
-        return Score;
+        const float Distance = CombatDistance::GetDistance(Context.Owner, Context.Target);
+        Score += DistanceScoreCurve->GetFloatValue(Distance);
     }
 
-    if (MovementChainAsset->DistanceScoreCurve)
-    {
-        float CurveScore = MovementChainAsset->DistanceScoreCurve->GetFloatValue(EnemyController->GetTargetHeroDistance());
-        Score += CurveScore;
-    }
-    */
     return Score;
 }
 
@@ -133,13 +112,3 @@ float UMovementChainDataa::GetTargetMovementScore(const FMovementDecisionContext
     return Score;
 }
 
-float UMovementChainDataa::GetBehaviorStateScore(const FMovementDecisionContext& Context) 
-{
-    float Score = 0.0f;
-
-    if (const float* FoundScore = BehaviorStateModifiers.Find(Context.BehaviorState))
-    {
-        Score += *FoundScore;
-    }
-    return Score;
-}

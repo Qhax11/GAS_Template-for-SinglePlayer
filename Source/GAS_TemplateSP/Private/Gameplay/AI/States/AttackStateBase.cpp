@@ -18,6 +18,12 @@ void UAttackStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 
 bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
+	if (!EnterPayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: EnterPayload is invalid in: %s"), *GetName());
+		return false;
+	}
+
 	// StaticCastSharedPtr is fast and safe if we trust the logic flow.
 	TSharedPtr<FAttackStatePayload> AttackStatePayload = StaticCastSharedPtr<FAttackStatePayload>(EnterPayload);
 	if (!AttackStatePayload.IsValid())

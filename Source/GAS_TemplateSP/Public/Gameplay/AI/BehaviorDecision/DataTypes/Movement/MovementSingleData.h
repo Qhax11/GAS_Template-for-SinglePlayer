@@ -59,7 +59,7 @@ public:
     UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.AbilityTriggerEvent.Movement"))
     FGameplayTag AbilityTriggerTag;
 
-    UPROPERTY(VisibleInstanceOnly, meta = (Categories = "Gameplay.Direction"))
+    UPROPERTY(EditDefaultsOnly, meta = (Categories = "Gameplay.Direction"))
     FGameplayTag DirectionTag;;
 
     UPROPERTY(EditDefaultsOnly)

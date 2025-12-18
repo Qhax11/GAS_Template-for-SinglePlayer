@@ -96,6 +96,7 @@ class UComingAttackReactionData : public UDecisionOptionData
     GENERATED_BODY()
 
 public:
+    // Hard gate
     virtual bool IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug = nullptr) const;
 
     virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug = nullptr) const;

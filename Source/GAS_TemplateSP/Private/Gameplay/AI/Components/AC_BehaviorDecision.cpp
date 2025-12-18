@@ -81,7 +81,6 @@ UAttackDataBase* UAC_BehaviorDecision::GetBestAttack()
     UAttackDataBase* BestAttack = GetBestAttackService->GetBestAttack();
     if (!BestAttack) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("BestAttack is null in: %s"), *GetName());
         return nullptr;
     }
 

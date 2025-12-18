@@ -23,8 +23,9 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 
 	FAttackDecisionContext AttackDecisionContext;
 	AttackDecisionContext.BehaviorState = BehaviorState;
-	AttackDecisionContext.EnemyASC = EnemyASC;
+	AttackDecisionContext.Owner = Enemy;
 	AttackDecisionContext.Target = Hero;
+	AttackDecisionContext.OwnerASC = EnemyASC;
 
     for (UAttackDataBase* AttackData : AttackAbilityAsset->OptionalAttacks)
     {
@@ -90,16 +91,24 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
     }
 
 	// ---------------- WINNER DEBUG ----------------
-	if (bEnableDebug && BestAttackData)
+	if (bEnableDebug )
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("UBDS_GetBestAttack: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
-			*BestAttackData->AttackName.ToString(),
-			BestScoreDebug.BehaviorScore,
-			BestScoreDebug.ComboScore,
-			BestScoreDebug.Bias,
-			BestScoreDebug.Total
-		);
+		if (BestAttackData) 
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("UBDS_GetBestAttack: WINNER = %s | Score: Behavior = %.2f, Combo = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
+				*BestAttackData->AttackName.ToString(),
+				BestScoreDebug.BehaviorScore,
+				BestScoreDebug.ComboScore,
+				BestScoreDebug.DistanceScore,
+				BestScoreDebug.Bias,
+				BestScoreDebug.Total
+			);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestAttack: No valid attack found!"));
+		}
 	}
 
 	return BestAttackData;

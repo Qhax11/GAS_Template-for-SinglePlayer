@@ -16,10 +16,16 @@ struct FAttackDecisionContext
 
 public:
 	UPROPERTY()
-	UAbilitySystemComponent* EnemyASC = nullptr;
+	AActor* Owner = nullptr;
 
 	UPROPERTY()
 	AActor* Target = nullptr;
+
+	UPROPERTY()
+	UAbilitySystemComponent* OwnerASC = nullptr;
+
+	UPROPERTY()
+	UAbilitySystemComponent* TargetASC = nullptr;
 
 	UPROPERTY()
 	EBehaviorState BehaviorState = EBehaviorState::None;
@@ -30,8 +36,7 @@ enum class EAttackDisableReason : uint8
 {
 	None,
 	InvalidAbility,
-	InvalidTarget,
-	OutOfRange,
+	InvalidContext,
 	OnCooldown,
 	InvalidState,
 	ComboBlocked,
@@ -52,6 +57,7 @@ struct FAttackScoreDebug
 {
 	float BehaviorScore = 0.f;
 	float ComboScore = 0.f;
+	float DistanceScore = 0.f;
 	float Bias = 0.f;
 	float Total = 0.f;
 };
@@ -101,6 +107,8 @@ public:
 	virtual float GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug = nullptr) const;
 
 protected:
+	float GetDistanceScore(const FAttackDecisionContext& Context) const;
+
 	//float CalculateScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);
 
 	//float CalculateComboScore(FAttackData AttackData);

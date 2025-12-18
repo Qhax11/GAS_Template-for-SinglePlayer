@@ -16,7 +16,7 @@ bool UAttackDataBase::IsEnable(const FAttackDecisionContext& Context, FAttackEna
 	}
 
 	// Ability cooldown'daysa bu attack seçilemez
-	if(Context.EnemyASC->HasMatchingGameplayTag(AbilityCooldownTag))
+	if(Context.OwnerASC->HasMatchingGameplayTag(AbilityCooldownTag))
 	{
 		if (OutDebug)
 		{
@@ -30,7 +30,7 @@ bool UAttackDataBase::IsEnable(const FAttackDecisionContext& Context, FAttackEna
 	{
 		if (OutDebug)
 		{
-			OutDebug->Reason = EAttackDisableReason::InvalidTarget;
+			OutDebug->Reason = EAttackDisableReason::InvalidContext;
 		}
 		return false;
 	}
@@ -59,6 +59,7 @@ bool UAttackDataBase::PassesChance(const FAttackDecisionContext& Context, FAttac
 
 float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug) const
 {
+	float DistanceScore = GetDistanceScore(Context);
 	float BehaviorScore = 0.f;
 	float ComboScore = 0.f;
 
@@ -75,17 +76,40 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 		ComboScore = 0.25f;
 	}
 
-	const float TotalScore = BehaviorScore + ComboScore + ScoreBias;
+	const float TotalScore = BehaviorScore + ComboScore + DistanceScore + ScoreBias;
 
 	if (OutDebug)
 	{
 		OutDebug->BehaviorScore = BehaviorScore;
 		OutDebug->ComboScore = ComboScore;
+		OutDebug->DistanceScore = DistanceScore;
 		OutDebug->Bias = ScoreBias;
 		OutDebug->Total = TotalScore;
 	}
 
 	return TotalScore;
+}
+
+float UAttackDataBase::GetDistanceScore(const FAttackDecisionContext& Context) const
+{
+	const float AttackRange = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
+
+	if (AttackRange <= 0.f || !IsValid(Context.Owner) || !IsValid(Context.Target))
+	{
+		return 0.f;
+	}
+
+	const float DistSq = FVector::DistSquared(Context.Owner->GetActorLocation(), Context.Target->GetActorLocation());
+	const float IdealSq = FMath::Square(AttackRange);
+
+	// 1.0 = ideal mesafe, uzaklaþtýkça düþer
+	const float Normalized = 1.f - FMath::Clamp(
+		FMath::Abs(DistSq - IdealSq) / IdealSq,
+		0.f,
+		1.f
+	);
+
+	return Normalized;
 }
 
 /*

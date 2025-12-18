@@ -45,16 +45,6 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
     return true;
 }
 
-bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug) const
-{
-    return false;
-}
-
-float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
-{
-    return 0.0f;
-}
-
 bool UMovementChainDataa::IsDistanceAllowed(const FMovementDecisionContext& Context) const
 {
     // 0 veya negatif = range kýsýtý yok
@@ -64,6 +54,16 @@ bool UMovementChainDataa::IsDistanceAllowed(const FMovementDecisionContext& Cont
     }
 
     return CombatDistance::IsInRange(Context.Owner, Context.Target, MinRange);
+}
+
+bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug) const
+{
+    return false;
+}
+
+float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
+{
+    return 0.0f;
 }
 
 float UMovementChainDataa::GetDistanceScore(const FMovementDecisionContext& Context) const

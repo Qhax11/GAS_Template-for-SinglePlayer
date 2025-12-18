@@ -39,13 +39,13 @@ void UStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	if (!StateManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: StateManager is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
 		return;
 	}
 
 	if (StateManager->bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: StateManager: %s has been enter"), *StateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[StateManager]: %s has been enter"), *StateTag.ToString());
 	}
 }
 
@@ -53,13 +53,13 @@ void UStateBase::OnExit_Implementation()
 {
 	if (!StateManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: StateManager is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
 		return;
 	}
 
 	if (StateManager->bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: %s has been exit"), *StateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[StateManager]: %s has been exit"), *StateTag.ToString());
 	}
 }
 
@@ -67,7 +67,7 @@ bool UStateBase::ExitRequest(FString Reason, FStateTransitionRequest StateTransi
 {
 	if (!StateManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: StateManager is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("StateManager is null in: %s"), *GetName());
 		return false; 
 	}
 
@@ -78,7 +78,7 @@ bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> Abi
 {
 	if (!BehaviorDecisionComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: BehaviorDecisionComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
 		return false;
 	}
 
@@ -89,7 +89,7 @@ UAttackDataBase* UStateBase::GetSelectedAttackAbilityData() const
 {
 	if (!BehaviorDecisionComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: BehaviorDecisionComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
 		return nullptr;
 	}
 

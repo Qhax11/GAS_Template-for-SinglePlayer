@@ -34,7 +34,7 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 	if (!AnimMontage && !IsValid(AnimMontage))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: AnimMontage is null in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("AnimMontage is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -44,7 +44,7 @@ void UGA_MontageAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: %s is will play."), *AnimMontage->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: %s is will play."), *AnimMontage->GetName());
 
 	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
 		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
@@ -67,14 +67,14 @@ void UGA_MontageAbility::ActivateMotionWarping()
 
 	if (!CharacterBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: CharacterBase is null in: %s, ability cannot motion warping"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, ability cannot motion warping"), *GetName());
 		return;
 	}
 
 	UMotionWarpingComponent* OwnerMotionWarping = CharacterBase->GetMotionWarpingComponent();
 	if (!OwnerMotionWarping)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: OwnerMotionWarping is null in: %s, ability cannot motion warping"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("OwnerMotionWarping is null in: %s, ability cannot motion warping"), *GetName());
 		return;
 	}
 
@@ -285,7 +285,7 @@ void UGA_MontageAbility::CleanupMotionWarping()
 
 	if (!CharacterBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: CharacterBase is null in: %s, ability cannot CleanupMotionWarping"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, ability cannot CleanupMotionWarping"), *GetName());
 		return;
 	}
 

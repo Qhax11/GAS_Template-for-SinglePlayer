@@ -56,7 +56,7 @@ struct FMovementScoreDebug
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	float BaseScore = 0.f;
+	float BiasScore = 0.f;
 
 	UPROPERTY(BlueprintReadOnly)
 	float DistanceScore = 0.f;

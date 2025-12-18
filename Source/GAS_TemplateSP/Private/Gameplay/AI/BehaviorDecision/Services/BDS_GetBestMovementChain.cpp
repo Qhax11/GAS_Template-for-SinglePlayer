@@ -82,9 +82,9 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             UE_LOG(LogTemp, Warning,
                 TEXT("UBDS_GetBestMovementChain: MovementChainScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
                 *MovementChain->MovementChainName.ToString(),
-                ScoreDebug.BaseScore,
-                ScoreDebug.DistanceScore,
                 ScoreDebug.BehaviorStateScore,
+                ScoreDebug.DistanceScore,
+                ScoreDebug.BiasScore,
                 ScoreDebug.TotalScore
             );
         }
@@ -106,9 +106,9 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             UE_LOG(LogTemp, Warning,
                 TEXT("UBDS_GetBestMovementChain: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
                 *BestMovementChainData->MovementChainName.ToString(),
-                BestScoreDebug.BaseScore,
-                BestScoreDebug.DistanceScore,
                 BestScoreDebug.BehaviorStateScore,
+                BestScoreDebug.DistanceScore,
+                BestScoreDebug.BiasScore,
                 BestScoreDebug.TotalScore
             );
         }
@@ -125,11 +125,9 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
 
 UMovementChainsAsset* UBDS_GetBestMovementChain::GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const
 {
-    UMovementChainsAsset* Result = nullptr;
-
     if (!SelectedAbilityClass || !AttackAbilitiesToMovementChainsAsset)
     {
-        return Result;
+        return nullptr;
     }
 
     for (const FAttackAbilityToMovementChain& AttackAbilityToMovementChain : AttackAbilitiesToMovementChainsAsset->AttackAbilityMovementChainMap)
@@ -139,7 +137,8 @@ UMovementChainsAsset* UBDS_GetBestMovementChain::GetMovementChainsForSelectedAtt
             return AttackAbilityToMovementChain.MovementChainsAsset;
         }
     }
-    return Result;
+
+    return nullptr;
 }
 
 

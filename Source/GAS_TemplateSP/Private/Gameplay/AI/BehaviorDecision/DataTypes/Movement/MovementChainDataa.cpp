@@ -59,7 +59,26 @@ bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, 
 
 float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
 {
-    return 0.0f;
+    float DistanceScore = GetDistanceScore(Context);
+    float BehaviorScore = 0.f;
+
+    // Behavior state modifier
+    if (const float* Modifier = BehaviorStateModifiers.Find(Context.BehaviorState))
+    {
+        BehaviorScore = *Modifier;
+    }
+
+    const float TotalScore = DistanceScore + BehaviorScore +ScoreBias;
+
+    if (OutDebug)
+    {
+        OutDebug->BiasScore = ScoreBias;
+        OutDebug->DistanceScore = DistanceScore;
+        OutDebug->BehaviorStateScore = BehaviorScore;
+        OutDebug->TotalScore = TotalScore;
+    }
+
+    return TotalScore;
 }
 
 float UMovementChainDataa::GetDistanceScore(const FMovementDecisionContext& Context) const
@@ -80,8 +99,6 @@ float UMovementChainDataa::GetDistanceScore(const FMovementDecisionContext& Cont
     }
     */
     return Score;
-
-
 }
 
 float UMovementChainDataa::GetTargetMovementScore(const FMovementDecisionContext& Context) const

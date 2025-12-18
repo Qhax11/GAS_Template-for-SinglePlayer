@@ -30,7 +30,7 @@ public:
     bool EnableDirectionPolicy = false;
 
     // The resolved direction for this ability, typically determined at runtime by a direction policy.
-    UPROPERTY(VisibleInstanceOnly, meta = (Categories = "AI.Direction.Resolved", ToolTip = "Resolved direction tag used by this ability at runtime. Typically set based on the direction policy."))
+    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Resolved", ToolTip = "Resolved direction tag used by this ability at runtime. Typically set based on the direction policy."))
     FGameplayTag ResolvedDirectionTag;
 
     // The policy used to resolve the direction, like random or based on player position.

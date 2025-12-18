@@ -47,7 +47,6 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 			);
 		}
 	}
-	
 }
 
 void UGA_EnemyStrafingBase::StartEQSForStrafingLocation(FGameplayTag StrafeDirectionTag)

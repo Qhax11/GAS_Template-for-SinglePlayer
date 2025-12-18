@@ -22,9 +22,8 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 
     // Dash distance
     DodgeMovementAbilityData->AbilityTriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;
-	DodgeMovementAbilityData->DirectionPolicyTag = GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack;
-	DodgeMovementAbilityData->ResolvedDirectionTag = GAS_Tags::TAG_Gameplay_Direction_Backward;
 	DodgeMovementAbilityData->EnableDirectionPolicy = true;
+	DodgeMovementAbilityData->DirectionPolicyTag = GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack;
     DodgeMovementAbilityData->AbilityEventMagnitude = 300.0f;
 }
 

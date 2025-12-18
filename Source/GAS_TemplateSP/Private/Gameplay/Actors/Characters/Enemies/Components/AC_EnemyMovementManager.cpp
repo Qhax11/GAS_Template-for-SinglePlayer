@@ -85,7 +85,7 @@ bool UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* Move
 	StopMovementAbilities();
 
 	FGameplayEventData GameplayEventData = FGameplayEventData();
-	GameplayEventData.InstigatorTags.AddTag(MovementData->ResolvedDirectionTag);
+	GameplayEventData.InstigatorTags.AddTag(MovementData->DirectionTag);
 	GameplayEventData.EventTag = MovementData->AbilityTriggerTag;
 	GameplayEventData.EventMagnitude = MovementData->AbilityEventMagnitude;
 
@@ -96,18 +96,49 @@ bool UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* Move
 	}
 
 	ReactionMovementAbility->OnAbilityEnded.RemoveAll(this);
-	ReactionMovementAbility->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnReactionMovementAbilityEnded);
+	ReactionMovementAbility->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded);
 	ActivatedReactionAbility = ReactionMovementAbility;
 
 	return true;
 }
 
-void UAC_EnemyMovementManager::OnReactionMovementAbilityEnded(const FCustomAbilityEndedData& EndData)
+bool UAC_EnemyMovementManager::ExecuteCorrectiveMovement(UMovementSingleData* MovementData)
 {
-	FReactionMovementEndedData Result;
-	Result.bWasCancelled = EndData.bWasCancelled;
+	if (!MovementData || !OwnerEnemyASC)
+	{
+		return false;
+	}
 
-	OnReactionMovementEnded.Broadcast(Result);
+	if (!MovementData->AbilityTriggerTag.IsValid() || !MovementData->MovementAbilityClass)
+	{
+		return false;
+	}
+
+	ApplyDirectionPoliciesToMovementAbility(MovementData);
+
+	FGameplayEventData EventData;
+	EventData.EventTag = MovementData->AbilityTriggerTag;
+	EventData.InstigatorTags.AddTag(MovementData->DirectionTag);
+	EventData.EventMagnitude = MovementData->AbilityEventMagnitude;
+
+	UGAS_GameplayAbilityBase* CorrectiveMovement = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementData->MovementAbilityClass, EventData);
+	if (!CorrectiveMovement)
+	{
+		return false;
+	}
+
+	CorrectiveMovement->OnAbilityEnded.RemoveAll(this);
+	CorrectiveMovement->OnAbilityEnded.AddUObject(this,&UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded);
+
+	return true;
+}
+
+void UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded(const FCustomAbilityEndedData& EndData)
+{
+	FMovementExecutionEndedData EndedData;
+	EndedData.bWasCancelled = EndData.bWasCancelled;
+
+	OnMovementExecutionEnded.Broadcast(EndedData);
 }
 
 void UAC_EnemyMovementManager::StopMovementAbilities()
@@ -159,7 +190,7 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(UMovement
 
 	FGameplayEventData MovementAbilityEventData;
 	MovementAbilityEventData.EventTag = MovementChainData->AbilityTriggerTag;
-	MovementAbilityEventData.InstigatorTags.AddTag(MovementChainData->ResolvedDirectionTag);
+	MovementAbilityEventData.InstigatorTags.AddTag(MovementChainData->DirectionTag);
 	MovementAbilityEventData.EventMagnitude = MovementChainData->AbilityEventMagnitude;
 
 	UGAS_GameplayAbilityBase* MovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementChainData->MovementAbilityClass, MovementAbilityEventData);
@@ -184,37 +215,41 @@ void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(UMovement
 		return;
 	}
 
-	FGameplayTag ResolvedDirectionTag;
-
+	// POLICY KAPALI → sadece garanti ver
 	if (!MovementAbilityData->EnableDirectionPolicy || !MovementAbilityData->DirectionPolicyTag.IsValid())
 	{
-		MovementAbilityData->ResolvedDirectionTag = GetRandomDirectionTag();
+		if (!MovementAbilityData->DirectionTag.IsValid())
+		{
+			MovementAbilityData->DirectionTag = GetRandomDirectionTag();
+		}
 		return;
 	}
 
+	FGameplayTag FinalTag;
+
 	if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack)
 	{
-		ResolvedDirectionTag = ResolveAttackDirection(AttackDirection);
+		FinalTag = ResolveAttackDirection(AttackDirection);
 	}
 	else if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
 	{
 		if (HeroMovementListener)
 		{
-			ResolvedDirectionTag = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
+			FinalTag = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
 		}
 	}
 	else if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random)
 	{
-		ResolvedDirectionTag = GetRandomDirectionTag();
+		FinalTag = GetRandomDirectionTag();
 	}
 
 	// FINAL GUARANTEE
-	if (!ResolvedDirectionTag.IsValid())
+	if (!FinalTag.IsValid())
 	{
-		ResolvedDirectionTag = GetRandomDirectionTag();
+		FinalTag = GetRandomDirectionTag();
 	}
 
-	MovementAbilityData->ResolvedDirectionTag = ResolvedDirectionTag;
+	MovementAbilityData->DirectionTag = FinalTag;
 }
 
 FGameplayTag UAC_EnemyMovementManager::GetRandomDirectionTag()

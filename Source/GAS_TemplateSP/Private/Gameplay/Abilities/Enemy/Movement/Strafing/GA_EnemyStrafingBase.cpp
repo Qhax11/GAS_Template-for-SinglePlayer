@@ -16,7 +16,7 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	// === ANTI-SPAM GUARD, LegShake problem, QuickEndAbility, TO:DO Problem is in EQS probably.
+	// === ANTI-SPAM GUARD, LegShake problem, QuickEndAbility, TO:DO Problem is in EQS probably. ================
 	const float Now = GetWorld()->GetTimeSeconds();
 	if (Now - LastActivationTime < 0.25f)
 	{

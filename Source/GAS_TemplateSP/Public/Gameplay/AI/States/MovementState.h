@@ -3,10 +3,8 @@
 #pragma once
 
 #include "Gameplay/AI/States/StateBase.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "MovementState.generated.h"
-
-class UMovementChainDataa;
-class UMovementSingleData;
 
 /**
  * UMovementState
@@ -48,6 +46,18 @@ class UMovementSingleData;
  * - Supports different movement chain strategies (dash, strafe, chase, etc.)
  * - Keeps positioning logic isolated from attack execution
  */
+
+class UMovementChainDataa;
+class UMovementSingleData;
+struct FMovementExecutionEndedData;
+
+enum class EMovementRangeResult : uint8
+{
+	TooClose,
+	InRange,
+	TooFar
+};
+
 UCLASS()
 class GAS_TEMPLATESP_API UMovementState : public UStateBase
 {
@@ -66,18 +76,29 @@ protected:
 public:
 	virtual void OnTick_Implementation(float DeltaTime) override;
 
+protected:
 	void TryEnterToAttackState();
 
-	bool IsReachedAttackRange() const;
+	EMovementRangeResult EvaluateAttackRange() const;
+
+	void TryBackStep();
+
+	void OnBackStepEnded(const FMovementExecutionEndedData& ReactionMovementEndedData);
 
 	UFUNCTION()
 	void OnMovementChainEnded();
 
-	virtual void OnExit_Implementation() override;
-
-protected:
 	TSharedPtr<FMovementStatePayload> MovementStateEnterPayload;
 
 	UPROPERTY()
 	UGAS_GameplayAbilityBase* SelectedAttackCDO;
+
+	UPROPERTY(EditDefaultsOnly, Instanced)
+	UMovementSingleData* StepBackMovementData;
+
+	bool bStepBackActive = false;
+
+public:
+	virtual void OnExit_Implementation() override;
+
 };

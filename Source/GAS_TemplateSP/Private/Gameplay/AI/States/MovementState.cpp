@@ -2,7 +2,6 @@
 
 
 #include "Gameplay/AI/States/MovementState.h"
-#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementDataBase.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
@@ -75,13 +74,23 @@ void UMovementState::OnTick_Implementation(float DeltaTime)
 
 void UMovementState::TryEnterToAttackState()
 {
+	if (bStepBackActive)
+	{
+		return;
+	}
+
 	if (!SelectedAttackCDO)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: BehaviorDecisionComponent is null in: %s"), *GetName());
 		return;
 	}
 
-	if (IsReachedAttackRange())
+	EMovementRangeResult MovementRangeResult = EvaluateAttackRange();
+	if (MovementRangeResult == EMovementRangeResult::TooClose) 
+	{
+		TryBackStep();
+	}
+	else if (MovementRangeResult == EMovementRangeResult::InRange) 
 	{
 		MovementManager->StopMovementAbilities();
 
@@ -91,21 +100,50 @@ void UMovementState::TryEnterToAttackState()
 		FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest(GAS_Tags::TAG_AI_State_Attack, AttackPayload);
 		ExitRequest("Target is in range", StateTransitionRequest);
 	}
+	else if (MovementRangeResult == EMovementRangeResult::TooFar) 
+	{
+		// Chain is continue for distance closing
+	}
 }
 
-bool UMovementState::IsReachedAttackRange() const
+EMovementRangeResult UMovementState::EvaluateAttackRange() const
 {
 	if (!SelectedAttackCDO || !IsValid(Enemy) || !IsValid(HeroTarget))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: SelectedAttackCDO, Enemy, or HeroTarget is null in %s"), *GetName());
-		return false;
+		return EMovementRangeResult::TooFar;
 	}
 
 	const float Distance = CombatDistance::GetDistance(Enemy, HeroTarget);
 	const float MinRange = FMath::Max(0.f, SelectedAttackCDO->MinRange);
 	const float MaxRange = SelectedAttackCDO->MaxRange;
 
-	return Distance >= MinRange && Distance <= MaxRange;
+	if (Distance < MinRange)
+	{
+		return EMovementRangeResult::TooClose;
+	}
+
+	if (Distance > MaxRange)
+	{
+		return EMovementRangeResult::TooFar;
+	}
+
+	return EMovementRangeResult::InRange;
+}
+
+void UMovementState::TryBackStep()
+{
+	const bool ExecutionSucces = MovementManager->ExecuteCorrectiveMovement(StepBackMovementData);
+	if (ExecutionSucces)
+	{
+		MovementManager->OnMovementExecutionEnded.RemoveAll(this);
+		MovementManager->OnMovementExecutionEnded.AddUObject(this, &UMovementState::OnBackStepEnded);
+		bStepBackActive = true;
+	}
+}
+
+void UMovementState::OnBackStepEnded(const FMovementExecutionEndedData& ReactionMovementEndedData)
+{
+	bStepBackActive = false;
 }
 
 void UMovementState::OnMovementChainEnded()

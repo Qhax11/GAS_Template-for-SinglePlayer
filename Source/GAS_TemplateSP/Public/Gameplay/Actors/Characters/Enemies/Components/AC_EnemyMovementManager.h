@@ -11,14 +11,23 @@ class UMovementDataBase;
 class UMovementSingleData;
 class UMovementChainDataa;
 
-struct FReactionMovementEndedData
+enum class EMovementExecutionType : uint8
+{
+	Reaction,
+	Corrective,
+	Chain
+};
+
+struct FMovementExecutionEndedData
 {
 	bool bWasCancelled = false;
+	EMovementExecutionType ExecutionType = EMovementExecutionType::Chain;
 	UMovementSingleData* MovementData = nullptr;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnReactionMovementEnded, const FReactionMovementEndedData&);
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMovementExecutionEnded, const FMovementExecutionEndedData&);
 
 USTRUCT()
 struct FMovementChainTracker
@@ -78,6 +87,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	/*===============  PUBLIC API ===============*/
 public:
 	UFUNCTION(BlueprintCallable)
 	void ExecuteMovementChain(UMovementChainDataa* MovementChain);
@@ -85,11 +95,14 @@ public:
 	// Reaction context (dodge, evade, panic, vs)
 	bool ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload);
 
+	bool ExecuteCorrectiveMovement(UMovementSingleData* MovementData);
+
 	FOnMovementChainEnded OnMovementChainEnded;
-	FOnReactionMovementEnded OnReactionMovementEnded;
+
+	FOnMovementExecutionEnded OnMovementExecutionEnded;
 
 private:
-	void OnReactionMovementAbilityEnded(const FCustomAbilityEndedData& EndData);
+	void OnMovementAbilityExecutionEnded(const FCustomAbilityEndedData& EndData);
 
 	// For now, it's dodge.
 	UGAS_GameplayAbilityBase* ActivatedReactionAbility;

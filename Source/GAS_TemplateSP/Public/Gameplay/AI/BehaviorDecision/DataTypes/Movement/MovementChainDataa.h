@@ -18,6 +18,8 @@ class UMovementSingleData;
  * This data does NOT guarantee executability at runtime; it only expresses intent and preference.
  * Actual execution validity (distance, blocking states, interruptions) is handled by states/abilities.
  */
+
+// TO:DO Rename UMovementChainDataa class with UMovementChainData.
 UCLASS()
 class GAS_TEMPLATESP_API UMovementChainDataa : public UMovementDataBase
 {

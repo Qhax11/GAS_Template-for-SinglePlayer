@@ -59,16 +59,15 @@ public:
     UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.AbilityTriggerEvent.Movement"))
     FGameplayTag AbilityTriggerTag;
 
+    UPROPERTY(VisibleInstanceOnly, meta = (Categories = "Gameplay.Direction"))
+    FGameplayTag DirectionTag;;
+
     UPROPERTY(EditDefaultsOnly)
     bool EnableDirectionPolicy = false;
 
-    // The resolved direction for this ability, typically determined at runtime by a direction policy.
-    UPROPERTY(VisibleInstanceOnly, meta = (Categories = "AI.Direction.Resolved", ToolTip = "Resolved direction tag used by this ability at runtime. Typically set based on the direction policy."))
-    FGameplayTag ResolvedDirectionTag;
-
     // The policy used to resolve the direction, like random or based on player position.
     UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Policy", EditCondition = "EnableDirectionPolicy", ToolTip = "Defines how the direction should be resolved at runtime (e.g., LastPlayerDirection, Random)."))
-    FGameplayTag DirectionPolicyTag = GAS_Tags::TAG_AI_Direction_Policy_Random;
+    FGameplayTag DirectionPolicyTag;
 
     // Used as movement distance for dash abilities, or as a time limit (in seconds) for other movement types like chase or flee.
     // Set to 0 to ignore. For dash, this represents how far the actor should move. For chase/flee, this limits how long the ability stays active.

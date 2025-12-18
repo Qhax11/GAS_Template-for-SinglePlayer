@@ -451,14 +451,8 @@ namespace GAS_Tags
 
 
 	// ============================================================
-	// AI DIRECTION TAGS
+	// AI DIRECTION POLICY TAGS
 	// ============================================================
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction, "AI.Direction");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved, "AI.Direction.Resolved");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Forward, "AI.Direction.Resolved.Forward");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Backward, "AI.Direction.Resolved.Backward");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Left, "AI.Direction.Resolved.Left");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Resolved_Right, "AI.Direction.Resolved.Right");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy, "AI.Direction.Policy");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_Random, "AI.Direction.Policy.Random");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_PlayerLastDirection, "AI.Direction.Policy.LastPlayerDirection");

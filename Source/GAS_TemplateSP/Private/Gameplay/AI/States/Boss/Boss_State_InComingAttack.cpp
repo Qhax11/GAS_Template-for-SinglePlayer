@@ -64,8 +64,8 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 	const bool ExecutionSucces = MovementManager->ExecuteReactionMovement(DodgeMovementAbilityData, InComingAttackStatePayload->AttackPayload);
 	if (ExecutionSucces) 
 	{
-		MovementManager->OnReactionMovementEnded.RemoveAll(this);
-		MovementManager->OnReactionMovementEnded.AddUObject(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded);
+		MovementManager->OnMovementExecutionEnded.RemoveAll(this);
+		MovementManager->OnMovementExecutionEnded.AddUObject(this, &UBoss_State_InComingAttack::OnDodgeExecutionEnded);
 	}
 	else
 	{
@@ -77,7 +77,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 	}
 }
 
-void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FReactionMovementEndedData& ReactionMovementEndedData)
+void UBoss_State_InComingAttack::OnDodgeExecutionEnded(const FMovementExecutionEndedData& ReactionMovementEndedData)
 {
 	// Execution path if the function was already called on the Game Thread.
 	UE_LOG(LogTemp, Warning, TEXT("UBoss_State_InComingAttack: OnDodgeAbilityEnded entered."));

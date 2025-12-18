@@ -21,7 +21,7 @@ public:
 
 	void ActivateDodgeAbility(UComingAttackReactionData* SelectedBestReaction);
 
-	void OnDodgeAbilityEnded(const FReactionMovementEndedData& ReactionMovementEndedData);
+	void OnDodgeExecutionEnded(const FMovementExecutionEndedData& ReactionMovementEndedData);
 
 	UGAS_GameplayAbilityBase* LastUsedDodgeAbility;
 

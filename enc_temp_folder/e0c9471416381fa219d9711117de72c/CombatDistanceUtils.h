@@ -17,16 +17,6 @@ namespace CombatDistance
 		return FVector::Dist(A->GetActorLocation(), B->GetActorLocation());
 	}
 
-	FORCEINLINE float GetDistance2D(const AActor* A, const FVector& Location)
-	{
-		if (!IsValid(A))
-		{
-			return TNumericLimits<float>::Max();
-		}
-
-		return FVector::Dist2D(A->GetActorLocation(), Location);
-	}
-
 	// Binary kararlar için
 	FORCEINLINE bool IsInRange(const AActor* A, const AActor* B, float Range)
 	{

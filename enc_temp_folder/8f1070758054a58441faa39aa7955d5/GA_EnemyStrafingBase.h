@@ -24,12 +24,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStrafingBase|EQS")
 	TEnumAsByte<EEnvQueryRunMode::Type> QueryRunMode = EEnvQueryRunMode::RandomBest25Pct;
 
-	UPROPERTY(EditDefaultsOnly)
-	float MinStrafeDistance = 150.f;
-
-	UPROPERTY()
-	float LastActivationTime = -100.f;
-
 	virtual void StartEQSForStrafingLocation(FGameplayTag StrafeDirectionTag);
 
 	float ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag);

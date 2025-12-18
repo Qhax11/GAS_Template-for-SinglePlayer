@@ -17,7 +17,7 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 
 	if (!TriggerEventData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -29,11 +29,12 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("There is no direction tag in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: There is no direction tag in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
 
+	// Manually ending
 	if (TriggerEventData->EventMagnitude > 0)
 	{
 		if (UWorld* World = GetWorld())
@@ -53,16 +54,13 @@ void UGA_EnemyStrafingBase::StartEQSForStrafingLocation(FGameplayTag StrafeDirec
 {
 	if (!EQSQueryTemplate)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EQS Query Template is not set in: %s!"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: EQS Query Template is not set in: %s!"), *GetName());
 		return;
 	}
 
 	FEnvQueryRequest QueryRequest(EQSQueryTemplate, EnemyController);
-
 	float DirectionFloat = ConvertStrafeDirectionTagToFloat(StrafeDirectionTag);
-
 	QueryRequest.SetFloatParam(FName("StrafeDirectionParam"), DirectionFloat);
-
 	QueryRequest.Execute(QueryRunMode, this, &UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished);
 }
 
@@ -86,7 +84,7 @@ void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQuery
 {
 	if (!Result.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EQS result invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: EQS result invalid in: %s"), *GetName());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}

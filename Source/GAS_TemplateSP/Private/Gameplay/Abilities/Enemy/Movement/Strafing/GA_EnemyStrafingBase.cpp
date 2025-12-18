@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Movement/Strafing/GA_EnemyStrafingBase.h"
+#include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 
 UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 {
@@ -14,6 +15,16 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	// === ANTI-SPAM GUARD, LegShake problem, QuickEndAbility, TO:DO Problem is in EQS probably.
+	const float Now = GetWorld()->GetTimeSeconds();
+	if (Now - LastActivationTime < 0.25f)
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+	LastActivationTime = Now;
+	// ===========================================
 
 	if (!TriggerEventData)
 	{
@@ -34,6 +45,7 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
+	// Manually ending
 	if (TriggerEventData->EventMagnitude > 0)
 	{
 		if (UWorld* World = GetWorld())
@@ -58,11 +70,8 @@ void UGA_EnemyStrafingBase::StartEQSForStrafingLocation(FGameplayTag StrafeDirec
 	}
 
 	FEnvQueryRequest QueryRequest(EQSQueryTemplate, EnemyController);
-
 	float DirectionFloat = ConvertStrafeDirectionTagToFloat(StrafeDirectionTag);
-
-	QueryRequest.SetFloatParam(FName("Ability: UGA_EnemyStrafingBase: StrafeDirectionParam"), DirectionFloat);
-
+	QueryRequest.SetFloatParam(FName("StrafeDirectionParam"), DirectionFloat);
 	QueryRequest.Execute(QueryRunMode, this, &UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished);
 }
 
@@ -84,14 +93,21 @@ float UGA_EnemyStrafingBase::ConvertStrafeDirectionTagToFloat(FGameplayTag Straf
 
 void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
 {
-	if (!Result.IsValid())
+	if (!Result.IsValid() || Result->Items.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: EQS result invalid in: %s"), *GetName());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}
 
-	FVector BestLocation = Result->GetItemAsLocation(0);
+	const FVector BestLocation = Result->GetItemAsLocation(0);
+	const float Distance = CombatDistance::GetDistance2D(EnemyCharacter, BestLocation);
+	if (Distance < MinStrafeDistance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: Strafe loc too close (%.1f)"), Distance);
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+		return;
+	}
+
 	RequestMoveToLocation(BestLocation);
 }
 

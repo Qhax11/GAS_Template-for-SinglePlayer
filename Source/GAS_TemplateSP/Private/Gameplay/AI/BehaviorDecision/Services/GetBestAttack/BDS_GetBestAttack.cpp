@@ -28,6 +28,12 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 
     for (UAttackDataBase* AttackData : AttackAbilityAsset->OptionalAttacks)
     {
+		if (!AttackData)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestAttack: AttackData is null!"));
+			continue;
+		}
+
 		// ---------------- ENABLE CHECK ----------------
 		FAttackEnableDebug EnableDebug;
 		if (!AttackData->IsEnable(AttackDecisionContext, bEnableDebug ? &EnableDebug : nullptr))

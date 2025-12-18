@@ -11,17 +11,17 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
         if (OutDebug)
         {
             OutDebug->bIsEnabled = false;
-            OutDebug->DisableReason = EMovementChainDisableReason::InvalidContext;
+            OutDebug->DisableReason = EMovementDisableReason::InvalidContext;
         }
         return false;
     }
 
-    if (!IsDistanceAllowed(Context))
+    if (!CheckDistance(Context)) 
     {
         if (OutDebug)
         {
             OutDebug->bIsEnabled = false;
-            OutDebug->DisableReason = EMovementChainDisableReason::DistanceNotAllowed;
+            OutDebug->DisableReason = EMovementDisableReason::OutOfRange;
         }
         return false;
     }
@@ -31,7 +31,7 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
         if (OutDebug)
         {
             OutDebug->bIsEnabled = false;
-            OutDebug->DisableReason = EMovementChainDisableReason::OnCooldown;
+            OutDebug->DisableReason = EMovementDisableReason::OnCooldown;
         }
         return false;
     }
@@ -39,7 +39,7 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
     if (OutDebug)
     {
         OutDebug->bIsEnabled = true;
-        OutDebug->DisableReason = EMovementChainDisableReason::None;
+        OutDebug->DisableReason = EMovementDisableReason::None;
     }
 
     return true;
@@ -55,14 +55,8 @@ float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMo
     return 0.0f;
 }
 
-bool UMovementChainDataa::IsDistanceAllowed(const FMovementDecisionContext& Context) const
+bool UMovementChainDataa::CheckDistance(const FMovementDecisionContext& Context) const
 {
-    // 0 veya negatif = range kýsýtý yok
-    if (MinRange <= 0.f)
-    {
-        return true;
-    }
-
     return CombatDistance::IsInRange(Context.Owner, Context.Target, MinRange);
 }
 

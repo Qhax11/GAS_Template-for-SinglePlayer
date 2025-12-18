@@ -25,7 +25,7 @@ public:
 	virtual bool IsChain() const override { return true; }
 
 protected:
-	bool IsDistanceAllowed(const FMovementDecisionContext& Context) const;
+	bool CheckDistance(const FMovementDecisionContext& Context) const;
 
 	virtual float GetBehaviorStateScore(const FMovementDecisionContext& Context);
 
@@ -52,8 +52,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score bonus applied if the target is not moving)."))
 	float ScoreModifierWhenTargetIsNotMoving = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0", ToolTip = "Minimum target distance required for this chain to be considered."))
-	float MinRange = 0.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Minimum target distance required for this chain to be considered."))
+	float MinRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Flat score bias added to this chain's total score. Useful to prioritize certain chains."))
 	float ScoreBias = 0.f;

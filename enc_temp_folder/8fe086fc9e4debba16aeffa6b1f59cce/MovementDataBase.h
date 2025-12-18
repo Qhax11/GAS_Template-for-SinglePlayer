@@ -10,14 +10,14 @@
 class UAbilitySystemComponent;
 
 UENUM(BlueprintType)
-enum class EMovementChainDisableReason : uint8
+enum class EMovementDisableReason : uint8
 {
-	None,
-	OnCooldown,
-	DistanceNotAllowed,
-	InvalidContext,
-	BehaviorStateBlocked,
-	CustomConditionFailed,
+	None                UMETA(DisplayName = "None"),
+	OnCooldown          UMETA(DisplayName = "On Cooldown"),
+	OutOfRange          UMETA(DisplayName = "Out Of Range"),
+	InvalidContext      UMETA(DisplayName = "Invalid Context"),
+	BehaviorStateBlocked UMETA(DisplayName = "Behavior State Blocked"),
+	CustomConditionFailed UMETA(DisplayName = "Custom Condition Failed"),
 };
 
 USTRUCT(BlueprintType)
@@ -29,7 +29,7 @@ struct FMovementEnableDebug
 	bool bIsEnabled = true;
 
 	UPROPERTY(BlueprintReadOnly)
-	EMovementChainDisableReason DisableReason = EMovementChainDisableReason::None;
+	EMovementDisableReason DisableReason = EMovementDisableReason::None;
 
 	UPROPERTY(BlueprintReadOnly)
 	FString AdditionalInfo;
@@ -39,7 +39,6 @@ UENUM()
 enum class EMovementChanceFailReason : uint8
 {
 	None,
-	OutOfRange,
 	RandomRollFailed,
 };
 

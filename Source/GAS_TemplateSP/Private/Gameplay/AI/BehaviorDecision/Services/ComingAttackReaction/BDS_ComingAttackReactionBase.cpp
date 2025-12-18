@@ -24,8 +24,9 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 
 	for (UComingAttackReactionData* Reaction : ComingAttackReactionAsset->ComingAttackReactions)
 	{
-		if (!IsValid(Reaction))
+		if (!Reaction)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("UBDS_ComingAttackReactionBase: Reaction is null!"));
 			continue;
 		}
 

@@ -21,7 +21,7 @@ enum class EReactionDisableReason : uint8
 {
     None,
     TooLate,
-    OutOfRange,
+    InvalidDistance,
     PostureTooHigh,
     AttackTagBlocked,
     UnparryableAttack,
@@ -103,13 +103,11 @@ public:
     virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug = nullptr) const;
 
 protected:
-    // Checks whether the incoming attack can currently reach the defender.
-    // This is a hard, binary validation based on the attack's effective range.
-    bool IsAttackInRange(const FComingAttackPayload& ComingAttackPayload) const;
-
     virtual float CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const;
 
     virtual float CalculateTagScore(const FComingAttackPayload& ComingAttackPayload) const;
+
+    bool CheckDistance(const FComingAttackPayload& ComingAttackPayload) const;
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Coming Attack Reaction. Used for debugging or referencing in logic."))

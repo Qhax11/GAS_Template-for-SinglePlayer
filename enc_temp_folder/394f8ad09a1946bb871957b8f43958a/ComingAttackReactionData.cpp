@@ -16,11 +16,11 @@ bool UComingAttackReactionData::IsEnable(FComingAttackPayload ComingAttackPayloa
 		return false;
 	}
 
-	if (!IsAttackInRange(ComingAttackPayload))
+	if (!CheckDistance(ComingAttackPayload))
 	{
 		if (OutDebug)
 		{
-			OutDebug->Reason = EReactionDisableReason::OutOfRange;
+			OutDebug->Reason = EReactionDisableReason::InvalidDistance;
 		}
 		return false;
 	}
@@ -67,11 +67,6 @@ float UComingAttackReactionData::GetScore(const FComingAttackPayload& ComingAtta
 	return Total;
 }
 
-bool UComingAttackReactionData::IsAttackInRange(const FComingAttackPayload& ComingAttackPayload) const
-{
-	return CombatDistance::IsInRange(ComingAttackPayload.Attacker, ComingAttackPayload.Defender, ComingAttackPayload.ComingAttack->MaxRange);
-}
-
 float UComingAttackReactionData::CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const
 {
 	if (const float* Mod = BehaviorStateScoreModifiers.Find(BehaviorState))
@@ -95,4 +90,9 @@ float UComingAttackReactionData::CalculateTagScore(const FComingAttackPayload& C
 	}
 
 	return Score;
+}
+
+bool UComingAttackReactionData::CheckDistance(const FComingAttackPayload& ComingAttackPayload) const
+{
+	return CombatDistance::IsInRange(ComingAttackPayload.Attacker, ComingAttackPayload.Defender, ComingAttackPayload.ComingAttack->MaxRange);
 }

@@ -14,7 +14,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
 {
     if (!SelectedAbilityClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestMovementChain: SelectedAbilityClass is null in: %s!"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("SelectedAbilityClass or AttackAbilityMovementChainMapAsset is null in: %s!"), *GetName());
         return nullptr;
     }
 
@@ -25,14 +25,10 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
     UMovementChainsAsset* SelectedAbilityMovementChains = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
     if (!SelectedAbilityMovementChains)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestMovementChain: SelectedAbilityMovementChains is null in: %s!"), *GetName());
         return nullptr;
     }
 
     FMovementDecisionContext MovementDecisionContext;
-    MovementDecisionContext.BehaviorState = BehaviorState;
-    MovementDecisionContext.Owner = Enemy;
-    MovementDecisionContext.Target = Hero;
 
     for (UMovementChainDataa* MovementChain : SelectedAbilityMovementChains->MovementChains)
     {
@@ -120,7 +116,7 @@ UMovementChainsAsset* UBDS_GetBestMovementChain::GetMovementChainsForSelectedAtt
 {
     UMovementChainsAsset* Result = nullptr;
 
-    if (!SelectedAbilityClass || !AttackAbilitiesToMovementChainsAsset)
+    if (!IsValid(AttackAbilitiesToMovementChainsAsset) || !SelectedAbilityClass)
     {
         return Result;
     }

@@ -32,67 +32,23 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	}
 
 	SelectedAttackCDO = MovementStateEnterPayload->SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	ExecuteMovement(MovementStateEnterPayload);
+	StartMovementChain(MovementStateEnterPayload->SelectedMovementChainData);
 }
 
-void UMovementState::ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload)
-{
-	if (!MovementStatePayload.IsValid() || !MovementStatePayload->SelectedAttackData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStatePayload is invalid in: %s"), *GetName());
-		return;
-	}
-
-	MovementManager->ExecuteMovement(MovementStatePayload->SelectedMovementData);
-
-	UMovementDataBase* SelectedMovementData = MovementStatePayload->SelectedMovementData;
-	if (!SelectedMovementData) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedMovementData is invalid in: %s"), *GetName());
-		return;
-	}
-
-	if (SelectedMovementData->IsChain())
-	{
-		UMovementChainDataa* MovementChainData = Cast<UMovementChainDataa>(SelectedMovementData);
-		if (!MovementChainData)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementChainData is invalid in: %s"), *GetName());
-			return;
-		}
-		ActivateMovementChain(MovementChainData);
-	}
-	else
-	{
-		UMovementSingleData* MovementSingleData = Cast<UMovementSingleData>(SelectedMovementData);
-		if(!MovementSingleData)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementSingleData is invalid in: %s"), *GetName());
-			return;
-		}	
-		ActivateMovementSingle(MovementSingleData);
-	}
-}
-
-void UMovementState::ActivateMovementChain(UMovementChainDataa* MovementChainData)
+void UMovementState::StartMovementChain(UMovementChainDataa* MovementChainData)
 {
 	if (!MovementChainData || !MovementManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStatePayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementChainData or MovementManager is invalid in: %s"), *GetName());
 		return;
 	}
-
-	MovementManager->ExecuteMovement(MovementChainData);
 
 	if (!MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
 	{
 		MovementManager->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
 	}
-}
 
-void UMovementState::ActivateMovementSingle(UMovementSingleData* MovementSingleData)
-{
-	// TRY ACTÝVATE SÝNGLE MOVEMENT ABÝLÝTY
+	MovementManager->ExecuteMovementChain(MovementChainData);
 }
 
 void UMovementState::OnTick_Implementation(float DeltaTime)

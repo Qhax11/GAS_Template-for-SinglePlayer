@@ -32,21 +32,9 @@ void UAC_EnemyMovementManager::BeginPlay()
 	checkf(HeroMovementListener, TEXT("HeroMovementListener is null in %s"), *GetClass()->GetName());
 }
 
-void UAC_EnemyMovementManager::ExecuteMovement(UMovementDataBase* Movement)
+void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainDataa* MovementChain)
 {
-	if (Movement->IsChain())
-	{
-		ExecuteChain(CastChecked<UMovementChainDataa>(Movement));
-	}
-	else
-	{
-		ExecuteSingle(CastChecked<UMovementSingleData>(Movement));
-	}
-}
-
-void UAC_EnemyMovementManager::ExecuteChain(UMovementChainDataa* ChainData)
-{
-	if (!ChainData || !OwnerEnemyASC)
+	if (!MovementChain || !OwnerEnemyASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MovementChainData or OwnerEnemyASC is null in: %s!"), *GetName());
 		return;
@@ -65,16 +53,15 @@ void UAC_EnemyMovementManager::ExecuteChain(UMovementChainDataa* ChainData)
 		MovementChainTracker.ResetChain();
 	}
 
-	if (ChainData->MovementChain.Num() > 0)
+	if (MovementChain->MovementChain.Num() > 0)
 	{
-		MovementChainTracker.StartChain(ChainData->MovementChain);
+		MovementChainTracker.StartChain(MovementChain->MovementChain);
 		TryExecuteNextMovementAbilityInChain();
 	}
 }
 
-void UAC_EnemyMovementManager::ExecuteSingle(UMovementSingleData* SingleData)
+void UAC_EnemyMovementManager::ExecuteMovementSingle(UMovementSingleData* MovementSingle)
 {
-
 }
 
 void UAC_EnemyMovementManager::StopMovementAbilities()

@@ -16,31 +16,37 @@ void UCrowdEnemy_MovementState::StateInitalize(const FStateInitParams& StateInit
 void UCrowdEnemy_MovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	Super::OnEnter(EnterPayload);
-}
 
-void UCrowdEnemy_MovementState::ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload)
-{
-	if (!MovementStatePayload.IsValid() || !MovementStatePayload->SelectedAttackData || !AICrowdEventManager)
+	TSharedPtr<FMovementStatePayload> Payload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
+	if (!Payload.IsValid() || !AICrowdEventManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AICrowdEventManager is null in: %s"), *GetName());
+		ExitRequest("InvalidPayload");
 		return;
 	}
-	/*
-	bool IsAttackIntender = AICrowdEventManager->RequestToBeAttackIntender(EnemyASC);
-	if (IsAttackIntender)
+
+	DecideAndStartMovement(Payload);
+}
+
+void UCrowdEnemy_MovementState::DecideAndStartMovement(TSharedPtr<FMovementStatePayload> Payload)
+{
+	if (!Payload->SelectedAttackData || !EnemyASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StartMovementChain"));
-		StartMovementChain(MovementStatePayload->MovementChainAsset);
+		ExitRequest("InvalidAttackData");
+		return;
+	}
+
+	const bool bIsAttackIntender = AICrowdEventManager->RequestToBeAttackIntender(EnemyASC);
+	if (bIsAttackIntender)
+	{
+		StartMovementChain(Payload->SelectedMovementChainData);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MakeStrafingAbility"));
-		MakeStrafingAbility();
+		StartStrafing();
 	}
-	*/
 }
 
-void UCrowdEnemy_MovementState::MakeStrafingAbility()
+void UCrowdEnemy_MovementState::StartStrafing()
 {
 	UGAS_GameplayAbilityBase* ActivatedStrafingAbility = EnemyASC->TryActivateAbilityByClassWithEventData(StrafingAbilityClass, StrafingAbilityEventData);
 	if (ActivatedStrafingAbility)

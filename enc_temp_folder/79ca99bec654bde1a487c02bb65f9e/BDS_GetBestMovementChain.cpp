@@ -39,7 +39,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             if (bEnableDebug)
             {
                 UE_LOG(LogTemp, Warning,
-                    TEXT("UBDS_GetBestMovementChain: MovementChainDisabled = %s | Reason = %s |"),
+                    TEXT("UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason = %s |"),
                     *MovementChain->MovementName.ToString(),
                     *UEnum::GetValueAsString(EnableDebug.DisableReason)
                 );
@@ -54,7 +54,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             if (bEnableDebug)
             {
                 UE_LOG(LogTemp, Warning,
-                    TEXT("UBDS_GetBestMovementChain: MovementChainRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
+                    TEXT("UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
                     *MovementChain->MovementName.ToString(),
                     *UEnum::GetValueAsString(ChanceDebug.ChanceFailReason),
                     ChanceDebug.Roll,
@@ -70,7 +70,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
         if (bEnableDebug)
         {
             UE_LOG(LogTemp, Warning,
-                TEXT("UBDS_GetBestMovementChain: MovementChainScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+                TEXT("UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
                 *MovementChain->MovementName.ToString(),
                 ScoreDebug.BaseScore,
                 ScoreDebug.DistanceScore,
@@ -92,7 +92,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
     if (bEnableDebug && BestMovementChainData)
     {
         UE_LOG(LogTemp, Warning,
-            TEXT("UBDS_GetBestMovementChain: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+            TEXT("UBDS_ComingAttackReactionBase: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
             *BestMovementChainData->MovementName.ToString(),
             BestScoreDebug.BaseScore,
             BestScoreDebug.DistanceScore,

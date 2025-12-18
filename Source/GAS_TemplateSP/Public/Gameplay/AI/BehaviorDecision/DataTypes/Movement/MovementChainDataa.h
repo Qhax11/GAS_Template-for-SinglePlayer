@@ -16,13 +16,20 @@ class GAS_TEMPLATESP_API UMovementChainDataa : public UMovementDataBase
 	GENERATED_BODY()
 
 public:
-    virtual bool IsEnable(const FMovementDecisionContext& Context, FMovementEnableDebug* OutDebug = nullptr) const { return true; }
+    virtual bool IsEnable(const FMovementDecisionContext& Context, FMovementEnableDebug* OutDebug = nullptr) const override; 
 
-    virtual bool PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug = nullptr) const { return true; }
+    virtual bool PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug = nullptr) const override; 
 
-    virtual float GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug = nullptr) const { return 0.f; }
+	virtual float GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug = nullptr) const override;
 
 	virtual bool IsChain() const override { return true; }
+
+protected:
+	virtual float GetBehaviorStateScore(const FMovementDecisionContext& Context);
+
+	virtual float GetDistanceScore(const FMovementDecisionContext& Context) const;
+
+	virtual float GetTargetMovementScore(const FMovementDecisionContext& Context) const;
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this movement chain. Used for debugging or referencing in logic."))

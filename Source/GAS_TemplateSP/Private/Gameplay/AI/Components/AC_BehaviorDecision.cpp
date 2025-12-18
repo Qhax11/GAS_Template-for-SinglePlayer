@@ -94,7 +94,7 @@ UAttackDataBase* UAC_BehaviorDecision::GetBestAttack()
     return BestAttack;
 }
 
-UMovementDataBase* UAC_BehaviorDecision::GetBestMovement(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
+UMovementChainDataa* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
     if (!GetBestMovementChainService)
     {
@@ -102,20 +102,20 @@ UMovementDataBase* UAC_BehaviorDecision::GetBestMovement(TSubclassOf<UGAS_Gamepl
         return nullptr;
     }
 
-    UMovementDataBase* BestMovementDataAsset = nullptr;
+    UMovementChainDataa* BestMovementChainData = nullptr;
 
     if (IsValid(GetBestMovementChainService)) 
     {
-        BestMovementDataAsset = GetBestMovementChainService->GetBestMovement(SelectedAbilityClass);
+        BestMovementChainData = GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
     }
 
-    if (!BestMovementDataAsset)
+    if (!BestMovementChainData)
     {
-        UE_LOG(LogTemp, Warning, TEXT("BestMovementChainDataAsset is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("BestMovementChainData is null in: %s"), *GetName());
         return nullptr;
     }
 
-    return BestMovementDataAsset;
+    return BestMovementChainData;
 }
 
 UComingAttackReactionData* UAC_BehaviorDecision::GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload)

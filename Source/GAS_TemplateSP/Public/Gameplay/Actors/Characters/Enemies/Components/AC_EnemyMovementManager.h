@@ -72,7 +72,10 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void ExecuteMovement(UMovementDataBase* Movement); 
+	void ExecuteMovementChain(UMovementChainDataa* MovementChain);
+
+	UFUNCTION(BlueprintCallable)
+	void ExecuteMovementSingle(UMovementSingleData* MovementSingle);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;

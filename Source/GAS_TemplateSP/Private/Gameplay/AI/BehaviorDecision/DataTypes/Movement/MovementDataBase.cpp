@@ -15,27 +15,7 @@ bool UMovementDataBase::PassesChance(const FMovementDecisionContext& Context, FM
 
 float UMovementDataBase::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
 {
-	float Score = 0.f;
-
-	Score += GetDistanceScore(Context);
-	Score += GetBehaviorStateScore(Context);
-	Score += ScoreBias;
-
-	return Score;
+    return 0.f;
 }
 
-float UMovementDataBase::GetDistanceScore(const FMovementDecisionContext& Context) const
-{
-    return 0.0f;
-}
 
-float UMovementDataBase::GetBehaviorStateScore(const FMovementDecisionContext& Context) const
-{
-    float Score = 0.0f;
-
-    if (const float* FoundScore = BehaviorStateModifiers.Find(Context.BehaviorState))
-    {
-        Score += *FoundScore;
-    }
-    return Score;
-}

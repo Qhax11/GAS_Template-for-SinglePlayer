@@ -9,6 +9,7 @@
 
 class UAttackDataBase;
 class UMovementDataBase;
+class UMovementChainDataa;
 class UAC_EnemyMovementManager;
 class UMovementChainAsset;
 class UGAS_GameplayAbilityBase;
@@ -20,14 +21,14 @@ struct FStatePayloadBase
 
 struct FMovementStatePayload : public FStatePayloadBase
 {
-	UMovementDataBase* SelectedMovementData = nullptr;
+	UMovementChainDataa* SelectedMovementChainData = nullptr;
 	UAttackDataBase* SelectedAttackData = nullptr; 
 
 	FMovementStatePayload(
-		UMovementDataBase* InSelectedMovementData, 
+		UMovementChainDataa* InSelectedMovementChainData,
 		UAttackDataBase* InSelectedAttackData)
 		: 
-		SelectedMovementData(InSelectedMovementData), 
+		SelectedMovementChainData(InSelectedMovementChainData),
 		SelectedAttackData(InSelectedAttackData)
 	{
 	}

@@ -18,12 +18,10 @@ public:
 
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	virtual void ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload);
+protected:
+	void StartMovementChain(UMovementChainDataa* MovementChainData);
 
-	void ActivateMovementChain(UMovementChainDataa* MovementChainData);
-
-	void ActivateMovementSingle(UMovementSingleData* MovementSingleData);
-
+public:
 	virtual void OnTick_Implementation(float DeltaTime) override;
 
 	void TryEnterToAttackState();

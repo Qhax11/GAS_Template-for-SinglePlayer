@@ -144,11 +144,6 @@ public:
 	
 	virtual bool IsChain() const { return false; }
 
-protected:
-	virtual float GetDistanceScore(const FMovementDecisionContext& Context) const;
-
-	virtual float GetBehaviorStateScore(const FMovementDecisionContext& Context) const;
-
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Movement. Used for debugging or referencing in logic."))
 	FName MovementName;

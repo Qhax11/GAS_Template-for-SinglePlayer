@@ -16,9 +16,9 @@ public:
 
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	virtual void ExecuteMovement(TSharedPtr<FMovementStatePayload> MovementStatePayload) override;
+	void DecideAndStartMovement(TSharedPtr<FMovementStatePayload> Payload);
 
-	void MakeStrafingAbility();
+	void StartStrafing();
 
 	UFUNCTION()
 	void OnStrafingAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);

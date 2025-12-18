@@ -97,15 +97,14 @@ bool UMovementState::IsReachedAttackRange() const
 {
 	if (!SelectedAttackCDO || !IsValid(Enemy) || !IsValid(HeroTarget))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedAttackCDO, Enemy, or HeroTarget is null in %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedAttackCDO or EnemyController is null in %s"), *GetName());
 		return false;
 	}
 
-	const float Distance = CombatDistance::GetDistance(Enemy, HeroTarget);
 	const float MinRange = FMath::Max(0.f, SelectedAttackCDO->MinRange);
 	const float MaxRange = SelectedAttackCDO->MaxRange;
 
-	return Distance >= MinRange && Distance <= MaxRange;
+	return CombatDistance::IsInRange(Enemy, HeroTarget, MaxRange) && !CombatDistance::IsInRange(Enemy, HeroTarget, MinRange);
 }
 
 void UMovementState::OnMovementChainEnded()

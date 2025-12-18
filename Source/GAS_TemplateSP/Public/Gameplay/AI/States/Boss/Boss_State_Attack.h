@@ -14,8 +14,6 @@ class GAS_TEMPLATESP_API UBoss_State_Attack : public UAttackStateBase
 public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	virtual bool SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> AttackStatePayload) override;
-
 	void MakeShadowAttack();
 
 	UFUNCTION()

@@ -20,9 +20,9 @@ namespace CombatDistance
 	// Binary kararlar için
 	FORCEINLINE bool IsInRange(const AActor* A, const AActor* B, float Range)
 	{
-		if (!IsValid(A) || !IsValid(B) || Range < 0.f)
+		if (Range <= 0.f)
 		{
-			return false;
+			return true;
 		}
 
 		const float Distance = GetDistance(A, B);

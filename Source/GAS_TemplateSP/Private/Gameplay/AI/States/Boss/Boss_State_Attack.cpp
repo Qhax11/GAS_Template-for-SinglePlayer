@@ -10,29 +10,6 @@ void UBoss_State_Attack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	Super::OnEnter(EnterPayload);
 }
 
-bool UBoss_State_Attack::SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> AttackStatePayload)
-{
-	TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass = AttackStatePayload->AttackData->AbilityClass;
-	if (!SelectedAttackClass)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SelectedAttackClass is null in: %s"), *GetName());
-		return false;
-	}
-
-	if (SelectedAttackClass->IsChildOf(UGA_BossShadowAttack::StaticClass()))
-	{
-		MakeShadowAttack();
-		return true;
-	}
-	
-	if (Super::SelectAndMakeAttack(AttackStatePayload))
-	{
-		return true;
-	}
-
-	return false;
-}
-
 void UBoss_State_Attack::MakeShadowAttack()
 {
 	/*

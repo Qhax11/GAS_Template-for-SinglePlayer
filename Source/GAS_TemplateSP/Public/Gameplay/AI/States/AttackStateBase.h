@@ -16,13 +16,12 @@ public:
 
 	virtual void StateInitalize(const FStateInitParams& StateInitParams);
 
+	virtual bool EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload = nullptr) override;
+
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 protected:
-	// Core Execution
-	virtual bool SelectAndMakeAttack(TSharedPtr<FAttackStatePayload> AttackStatePayload);
-
-	void MakeAttack(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass);
+	void ExecuteAttack(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass);
 
 	// Callbacks
 	void OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);

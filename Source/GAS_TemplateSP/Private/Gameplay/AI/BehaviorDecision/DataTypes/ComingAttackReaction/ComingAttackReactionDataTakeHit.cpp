@@ -7,7 +7,7 @@
 UComingAttackReactionDataTakeHit::UComingAttackReactionDataTakeHit()
 {
 	ComingAttackReactionName = FName("TakeHit");
-	ReactionType = EComingAttackReaction::TakeDamage;
+	ReactionType = EReactionType::TakeHit;
 
 	MinimumTimeBeforeHitToReact = 0.0f;	
 	PreferredTriggerTimeBeforeHit = 0.f;	

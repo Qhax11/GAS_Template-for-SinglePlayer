@@ -60,8 +60,52 @@ void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainDataa* Movemen
 	}
 }
 
-void UAC_EnemyMovementManager::ExecuteMovementSingle(UMovementSingleData* MovementSingle)
+bool UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload)
 {
+	if (!MovementData || !OwnerEnemyASC)
+	{
+		return false;
+	}
+
+	if (MovementData->AbilityTriggerTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: AbilityTriggerTag is non valid!"));
+		return false;
+	}
+
+	TSubclassOf<UGAS_GameplayAbilityBase> MovementAbilityClass = MovementData->MovementAbilityClass;
+	if (!MovementAbilityClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: MovementAbilityClass is non valid!"));
+		return false;
+	}
+	
+	ApplyDirectionPoliciesToMovementAbility(MovementData, AttackPayload.AttackDirectionTag);
+
+	FGameplayEventData GameplayEventData = FGameplayEventData();
+	GameplayEventData.InstigatorTags.AddTag(MovementData->ResolvedDirectionTag);
+	GameplayEventData.EventTag = MovementData->AbilityTriggerTag;
+	GameplayEventData.EventMagnitude = MovementData->AbilityEventMagnitude;
+
+	UGAS_GameplayAbilityBase* ReactionMovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementAbilityClass, GameplayEventData);
+	if (!ReactionMovementAbility)
+	{
+		return false;
+	}
+
+	ReactionMovementAbility->OnAbilityEnded.RemoveAll(this);
+	ReactionMovementAbility->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnReactionMovementAbilityEnded);
+	ActivatedReactionAbility = ReactionMovementAbility;
+
+	return true;
+}
+
+void UAC_EnemyMovementManager::OnReactionMovementAbilityEnded(const FCustomAbilityEndedData& EndData)
+{
+	FMovementExecutionResult Result;
+	Result.bWasCancelled = EndData.bWasCancelled;
+
+	OnReactionMovementEnded.Broadcast(Result);
 }
 
 void UAC_EnemyMovementManager::StopMovementAbilities()

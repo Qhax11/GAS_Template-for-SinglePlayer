@@ -4,13 +4,21 @@
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyBase.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
+#include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "AC_EnemyMovementManager.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
 
 class UMovementDataBase;
 class UMovementSingleData;
 class UMovementChainDataa;
+
+struct FMovementExecutionResult
+{
+	bool bWasCancelled = false;
+	UMovementSingleData* MovementData = nullptr;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnReactionMovementEnded, const FMovementExecutionResult&);
 
 USTRUCT()
 struct FMovementChainTracker
@@ -74,16 +82,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ExecuteMovementChain(UMovementChainDataa* MovementChain);
 
-	UFUNCTION(BlueprintCallable)
-	void ExecuteMovementSingle(UMovementSingleData* MovementSingle);
+	// Reaction context (dodge, evade, panic, vs)
+	bool ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload);
 
-	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;
+	FOnReactionMovementEnded OnReactionMovementEnded;
 
 private:
-	void ExecuteChain(UMovementChainDataa* ChainData);
+	void OnReactionMovementAbilityEnded(const FCustomAbilityEndedData& EndData);
 
-	void ExecuteSingle(UMovementSingleData* SingleData);
+	// For now, it's dodge.
+	UGAS_GameplayAbilityBase* ActivatedReactionAbility;
 
 public:
 	UFUNCTION(BlueprintCallable)

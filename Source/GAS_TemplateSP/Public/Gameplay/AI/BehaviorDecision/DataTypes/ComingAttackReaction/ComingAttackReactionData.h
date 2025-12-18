@@ -9,11 +9,18 @@
 #include "ComingAttackReactionData.generated.h"
 
 UENUM(BlueprintType)
-enum class EComingAttackReaction : uint8
+enum class EReactionExecutionMode : uint8
 {
-    TakeDamage  UMETA(DisplayName = "TakeDamage"),
-    Parry  UMETA(DisplayName = "Parry"),
-    Dodge     UMETA(DisplayName = "Dodge"),
+    Ability,          // Parry, TakeDamage
+    MovementAbility,  // Dodge via movement
+};
+
+UENUM(BlueprintType)
+enum class EReactionType : uint8
+{
+    TakeHit,          
+    Dodge,
+    Parry,
 };
 
 UENUM()
@@ -116,9 +123,11 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Coming Attack Reaction. Used for debugging or referencing in logic."))
     FName ComingAttackReactionName;
 
-    // Defense reaction type this data represents (e.g., Parry or Dodge)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    EComingAttackReaction ReactionType;
+    EReactionType ReactionType;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    EReactionExecutionMode ReactionExecutionMode = EReactionExecutionMode::Ability;
 
     // Minimum time required before impact to allow this reaction (otherwise it's too late)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))

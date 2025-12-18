@@ -25,19 +25,6 @@ bool UBoss_State_InComingAttack::SelectAndExecuteReaction(UComingAttackReactionD
 		return true;
 	}
 
-	if (!SelectedReactionData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SelectedBestReaction is null in: %s"), *GetName());
-		return false;
-	}
-
-	if (SelectedReactionData->ReactionType == EComingAttackReaction::Dodge)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: ActivateDodgeAbility entered."));
-		ActivateDodgeAbility(SelectedReactionData);
-		return true;
-	}
-
 	return false;
 }
 
@@ -63,24 +50,8 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 		return;
 	}
 
-	MovementManager->ApplyDirectionPoliciesToMovementAbility(DodgeMovementAbilityData, InComingAttackStatePayload->AttackPayload.AttackDirectionTag);
-	Enemy->GetEnemyMeleeComboManagerComponent()->StopCombo();
-
-	FGameplayEventData GameplayEventData = FGameplayEventData();
-	GameplayEventData.InstigatorTags.AddTag(DodgeMovementAbilityData->ResolvedDirectionTag);
-	GameplayEventData.EventTag = DodgeMovementAbilityData->AbilityTriggerTag;
-	GameplayEventData.EventMagnitude = DodgeMovementAbilityData->AbilityEventMagnitude;
-
-	UGAS_GameplayAbilityBase* ActivatedDodgeAbility =
-		EnemyASC->TryActivateAbilityByClassWithEventData(DodgeMovementAbilityData->MovementAbilityClass, GameplayEventData);
-	if (ActivatedDodgeAbility && ActivatedDodgeAbility->IsActive())
-	{
-		ActivatedDodgeAbility->OnAbilityEnded.RemoveAll(this);
-		ActivatedDodgeAbility->OnAbilityEnded.AddUObject(this, &UBoss_State_InComingAttack::OnDodgeAbilityEnded);
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: ActivatedDodgeAbility entered."));
-		LastUsedDodgeAbility = ActivatedDodgeAbility;
-	}
-	else
+	const bool ExecutionSucces = MovementManager->ExecuteReactionMovement(DodgeMovementAbilityData, InComingAttackStatePayload->AttackPayload);
+	if (!ExecutionSucces) 
 	{
 		bool bExitRequestSucces = ExitRequest("Dodge Ability Cannot Executed");
 		if (!bExitRequestSucces)

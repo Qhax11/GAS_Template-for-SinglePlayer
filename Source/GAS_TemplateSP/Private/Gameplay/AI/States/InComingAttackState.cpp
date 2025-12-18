@@ -83,13 +83,27 @@ bool UInComingAttackState::SelectAndExecuteReaction(UComingAttackReactionData* S
 		return false;
 	}
 
-	if (SelectedReactionData->ReactionType == EComingAttackReaction::Parry)
+	if (SelectedReactionData->ReactionExecutionMode == EReactionExecutionMode::Ability)
 	{
 		BindTargetComingAttackEnd();
-		MakeParryAbility(SelectedReactionData);
+		ExecuteAbilityReaction(SelectedReactionData);
 		return true;
 	}
+	else if (SelectedReactionData->ReactionExecutionMode == EReactionExecutionMode::MovementAbility) 
+	{
 
+	}
+
+	return false;
+}
+
+bool UInComingAttackState::ExecuteAbilityReaction(UComingAttackReactionData* ReactionData)
+{
+	return false;
+}
+
+bool UInComingAttackState::ExecuteMovementReaction(UComingAttackReactionData* SelectedReactionData)
+{
 	return false;
 }
 

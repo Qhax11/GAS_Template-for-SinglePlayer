@@ -6,7 +6,8 @@
 UComingAttackReactionDataParry::UComingAttackReactionDataParry()
 {
 	ComingAttackReactionName = FName("Parry");
-	ReactionType = EComingAttackReaction::Parry;
+	ReactionType = EReactionType::Parry;
+	ReactionExecutionMode = EReactionExecutionMode::Ability;
 
 	MinimumTimeBeforeHitToReact = 0.f;	
 	PreferredTriggerTimeBeforeHit = 0.2f;	

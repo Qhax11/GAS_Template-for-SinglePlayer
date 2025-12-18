@@ -43,21 +43,21 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 {
 	if (!SelectedBestReaction) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: SelectedBestReaction is null."));
+		UE_LOG(LogTemp, Warning, TEXT("UBoss_State_InComingAttack: SelectedBestReaction is null."));
 		return;
 	}
 
 	UComingAttackReactionDataDodge* DodgeReactionData = Cast<UComingAttackReactionDataDodge>(SelectedBestReaction);
 	if (!DodgeReactionData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: DodgeReactionData is null."));
+		UE_LOG(LogTemp, Warning, TEXT("UBoss_State_InComingAttack: DodgeReactionData is null."));
 		return;
 	}
 
 	UMovementSingleData* DodgeMovementAbilityData = DodgeReactionData->DodgeMovementAbilityData;
 	if (!DodgeMovementAbilityData->MovementAbilityClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State Manager: Dodge MovementAbilityClass is null."));
+		UE_LOG(LogTemp, Warning, TEXT("UBoss_State_InComingAttack: Dodge MovementAbilityClass is null."));
 		return;
 	}
 
@@ -80,7 +80,7 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FReactionMovementEndedData& ReactionMovementEndedData)
 {
 	// Execution path if the function was already called on the Game Thread.
-	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDodgeAbilityEnded entered."));
+	UE_LOG(LogTemp, Warning, TEXT("UBoss_State_InComingAttack: OnDodgeAbilityEnded entered."));
 	ExitRequest("OnDodgeAbilityEnded");
 }
 

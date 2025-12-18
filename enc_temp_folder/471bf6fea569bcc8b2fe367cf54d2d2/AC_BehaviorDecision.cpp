@@ -22,14 +22,14 @@ void UAC_BehaviorDecision::BeginPlay()
 
     if(!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: Some owner variables are already set in: %s !"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Some owner variables are already set in: %s !"), *GetName());
         return;
 	}
 
     HeroMovementListenerComp = HeroBase->GetMovementListenerComponent();
     if (!HeroMovementListenerComp)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: HeroMovementListenerComp is null in: %s !"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("HeroMovementListenerComp is null in: %s !"), *GetName());
         return;
     }
 
@@ -45,7 +45,7 @@ void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
 {
     if (!BehaviorDecisionConfigAsset)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: BehaviorDecisionConfigAsset is null in: %s !"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionConfigAsset is null in: %s !"), *GetName());
         return;
     }
 
@@ -74,7 +74,7 @@ UAttackDataBase* UAC_BehaviorDecision::GetBestAttack()
 {
     if (!GetBestAttackService) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: GetBestAttackService is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("GetBestAttackService is null in: %s"), *GetName());
         return nullptr;
     }
 
@@ -97,7 +97,7 @@ UMovementChainDataa* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS
 {
     if (!GetBestMovementChainService)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: GetBestMovementChainService is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("GetBestMovementChainService is null in: %s"), *GetName());
         return nullptr;
     }
 
@@ -110,7 +110,7 @@ UMovementChainDataa* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS
 
     if (!BestMovementChainData)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: BestMovementChainData is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("BestMovementChainData is null in: %s"), *GetName());
         return nullptr;
     }
 
@@ -121,7 +121,7 @@ UComingAttackReactionData* UAC_BehaviorDecision::GetBestComingAttackReaction(FCo
 {
     if (!IsValid(ComingAttackReactionService) || !ComingAttackPayload.ComingAttack)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: ComingAttackReactionService or ComingAttack is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("ComingAttackReactionService or ComingAttack is null in: %s"), *GetName());
         return nullptr;
     }
 
@@ -145,14 +145,14 @@ bool UAC_BehaviorDecision::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilit
 {
     if (!AbilityClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: Ability Class is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability Class is null in: %s"), *GetName());
         return false;
     }
 
     UGAS_GameplayAbilityBase* AbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
     if (!AbilityCDO) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: AbilityCDO is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("AbilityCDO is null in: %s"), *GetName());
         return false;
     }
 

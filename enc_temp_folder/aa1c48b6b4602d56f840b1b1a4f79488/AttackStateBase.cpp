@@ -20,7 +20,7 @@ bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload
 {
 	if (!EnterPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: EnterPayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: EnterPayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
@@ -28,33 +28,33 @@ bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload
 	TSharedPtr<FAttackStatePayload> AttackStatePayload = StaticCastSharedPtr<FAttackStatePayload>(EnterPayload);
 	if (!AttackStatePayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: AttackStatePayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: AttackStatePayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
 	if (!AttackStatePayload->AttackData || !AttackStatePayload->AttackData->AbilityClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: AttackData or AbilityClass invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: AttackData or AbilityClass invalid in: %s"), *GetName());
 		return false;
 	}
 
 	if (!IsValid(Enemy) || !IsValid(HeroTarget))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: Enemy or HeroTarget is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: Enemy or HeroTarget is invalid in: %s"), *GetName());
 		return false;
 	}
 
 	UGAS_GameplayAbilityBase* SelectedAttackCDO = AttackStatePayload->AttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	if (!SelectedAttackCDO) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: SelectedAttackCDO is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: SelectedAttackCDO is null!"));
 		return false;
 	}
 
 	float MaxRange = SelectedAttackCDO->MaxRange;
 	if (!CombatDistance::IsInRange(Enemy, HeroTarget, MaxRange))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: Out of Range!"));
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: Out of Range!"));
 		return false;
 	}
 
@@ -78,14 +78,14 @@ void UAttackStateBase::ExecuteAttack(TSubclassOf<UGAS_GameplayAbilityBase> Selec
 {
 	if (!SelectedAttackClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: SelectedAttackClass is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase: SelectedAttackClass is null in: %s"), *GetName());
 		return;
 	}
 
 	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(SelectedAttackClass);
 	if (ActivatedAbility) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase:: ActivatedAbility is valid"));
+		UE_LOG(LogTemp, Warning, TEXT("UAttackStateBase:: ActivatedAbility is valid"));
 		ActivatedAbility->OnAbilityEnded.RemoveAll(this);
 		ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAttackStateBase::OnAttackAbilityEnded);
 		LastUsedAttack = ActivatedAbility;

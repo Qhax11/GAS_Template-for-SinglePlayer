@@ -24,7 +24,7 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 {
 	if (!EnterPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: EnterPayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: EnterPayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
@@ -32,19 +32,19 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 	InComingAttackStatePayload = StaticCastSharedPtr<FIncomingAttackStatePayload>(EnterPayload);
 	if (!InComingAttackStatePayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: InComingAttackStatePayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: InComingAttackStatePayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
 	if (!InComingAttackStatePayload->ReactionData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: ReactionData is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: ReactionData is null in: %s"), *GetName());
 		return false;
 	}
 
 	if (!InComingAttackStatePayload->AttackPayload.ComingAttack)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: ComingAttack is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: ComingAttack is null in: %s"), *GetName());
 		return false;
 	}
 
@@ -69,7 +69,7 @@ void UInComingAttackState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		{
 			DamageSubsystem->OnDamageDealt.AddDynamic(this, &UInComingAttackState::OnDamageDealt);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: DamageSubsystem binded."));
+		UE_LOG(LogTemp, Warning, TEXT("UInComingAttackState: DamageSubsystem binded."));
 	}
 
 	SelectAndExecuteReaction(InComingAttackStatePayload->ReactionData);
@@ -79,7 +79,7 @@ bool UInComingAttackState::SelectAndExecuteReaction(UComingAttackReactionData* S
 {
 	if (!SelectedReactionData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: SelectedReactionData is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("SelectedReactionData is invalid in: %s"), *GetName());
 		return false;
 	}
 
@@ -114,7 +114,7 @@ void UInComingAttackState::OnComingAttackAbilityEnded(const FCustomAbilityEndedD
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
-	UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: OnDamageDealt entered from: %s"), *GetClass()->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: OnDamageDealt entered from: %s"), *GetClass()->GetName());
 	UnBindTargetComingAttackEnd();
 
 	if (DamageData.bParrySucces)
@@ -134,7 +134,7 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 				ParryKnocbackAbility->OnAbilityEnded.RemoveAll(this);
 			}
 			ParryKnockbackEndHandle = ParryKnocbackAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
-			UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: ParryKnocbackAbility executed from: %s"), *GetClass()->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("State Manager: ParryKnocbackAbility executed from: %s"), *GetClass()->GetName());
 		}
 		LastUsedParryKnocbackAbility = ParryKnocbackAbility;
 	}
@@ -151,11 +151,11 @@ void UInComingAttackState::UnBindTargetComingAttackEnd()
 
 void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* BestComingAttackReaction)
 {
-	UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: MakeParryAbility entered."));
+	UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility entered."));
 
 	if (LastUsedParryAbility && LastUsedParryAbility->IsActive())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: LastUsedParryAbility is active from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: LastUsedParryAbility is active from: %s"), *GetClass()->GetName());
 		if (LastUsedParryAbility)
 		{
 			EnemyASC->CancelAbilityHandle(LastUsedParryAbility->GetCurrentAbilitySpecHandle());
@@ -166,7 +166,7 @@ void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* Bes
 	const bool bIsInActiveAttackPhase = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
 	if (bIsInActiveAttackPhase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: bIsInActiveAttackPhase TRUE."));
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: bIsInActiveAttackPhase TRUE."));
 	}
 
 	FaceTargetBeforeParry();
@@ -179,7 +179,7 @@ void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* Bes
 			ActivatedParryAbility->OnAbilityEnded.RemoveAll(this);
 		}
 		ParryEndHandle = ActivatedParryAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryAbilityEnded);
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: MakeParryAbility executed from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: MakeParryAbility executed from: %s"), *GetClass()->GetName());
 	}
 
 	LastUsedParryAbility = ActivatedParryAbility;
@@ -209,7 +209,7 @@ void UInComingAttackState::OnParryAbilityEnded(const FCustomAbilityEndedData& Do
 {
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: OnParryAbilityEnded with knocback don't exit the state from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: OnParryAbilityEnded with knocback don't exit the state from: %s"), *GetClass()->GetName());
 		return;
 	}
 	else

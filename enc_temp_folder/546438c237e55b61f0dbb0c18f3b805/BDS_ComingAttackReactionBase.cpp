@@ -26,7 +26,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 	{
 		if (!Reaction)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_ComingAttackReactionBase: Reaction is null!"));
+			UE_LOG(LogTemp, Warning, TEXT("UBDS_ComingAttackReactionBase: Reaction is null!"));
 			continue;
 		}
 
@@ -37,7 +37,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("Decision: Service: UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason = %s |"),
+					TEXT("UBDS_ComingAttackReactionBase: ReactionDisabled = %s | Reason = %s |"),
 					*Reaction->ComingAttackReactionName.ToString(),
 					*UEnum::GetValueAsString(EnableDebug.Reason)
 				);
@@ -52,7 +52,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("Decision: Service: UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
+					TEXT("UBDS_ComingAttackReactionBase: ReactionRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
 					*Reaction->ComingAttackReactionName.ToString(),
 					*UEnum::GetValueAsString(ChanceDebug.Reason),
 					ChanceDebug.Roll,
@@ -68,7 +68,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 		if (bEnableDebug)
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("Decision: Service: UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 				*Reaction->ComingAttackReactionName.ToString(),
 				ScoreDebug.BehaviorStateScore,
 				ScoreDebug.TagScore,
@@ -90,7 +90,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 	if (bEnableDebug && BestReaction)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("Decision: Service: UBDS_ComingAttackReactionBase: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+			TEXT("UBDS_ComingAttackReactionBase: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 			*BestReaction->ComingAttackReactionName.ToString(),
 			BestScoreDebug.BehaviorStateScore,
 			BestScoreDebug.TagScore,

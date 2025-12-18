@@ -27,7 +27,7 @@ void UAC_StateManager::BeginPlay()
 
 	if (!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: Some owner variables are missing in: %s !"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Some owner variables are already set in: %s !"), *GetName());
 		return;
 	}
 
@@ -36,14 +36,14 @@ void UAC_StateManager::BeginPlay()
 	BehaviorDecisionComponent = OwnerController->GetBehaviorDecisionComponent();
 	if (!BehaviorDecisionComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: BehaviorDecisionComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("BehaviorDecisionComponent is null in: %s"), *GetName());
 		return;
 	}
 
 	EnemyTagDelegatesComponent = OwnerEnemyBase->GetTagDelegatesComponent();
 	if (!EnemyTagDelegatesComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: EnemyTagDelegatesComponent is null in: %s !"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("EnemyTagDelegatesComponent is null in: %s !"), *GetName());
 		return;
 	}
 } 
@@ -87,14 +87,14 @@ void UAC_StateManager::CreateStates()
 	{
 		if (!*StateClass)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("State: Manager: Invalid state class in array."));
+			UE_LOG(LogTemp, Warning, TEXT("Invalid state class in array."));
 			continue;
 		}
 
 		UStateBase* NewState = NewObject<UStateBase>(this, StateClass);
 		if (!NewState || !NewState->StateTag.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("State: Manager: Failed to instantiate: %s"), *StateClass->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Failed to instantiate: %s"), *StateClass->GetName());
 			continue;
 		}
 
@@ -135,7 +135,7 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag, TS
 {
 	if (!StateEventTag.IsValid()) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: StateEventTag is empty!"));
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: StateEventTag is empty!"));
 		return;
 	}
 
@@ -161,7 +161,7 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag, TS
 	}
 	else 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: Unhandled StateEventTag: %s"), *StateEventTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Unhandled StateEventTag: %s"), *StateEventTag.ToString());
 	}
 }
 
@@ -184,20 +184,20 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 {
 	if (!BehaviorDecisionComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: BehaviorDecisionComponent is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: BehaviorDecisionComponent is null!"));
 		return;
 	}
 
 	UAttackDataBase* BestAttack = BehaviorDecisionComponent->GetBestAttack();
 	if (!BestAttack) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: BestAttack is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: BestAttack is null!"));
 		return;
 	}
 
 	if(!BestAttack->AbilityClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: BestAttack.AbilityClass is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: BestAttack.AbilityClass is null!"));
 		return;
 	}	
 
@@ -223,13 +223,13 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& TargetStateTag,
 
 	if (bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: %s state has been requested to enter"), *TargetStateTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to enter"), *TargetStateTag.ToString());
 	}
 
 	UStateBase* TargetState = GetStateWithTag(TargetStateTag);
 	if (!IsValid(TargetState))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: %s TargetState is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s TargetState is null!"));
 		return false;
 	}
 
@@ -248,7 +248,7 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& TargetStateTag,
 	{
 		if (bEnableDebug)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("State: Manager: Condition of %s is false, cannot enter"), *TargetState->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot enter"), *TargetState->GetName());
 		}
 		return false;
 	}
@@ -263,14 +263,14 @@ bool UAC_StateManager::RequestStateTreeExit(const FStateTransitionRequest StateT
 
 	if (bEnableDebug)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: %s state has been requested to exit, reason is: %s"), *CurrentState->GetName(), *Reason);
+		UE_LOG(LogTemp, Warning, TEXT("[State Manager]: %s state has been requested to exit, reason is: %s"), *CurrentState->GetName(), *Reason);
 	}
 
 	if (!CurrentState->ExitCondition()) 
 	{
 		if (bEnableDebug)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("State: Manager: Condition of %s is false, cannot exit"), *CurrentState->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("[State Manager]: Condition of %s is false, cannot exit"), *CurrentState->GetName());
 		}
 		return false;
 	}

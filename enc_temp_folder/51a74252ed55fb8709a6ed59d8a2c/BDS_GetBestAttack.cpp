@@ -13,7 +13,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 {
     if (!IsValid(AttackAbilityAsset) || !EnemyASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestAttack: AttackAbilityAsset or OwnerEnemyASC is null in: %s !"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("AttackAbilityAsset or OwnerEnemyASC is null in: %s !"), *GetName());
         return nullptr;
     }
 
@@ -31,7 +31,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 	{
 		if (!AttackData)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestAttack: AttackData is null!"));
+			UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestAttack: AttackData is null!"));
 			continue;
 		}
 
@@ -42,7 +42,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("Decision: Service: UBDS_GetBestAttack: AttackDisabled = %s | Reason = %s |"),
+					TEXT("UBDS_GetBestAttack: AttackDisabled = %s | Reason = %s |"),
 					*AttackData->AttackName.ToString(),
 					*UEnum::GetValueAsString(EnableDebug.Reason)
 				);
@@ -57,7 +57,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 			if (bEnableDebug)
 			{
 				UE_LOG(LogTemp, Warning,
-					TEXT("Decision: Service: UBDS_GetBestAttack: AttackPassesChangeFailed = %s | Roll = %.2f Threshold = %.2f |"),
+					TEXT("UBDS_GetBestAttack: AttackPassesChangeFailed = %s | Roll = %.2f Threshold = %.2f |"),
 					*AttackData->AttackName.ToString(),
 					ChanceDebug.Roll,
 					ChanceDebug.Threshold
@@ -72,7 +72,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 		if (bEnableDebug)
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("Decision: Service: UBDS_GetBestAttack: AttackScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("UBDS_GetBestAttack: AttackScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 				*AttackData->AttackName.ToString(),
 				ScoreDebug.BehaviorScore,
 				ScoreDebug.ComboScore,
@@ -96,7 +96,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 		if (BestAttackData) 
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("Decision: Service: UBDS_GetBestAttack: WINNER = %s | Score: Behavior = %.2f, Combo = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("UBDS_GetBestAttack: WINNER = %s | Score: Behavior = %.2f, Combo = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
 				*BestAttackData->AttackName.ToString(),
 				BestScoreDebug.BehaviorScore,
 				BestScoreDebug.ComboScore,
@@ -107,7 +107,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestAttack: No valid attack found!"));
+			UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestAttack: No valid attack found!"));
 		}
 	}
 

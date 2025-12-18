@@ -14,7 +14,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
 {
     if (!SelectedAbilityClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestMovementChain: SelectedAbilityClass is null in: %s!"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestMovementChain: SelectedAbilityClass is null in: %s!"), *GetName());
         return nullptr;
     }
 
@@ -25,7 +25,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
     UMovementChainsAsset* SelectedAbilityMovementChains = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
     if (!SelectedAbilityMovementChains)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestMovementChain: SelectedAbilityMovementChains is null in: %s!"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestMovementChain: SelectedAbilityMovementChains is null in: %s!"), *GetName());
         return nullptr;
     }
 
@@ -38,7 +38,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
     {
         if (!MovementChain)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestMovementChain: MovementChain is null!"));
+            UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestMovementChain: MovementChain is null!"));
             continue;
         }
 
@@ -49,7 +49,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             if (bEnableDebug)
             {
                 UE_LOG(LogTemp, Warning,
-                    TEXT("Decision: Service: UBDS_GetBestMovementChain: MovementChainDisabled = %s | Reason = %s |"),
+                    TEXT("UBDS_GetBestMovementChain: MovementChainDisabled = %s | Reason = %s |"),
                     *MovementChain->MovementChainName.ToString(),
                     *UEnum::GetValueAsString(EnableDebug.DisableReason)
                 );
@@ -64,7 +64,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             if (bEnableDebug)
             {
                 UE_LOG(LogTemp, Warning,
-                    TEXT("Decision: Service: UBDS_GetBestMovementChain: MovementChainRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
+                    TEXT("UBDS_GetBestMovementChain: MovementChainRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
                     *MovementChain->MovementChainName.ToString(),
                     *UEnum::GetValueAsString(ChanceDebug.ChanceFailReason),
                     ChanceDebug.Roll,
@@ -80,7 +80,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
         if (bEnableDebug)
         {
             UE_LOG(LogTemp, Warning,
-                TEXT("Decision: Service: UBDS_GetBestMovementChain: MovementChainScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+                TEXT("UBDS_GetBestMovementChain: MovementChainScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
                 *MovementChain->MovementChainName.ToString(),
                 ScoreDebug.BehaviorStateScore,
                 ScoreDebug.DistanceScore,
@@ -104,7 +104,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
         if (BestMovementChainData) 
         {
             UE_LOG(LogTemp, Warning,
-                TEXT("Decision: Service: UBDS_GetBestMovementChain: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+                TEXT("UBDS_GetBestMovementChain: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
                 *BestMovementChainData->MovementChainName.ToString(),
                 BestScoreDebug.BehaviorStateScore,
                 BestScoreDebug.DistanceScore,
@@ -114,7 +114,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestMovementChain: No valid movement chain found!"));
+            UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestMovementChain: No valid movement chain found!"));
         }
     }
 

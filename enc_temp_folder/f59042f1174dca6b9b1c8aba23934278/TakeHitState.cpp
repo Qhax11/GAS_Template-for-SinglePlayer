@@ -19,14 +19,14 @@ bool UTakeHitState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	if (!EnterPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UTakeHitState: EnterPayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("EnterPayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
 	TSharedPtr<FTakeHitStatePayload> TakeHitPayload = StaticCastSharedPtr<FTakeHitStatePayload>(EnterPayload);
 	if (!TakeHitPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UTakeHitState: TakeHitPayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TakeHitPayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
@@ -40,7 +40,7 @@ void UTakeHitState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	TSharedPtr<FTakeHitStatePayload> TakeHitPayload = StaticCastSharedPtr<FTakeHitStatePayload>(EnterPayload);
 	if (!TakeHitPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UTakeHitState: InComingAttackStatePayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("InComingAttackStatePayload is invalid in: %s"), *GetName());
 		return;
 	}
 
@@ -77,7 +77,7 @@ void UTakeHitState::TriggerTakeHitAbility(TSharedPtr<FTakeHitStatePayload> TakeH
 	{
 		TakeDamageAbility->OnAbilityEnded.RemoveAll(this);
 		TakeDamageAbility->OnAbilityEnded.AddUObject(this, &UTakeHitState::OnTakeHitAbilityEnded);
-		UE_LOG(LogTemp, Warning, TEXT("State: UTakeHitState: TakeDamageAbility executed from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State Manager: TakeDamageAbility executed from: %s"), *GetClass()->GetName());
 	}
 
 	LastUsedTakeDamageAbility = TakeDamageAbility;
@@ -92,7 +92,7 @@ void UTakeHitState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();	
 
-	UE_LOG(LogTemp, Warning, TEXT("State: UTakeHitState:  OnExit_Implementation entered."));
+	UE_LOG(LogTemp, Warning, TEXT("UTakeHitState:: OnExit_Implementation entered."));
 
 	if (EnemyTagDelegatesComp)
 	{

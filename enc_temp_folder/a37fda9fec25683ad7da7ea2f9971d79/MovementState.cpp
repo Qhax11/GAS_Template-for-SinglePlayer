@@ -20,19 +20,19 @@ bool UMovementState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 	MovementStateEnterPayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
 	if (!MovementStateEnterPayload.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: MovementStateEnterPayload is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStateEnterPayload is invalid in: %s"), *GetName());
 		return false;
 	}
 
 	if (!MovementStateEnterPayload->SelectedAttackData->AbilityClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: SelectedAttackData->AbilityClass is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedAttackData->AbilityClass is invalid in: %s"), *GetName());
 		return false;
 	}
 
 	if (!IsValid(Enemy) || !IsValid(HeroTarget))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: Enemy or HeroTarget is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: Enemy or HeroTarget is invalid in: %s"), *GetName());
 		return false;
 	}
 
@@ -56,7 +56,7 @@ void UMovementState::StartMovementChain(UMovementChainDataa* MovementChainData)
 {
 	if (!MovementChainData || !MovementManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: MovementChainData or MovementManager is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementChainData or MovementManager is invalid in: %s"), *GetName());
 		return;
 	}
 
@@ -77,7 +77,7 @@ void UMovementState::TryEnterToAttackState()
 {
 	if (!SelectedAttackCDO)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: BehaviorDecisionComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: BehaviorDecisionComponent is null in: %s"), *GetName());
 		return;
 	}
 
@@ -97,7 +97,7 @@ bool UMovementState::IsReachedAttackRange() const
 {
 	if (!SelectedAttackCDO || !IsValid(Enemy) || !IsValid(HeroTarget))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: SelectedAttackCDO, Enemy, or HeroTarget is null in %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedAttackCDO, Enemy, or HeroTarget is null in %s"), *GetName());
 		return false;
 	}
 

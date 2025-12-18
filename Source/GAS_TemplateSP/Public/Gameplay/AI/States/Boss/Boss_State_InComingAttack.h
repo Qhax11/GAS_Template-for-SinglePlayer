@@ -5,6 +5,7 @@
 #include "Gameplay/AI/States/InComingAttackState.h"
 #include "Boss_State_InComingAttack.generated.h"
 
+struct FReactionMovementEndedData;
 
 UCLASS()
 class GAS_TEMPLATESP_API UBoss_State_InComingAttack : public UInComingAttackState
@@ -20,8 +21,7 @@ public:
 
 	void ActivateDodgeAbility(UComingAttackReactionData* SelectedBestReaction);
 
-	UFUNCTION()
-	void OnDodgeAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
+	void OnDodgeAbilityEnded(const FReactionMovementEndedData& ReactionMovementEndedData);
 
 	UGAS_GameplayAbilityBase* LastUsedDodgeAbility;
 

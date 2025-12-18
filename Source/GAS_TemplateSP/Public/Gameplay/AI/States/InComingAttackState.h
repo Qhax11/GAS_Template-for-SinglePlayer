@@ -36,10 +36,6 @@ protected:
 
 	virtual bool SelectAndExecuteReaction(UComingAttackReactionData* SelectedReactionData);
 
-	bool ExecuteAbilityReaction(UComingAttackReactionData* ReactionData);
-
-	bool ExecuteMovementReaction(UComingAttackReactionData* SelectedReactionData);
-
 	//********************* TAKE DAMAGE *********************/
 
 	void BindTargetComingAttackEnd();

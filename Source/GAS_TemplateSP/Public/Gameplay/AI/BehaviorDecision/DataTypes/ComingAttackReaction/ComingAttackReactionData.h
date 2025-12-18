@@ -8,12 +8,6 @@
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "ComingAttackReactionData.generated.h"
 
-UENUM(BlueprintType)
-enum class EReactionExecutionMode : uint8
-{
-    Ability,          // Parry, TakeDamage
-    MovementAbility,  // Dodge via movement
-};
 
 UENUM(BlueprintType)
 enum class EReactionType : uint8
@@ -125,9 +119,6 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     EReactionType ReactionType;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    EReactionExecutionMode ReactionExecutionMode = EReactionExecutionMode::Ability;
 
     // Minimum time required before impact to allow this reaction (otherwise it's too late)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "0.0"))

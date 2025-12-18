@@ -11,14 +11,14 @@ class UMovementDataBase;
 class UMovementSingleData;
 class UMovementChainDataa;
 
-struct FMovementExecutionResult
+struct FReactionMovementEndedData
 {
 	bool bWasCancelled = false;
 	UMovementSingleData* MovementData = nullptr;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnReactionMovementEnded, const FMovementExecutionResult&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnReactionMovementEnded, const FReactionMovementEndedData&);
 
 USTRUCT()
 struct FMovementChainTracker

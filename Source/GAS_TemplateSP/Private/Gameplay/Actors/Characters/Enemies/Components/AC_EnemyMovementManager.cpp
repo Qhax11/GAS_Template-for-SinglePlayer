@@ -67,7 +67,7 @@ bool UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* Move
 		return false;
 	}
 
-	if (MovementData->AbilityTriggerTag.IsValid())
+	if (!MovementData->AbilityTriggerTag.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: AbilityTriggerTag is non valid!"));
 		return false;
@@ -81,6 +81,8 @@ bool UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* Move
 	}
 	
 	ApplyDirectionPoliciesToMovementAbility(MovementData, AttackPayload.AttackDirectionTag);
+
+	StopMovementAbilities();
 
 	FGameplayEventData GameplayEventData = FGameplayEventData();
 	GameplayEventData.InstigatorTags.AddTag(MovementData->ResolvedDirectionTag);
@@ -102,7 +104,7 @@ bool UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* Move
 
 void UAC_EnemyMovementManager::OnReactionMovementAbilityEnded(const FCustomAbilityEndedData& EndData)
 {
-	FMovementExecutionResult Result;
+	FReactionMovementEndedData Result;
 	Result.bWasCancelled = EndData.bWasCancelled;
 
 	OnReactionMovementEnded.Broadcast(Result);

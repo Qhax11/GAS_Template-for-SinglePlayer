@@ -8,7 +8,6 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 {
     ComingAttackReactionName = FName("Dodge");
 	ReactionType = EReactionType::Dodge;
-	ReactionExecutionMode = EReactionExecutionMode::MovementAbility;
 
     MinimumTimeBeforeHitToReact = 0.f;    
     PreferredTriggerTimeBeforeHit = 0.2f;    

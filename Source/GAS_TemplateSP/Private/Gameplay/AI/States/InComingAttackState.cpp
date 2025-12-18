@@ -83,27 +83,13 @@ bool UInComingAttackState::SelectAndExecuteReaction(UComingAttackReactionData* S
 		return false;
 	}
 
-	if (SelectedReactionData->ReactionExecutionMode == EReactionExecutionMode::Ability)
+	if (SelectedReactionData->ReactionType == EReactionType::Parry)
 	{
 		BindTargetComingAttackEnd();
-		ExecuteAbilityReaction(SelectedReactionData);
+		MakeParryAbility(SelectedReactionData);
 		return true;
 	}
-	else if (SelectedReactionData->ReactionExecutionMode == EReactionExecutionMode::MovementAbility) 
-	{
 
-	}
-
-	return false;
-}
-
-bool UInComingAttackState::ExecuteAbilityReaction(UComingAttackReactionData* ReactionData)
-{
-	return false;
-}
-
-bool UInComingAttackState::ExecuteMovementReaction(UComingAttackReactionData* SelectedReactionData)
-{
 	return false;
 }
 
@@ -121,13 +107,9 @@ void UInComingAttackState::BindTargetComingAttackEnd()
 	LastComingAttackAbility = ComingAttack;
 }
 
-void UInComingAttackState::UnBindTargetComingAttackEnd()
+void UInComingAttackState::OnComingAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
-	if (IsValid(LastComingAttackAbility))
-	{
-		LastComingAttackAbility->OnAbilityEnded.RemoveAll(this);
-		LastComingAttackAbility = nullptr;
-	}
+	ExitRequest("OnComingAttackAbilityEnded");
 }
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
@@ -156,12 +138,15 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 		}
 		LastUsedParryKnocbackAbility = ParryKnocbackAbility;
 	}
-
 }
 
-void UInComingAttackState::OnComingAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
+void UInComingAttackState::UnBindTargetComingAttackEnd()
 {
-	ExitRequest("OnComingAttackAbilityEnded");
+	if (IsValid(LastComingAttackAbility))
+	{
+		LastComingAttackAbility->OnAbilityEnded.RemoveAll(this);
+		LastComingAttackAbility = nullptr;
+	}
 }
 
 void UInComingAttackState::MakeParryAbility(const UComingAttackReactionData* BestComingAttackReaction)
@@ -240,18 +225,6 @@ void UInComingAttackState::OnParryKnocbackAbilityEnded(const FCustomAbilityEnded
 
 void UInComingAttackState::OnExit_Implementation()
 {
-	if (!IsInGameThread())
-	{
-		AsyncTask(ENamedThreads::GameThread, [WeakThis = TWeakObjectPtr<UInComingAttackState>(this)]()
-			{
-				if (UInComingAttackState* Self = WeakThis.Get())
-				{
-					Self->OnExit_Implementation();
-				}
-			});
-		return;
-	}
-
 	Super::OnExit_Implementation();
 
 	CleanupDelegates();

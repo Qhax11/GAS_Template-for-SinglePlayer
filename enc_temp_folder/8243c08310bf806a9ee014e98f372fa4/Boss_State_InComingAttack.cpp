@@ -5,6 +5,7 @@
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionDataDodge.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 
 void UBoss_State_InComingAttack::StateInitalize(const FStateInitParams& StateInitParams)
 {

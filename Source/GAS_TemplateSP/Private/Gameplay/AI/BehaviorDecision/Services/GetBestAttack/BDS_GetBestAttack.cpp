@@ -27,8 +27,8 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 	AttackDecisionContext.Target = Hero;
 	AttackDecisionContext.OwnerASC = EnemyASC;
 
-    for (UAttackDataBase* AttackData : AttackAbilityAsset->OptionalAttacks)
-    {
+	for (UAttackDataBase* AttackData : AttackAbilityAsset->OptionalAttacks)
+	{
 		if (!AttackData)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestAttack: AttackData is null!"));
@@ -88,7 +88,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 			BestAttackData = AttackData;
 			BestScoreDebug = ScoreDebug;
 		}
-    }
+	}
 
 	// ---------------- WINNER DEBUG ----------------
 	if (bEnableDebug )

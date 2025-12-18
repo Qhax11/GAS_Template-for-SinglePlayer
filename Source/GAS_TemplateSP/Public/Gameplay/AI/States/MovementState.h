@@ -16,6 +16,8 @@ class GAS_TEMPLATESP_API UMovementState : public UStateBase
 public:
 	virtual void StateInitalize(const FStateInitParams& StateInitParams) override;
 
+	virtual bool EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload = nullptr) override;
+
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 protected:
@@ -26,7 +28,7 @@ public:
 
 	void TryEnterToAttackState();
 
-	bool IsInRangeForAttack() const;
+	bool IsReachedAttackRange() const;
 
 	UFUNCTION()
 	void OnMovementChainEnded();

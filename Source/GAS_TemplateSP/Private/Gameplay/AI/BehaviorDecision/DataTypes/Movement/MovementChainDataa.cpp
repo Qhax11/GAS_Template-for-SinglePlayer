@@ -10,7 +10,6 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
     {
         if (OutDebug)
         {
-            OutDebug->bIsEnabled = false;
             OutDebug->DisableReason = EMovementChainDisableReason::InvalidContext;
         }
         return false;
@@ -20,7 +19,6 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
     {
         if (OutDebug)
         {
-            OutDebug->bIsEnabled = false;
             OutDebug->DisableReason = EMovementChainDisableReason::DistanceNotAllowed;
         }
         return false;
@@ -30,7 +28,6 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
     {
         if (OutDebug)
         {
-            OutDebug->bIsEnabled = false;
             OutDebug->DisableReason = EMovementChainDisableReason::OnCooldown;
         }
         return false;
@@ -38,7 +35,6 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
 
     if (OutDebug)
     {
-        OutDebug->bIsEnabled = true;
         OutDebug->DisableReason = EMovementChainDisableReason::None;
     }
 
@@ -58,7 +54,7 @@ bool UMovementChainDataa::IsDistanceAllowed(const FMovementDecisionContext& Cont
 
 bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug) const
 {
-    return false;
+    return true;
 }
 
 float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const

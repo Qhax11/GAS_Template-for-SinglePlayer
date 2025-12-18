@@ -7,6 +7,7 @@
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
+#include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 
 void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
@@ -14,22 +15,38 @@ void UMovementState::StateInitalize(const FStateInitParams& StateInitParams)
 	Super::StateInitalize(StateInitParams);
 }
 
+bool UMovementState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
+{
+	MovementStateEnterPayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
+	if (!MovementStateEnterPayload.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStateEnterPayload is invalid in: %s"), *GetName());
+		return false;
+	}
+
+	if (!MovementStateEnterPayload->SelectedAttackData->AbilityClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedAttackData->AbilityClass is invalid in: %s"), *GetName());
+		return false;
+	}
+
+	if (!IsValid(Enemy) || !IsValid(HeroTarget))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: Enemy or HeroTarget is invalid in: %s"), *GetName());
+		return false;
+	}
+
+	return true;
+}
+
 void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	Super::OnEnter();
 
 	MovementStateEnterPayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
-	if (!MovementStateEnterPayload.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UMovementState: MovementStateEnterPayload is invalid in: %s"), *GetName());
-		return;
-	}
-
-	if (!MovementStateEnterPayload->SelectedAttackData->AbilityClass) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedAttackData->AbilityClass is invalid in: %s"), *GetName());
-		return;
-	}
+	check(MovementStateEnterPayload.IsValid()); 
+	check(MovementStateEnterPayload->SelectedAttackData);
+	check(MovementStateEnterPayload->SelectedAttackData->AbilityClass);
 
 	SelectedAttackCDO = MovementStateEnterPayload->SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	StartMovementChain(MovementStateEnterPayload->SelectedMovementChainData);
@@ -64,7 +81,7 @@ void UMovementState::TryEnterToAttackState()
 		return;
 	}
 
-	if (IsInRangeForAttack())
+	if (IsReachedAttackRange())
 	{
 		MovementManager->StopMovementAbilities();
 
@@ -74,30 +91,20 @@ void UMovementState::TryEnterToAttackState()
 		FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest(GAS_Tags::TAG_AI_State_Attack, AttackPayload);
 		ExitRequest("Target is in range", StateTransitionRequest);
 	}
-
-	/*
-	if (SelectedAttackCDO->MinRange > EnemyController->GetTargetHeroDistance())
-	{
-		FAttackData NewAttack = BehaviorDecisionComponent->GetBestAttack();
-		if (NewAttack.AbilityClass)
-		{
-			StartMovementChain(NewAttack.AbilityClass);
-			return;
-		}
-	}
-	*/
 }
 
-bool UMovementState::IsInRangeForAttack() const
+bool UMovementState::IsReachedAttackRange() const
 {
-	if (!SelectedAttackCDO || !EnemyController)
+	if (!SelectedAttackCDO || !IsValid(Enemy) || !IsValid(HeroTarget))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UMovementState: Ability Class is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UMovementState: SelectedAttackCDO or EnemyController is null in %s"), *GetName());
 		return false;
 	}
 
-	float Distance = EnemyController->GetTargetHeroDistance();
-	return (SelectedAttackCDO->MaxRange > Distance && SelectedAttackCDO->MinRange < Distance);
+	const float MinRange = FMath::Max(0.f, SelectedAttackCDO->MinRange);
+	const float MaxRange = SelectedAttackCDO->MaxRange;
+
+	return CombatDistance::IsInRange(Enemy, HeroTarget, MaxRange) && !CombatDistance::IsInRange(Enemy, HeroTarget, MinRange);
 }
 
 void UMovementState::OnMovementChainEnded()

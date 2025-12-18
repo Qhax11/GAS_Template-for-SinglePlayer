@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
+#include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 
 bool UAttackDataBase::IsEnable(const FAttackDecisionContext& Context, FAttackEnableDebug* OutDebug) const
 {
@@ -92,24 +93,23 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 
 float UAttackDataBase::GetDistanceScore(const FAttackDecisionContext& Context) const
 {
-	const float AttackRange = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
-
-	if (AttackRange <= 0.f || !IsValid(Context.Owner) || !IsValid(Context.Target))
+	if (!AbilityClass || !IsValid(Context.Owner) || !IsValid(Context.Target))
 	{
 		return 0.f;
 	}
 
-	const float DistSq = FVector::DistSquared(Context.Owner->GetActorLocation(), Context.Target->GetActorLocation());
-	const float IdealSq = FMath::Square(AttackRange);
+	const float AttackRange = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
+	if (AttackRange <= 0.f)
+	{
+		return 0.f;
+	}
 
-	// 1.0 = ideal mesafe, uzaklaþtýkça düþer
-	const float Normalized = 1.f - FMath::Clamp(
-		FMath::Abs(DistSq - IdealSq) / IdealSq,
-		0.f,
-		1.f
-	);
+	const float Distance = CombatDistance::GetDistance(Context.Owner, Context.Target);
 
-	return Normalized;
+	const float Alpha = FMath::Clamp(Distance / AttackRange, 0.f, 1.f);
+
+	// Near = 1.0, Far = 0.0
+	return FMath::Lerp(1.f, 0.f, Alpha);
 }
 
 /*

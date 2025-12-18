@@ -26,9 +26,6 @@ struct FMovementEnableDebug
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	bool bIsEnabled = true;
-
-	UPROPERTY(BlueprintReadOnly)
 	EMovementChainDisableReason DisableReason = EMovementChainDisableReason::None;
 
 	UPROPERTY(BlueprintReadOnly)

@@ -4,16 +4,28 @@
 
 #include "CoreMinimal.h"
 
-
 namespace CombatDistance
 {
-    FORCEINLINE bool IsInRange(const AActor* Source, const AActor* Target, float Range)
-    {
-        if (!IsValid(Source) || !IsValid(Target))
-        {
-            return false;
-        }
+	// Ham mesafe (dereceli kararlar için)
+	FORCEINLINE float GetDistance(const AActor* A, const AActor* B)
+	{
+		if (!IsValid(A) || !IsValid(B))
+		{
+			return TNumericLimits<float>::Max();
+		}
 
-        return FVector::DistSquared(Source->GetActorLocation(), Target->GetActorLocation()) <= FMath::Square(Range);
-    }
+		return FVector::Dist(A->GetActorLocation(), B->GetActorLocation());
+	}
+
+	// Binary kararlar için
+	FORCEINLINE bool IsInRange(const AActor* A, const AActor* B, float Range)
+	{
+		if (Range <= 0.f)
+		{
+			return true;
+		}
+
+		const float Distance = GetDistance(A, B);
+		return Distance <= Range;
+	}
 }

@@ -75,59 +75,28 @@ struct FMovementDecisionContext
 {
 	GENERATED_BODY()
 
-	/* ================= CORE ACTORS ================= */
-
+	// ---- CORE ----
 	UPROPERTY(BlueprintReadOnly)
 	AActor* Owner = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)
 	AActor* Target = nullptr;
 
-	UPROPERTY(BlueprintReadOnly)
-	UAbilitySystemComponent* OwnerASC = nullptr;
-
-	/* ================= SPATIAL ================= */
-
-	UPROPERTY(BlueprintReadOnly)
-	float DistanceToTarget = 0.f;
-
+	// ---- SPATIAL ----
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsTargetMoving = false;
 
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayTag TargetMoveDirection; // Forward / Backward / Left / Right
-
-	/* ================= OWNER STATE ================= */
-
+	// ---- STATE ----
 	UPROPERTY(BlueprintReadOnly)
 	EBehaviorState BehaviorState = EBehaviorState::None;
 
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayTagContainer OwnerStateTags;
-
-	/* ================= COMBAT ================= */
-
-	UPROPERTY(BlueprintReadOnly)
-	bool bHasIncomingAttack = false;
-
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayTag IncomingAttackType; // Thrust / Sweep / Heavy
-
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayTag IncomingAttackDirection;
-
-	/* ================= COOLDOWN / AVAILABILITY ================= */
-
-	UPROPERTY(BlueprintReadOnly)
-	bool bIsAnyMovementAbilityOnCooldown = false;
-
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayTagContainer ActiveMovementCooldownTags;
-
-	/* ================= MISC ================= */
-
+	// ---- FLOW CONTROL ----
 	UPROPERTY(BlueprintReadOnly)
 	float TimeSinceLastMovement = 0.f;
+
+	// ---- AVAILABILITY ----
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsAnyMovementAbilityOnCooldown = false;
 };
 
 UCLASS(Abstract, BlueprintType, EditInlineNew, DefaultToInstanced)
@@ -148,10 +117,4 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Movement. Used for debugging or referencing in logic."))
 	FName MovementName;
 
-	// ---- COMMON DECISION DATA ----
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Minimum target distance required for this chain to be considered."))
-	float MinRange;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ToolTip = "Flat score bias added to this chain's total score. Useful to prioritize certain chains."))
-	float ScoreBias = 0.f;
 };

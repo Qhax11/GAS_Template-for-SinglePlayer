@@ -2,10 +2,47 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
+#include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 
 bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMovementEnableDebug* OutDebug) const
 {
-    return false;
+    if (!Context.Owner || !Context.Target)
+    {
+        if (OutDebug)
+        {
+            OutDebug->bIsEnabled = false;
+            OutDebug->DisableReason = EMovementDisableReason::InvalidContext;
+        }
+        return false;
+    }
+
+    if (!CheckDistance(Context)) 
+    {
+        if (OutDebug)
+        {
+            OutDebug->bIsEnabled = false;
+            OutDebug->DisableReason = EMovementDisableReason::OutOfRange;
+        }
+        return false;
+    }
+
+    if (Context.bIsAnyMovementAbilityOnCooldown)
+    {
+        if (OutDebug)
+        {
+            OutDebug->bIsEnabled = false;
+            OutDebug->DisableReason = EMovementDisableReason::OnCooldown;
+        }
+        return false;
+    }
+
+    if (OutDebug)
+    {
+        OutDebug->bIsEnabled = true;
+        OutDebug->DisableReason = EMovementDisableReason::None;
+    }
+
+    return true;
 }
 
 bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug) const
@@ -16,6 +53,11 @@ bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, 
 float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
 {
     return 0.0f;
+}
+
+bool UMovementChainDataa::CheckDistance(const FMovementDecisionContext& Context) const
+{
+    return CombatDistance::IsInRange(Context.Owner, Context.Target, MinRange);
 }
 
 float UMovementChainDataa::GetDistanceScore(const FMovementDecisionContext& Context) const

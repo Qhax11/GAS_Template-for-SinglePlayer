@@ -15,6 +15,9 @@ class GAS_TEMPLATESP_API UMovementSingleData : public UMovementDataBase
 	GENERATED_BODY()
 
 public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Movement. Used for debugging or referencing in logic."))
+    FName MovementName;
+
     // The gameplay ability class used for movement.
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<UGAS_GameplayAbilityBase> MovementAbilityClass;

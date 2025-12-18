@@ -50,7 +50,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             {
                 UE_LOG(LogTemp, Warning,
                     TEXT("UBDS_GetBestMovementChain: MovementChainDisabled = %s | Reason = %s |"),
-                    *MovementChain->MovementName.ToString(),
+                    *MovementChain->MovementChainName.ToString(),
                     *UEnum::GetValueAsString(EnableDebug.DisableReason)
                 );
             }
@@ -65,7 +65,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
             {
                 UE_LOG(LogTemp, Warning,
                     TEXT("UBDS_GetBestMovementChain: MovementChainRollFailed = %s | Reason = %s | Roll = %.2f Threshold = %.2f |"),
-                    *MovementChain->MovementName.ToString(),
+                    *MovementChain->MovementChainName.ToString(),
                     *UEnum::GetValueAsString(ChanceDebug.ChanceFailReason),
                     ChanceDebug.Roll,
                     ChanceDebug.Threshold
@@ -81,7 +81,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
         {
             UE_LOG(LogTemp, Warning,
                 TEXT("UBDS_GetBestMovementChain: MovementChainScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
-                *MovementChain->MovementName.ToString(),
+                *MovementChain->MovementChainName.ToString(),
                 ScoreDebug.BaseScore,
                 ScoreDebug.DistanceScore,
                 ScoreDebug.BehaviorStateScore,
@@ -99,16 +99,23 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
     }
 
     // ---------------- WINNER DEBUG ----------------
-    if (bEnableDebug && BestMovementChainData)
+    if (bEnableDebug)
     {
-        UE_LOG(LogTemp, Warning,
-            TEXT("UBDS_GetBestMovementChain: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
-            *BestMovementChainData->MovementName.ToString(),
-            BestScoreDebug.BaseScore,
-            BestScoreDebug.DistanceScore,
-            BestScoreDebug.BehaviorStateScore,
-            BestScoreDebug.TotalScore
-        );
+        if (BestMovementChainData) 
+        {
+            UE_LOG(LogTemp, Warning,
+                TEXT("UBDS_GetBestMovementChain: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+                *BestMovementChainData->MovementChainName.ToString(),
+                BestScoreDebug.BaseScore,
+                BestScoreDebug.DistanceScore,
+                BestScoreDebug.BehaviorStateScore,
+                BestScoreDebug.TotalScore
+            );
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("UBDS_GetBestMovementChain: No valid movement chain found!"));
+        }
     }
 
    // ApplyDirectionPoliciesToSelectedMovementChain(BestMovementChainDataAsset);

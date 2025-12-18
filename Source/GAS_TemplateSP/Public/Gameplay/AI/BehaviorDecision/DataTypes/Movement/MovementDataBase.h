@@ -111,8 +111,4 @@ public:
 	
 	virtual bool IsChain() const { return false; }
 
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Movement. Used for debugging or referencing in logic."))
-	FName MovementName;
-
 };

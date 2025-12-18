@@ -59,7 +59,7 @@ protected:
 	TArray<TSubclassOf<UStateBase>> StateClassArray;
 
 	UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.State"))
-	FGameplayTag StartState;
+	FGameplayTag StartState = GAS_Tags::TAG_AI_State_Patrolling;
 
 	UPROPERTY()
 	TArray<UStateBase*> StateInstances;

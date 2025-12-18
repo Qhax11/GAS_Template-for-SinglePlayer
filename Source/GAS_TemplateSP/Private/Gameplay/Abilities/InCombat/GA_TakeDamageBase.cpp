@@ -36,7 +36,7 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 {
 	if (!TriggerEventData) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TakeDamageBase: TriggerEventData is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -44,7 +44,7 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	// Use default montage, it should be in air attack hit.
 	if(GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InAir))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GetAbilitySystemComponentFromActorInfo in air"));
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TakeDamageBase: GetAbilitySystemComponentFromActorInfo in air"));
 		Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 		return;
 	}
@@ -52,7 +52,7 @@ void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	const UGA_MeleeAttackBase* MeleeAttack = Cast<UGA_MeleeAttackBase>(TriggerEventData->ContextHandle.GetAbility());
 	if (!MeleeAttack)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MeleeAttackBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TakeDamageBase: MeleeAttackBase is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}

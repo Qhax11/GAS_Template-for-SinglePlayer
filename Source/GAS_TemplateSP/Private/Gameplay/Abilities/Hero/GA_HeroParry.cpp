@@ -31,7 +31,7 @@ void UGA_HeroParry::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	US_DamageDelegates* DamageSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_DamageDelegates>();
 	if (!DamageSubsystem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DamageSubsystem is null in: %s, can not initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroParry: DamageSubsystem is null in: %s, can not initialize"), *GetName());
 		return;
 	}
 

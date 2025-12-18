@@ -21,7 +21,7 @@ void UGA_DeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	if (!TriggerEventData || !TriggerEventData->Instigator)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData or instigator is null in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_DeathBase: TriggerEventData or instigator is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -38,7 +38,7 @@ void UGA_DeathBase::BrodcastDeSpawn(EDeSpawnPhase DeSpawnPhase)
 
 	if (!OwnerCharacter || !OwnerASC || !CachedInstigator)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OwnerCharacter or OwnerASC is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_DeathBase: OwnerCharacter or OwnerASC is null in: %s"), *GetName());
 		return;
 	}
 
@@ -57,7 +57,7 @@ void UGA_DeathBase::DisableOwnerCollision(ECollisionEnabled::Type NewType)
 {
 	if (!CharacterBase) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_DeathBase: CharacterBase is null in: %s"), *GetName());
 		return;
 	}
 
@@ -73,7 +73,7 @@ void UGA_DeathBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 
 	if (!CharacterBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_DeathBase: CharacterBase is null in: %s"), *GetName());
 		return;
 	}
 

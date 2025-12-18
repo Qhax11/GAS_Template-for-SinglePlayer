@@ -28,14 +28,14 @@ void UGA_HeroShadowAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
     if (!Hero)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Hero is null in %s"), *this->GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowAttack: Hero is null in %s"), *this->GetName());
         return;
     }
 
     HeroTagDelegatesComp = Hero->GetTagDelegatesComponent();
     if (!Hero)
     {
-        UE_LOG(LogTemp, Warning, TEXT("OwnerTagDelegatesComp is null in %s"), *this->GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowAttack: OwnerTagDelegatesComp is null in %s"), *this->GetName());
         return;
     }
 
@@ -89,7 +89,7 @@ void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
     AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
     if (!HeroBase || !TraceData) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("HeroBase or TraceData is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowAttack: HeroBase or TraceData is null in: %s"), *GetName());
         Super::SpawnAndSetupTargetActor(Rotation, Location);
         return;
     }

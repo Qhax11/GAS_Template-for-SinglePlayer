@@ -19,8 +19,7 @@ void UGA_EnemyTakeDamage::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
-	UE_LOG(LogTemp, Warning, TEXT("StateManager: enemy take damage from: %s"), *TriggerEventData->Instigator->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyTakeDamage: enemy take damage from: %s"), *TriggerEventData->Instigator->GetName());
 	SetRotationToInstigator(TriggerEventData->Instigator);
 }
 

@@ -22,7 +22,7 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 	if (!TriggerEventData || !EnemyController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyChaseTarget: TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -30,7 +30,7 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	AActor* TargetActor = EnemyController->GetTargetActor();
 	if (!TargetActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetActor is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyChaseTarget: TargetActor is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}

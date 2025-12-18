@@ -18,7 +18,7 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	EnemyCharacter = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
 	if (!EnemyCharacter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BossCharacter is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: EnemyCharacter is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -26,7 +26,7 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	EnemyMovementComp = EnemyCharacter->GetCharacterMovement();
 	if (!EnemyMovementComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EnemyMovementComp is null in: %s!, Ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: EnemyMovementComp is null in: %s!, Ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -34,7 +34,7 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	EnemyController = Cast<AAIControllerBase>(EnemyCharacter->GetController());
 	if (!EnemyController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BossController is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: EnemyController is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -46,12 +46,12 @@ void UGA_EnemyMovementBase::RequestMoveToLocation(const FVector& MoveLocation)
 {
 	if (!EnemyController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: EnemyController is null in: %s"), *GetName());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Move Location: %s, from: %s"), *MoveLocation.ToString(), *GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: Move Location: %s, from: %s"), *MoveLocation.ToString(), *GetName());
 
 	FAIMoveRequest MoveReq;
 	MoveReq.SetGoalLocation(MoveLocation);
@@ -64,7 +64,7 @@ void UGA_EnemyMovementBase::RequestMoveToLocation(const FVector& MoveLocation)
 
 	if (MoveResult == EPathFollowingRequestResult::Failed)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MoveTo failed immediately in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTo failed immediately in: %s"), *GetName());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}
@@ -72,7 +72,7 @@ void UGA_EnemyMovementBase::RequestMoveToLocation(const FVector& MoveLocation)
 	UPathFollowingComponent* PathComp = EnemyController->GetPathFollowingComponent();
 	if (!PathComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PathFollowingComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: PathFollowingComponent is null in: %s"), *GetName());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}
@@ -84,7 +84,7 @@ void UGA_EnemyMovementBase::RequestMoveToTarget(AActor* TargetActor)
 {
 	if (!EnemyController || !TargetActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("RequestMoveToTarget failed in %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: RequestMoveToTarget failed in %s"), *GetName());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}
@@ -111,7 +111,7 @@ void UGA_EnemyMovementBase::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 
 	if (!Result.IsSuccess())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MoveTo strafing failed or was aborted: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTo strafing failed or was aborted: %s"), *GetName());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}

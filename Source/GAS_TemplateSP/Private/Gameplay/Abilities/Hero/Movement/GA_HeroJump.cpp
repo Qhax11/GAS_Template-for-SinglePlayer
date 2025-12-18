@@ -25,21 +25,21 @@ void UGA_HeroJump::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
 	if (!CharacterBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroJump: CharacterBase is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 
 	HeroBase = Cast<AGAS_HeroBase>(CharacterBase);
 	if (!HeroBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s)"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroJump: HeroBase is null in: %s)"), *GetName());
 		return;
 	}
 
 	HeroControl = HeroBase->GetHeroControlComponent();
 	if (!HeroControl)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroControl is null in: %s)"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroJump: HeroControl is null in: %s)"), *GetName());
 		return;
 	}
 

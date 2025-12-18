@@ -54,7 +54,7 @@ void UGA_HeroRun::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Hero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
 	if (!Hero)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hero is null in %s, cannot damage apply"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroRun: Hero is null in %s, cannot damage apply"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
 		return;
 	}
@@ -62,7 +62,7 @@ void UGA_HeroRun::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	HeroTagDelegatesComp = Hero->GetTagDelegatesComponent();
 	if (!HeroTagDelegatesComp) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroTagDelegatesComp is null in %s, cannot damage apply"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroRun: HeroTagDelegatesComp is null in %s, cannot damage apply"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
 		return;
 	}
@@ -78,7 +78,7 @@ void UGA_HeroRun::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	if (!bIsPostureRegenSpecValid)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PostureRegenSpec is null in %s, cannot damage apply"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroRun: PostureRegenSpec is null in %s, cannot damage apply"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
 		return;
 	}
@@ -108,7 +108,7 @@ void UGA_HeroRun::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 	else 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GE_SpeedBoostHandle or GE_PostureDecreaseHandle is null in %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroRun: GE_SpeedBoostHandle or GE_PostureDecreaseHandle is null in %s"), *GetName());
 	}
 
 	HeroTagDelegatesComp->UnregisterAllDelegatesForObject(this);

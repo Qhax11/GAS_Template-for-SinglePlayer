@@ -21,7 +21,7 @@ void UGA_BossDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	if (!TriggerEventData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_BossDodge: TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -32,7 +32,7 @@ void UGA_BossDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("There is no direction tag in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_BossDodge: There is no direction tag in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -40,12 +40,10 @@ void UGA_BossDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	UAnimMontage* FoundDodgeMontage = DirectionToDodgeMontageAsset->FindDodgetMontage(DirectionTag);
 	if (!FoundDodgeMontage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No montage found for direction tag: %s"), *DirectionTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_BossDodge: No montage found for direction tag: %s"), *DirectionTag.ToString());
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 		return;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("montage found for direction tag: %s"), *DirectionTag.ToString());
 
 	AnimMontage = FoundDodgeMontage;
 

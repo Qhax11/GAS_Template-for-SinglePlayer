@@ -15,14 +15,14 @@ void UGA_TracePefromerOnMontage::ActivateAbility(const FGameplayAbilitySpecHandl
 
 	if (!CharacterBase) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TracePefromerOnMontage: CharacterBase is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 
 	CharacterWeapon = CharacterBase->GetWeapon();
 	if (!CharacterWeapon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterWeapon is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TracePefromerOnMontage: CharacterWeapon is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 }
@@ -64,7 +64,7 @@ void UGA_TracePefromerOnMontage::GetTracePoints(FVector& OutStart, FVector& OutE
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GetTracePoints: CharacterWeapon is null. Override this function for bone-based trace!"));
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TracePefromerOnMontage: GetTracePoints: CharacterWeapon is null. Override this function for bone-based trace!"));
 		OutStart = FVector::ZeroVector;
 		OutEnd = FVector::ZeroVector;
 		OutRot = FRotator::ZeroRotator;

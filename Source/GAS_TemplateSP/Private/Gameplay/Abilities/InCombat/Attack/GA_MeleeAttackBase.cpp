@@ -28,13 +28,13 @@ void UGA_MeleeAttackBase::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 	if (!CharacterBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MeleeAttackBase: CharacterBase is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 
 	if (!CharacterWeapon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterWeapon is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MeleeAttackBase: CharacterWeapon is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 }
@@ -69,7 +69,7 @@ void UGA_MeleeAttackBase::AttackLogic(const TArray<FHitResult>& OutHitResults)
 
 	if (!bIsDamageSpecValid)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DamageSpec is null in %s, cannot damage apply"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MeleeAttackBase: DamageSpec is null in %s, cannot damage apply"), *GetName());
 		return;
 	}
 

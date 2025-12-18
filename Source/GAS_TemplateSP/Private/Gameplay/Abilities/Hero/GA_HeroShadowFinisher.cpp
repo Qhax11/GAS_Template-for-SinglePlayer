@@ -45,7 +45,7 @@ void UGA_HeroShadowFinisher::ActivateAbility(const FGameplayAbilitySpecHandle Ha
     AHeroShadowTargetActor* HeroShadowTargetActor = Cast<AHeroShadowTargetActor>(TargetActor);
     if (!HeroShadowTargetActor) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("HeroShadowTargetActor is null!"));
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: HeroShadowTargetActor is null!"));
         return;
     }
 }
@@ -55,14 +55,14 @@ void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector
     AGAS_HeroBase* OwnerHero = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
     if (!OwnerHero)
     {
-        UE_LOG(LogTemp, Warning, TEXT("OwnerHero is null in: %s, cannot initalize the ability"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: OwnerHero is null in: %s, cannot initalize the ability"), *GetName());
         return;
     }
 
     UAC_TargetLockSystem* TargetLockSystemComponent = OwnerHero->GetTargetLockSystemComponent();
     if (!TargetLockSystemComponent)
     {
-        UE_LOG(LogTemp, Warning, TEXT("TargetLockSystemComponent is null in: %s, cannot initalize the ability"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: TargetLockSystemComponent is null in: %s, cannot initalize the ability"), *GetName());
         Super::SpawnAndSetupTargetActor(Rotation, Location);
         return;
     }
@@ -70,7 +70,7 @@ void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector
     AGAS_CharacterBase* CurrentEnemyTargetCharacter = Cast<AGAS_CharacterBase>(TargetLockSystemComponent->CurrentTarget);
     if (!CurrentEnemyTargetCharacter)
     {
-        UE_LOG(LogTemp, Warning, TEXT("CurrentTarget is null in: %s, cannot initalize the ability"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: CurrentTarget is null in: %s, cannot initalize the ability"), *GetName());
         Super::SpawnAndSetupTargetActor(Rotation, Location);
         return;
     }
@@ -78,7 +78,7 @@ void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector
     UAC_TagDelegates* EnemyTargetTageDeleagtesComp = CurrentEnemyTargetCharacter->GetTagDelegatesComponent();
     if (!EnemyTargetTageDeleagtesComp)
     {
-        UE_LOG(LogTemp, Warning, TEXT("TargetTageDeleagtesComp is null in: %s, cannot initalize the ability"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: TargetTageDeleagtesComp is null in: %s, cannot initalize the ability"), *GetName());
         Super::SpawnAndSetupTargetActor(Rotation, Location);
         return;
     }
@@ -88,7 +88,7 @@ void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector
     UAbilitySystemComponent* CurrentTargetASC = TargetLockSystemComponent->CurrentTargetASC;
     if (!CurrentTargetASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("CurrentTargetASC is null in: %s, cannot initalize the ability"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: CurrentTargetASC is null in: %s, cannot initalize the ability"), *GetName());
         Super::SpawnAndSetupTargetActor(Rotation, Location);
         return;
     }
@@ -108,7 +108,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     AHeroShadowTargetActor* HeroShadowTargetActor = Cast<AHeroShadowTargetActor>(TargetActorData.TargetActor);
     if (!HeroShadowTargetActor)
     {
-        UE_LOG(LogTemp, Warning, TEXT("HeroShadowTargetActor is null in %s, cannot initialize ShadowFinisher."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: HeroShadowTargetActor is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
@@ -116,7 +116,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     TSubclassOf<UGA_MeleeAttackBase> MeleeFinisherClass = HeroShadowTargetActor->GetSelectedAttackAbilityClass();
     if (!MeleeFinisherClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("MeleeFinisherClass is null in %s, cannot initialize ShadowFinisher."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: MeleeFinisherClass is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
@@ -124,7 +124,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     AActor* CurrentTarget = HeroShadowTargetActor->GetCurrentTarget();
     if (!CurrentTarget)
     {
-        UE_LOG(LogTemp, Warning, TEXT("CurrentTarget is null in %s, cannot initialize ShadowFinisher."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: CurrentTarget is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
@@ -132,7 +132,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     UAbilitySystemComponent* TargetEnemyASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CurrentTarget);
     if (!TargetEnemyASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("TargetEnemyASC is null for actor: %s in %s, cannot initialize ShadowFinisher."),
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: TargetEnemyASC is null for actor: %s in %s, cannot initialize ShadowFinisher."),
             *CurrentTarget->GetName(), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
@@ -141,7 +141,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     UGAS_AbilitySystemComponent* EnemyASC = Cast<UGAS_AbilitySystemComponent>(TargetEnemyASC);
     if (!EnemyASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Failed to cast ASC to UGAS_AbilitySystemComponent for actor: %s in %s"),
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: Failed to cast ASC to UGAS_AbilitySystemComponent for actor: %s in %s"),
             *CurrentTarget->GetName(), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
@@ -160,7 +160,7 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     UGA_MeleeFinisher* ActivatedMeleeFinisher = Cast<UGA_MeleeFinisher>(GetASC()->TryActivateAbilityByClassAndReturnInstance(MeleeFinisherClass));
     if (!ActivatedMeleeFinisher)
     {
-        UE_LOG(LogTemp, Warning, TEXT("ActivatedMeleeFinisher is null in %s, cannot initialize ShadowFinisher."), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: ActivatedMeleeFinisher is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }

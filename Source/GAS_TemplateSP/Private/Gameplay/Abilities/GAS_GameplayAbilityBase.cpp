@@ -30,7 +30,7 @@ void UGAS_GameplayAbilityBase::ActivateAbility(const FGameplayAbilitySpecHandle 
 	CharacterBase = Cast<AGAS_CharacterBase>(GetAvatarActorFromActorInfo());
 	if (!CharacterBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGAS_GameplayAbilityBase: CharacterBase is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 	}
 
@@ -101,7 +101,7 @@ void UGAS_GameplayAbilityBase::IncreaseLevel(UAbilitySystemComponent* AbilitySys
 {
 	if (!AbilitySystemComp) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AbilitySystemComp is null in %s."), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGAS_GameplayAbilityBase: AbilitySystemComp is null in %s."), *GetName());
 		return;
 	}
 
@@ -110,7 +110,7 @@ void UGAS_GameplayAbilityBase::IncreaseLevel(UAbilitySystemComponent* AbilitySys
 	FGameplayAbilitySpec* CDO_AbilitySpec = AbilitySystemComp->FindAbilitySpecFromClass(CDO_AbilityBase->GetClass());
 	if (!CDO_AbilitySpec)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AbilitySpec is null in %s."), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGAS_GameplayAbilityBase: AbilitySpec is null in %s."), *GetName());
 		return;
 	}
 

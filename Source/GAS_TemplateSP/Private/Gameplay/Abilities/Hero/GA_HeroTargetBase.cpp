@@ -32,7 +32,7 @@ bool UGA_HeroTargetBase::BindInputForConfirmAndCancel()
 	AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
 	if (!HeroBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in %s. Cannot bind input for targeting because the Avatar Actor is not a valid hero."), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroTargetBase: HeroBase is null in %s. Cannot bind input for targeting because the Avatar Actor is not a valid hero."), *GetName());
 		return false;
 	}
 
@@ -48,7 +48,7 @@ bool UGA_HeroTargetBase::BindInputForConfirmAndCancel()
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Input actions are null in: %s"), *GetName());
+				UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroTargetBase: Input actions are null in: %s"), *GetName());
 			}
 		}
 	}

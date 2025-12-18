@@ -26,7 +26,7 @@ void UGA_TargetBase::StartEQSForTargetActorSpawnLocation()
 {
 	if (!EQSQueryTemplate)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EQS Query Template is not set!"));
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TargetBase: EQS Query Template is not set!"));
 		return;
 	}
 
@@ -39,7 +39,7 @@ void UGA_TargetBase::OnTargetActorSpawnLocationQueryFinished(TSharedPtr<FEnvQuer
 {
 	if (!Result.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EQS Query did not return any results."));
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TargetBase: EQS Query did not return any results."));
 		SpawnAndSetupTargetActor();
 		return;
 	}
@@ -69,7 +69,7 @@ void UGA_TargetBase::SpawnAndSetupTargetActor(FRotator Rotation, FVector Locatio
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Actor cannot spawned in: %s"), *GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_TargetBase: Actor cannot spawned in: %s"), *GetName());
 			EndAbility(CurrentSpecHandle, GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 		}
 	}

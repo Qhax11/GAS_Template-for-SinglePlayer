@@ -18,21 +18,21 @@ void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	AGAS_EnemyBase* Enemy = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
 	if (!Enemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Enemy is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyDeathBase: Enemy is null in: %s"), *GetName());
 		return;
 	}
 
 	AAIControllerBase* EnemyController = Cast<AAIControllerBase>(Enemy->GetController());
 	if (!EnemyController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyDeathBase: EnemyController is null in: %s"), *GetName());
 		return;
 	}
 
 	UBrainComponent* EnemyBrainComponent = EnemyController->GetBrainComponent();
 	if (!EnemyBrainComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EnemyBrainComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyDeathBase: EnemyBrainComponent is null in: %s"), *GetName());
 		return;
 	}
 

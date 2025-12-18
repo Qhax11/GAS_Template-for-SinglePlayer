@@ -35,7 +35,7 @@ void UGA_HeroDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
     if (!HeroBase)
     {
-        UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: HeroBase is null in: %s"), *GetName());
         EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
         return;
     }
@@ -43,14 +43,14 @@ void UGA_HeroDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     HeroControlComponent = HeroBase->GetHeroControlComponent();
     if (!HeroControlComponent)
     {
-        UE_LOG(LogTemp, Warning, TEXT("GetHeroControlComponent is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: GetHeroControlComponent is null in: %s"), *GetName());
         EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
         return;
     }
 
     if (!DirectionToDodgeMontageAsset)
     {
-        UE_LOG(LogTemp, Warning, TEXT("InputDirectionToDodgeMontageAsset is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: InputDirectionToDodgeMontageAsset is null in: %s"), *GetName());
         EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
         return;
     }
@@ -58,7 +58,7 @@ void UGA_HeroDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
     WaitOneFrameTask = UAT_WaitOneFrame::WaitOneFrame(this);
     if (!WaitOneFrameTask)
     {
-        UE_LOG(LogTemp, Warning, TEXT("WaitOneFrameTask is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: WaitOneFrameTask is null in: %s"), *GetName());
         EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
         return;
     }
@@ -85,7 +85,7 @@ void UGA_HeroDodge::OnAfterFrame()
 {
     if (!HeroBase || !HeroControlComponent || !DirectionToDodgeMontageAsset)
     {
-        UE_LOG(LogTemp, Warning, TEXT("HeroBase or HeroControlComponent is null"));
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: HeroBase or HeroControlComponent is null"));
         EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
         return;
     }
@@ -110,7 +110,7 @@ void UGA_HeroDodge::OnAfterFrame()
     UAnimMontage* FoundDodgeMontage = DirectionToDodgeMontageAsset->FindDodgetMontage(InputDirectionTag);
     if (!FoundDodgeMontage)
     {
-        UE_LOG(LogTemp, Warning, TEXT("No montage found for direction tag: %s"), *InputDirectionTag.ToString());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: No montage found for direction tag: %s"), *InputDirectionTag.ToString());
         EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
         return;
     }

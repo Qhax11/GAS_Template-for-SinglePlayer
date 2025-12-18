@@ -18,7 +18,7 @@ void UGA_BossTargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	BossCharacter = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
 	if (!BossCharacter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BossCharacter is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_BossTargetBase: BossCharacter is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -26,7 +26,7 @@ void UGA_BossTargetBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	BossController = Cast<AAIControllerBase>(GetAvatarActorFromActorInfo()->GetInstigatorController());
 	if (!BossController) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BossController is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_BossTargetBase: BossController is null in: %s"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}

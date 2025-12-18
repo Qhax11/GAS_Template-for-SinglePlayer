@@ -22,7 +22,7 @@ void UGA_HeroRouterAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     HeroBase = Cast<AGAS_HeroBase>(GetAvatarActorFromActorInfo());
     if (!HeroBase) 
     {
-        UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroRouterAttack: HeroBase is null in: %s"), *GetName());
         EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
         return;
     }

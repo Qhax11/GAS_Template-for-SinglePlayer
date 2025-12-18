@@ -15,7 +15,7 @@ void UGA_HeroRouterDashAndRun::ActivateAbility(const FGameplayAbilitySpecHandle 
     UsedDashAbilty = GetASC()->TryActivateAbilityByClassAndReturnInstance(GA_DashAbilityClass);
     if(!UsedDashAbilty)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Dash Ability could not be activated in: %s"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroRouterAttack: Dash Ability could not be activated in: %s"), *GetName());
         EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
         return;
 	}

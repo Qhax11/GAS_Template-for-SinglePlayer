@@ -46,14 +46,14 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	if (!CharacterBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s, can not initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_ParryBase: CharacterBase is null in: %s, can not initialize"), *GetName());
 		return;
 	}
 
 	TargetCharacterTagDelegatesComp = CharacterBase->GetTagDelegatesComponent();
 	if (!TargetCharacterTagDelegatesComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TargetCharacterTagDelegatesComp is null in: %s, can not initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_ParryBase: TargetCharacterTagDelegatesComp is null in: %s, can not initialize"), *GetName());
 		return;
 	}
 

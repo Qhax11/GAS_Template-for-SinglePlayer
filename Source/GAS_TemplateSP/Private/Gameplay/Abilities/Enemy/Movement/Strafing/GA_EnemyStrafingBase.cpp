@@ -4,6 +4,7 @@
 #include "Gameplay/Abilities/Enemy/Movement/Strafing/GA_EnemyStrafingBase.h"
 #include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "Gameplay/Abilities/Tasks/AT_AIMoveTo.h"
 
 UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 {
@@ -51,12 +52,12 @@ void UGA_EnemyStrafingBase::ExecuteFindLocationQuery(FGameplayTag StrafeDirectio
 	}
 
 	FEnvQueryRequest QueryRequest(EQSQueryTemplate, EnemyController);
-	float DirectionFloat = ConvertStrafeDirectionTagToFloat(StrafeDirectionTag);
+	float DirectionFloat = ConvertDirectionTagToFloat(StrafeDirectionTag);
 	QueryRequest.SetFloatParam(FName("StrafeDirectionParam"), DirectionFloat);
-	QueryRequest.Execute(QueryRunMode, this, &UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished);
+	QueryRequest.Execute(QueryRunMode, this, &UGA_EnemyStrafingBase::OnLocationQueryFinished);
 }
 
-float UGA_EnemyStrafingBase::ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag)
+float UGA_EnemyStrafingBase::ConvertDirectionTagToFloat(FGameplayTag StrafeDirectionTag)
 {
 	float TagValue = 2.0f; // Default: Both
 
@@ -72,7 +73,7 @@ float UGA_EnemyStrafingBase::ConvertStrafeDirectionTagToFloat(FGameplayTag Straf
 	return TagValue;
 }
 
-void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
+void UGA_EnemyStrafingBase::OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
 {
 	UE_LOG(LogTemp, Warning, TEXT(">>> EQS Query FINISHED"));
 
@@ -83,48 +84,37 @@ void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQuery
 	}
 
 	const FVector BestLocation = Result->GetItemAsLocation(0);
-	const float Distance = CombatDistance::GetDistance2D(EnemyCharacter, BestLocation);
 
-	UE_LOG(LogTemp, Warning, TEXT(">>> EQS Best Location: %s, Distance: %.2f"), *BestLocation.ToString(), Distance);
+	// TEK satır! Her şey task içinde halloluyor
+	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveTo(
+		this,
+		FName("StrafeMove"),
+		EnemyController,
+		BestLocation,
+		AcceptanceRadius,
+		DEFAULT_MIN_MOVEMENT_DURATION,  // Min duration support built-in!
+		MovementSpeed
+	);
 
-	if (Distance < MinStrafeDistance)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: Strafe loc too close (%.1f)"), Distance);
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-		return;
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT(">>> Requesting MOVE TO LOCATION"));
-	RequestMoveToLocation(BestLocation);
-
-	UE_LOG(LogTemp, Warning, TEXT(">>> Activating WAIT DELAY TASK"));
-	ActivateWaitDelayTask();
+	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyStrafingBase::OnMoveCompleted);
+	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyStrafingBase::OnMoveAborted);
+	MoveTask->OnFailed.AddDynamic(this, &UGA_EnemyStrafingBase::OnMoveFailed);
+	MoveTask->ReadyForActivation();
 }
 
-void UGA_EnemyStrafingBase::ActivateWaitDelayTask()
+void UGA_EnemyStrafingBase::OnMoveCompleted()
 {
-	float ExpectedDuration = CachedExpectedDuration;
-	ExpectedDuration = FMath::Max(ExpectedDuration, DEFAULT_MIN_MOVEMENT_DURATION);
-
-	UE_LOG(LogTemp, Warning, TEXT(">>> Wait Task Duration: %.2f"), ExpectedDuration);
-
-	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, ExpectedDuration);
-	WaitTask->OnFinish.AddDynamic(this, &UGA_EnemyStrafingBase::OnStrafingTimeEnd);
-	WaitTask->ReadyForActivation();
-}
-
-void UGA_EnemyStrafingBase::OnStrafingTimeEnd()
-{
-	UE_LOG(LogTemp, Warning, TEXT(">>> STRAFE TIME ENDED"));
-
-	if (EnemyController && EnemyController->GetPathFollowingComponent())
-	{
-		// ÖNCELİKLE delegate'i kaldır - StopMovement OnMoveCompleted'i tetiklemesin
-		EnemyController->GetPathFollowingComponent()->OnRequestFinished.RemoveAll(this);
-		EnemyController->StopMovement();
-	}
-
-	// It wasn't cancelled, we want this.
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
+
+void UGA_EnemyStrafingBase::OnMoveAborted()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+}
+
+void UGA_EnemyStrafingBase::OnMoveFailed()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+}
+
 

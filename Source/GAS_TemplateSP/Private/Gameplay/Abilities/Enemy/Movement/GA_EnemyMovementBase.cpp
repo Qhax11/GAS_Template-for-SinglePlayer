@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyMovementBase.h"
+#include "Gameplay/Abilities/Tasks/AT_AIMoveTo.h"
 
 UGA_EnemyMovementBase::UGA_EnemyMovementBase()
 {
@@ -49,91 +50,6 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	EnemyMovementComp->MaxWalkSpeed = MovementSpeed;
 }
 
-void UGA_EnemyMovementBase::RequestMoveToLocation(const FVector& MoveLocation)
-{
-	if (!EnemyController)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: EnemyController is null in: %s"), *GetName());
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-		return;
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: Move Location: %s, from: %s"), *MoveLocation.ToString(), *GetName());
-
-	FAIMoveRequest MoveReq;
-	MoveReq.SetGoalLocation(MoveLocation);
-	MoveReq.SetAcceptanceRadius(AcceptanceRadius);
-	MoveReq.SetUsePathfinding(true);
-	MoveReq.SetAllowPartialPath(true);
-
-	FNavPathSharedPtr NavPath;
-	EPathFollowingRequestResult::Type MoveResult = EnemyController->MoveTo(MoveReq, &NavPath);
-
-	if (MoveResult == EPathFollowingRequestResult::Failed)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTo failed immediately in: %s"), *GetName());
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-		return;
-	}
-
-	UPathFollowingComponent* PathComp = EnemyController->GetPathFollowingComponent();
-	if (!PathComp)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: PathFollowingComponent is null in: %s"), *GetName());
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-		return;
-	}
-
-	PathComp->OnRequestFinished.AddUObject(this, &ThisClass::OnMoveCompleted);
-}
-
-void UGA_EnemyMovementBase::RequestMoveToTarget(AActor* TargetActor)
-{
-	if (!EnemyController || !TargetActor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: RequestMoveToTarget failed in %s"), *GetName());
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-		return;
-	}
-
-	FAIMoveRequest MoveReq;
-	MoveReq.SetGoalActor(TargetActor); 
-	MoveReq.SetAcceptanceRadius(AcceptanceRadius);
-	MoveReq.SetUsePathfinding(true);
-	MoveReq.SetAllowPartialPath(true);
-
-	FNavPathSharedPtr NavPath;
-	EnemyController->MoveTo(MoveReq, &NavPath);
-
-	EnemyController->GetPathFollowingComponent()->OnRequestFinished.AddUObject(this, &UGA_EnemyMovementBase::OnMoveCompleted);
-}
-
-void UGA_EnemyMovementBase::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
-{
-	if (Result.Code == EPathFollowingResult::Aborted)
-	{
-		// Yeni movement başladı → NORMAL
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTo strafing was aborted: %s"), *GetName());
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-		return;
-	}
-
-	if (!Result.IsSuccess())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTo strafing failed: %s"), *GetName());
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-		return;
-	}
-
-	// Timer'ı temizle
-	if (GetWorld()->GetTimerManager().IsTimerActive(MovementTimerHandle))
-	{
-		GetWorld()->GetTimerManager().ClearTimer(MovementTimerHandle);
-	}
-
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-}
-
 void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
@@ -145,16 +61,6 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 		{
 			EnemyController->StopMovement();
 		}
-	}
-
-	if (EnemyController && EnemyController->GetPathFollowingComponent())
-	{
-		EnemyController->GetPathFollowingComponent()->OnRequestFinished.RemoveAll(this);
-	}
-
-	if (GetWorld()->GetTimerManager().IsTimerActive(MovementTimerHandle))
-	{
-		GetWorld()->GetTimerManager().ClearTimer(MovementTimerHandle);
 	}
 
 	// Super::EndAbility must be called last because it broadcasts the end event immediately.

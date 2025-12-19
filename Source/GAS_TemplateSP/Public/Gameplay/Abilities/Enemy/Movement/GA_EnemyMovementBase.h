@@ -20,12 +20,6 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	virtual void RequestMoveToLocation(const FVector& MoveLocation);
-
-	virtual void RequestMoveToTarget(AActor* TargetActor);
-
-	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
-
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 	UPROPERTY(EditDefaultsOnly)
@@ -37,7 +31,4 @@ protected:
 	AGAS_EnemyBase* EnemyCharacter;
 	AAIControllerBase* EnemyController;
 	UCharacterMovementComponent* EnemyMovementComp;
-
-	FTimerHandle MovementTimerHandle;
-
 };

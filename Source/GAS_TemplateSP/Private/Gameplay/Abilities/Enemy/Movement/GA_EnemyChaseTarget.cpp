@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyChaseTarget.h"
+#include "Gameplay/Abilities/Tasks/AT_AIMoveTo.h"
 
 UGA_EnemyChaseTarget::UGA_EnemyChaseTarget()
 {
@@ -35,24 +36,36 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		return;
 	}
 
-	if (TriggerEventData->EventMagnitude > 0) 
-	{
-		if (UWorld* World = GetWorld())
-		{
-			World->GetTimerManager().SetTimer(
-				MovementTimerHandle,
-				this,
-				&UGA_EnemyChaseTarget::OnChaseTimeEnd,
-				TriggerEventData->EventMagnitude,
-				false
-			);
-		}
-	}
+	// Actor'a doðru chase - min duration 0 (hemen bitebilir)
+	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveToActor(
+		this,
+		FName("Chase"),
+		EnemyController,
+		TargetActor,
+		AcceptanceRadius,
+		0.0f,  // No min duration for chase
+		MovementSpeed
+	);
 
-	RequestMoveToTarget(TargetActor);
+	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyChaseTarget::OnMoveCompleted);
+	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyChaseTarget::OnMoveAborted);
+	MoveTask->OnFailed.AddDynamic(this, &UGA_EnemyChaseTarget::OnMoveFailed);
+	MoveTask->ReadyForActivation();
 }
 
-void UGA_EnemyChaseTarget::OnChaseTimeEnd()
+void UGA_EnemyChaseTarget::OnMoveCompleted()
 {
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
+
+void UGA_EnemyChaseTarget::OnMoveAborted()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+}
+
+void UGA_EnemyChaseTarget::OnMoveFailed()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+}
+
+

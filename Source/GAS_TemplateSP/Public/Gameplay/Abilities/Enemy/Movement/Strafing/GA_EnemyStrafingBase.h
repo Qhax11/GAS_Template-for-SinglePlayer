@@ -20,14 +20,18 @@ protected:
 
 	virtual void ExecuteFindLocationQuery(FGameplayTag StrafeDirectionTag);
 
-	float ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag);
+	float ConvertDirectionTagToFloat(FGameplayTag StrafeDirectionTag);
 
-	virtual void OnStrafingLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
-
-	void ActivateWaitDelayTask();
+	virtual void OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
 
 	UFUNCTION()
-	void OnStrafingTimeEnd();
+	void OnMoveCompleted();
+
+	UFUNCTION()
+	void OnMoveAborted();
+
+	UFUNCTION()
+	void OnMoveFailed();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStrafingBase|EQS")
 	UEnvQuery* EQSQueryTemplate;

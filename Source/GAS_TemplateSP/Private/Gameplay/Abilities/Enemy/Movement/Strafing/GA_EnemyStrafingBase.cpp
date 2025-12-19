@@ -9,6 +9,8 @@
 UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 {
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
+
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
 }
 
 void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

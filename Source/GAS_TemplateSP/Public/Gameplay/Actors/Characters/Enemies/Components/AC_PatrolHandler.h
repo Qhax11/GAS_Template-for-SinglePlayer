@@ -6,6 +6,8 @@
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyPatrolling.h"
 #include "AC_PatrolHandler.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnPatrollingStopped);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_PatrolHandler : public UActorComponent
 {
@@ -20,10 +22,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopPatrolling();
 
+	FOnPatrollingStopped OnPatrollingStopped;
+
 protected:
 	virtual void BeginPlay() override;
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void MoveToNextPatrolPoint();
 
@@ -32,22 +34,23 @@ protected:
 	UFUNCTION()
 	void OnPatrollingAbilityEnded(const FCustomAbilityEndedData& ShadowAttackAbilityEndedData);
 
-	UPROPERTY(EditAnywhere, Category = "Patrolling")
-	TArray<AActor*> PatrolPoints;
+	// Returns a random wait time in range
+	UFUNCTION(BlueprintCallable, Category = "Patrolling")
+	float GetRandomPatrolWaitTime() const;
 
-	UPROPERTY(EditAnywhere, Category = "Patrolling")
-	TSubclassOf<UGA_EnemyPatrolling> EnemyPatrollingAbilityClass;
-
-	// Minimum and maximum wait time between patrol points
 	UPROPERTY(EditAnywhere, Category = "Patrolling")
 	float MinPatrolWaitTime = 1.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Patrolling")
 	float MaxPatrolWaitTime = 3.0f;
 
-	// Returns a random wait time in range
-	UFUNCTION(BlueprintCallable, Category = "Patrolling")
-	float GetRandomPatrolWaitTime() const;
+	UPROPERTY(EditAnywhere, Category = "Patrolling")
+	TArray<AActor*> PatrolPoints;
+
+	UPROPERTY(EditAnywhere, Category = "Patrolling")
+	TSubclassOf<UGA_EnemyPatrolling> EnemyPatrollingAbilityClass;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	UPROPERTY()
@@ -57,7 +60,7 @@ private:
 	class AGAS_EnemyBase* OwnerEnemy;
 
 	UPROPERTY()
-	UGAS_GameplayAbilityBase* LastMoveToLocationAbility = nullptr;
+	UGAS_GameplayAbilityBase* LastPatrolingAbility = nullptr;
 
 	FTimerHandle WaitForNextPatrolTimerHandle;
 	int32 CurrentIndex = 0;

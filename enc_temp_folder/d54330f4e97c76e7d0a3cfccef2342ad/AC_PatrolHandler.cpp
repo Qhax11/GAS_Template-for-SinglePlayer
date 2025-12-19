@@ -17,14 +17,14 @@ void UAC_PatrolHandler::BeginPlay()
 	OwnerEnemy = Cast<AGAS_EnemyBase>(GetOwner());
 	if (!OwnerEnemy)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_PatrolHandler: Enemy is null in: %s)"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Enemy is null in: %s)"), *GetName());
 		return;
 	}
 
 	OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemy->GetAbilitySystemComponent());
 	if (!OwnerEnemyASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_PatrolHandler: EnemyASC is null in %s, cannot initialize HeroControl."), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("EnemyASC is null in %s, cannot initialize HeroControl."), *GetName());
 		return;
 	}
 }
@@ -57,34 +57,19 @@ void UAC_PatrolHandler::ActivatePatrollingAbility()
 		return;
 	}
 
-	if (!PatrolPoints.IsValidIndex(CurrentIndex))
-	{
-		CurrentIndex = 0;
-	}
-
-	AActor* PatrolTarget = PatrolPoints[CurrentIndex];
-	if (!IsValid(PatrolTarget))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_PatrolHandler: Invalid patrol point at index %d on %s"), CurrentIndex, *GetName());
-		CurrentIndex++;
-		return; // ability'ye gitme
-	}
-
 	FGameplayEventData MoveToLocationEventData;
 	MoveToLocationEventData.EventTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Patrolling;
 	MoveToLocationEventData.Target = PatrolPoints[CurrentIndex];
 
 	UGAS_GameplayAbilityBase* PatrollingAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(EnemyPatrollingAbilityClass, MoveToLocationEventData);
-	if (!PatrollingAbility)
+	if (PatrollingAbility)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_PatrolHandler: PatrollingAbility is null in %s"), *GetName());
-		return;
+		PatrollingAbility->OnAbilityEnded.RemoveAll(this);
+		PatrollingAbility->OnAbilityEnded.AddUObject(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
 	}
 
-	PatrollingAbility->OnAbilityEnded.RemoveAll(this);
-	PatrollingAbility->OnAbilityEnded.AddUObject(this, &UAC_PatrolHandler::OnPatrollingAbilityEnded);
-	LastPatrolingAbility = PatrollingAbility;
 	CurrentIndex++;
+	LastPatrolingAbility = PatrollingAbility;
 }
 
 void UAC_PatrolHandler::StopPatrolling()

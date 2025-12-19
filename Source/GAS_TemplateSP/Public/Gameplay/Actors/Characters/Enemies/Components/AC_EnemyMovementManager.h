@@ -89,17 +89,10 @@ public:
 	// Executes a non-reactive corrective movement to adjust positioning (e.g. step-back, micro-reposition).
 	UGAS_GameplayAbilityBase* ExecuteCorrectiveMovement(UMovementSingleData* MovementData);
 
-	UFUNCTION(BlueprintCallable)
-	void StopChain();
-
-	void InterruptByReaction();
-
-	FOnMovementChainEnded OnMovementChainEnded;
-
 private:
 	void TryExecuteNextMovementAbilityInChain();
 
-	// Generic activation - callback type belirler hangi flow'da olduðumuzu
+	// Generic activation 
 	UGAS_GameplayAbilityBase* ActivateMovementAbility(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
 
 	/*===============  HELPERS ===============*/
@@ -112,11 +105,18 @@ private:
 	FGameplayTag GetRandomDirectionTag();
 
 	// Resolves the final movement direction based on the incoming attack direction.
-    // Applies attack-direction–specific rules (e.g. horizontal vs vertical attacks)
-    // and returns a single, safe direction tag to be used by movement abilities.
-    // May return an invalid tag if the input is invalid and no fallback is applied.
 	FGameplayTag ResolveAttackDirection(FGameplayTag AttackDirectionTag);
 
+	/*===============  PUBLIC API ===============*/
+public:
+	UFUNCTION(BlueprintCallable)
+	void StopChain();
+
+	void InterruptByReaction();
+
+	FOnMovementChainEnded OnMovementChainEnded;
+
+private:
 	/*===============  CALLBACKS ===============*/
 	UFUNCTION()
 	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);

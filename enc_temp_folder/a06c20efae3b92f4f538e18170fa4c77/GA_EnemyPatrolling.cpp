@@ -24,7 +24,7 @@ void UGA_EnemyPatrolling::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 	if (!TriggerEventData || !TriggerEventData->Target)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyPatrolling: TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}

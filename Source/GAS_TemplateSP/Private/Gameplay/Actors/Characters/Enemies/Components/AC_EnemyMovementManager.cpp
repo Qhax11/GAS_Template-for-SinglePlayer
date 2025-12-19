@@ -74,25 +74,7 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteCorrectiveMovement(UM
 	return ActivateMovementAbility(MovementData);
 }
 
-void UAC_EnemyMovementManager::StopChain()
-{
-	InterruptByReaction();
-	MovementChainTracker.ResetChain();
-}
 
-void UAC_EnemyMovementManager::InterruptByReaction()
-{
-	if (!OwnerEnemyASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: CancelMovementAbilities: ASC is null"));
-		return;
-	}
-
-	FGameplayTagContainer CancelTags;
-	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement);
-
-	OwnerEnemyASC->CancelAbilities(&CancelTags);
-}
 
 void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 {
@@ -289,5 +271,22 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 	TryExecuteNextMovementAbilityInChain();
 }
 
+void UAC_EnemyMovementManager::StopChain()
+{
+	InterruptByReaction();
+	MovementChainTracker.ResetChain();
+}
 
+void UAC_EnemyMovementManager::InterruptByReaction()
+{
+	if (!OwnerEnemyASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: CancelMovementAbilities: ASC is null"));
+		return;
+	}
 
+	FGameplayTagContainer CancelTags;
+	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement);
+
+	OwnerEnemyASC->CancelAbilities(&CancelTags);
+}

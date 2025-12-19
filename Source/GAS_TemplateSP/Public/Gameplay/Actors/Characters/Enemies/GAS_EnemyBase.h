@@ -30,6 +30,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class UAC_EnemyMovementManager* GetEnemyMovementManagerComponent() const { return EnemyMovementManagerComponent; }
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class UAC_PatrolHandler* GetPatrolHandlerComponent() const { return PatrolHandlerComponent; }
+
 protected:
 	//* Components *//
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")

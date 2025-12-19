@@ -110,11 +110,6 @@ void UGA_EnemyMovementBase::RequestMoveToTarget(AActor* TargetActor)
 
 void UGA_EnemyMovementBase::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
-	if (bAbilityEnded) 
-	{
-		return;
-	}
-
 	if (Result.Code == EPathFollowingResult::Aborted)
 	{
 		// Yeni movement başladı → NORMAL
@@ -130,6 +125,12 @@ void UGA_EnemyMovementBase::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 		return;
 	}
 
+	// Timer'ı temizle
+	if (GetWorld()->GetTimerManager().IsTimerActive(MovementTimerHandle))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(MovementTimerHandle);
+	}
+
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
@@ -138,8 +139,6 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
-	bAbilityEnded = true;
-
 	if (bWasCancelled)
 	{
 		if (EnemyController)

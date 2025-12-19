@@ -117,10 +117,8 @@ void UGA_EnemyStrafingBase::OnStrafingTimeEnd()
 {
 	UE_LOG(LogTemp, Warning, TEXT(">>> STRAFE TIME ENDED"));
 
-	if (EnemyController && EnemyController->GetPathFollowingComponent())
+	if (EnemyController)
 	{
-		// ÖNCELİKLE delegate'i kaldır - StopMovement OnMoveCompleted'i tetiklemesin
-		EnemyController->GetPathFollowingComponent()->OnRequestFinished.RemoveAll(this);
 		EnemyController->StopMovement();
 	}
 

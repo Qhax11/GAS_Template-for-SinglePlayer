@@ -18,6 +18,17 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	virtual void ExecuteFindLocationQuery(FGameplayTag StrafeDirectionTag);
+
+	float ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag);
+
+	virtual void OnStrafingLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
+
+	void ActivateWaitDelayTask();
+
+	UFUNCTION()
+	void OnStrafingTimeEnd();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStrafingBase|EQS")
 	UEnvQuery* EQSQueryTemplate;
 
@@ -27,11 +38,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MinStrafeDistance = 150.f;
 
-	virtual void StartEQSForStrafingLocation(FGameplayTag StrafeDirectionTag);
+private:
+	static constexpr float DEFAULT_MIN_MOVEMENT_DURATION = 0.25f;
+	float CachedExpectedDuration;
 
-	float ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag);
-
-	virtual void OnStrafingLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
-
-	void OnStrafingTimeEnd();
 };

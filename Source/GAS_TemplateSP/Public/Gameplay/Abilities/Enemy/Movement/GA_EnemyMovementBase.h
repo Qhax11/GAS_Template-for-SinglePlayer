@@ -40,5 +40,4 @@ protected:
 
 	FTimerHandle MovementTimerHandle;
 
-	bool bAbilityEnded = false;
 };

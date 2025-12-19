@@ -35,8 +35,9 @@ struct FMovementChainTracker
 	GENERATED_BODY()
 
 public:
-	TArray<UMovementSingleData*> ActiveChain;
+	UPROPERTY()
 	UGAS_GameplayAbilityBase* CurrentMovementAbility = nullptr;
+	TArray<UMovementSingleData*> ActiveChain;
 	int32 CurrentIndex = 0;
 	bool bIsActive = false;
 
@@ -57,11 +58,6 @@ public:
 	bool IsChainFinished() const
 	{
 		return !bIsActive || !ActiveChain.IsValidIndex(CurrentIndex);
-	}
-
-	bool IsCurrentAbilityStillValid() const
-	{
-		return bIsActive && CurrentMovementAbility && !CurrentMovementAbility->IsActive();
 	}
 
 	UMovementSingleData* GetCurrentMovementAbilityInChain() const
@@ -102,6 +98,11 @@ public:
 	FOnMovementExecutionEnded OnMovementExecutionEnded;
 
 private:
+	bool ValidateMovementData(UMovementSingleData* MovementData) const;
+
+	// Shared activation logic - handles direction, event data, and ability activation
+	UGAS_GameplayAbilityBase* ActivateAndBindMovementAbility(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
+
 	void OnMovementAbilityExecutionEnded(const FCustomAbilityEndedData& EndData);
 
 	// For now, it's dodge.
@@ -113,7 +114,7 @@ public:
 
 	void CancelMovementAbilities();
 
-	void ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, FGameplayTag AttackDirection = FGameplayTag());
+	void ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
 
 protected:
 	void TryExecuteNextMovementAbilityInChain();

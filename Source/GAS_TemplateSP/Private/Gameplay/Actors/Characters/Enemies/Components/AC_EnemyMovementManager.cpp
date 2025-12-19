@@ -62,75 +62,92 @@ void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainData* Movement
 
 bool UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload)
 {
-	if (!MovementData || !OwnerEnemyASC)
+	if (!ValidateMovementData(MovementData))
 	{
 		return false;
 	}
 
-	if (!MovementData->AbilityTriggerTag.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: AbilityTriggerTag is non valid!"));
-		return false;
-	}
-
-	TSubclassOf<UGAS_GameplayAbilityBase> MovementAbilityClass = MovementData->MovementAbilityClass;
-	if (!MovementAbilityClass)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: MovementAbilityClass is non valid!"));
-		return false;
-	}
-	
-	ApplyDirectionPoliciesToMovementAbility(MovementData, AttackPayload.AttackDirectionTag);
-
+	// Reaction movements interrupt everything
 	StopMovementAbilities();
 
-	FGameplayEventData GameplayEventData = FGameplayEventData();
-	GameplayEventData.InstigatorTags.AddTag(MovementData->DirectionTag);
-	GameplayEventData.EventTag = MovementData->AbilityTriggerTag;
-	GameplayEventData.EventMagnitude = MovementData->AbilityEventMagnitude;
-
-	UGAS_GameplayAbilityBase* ReactionMovementAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementAbilityClass, GameplayEventData);
-	if (!ReactionMovementAbility)
+	// Activate with attack direction context
+	UGAS_GameplayAbilityBase* ReactionAbility = ActivateAndBindMovementAbility(MovementData, AttackPayload);
+	if (!ReactionAbility)
 	{
 		return false;
 	}
 
-	ReactionMovementAbility->OnAbilityEnded.RemoveAll(this);
-	ReactionMovementAbility->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded);
-	ActivatedReactionAbility = ReactionMovementAbility;
-
+	ActivatedReactionAbility = ReactionAbility;
 	return true;
 }
 
 bool UAC_EnemyMovementManager::ExecuteCorrectiveMovement(UMovementSingleData* MovementData)
 {
-	if (!MovementData || !OwnerEnemyASC)
+	if (!ValidateMovementData(MovementData))
 	{
 		return false;
 	}
 
-	if (!MovementData->AbilityTriggerTag.IsValid() || !MovementData->MovementAbilityClass)
+	// Corrective movements don't need attack direction
+	UGAS_GameplayAbilityBase* CorrectiveAbility = ActivateAndBindMovementAbility(MovementData);
+
+	return CorrectiveAbility != nullptr;
+}
+
+bool UAC_EnemyMovementManager::ValidateMovementData(UMovementSingleData* MovementData) const
+{
+	if (!MovementData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: MovementData is null!"));
 		return false;
 	}
 
-	ApplyDirectionPoliciesToMovementAbility(MovementData);
+	if (!OwnerEnemyASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: OwnerEnemyASC is null!"));
+		return false;
+	}
 
+	if (!MovementData->AbilityTriggerTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: AbilityTriggerTag is invalid!"));
+		return false;
+	}
+
+	if (!MovementData->MovementAbilityClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAC_EnemyMovementManager: MovementAbilityClass is null!"));
+		return false;
+	}
+
+	return true;
+}
+
+UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ActivateAndBindMovementAbility(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload)
+{
+	// Step 1: Apply direction policies (attack direction used if relevant)
+	ApplyDirectionPoliciesToMovementAbility(MovementData, AttackPayload);
+
+	// Step 2: Build event data
 	FGameplayEventData EventData;
 	EventData.EventTag = MovementData->AbilityTriggerTag;
 	EventData.InstigatorTags.AddTag(MovementData->DirectionTag);
 	EventData.EventMagnitude = MovementData->AbilityEventMagnitude;
 
-	UGAS_GameplayAbilityBase* CorrectiveMovement = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementData->MovementAbilityClass, EventData);
-	if (!CorrectiveMovement)
+	// Step 3: Activate ability
+	UGAS_GameplayAbilityBase* ActivatedAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(
+		MovementData->MovementAbilityClass, EventData);
+	if (!ActivatedAbility)
 	{
-		return false;
+		UE_LOG(LogTemp, Warning, TEXT("Failed to activate movement ability: %s"), *MovementData->MovementAbilityClass->GetName());
+		return nullptr;
 	}
 
-	CorrectiveMovement->OnAbilityEnded.RemoveAll(this);
-	CorrectiveMovement->OnAbilityEnded.AddUObject(this,&UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded);
+	// Step 4: Bind callback
+	ActivatedAbility->OnAbilityEnded.RemoveAll(this);
+	ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded);
 
-	return true;
+	return ActivatedAbility;
 }
 
 void UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded(const FCustomAbilityEndedData& EndData)
@@ -208,7 +225,7 @@ void UAC_EnemyMovementManager::TryActivateMovementAbilityWithEventData(UMovement
 	}
 }
 
-void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, FGameplayTag AttackDirection)
+void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, const FComingAttackPayload& AttackPayload)
 {
 	if (!MovementAbilityData)
 	{
@@ -226,6 +243,7 @@ void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(UMovement
 	}
 
 	FGameplayTag FinalTag;
+	FGameplayTag AttackDirection = AttackPayload.AttackDirectionTag;
 
 	if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack)
 	{

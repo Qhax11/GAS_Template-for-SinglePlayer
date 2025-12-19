@@ -3,7 +3,7 @@
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
-#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
@@ -32,7 +32,7 @@ void UAC_EnemyMovementManager::BeginPlay()
 	checkf(HeroMovementListener, TEXT("HeroMovementListener is null in %s"), *GetClass()->GetName());
 }
 
-void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainDataa* MovementChain)
+void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainData* MovementChain)
 {
 	if (!MovementChain || !OwnerEnemyASC)
 	{

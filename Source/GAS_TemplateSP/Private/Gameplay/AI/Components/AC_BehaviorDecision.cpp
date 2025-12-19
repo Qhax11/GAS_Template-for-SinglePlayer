@@ -93,7 +93,7 @@ UAttackDataBase* UAC_BehaviorDecision::GetBestAttack()
     return BestAttack;
 }
 
-UMovementChainDataa* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
+UMovementChainData* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
     if (!GetBestMovementChainService)
     {
@@ -101,7 +101,7 @@ UMovementChainDataa* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS
         return nullptr;
     }
 
-    UMovementChainDataa* BestMovementChainData = nullptr;
+    UMovementChainData* BestMovementChainData = nullptr;
 
     if (IsValid(GetBestMovementChainService)) 
     {

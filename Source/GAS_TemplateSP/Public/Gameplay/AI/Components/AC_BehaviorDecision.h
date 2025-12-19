@@ -60,7 +60,7 @@ public:
     UAttackDataBase* GetBestAttack();
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
-    UMovementChainDataa* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
+    UMovementChainData* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);

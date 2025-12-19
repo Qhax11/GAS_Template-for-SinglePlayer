@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/StaticDelegates/S_DamageDelegates.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
 
 class UAttackDataBase;
 class UMovementDataBase;
-class UMovementChainDataa;
+class UMovementChainData;
 class UAC_EnemyMovementManager;
 class UMovementChainAsset;
 class UGAS_GameplayAbilityBase;
@@ -21,11 +21,11 @@ struct FStatePayloadBase
 
 struct FMovementStatePayload : public FStatePayloadBase
 {
-	UMovementChainDataa* SelectedMovementChainData = nullptr;
+	UMovementChainData* SelectedMovementChainData = nullptr;
 	UAttackDataBase* SelectedAttackData = nullptr; 
 
 	FMovementStatePayload(
-		UMovementChainDataa* InSelectedMovementChainData,
+		UMovementChainData* InSelectedMovementChainData,
 		UAttackDataBase* InSelectedAttackData)
 		: 
 		SelectedMovementChainData(InSelectedMovementChainData),

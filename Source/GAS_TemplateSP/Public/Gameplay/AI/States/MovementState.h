@@ -47,7 +47,7 @@
  * - Keeps positioning logic isolated from attack execution
  */
 
-class UMovementChainDataa;
+class UMovementChainData;
 class UMovementSingleData;
 struct FMovementExecutionEndedData;
 
@@ -71,7 +71,7 @@ public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 protected:
-	void StartMovementChain(UMovementChainDataa* MovementChainData);
+	void StartMovementChain(UMovementChainData* MovementChainData);
 
 public:
 	virtual void OnTick_Implementation(float DeltaTime) override;

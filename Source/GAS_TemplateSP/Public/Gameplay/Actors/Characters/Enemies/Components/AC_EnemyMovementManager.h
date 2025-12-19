@@ -90,7 +90,7 @@ protected:
 	/*===============  PUBLIC API ===============*/
 public:
 	UFUNCTION(BlueprintCallable)
-	void ExecuteMovementChain(UMovementChainDataa* MovementChain);
+	void ExecuteMovementChain(UMovementChainData* MovementChain);
 
 	// Reaction context (dodge, evade, panic, vs)
 	bool ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload);

@@ -4,7 +4,7 @@
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementDataBase.h"
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
-#include "MovementChainDataa.generated.h"
+#include "MovementChainData.generated.h"
 
 class UGA_EnemyMovementBase;
 class UAbilitySystemComponent;
@@ -21,7 +21,7 @@ class UMovementSingleData;
 
 // TO:DO Rename UMovementChainDataa class with UMovementChainData.
 UCLASS()
-class GAS_TEMPLATESP_API UMovementChainDataa : public UMovementDataBase
+class GAS_TEMPLATESP_API UMovementChainData : public UMovementDataBase
 {
 	GENERATED_BODY()
 

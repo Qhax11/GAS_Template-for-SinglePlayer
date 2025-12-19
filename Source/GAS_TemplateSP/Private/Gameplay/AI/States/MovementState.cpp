@@ -3,7 +3,7 @@
 
 #include "Gameplay/AI/States/MovementState.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementDataBase.h"
-#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
@@ -51,7 +51,7 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	StartMovementChain(MovementStateEnterPayload->SelectedMovementChainData);
 }
 
-void UMovementState::StartMovementChain(UMovementChainDataa* MovementChainData)
+void UMovementState::StartMovementChain(UMovementChainData* MovementChainData)
 {
 	if (!MovementChainData || !MovementManager)
 	{

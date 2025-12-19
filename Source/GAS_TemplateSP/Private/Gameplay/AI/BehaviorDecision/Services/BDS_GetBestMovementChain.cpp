@@ -2,7 +2,7 @@
 
 
 #include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
-#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementDataBase.h"
 
 void UBDS_GetBestMovementChain::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
@@ -10,7 +10,7 @@ void UBDS_GetBestMovementChain::Initialize(const FBehaviorServiceInitParams& Beh
     Super::Initialize(BehaviorServiceInitParams);
 }
 
-UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
+UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
 {
     if (!SelectedAbilityClass)
     {
@@ -18,7 +18,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
         return nullptr;
     }
 
-    UMovementChainDataa* BestMovementChainData = nullptr;
+    UMovementChainData* BestMovementChainData = nullptr;
     FMovementScoreDebug BestScoreDebug;
     float BestScore = -FLT_MAX;
 
@@ -34,7 +34,7 @@ UMovementChainDataa* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf
     MovementDecisionContext.Owner = Enemy;
     MovementDecisionContext.Target = Hero;
 
-    for (UMovementChainDataa* MovementChain : SelectedAbilityMovementChains->MovementChains)
+    for (UMovementChainData* MovementChain : SelectedAbilityMovementChains->MovementChains)
     {
         if (!MovementChain)
         {

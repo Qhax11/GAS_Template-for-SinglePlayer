@@ -1,10 +1,10 @@
 // Qhax's GAS Template for SinglePlayer
 
 
-#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainDataa.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
 #include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 
-bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMovementEnableDebug* OutDebug) const
+bool UMovementChainData::IsEnable(const FMovementDecisionContext& Context, FMovementEnableDebug* OutDebug) const
 {
     if (!Context.Owner || !Context.Target)
     {
@@ -32,12 +32,12 @@ bool UMovementChainDataa::IsEnable(const FMovementDecisionContext& Context, FMov
     return true;
 }
 
-bool UMovementChainDataa::PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug) const
+bool UMovementChainData::PassesChance(const FMovementDecisionContext& Context, FMovementChanceDebug* OutDebug) const
 {
     return true;
 }
 
-float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
+float UMovementChainData::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
 {
     float DistanceScore = GetDistanceScore(Context);
     float BehaviorScore = GetBehaviorStateScore(Context);
@@ -55,7 +55,7 @@ float UMovementChainDataa::GetScore(const FMovementDecisionContext& Context, FMo
     return TotalScore;
 }
 
-float UMovementChainDataa::GetBehaviorStateScore(const FMovementDecisionContext& Context) const
+float UMovementChainData::GetBehaviorStateScore(const FMovementDecisionContext& Context) const
 {
     float Score = 0.0f;
 
@@ -67,7 +67,7 @@ float UMovementChainDataa::GetBehaviorStateScore(const FMovementDecisionContext&
     return Score;
 }
 
-float UMovementChainDataa::GetDistanceScore(const FMovementDecisionContext& Context) const
+float UMovementChainData::GetDistanceScore(const FMovementDecisionContext& Context) const
 {
     float Score = 0.0f;
 
@@ -80,7 +80,7 @@ float UMovementChainDataa::GetDistanceScore(const FMovementDecisionContext& Cont
     return Score;
 }
 
-float UMovementChainDataa::GetTargetMovementScore(const FMovementDecisionContext& Context) const
+float UMovementChainData::GetTargetMovementScore(const FMovementDecisionContext& Context) const
 {
     float Score = 0.0f;
 

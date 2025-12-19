@@ -46,6 +46,8 @@ public:
     FStateInitParams() = default;
 };
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnStateTransitionRequested, const FStateTransitionRequest&);
+
 class UAC_StateManager;
 class UAC_EnemyMovementManager;
 
@@ -76,14 +78,10 @@ public:
     UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (Categories = "AI.State"))
     FGameplayTag StateTag;
 
+    FOnStateTransitionRequested OnStateTransitionRequested;
+
 protected:
-    virtual bool ExitRequest(FString Reason, FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest());
-
-    UAttackDataBase* GetSelectedAttackAbilityData() const;
-
-    //FComingAttackReactionData GetSelectedReactionData() const;
-
-    UGAS_GameplayAbilityBase* GetSelectedAttackAbilityCDO() const;
+    void BroadcastTransition(const FGameplayTag& TargetStateTag, TSharedPtr<FStatePayloadBase> Payload, const FString& Reason);
 
 protected:
     UPROPERTY(BlueprintReadOnly)

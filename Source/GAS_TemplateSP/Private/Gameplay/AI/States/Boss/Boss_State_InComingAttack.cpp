@@ -69,19 +69,13 @@ void UBoss_State_InComingAttack::ActivateDodgeAbility(UComingAttackReactionData*
 	}
 	else
 	{
-		bool bExitRequestSucces = ExitRequest("Dodge Ability Cannot Executed");
-		if (!bExitRequestSucces)
-		{
-			BindTargetComingAttackEnd();
-		}
+		BroadcastTransition(FGameplayTag(), nullptr, "Dodge Ability activation is failed.");
 	}
 }
 
 void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FCustomAbilityEndedData& ReactionMovementEndedData)
 {
-	// Execution path if the function was already called on the Game Thread.
-	UE_LOG(LogTemp, Warning, TEXT("UBoss_State_InComingAttack: OnDodgeAbilityEnded entered."));
-	ExitRequest("OnDodgeAbilityEnded");
+	BroadcastTransition(FGameplayTag(), nullptr, "Dodge Ability is ended.");
 }
 
 void UBoss_State_InComingAttack::OnExit_Implementation()

@@ -64,11 +64,18 @@ struct FTakeHitStatePayload : public FStatePayloadBase
 
 struct FStateTransitionRequest
 {
+	FGameplayTag SourceStateTag;
 	FGameplayTag TargetStateTag;
 	TSharedPtr<FStatePayloadBase> Payload;
 
-	FStateTransitionRequest(FGameplayTag InTargetTag, TSharedPtr<FStatePayloadBase> InPayload)
-		: TargetStateTag(InTargetTag), Payload(InPayload) {
+	FStateTransitionRequest(FGameplayTag InSourceStateTag, 
+		FGameplayTag InTargetTag, 
+		TSharedPtr<FStatePayloadBase> InPayload)
+		: 
+		SourceStateTag(InSourceStateTag),
+		TargetStateTag(InTargetTag), 
+		Payload(InPayload) 
+	{
 	}
 
 	FStateTransitionRequest() = default;

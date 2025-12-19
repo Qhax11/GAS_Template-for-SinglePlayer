@@ -16,6 +16,8 @@ public:
 	UPatrolingState();
 
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
+
+	void OnPatrollingStopped();
 	
 	virtual void OnExit_Implementation() override;
 

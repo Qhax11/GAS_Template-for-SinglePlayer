@@ -63,32 +63,14 @@ void UStateBase::OnExit_Implementation()
 	}
 }
 
-bool UStateBase::ExitRequest(FString Reason, FStateTransitionRequest StateTransitionRequest)
+void UStateBase::BroadcastTransition(const FGameplayTag& TargetStateTag, TSharedPtr<FStatePayloadBase> Payload, const FString& Reason)
 {
-	if (!StateManager)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: StateManager is null in: %s"), *GetName());
-		return false; 
-	}
+    FStateTransitionRequest Request;
+    Request.SourceStateTag = StateTag;
+    Request.TargetStateTag = TargetStateTag;
+    Request.Payload = Payload;
 
-	return StateManager->RequestStateTreeExit(StateTransitionRequest, Reason);
-}
-
-UAttackDataBase* UStateBase::GetSelectedAttackAbilityData() const
-{
-	if (!BehaviorDecisionComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: BehaviorDecisionComponent is null in: %s"), *GetName());
-		return nullptr;
-	}
-
-	return BehaviorDecisionComponent->LastSelectedAttackData;
-}
-
-UGAS_GameplayAbilityBase* UStateBase::GetSelectedAttackAbilityCDO() const
-{
-	UAttackDataBase* SelectedAttackData = GetSelectedAttackAbilityData();
-	return SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+    OnStateTransitionRequested.Broadcast(Request);
 }
 
 

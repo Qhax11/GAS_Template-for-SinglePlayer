@@ -109,8 +109,7 @@ void UMovementState::TryEnterToAttackState()
 		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
 		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(SelectedAttackData);
 
-		FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest(GAS_Tags::TAG_AI_State_Attack, AttackPayload);
-		ExitRequest("Target is in range", StateTransitionRequest);
+		BroadcastTransition(GAS_Tags::TAG_AI_State_Attack, AttackPayload, "Target is in range");
 	}
 	else if (MovementRangeResult == EMovementRangeResult::TooFar) 
 	{
@@ -136,7 +135,7 @@ void UMovementState::OnBackStepEnded(const FCustomAbilityEndedData& ReactionMove
 
 void UMovementState::OnMovementChainEnded()
 {
-	ExitRequest("MovementChain is ended");
+	BroadcastTransition(FGameplayTag(), nullptr, "MovementChain ended");
 }
 
 void UMovementState::OnExit_Implementation()

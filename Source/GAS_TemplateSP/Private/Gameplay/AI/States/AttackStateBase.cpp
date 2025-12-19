@@ -92,13 +92,13 @@ void UAttackStateBase::ExecuteAttack(TSubclassOf<UGAS_GameplayAbilityBase> Selec
 	}
 	else
 	{
-		ExitRequest("Attack activation failed");
+		BroadcastTransition(FGameplayTag(), nullptr, "AttackAbility activation is failed.");
 	}
 }
 
 void UAttackStateBase::OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
-	ExitRequest("OnAttackAbilityEnded");
+	BroadcastTransition(FGameplayTag(), nullptr, "AttackAbility is ended.");
 }
 
 void UAttackStateBase::OnExit_Implementation()

@@ -40,7 +40,7 @@ void UVulnerableState::ActivateVulnerableAbility()
 	}
 	else
 	{
-		ExitRequest("Vulnerable ability couldn't executed");
+		BroadcastTransition(FGameplayTag(), nullptr, "Vulnerable Ability activation is failed.");
 	}
 }
 
@@ -52,7 +52,7 @@ void UVulnerableState::OnVulnerableAbilityEnded(const FCustomAbilityEndedData& D
 	}
 	else
 	{
-		ExitRequest("OnVulnerableAbilityEnded");
+		BroadcastTransition(FGameplayTag(), nullptr, "Vulnerable Ability is ended.");
 	}
 }
 

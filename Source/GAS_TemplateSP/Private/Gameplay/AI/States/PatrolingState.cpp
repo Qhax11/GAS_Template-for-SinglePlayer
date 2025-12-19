@@ -24,8 +24,13 @@ void UPatrolingState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return;
 	}
 
-	PatrolHandler->OnPatrollingStopped.AddUObject(this,&UPatrolingState::OnExit_Implementation);
+	PatrolHandler->OnPatrollingStopped.AddUObject(this,&UPatrolingState::OnPatrollingStopped);
 	PatrolHandler->StartPatrolling();
+}
+
+void UPatrolingState::OnPatrollingStopped()
+{
+	BroadcastTransition(FGameplayTag(), nullptr, "Patrolling is stopped.");
 }
 
 void UPatrolingState::OnExit_Implementation()

@@ -74,8 +74,6 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteCorrectiveMovement(UM
 	return ActivateMovementAbility(MovementData);
 }
 
-
-
 void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 {
 	if (MovementChainTracker.IsChainFinished())

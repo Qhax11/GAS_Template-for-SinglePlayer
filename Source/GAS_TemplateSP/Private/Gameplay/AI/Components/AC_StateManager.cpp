@@ -258,8 +258,28 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& TargetStateTag,
 
 bool UAC_StateManager::RequestStateTreeExit(const FStateTransitionRequest StateTransitionRequest, FString Reason)
 {
-	if (!CurrentState || !bActive)
+	if (!bActive) 
 	{
+		UE_LOG(LogTemp, Warning, TEXT("State: Manager: StateManager non active"));
+		return false;
+	}
+
+	if (!StateTransitionRequest.SourceStateTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: Manager: TransitionRequest SourceStateTag is invalid!."));
+		return false;
+	}
+
+	UStateBase* RequestSourceState = GetStateWithTag(StateTransitionRequest.SourceStateTag);
+	if (!RequestSourceState)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: Manager: RequestSourceState is null!."));
+		return false;
+	}
+
+	if (RequestSourceState != CurrentState) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: Manager: RequestSourceState is not CurrentState, Request failed."));
 		return false;
 	}
 

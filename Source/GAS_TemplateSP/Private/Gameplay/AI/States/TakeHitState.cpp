@@ -85,7 +85,7 @@ void UTakeHitState::TriggerTakeHitAbility(TSharedPtr<FTakeHitStatePayload> TakeH
 
 void UTakeHitState::OnTakeHitAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)
 {
-	ExitRequest("OnTakeHitAbilityEnded");
+	BroadcastTransition(FGameplayTag(), nullptr, "TakeHit Ability is ended.");
 }
 
 void UTakeHitState::OnExit_Implementation()

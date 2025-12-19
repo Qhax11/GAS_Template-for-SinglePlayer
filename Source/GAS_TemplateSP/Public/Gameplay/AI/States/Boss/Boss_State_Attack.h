@@ -14,15 +14,5 @@ class GAS_TEMPLATESP_API UBoss_State_Attack : public UAttackStateBase
 public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
-	void MakeShadowAttack();
-
-	UFUNCTION()
-	void ExecuteShadowAttack(const FGAS_TargetActorData& ShadowActorData);
-
-	UFUNCTION()
-	void OnShadowAttackAbilityEnded(const FCustomAbilityEndedData& ShadowAttackAbilityEndedData);
-
-	class UGA_BossShadowAttack* LastUsedShadowAttack;
-
 	virtual void OnExit_Implementation() override;
 };

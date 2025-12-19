@@ -109,7 +109,7 @@ void UInComingAttackState::BindTargetComingAttackEnd()
 
 void UInComingAttackState::OnComingAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
-	ExitRequest("OnComingAttackAbilityEnded");
+	BroadcastTransition(FGameplayTag(), nullptr, "ComingAttackAbility is ended.");
 }
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
@@ -209,18 +209,18 @@ void UInComingAttackState::OnParryAbilityEnded(const FCustomAbilityEndedData& Do
 {
 	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: OnParryAbilityEnded with knocback don't exit the state from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: ParryAbility is ended with knocback, don't exit the state from: %s"), *GetClass()->GetName());
 		return;
 	}
 	else
 	{
-		ExitRequest("Parry Ability Ended without knocback.");
+		BroadcastTransition(FGameplayTag(), nullptr, "Parry Ability ended with out knocback.");
 	}
 }
 
 void UInComingAttackState::OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
 {
-	ExitRequest("OnParryKnocbackAbilityEnded");
+	BroadcastTransition(FGameplayTag(), nullptr, "ParryKnocback Ability is ended.");
 }
 
 void UInComingAttackState::OnExit_Implementation()

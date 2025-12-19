@@ -58,7 +58,7 @@ void UCrowdEnemy_MovementState::OnStrafingAbilityEnded(const FCustomAbilityEnded
 
 void UCrowdEnemy_MovementState::OnWaitTimeFinished()
 {
-	ExitRequest("OnWaitTimeFinished");
+	BroadcastTransition(FGameplayTag(), nullptr, "Strafing timer is ended.");
 }
 
 void UCrowdEnemy_MovementState::OnExit_Implementation()

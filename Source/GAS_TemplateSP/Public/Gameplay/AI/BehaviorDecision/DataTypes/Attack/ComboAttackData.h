@@ -10,5 +10,8 @@ UCLASS()
 class GAS_TEMPLATESP_API UComboAttackData : public UAttackDataBase
 {
 	GENERATED_BODY()
+
+public:
+	UComboAttackData();
 	
 };

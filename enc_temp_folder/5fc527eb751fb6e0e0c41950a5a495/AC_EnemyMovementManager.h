@@ -53,7 +53,6 @@ public:
 		ActiveChain.Empty();
 		CurrentIndex = 0;
 		bIsActive = false;
-		CurrentMovementAbility = nullptr;
 	}
 
 	bool IsChainFinished() const
@@ -94,25 +93,38 @@ public:
 
 	bool ExecuteCorrectiveMovement(UMovementSingleData* MovementData);
 
-	UFUNCTION(BlueprintCallable)
-	void StopMovementAbilities();
-
-	void CancelMovementAbilities();
-
 	FOnMovementChainEnded OnMovementChainEnded;
 
 	FOnMovementExecutionEnded OnMovementExecutionEnded;
 
 private:
-	void TryExecuteNextMovementAbilityInChain();
-
-	// Generic activation - callback type belirler hangi flow'da olduðumuzu
-	UGAS_GameplayAbilityBase* ActivateAndBindMovementAbility(UMovementSingleData* MovementData, EMovementExecutionType ExecutionType, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
-
-	/*===============  HELPERS ===============*/
 	bool ValidateMovementData(UMovementSingleData* MovementData) const;
 
+private:
+	// Generic activation - callback type belirler hangi flow'da olduðumuzu
+	UGAS_GameplayAbilityBase* ActivateAndBindMovementAbility(
+		UMovementSingleData* MovementData,
+		EMovementExecutionType ExecutionType,
+		const FComingAttackPayload& AttackPayload = FComingAttackPayload()
+	);
+
+	void OnMovementAbilityExecutionEnded(const FCustomAbilityEndedData& EndData);
+
+	// For now, it's dodge.
+	UGAS_GameplayAbilityBase* ActivatedReactionAbility;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void StopMovementAbilities();
+
+	void CancelMovementAbilities();
+
 	void ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
+
+protected:
+	void TryExecuteNextMovementAbilityInChain();
+
+	void TryActivateMovementAbilityWithEventData(UMovementSingleData* MovemenData);
 
 	FGameplayTag GetRandomDirectionTag();
 
@@ -122,18 +134,12 @@ private:
     // May return an invalid tag if the input is invalid and no fallback is applied.
 	FGameplayTag ResolveAttackDirection(FGameplayTag AttackDirectionTag);
 
-	/*===============  CALLBACKS ===============*/
-	void OnMovementAbilityExecutionEnded(const FCustomAbilityEndedData& EndData);
-
 	UFUNCTION()
 	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
 
-	/*===============  STATE ===============*/
-	UPROPERTY()
-	UAC_HeroMovementListener* HeroMovementListener;
-
-	// For now, it's dodge.
-	UGAS_GameplayAbilityBase* ActivatedReactionAbility;
+private:
 	FMovementChainTracker MovementChainTracker;
 
+	UPROPERTY()
+	UAC_HeroMovementListener* HeroMovementListener;
 };

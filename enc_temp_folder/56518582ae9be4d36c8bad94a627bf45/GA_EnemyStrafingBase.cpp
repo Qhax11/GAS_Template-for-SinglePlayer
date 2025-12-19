@@ -18,6 +18,8 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	UE_LOG(LogTemp, Warning, TEXT(">>> Strafe Ability ACTIVATED: %s"), *GetName());
+
 	if (!TriggerEventData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
@@ -38,6 +40,7 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	}
 
 	CachedExpectedDuration = TriggerEventData->EventMagnitude;
+	UE_LOG(LogTemp, Warning, TEXT(">>> CachedExpectedDuration: %.2f"), CachedExpectedDuration);
 }
 
 void UGA_EnemyStrafingBase::ExecuteFindLocationQuery(FGameplayTag StrafeDirectionTag)
@@ -72,6 +75,8 @@ float UGA_EnemyStrafingBase::ConvertDirectionTagToFloat(FGameplayTag StrafeDirec
 
 void UGA_EnemyStrafingBase::OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result)
 {
+	UE_LOG(LogTemp, Warning, TEXT(">>> EQS Query FINISHED"));
+
 	if (!Result.IsValid() || Result->Items.Num() == 0)
 	{
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);

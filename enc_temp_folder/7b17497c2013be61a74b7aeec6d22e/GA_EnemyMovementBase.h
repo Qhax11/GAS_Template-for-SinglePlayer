@@ -6,6 +6,7 @@
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Navigation/PathFollowingComponent.h"
 #include "GA_EnemyMovementBase.generated.h"
 
 

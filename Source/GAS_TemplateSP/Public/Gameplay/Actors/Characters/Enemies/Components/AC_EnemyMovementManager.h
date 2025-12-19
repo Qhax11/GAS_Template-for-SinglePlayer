@@ -119,7 +119,7 @@ public:
 private:
 	/*===============  CALLBACKS ===============*/
 	UFUNCTION()
-	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
+	void OnMovementAbilityInChainEnded(const FCustomAbilityEndedData& AbilityEndedData);
 
 	/*===============  STATE ===============*/
 	UPROPERTY()

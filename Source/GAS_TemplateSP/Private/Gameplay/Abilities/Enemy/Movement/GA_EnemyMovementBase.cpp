@@ -13,6 +13,13 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo())
+	{
+		FGameplayTagContainer CancelTags;
+		CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Movement);
+		ASC->CancelAbilities(&CancelTags, nullptr, this);
+	}
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	EnemyCharacter = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
@@ -98,8 +105,7 @@ void UGA_EnemyMovementBase::RequestMoveToTarget(AActor* TargetActor)
 	FNavPathSharedPtr NavPath;
 	EnemyController->MoveTo(MoveReq, &NavPath);
 
-	EnemyController->GetPathFollowingComponent()->OnRequestFinished.AddUObject(
-		this, &UGA_EnemyMovementBase::OnMoveCompleted);
+	EnemyController->GetPathFollowingComponent()->OnRequestFinished.AddUObject(this, &UGA_EnemyMovementBase::OnMoveCompleted);
 }
 
 void UGA_EnemyMovementBase::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
@@ -109,10 +115,18 @@ void UGA_EnemyMovementBase::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 		return;
 	}
 
+	if (Result.Code == EPathFollowingResult::Aborted)
+	{
+		// Yeni movement başladı → NORMAL
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTo strafing was aborted: %s"), *GetName());
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+		return;
+	}
+
 	if (!Result.IsSuccess())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTo strafing failed or was aborted: %s"), *GetName());
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTo strafing failed: %s"), *GetName());
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 		return;
 	}
 
@@ -126,9 +140,12 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	bAbilityEnded = true;
 
-	if (EnemyController)
+	if (bWasCancelled)
 	{
-		EnemyController->StopMovement(); 
+		if (EnemyController)
+		{
+			EnemyController->StopMovement();
+		}
 	}
 
 	if (EnemyController && EnemyController->GetPathFollowingComponent())

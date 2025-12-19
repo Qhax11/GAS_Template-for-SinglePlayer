@@ -5,12 +5,12 @@
 
 bool UMovementSingleData::IsValidData() const
 {
-	if (!MovementAbilityClass || AbilityTriggerTag.IsValid())
+	if (!MovementAbilityClass || !AbilityTriggerTag.IsValid())
 	{
 		return false;
 	}
 
-	if (EnableDirectionPolicy && !DirectionPolicyTag.IsValid())
+	if (!EnableDirectionPolicy && !DirectionPolicyTag.IsValid())
 	{
 		return false;
 	}

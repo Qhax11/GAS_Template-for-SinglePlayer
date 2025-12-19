@@ -76,23 +76,27 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteCorrectiveMovement(UM
 
 void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 {
-	if (MovementChainTracker.IsChainFinished())
+	UMovementSingleData* MovementDataInChain = MovementChainTracker.GetCurrentValidMovement();
+	if (!MovementDataInChain)
 	{
-		StopChain();
 		OnMovementChainEnded.Broadcast();
+		StopChain();
 		return;
 	}
 
-	UMovementSingleData* MovementData = MovementChainTracker.GetCurrentValidMovement();
-	UGAS_GameplayAbilityBase* MovementAbility = ActivateMovementAbility(MovementData);
-	if (MovementAbility)
+	UGAS_GameplayAbilityBase* MovementAbilityInChain = ActivateMovementAbility(MovementDataInChain);
+	if (!MovementAbilityInChain)
 	{
-		MovementChainTracker.CurrentMovementAbility = MovementAbility;
+		UE_LOG(LogTemp, Log, 
+			TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementInChain activation failed, try next data!"));
+		MovementChainTracker.Advance();
+		TryExecuteNextMovementAbilityInChain();
 	}
 	else
 	{
-		MovementChainTracker.Advance();
-		TryExecuteNextMovementAbilityInChain();
+		MovementAbilityInChain->OnAbilityEnded.RemoveAll(this);
+		MovementAbilityInChain->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityInChainEnded);
+		MovementChainTracker.CurrentMovementAbility = MovementAbilityInChain;
 	}
 }
 
@@ -248,7 +252,7 @@ FGameplayTag UAC_EnemyMovementManager::ResolveAttackDirection(FGameplayTag Attac
 	return FGameplayTag();
 }
 
-void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)
+void UAC_EnemyMovementManager::OnMovementAbilityInChainEnded(const FCustomAbilityEndedData& AbilityEndedData)
 {
 	if (AbilityEndedData.AbilityThatEnded != MovementChainTracker.CurrentMovementAbility)
 	{
@@ -264,14 +268,27 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Movement Ability ended: %s."), *AbilityEndedData.AbilityThatEnded->GetName());
 	MovementChainTracker.Advance();
+
+	if (MovementChainTracker.IsChainFinished())
+	{
+		StopChain();
+		OnMovementChainEnded.Broadcast();
+		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain is finished."), *AbilityEndedData.AbilityThatEnded->GetName());
+		return;
+	}
+
 	TryExecuteNextMovementAbilityInChain();
 }
 
 void UAC_EnemyMovementManager::StopChain()
 {
-	InterruptByReaction();
+	if (MovementChainTracker.CurrentMovementAbility)
+	{
+		MovementChainTracker.CurrentMovementAbility->OnAbilityEnded.RemoveAll(this);
+	}
+
+	MovementChainTracker.CurrentMovementAbility = nullptr;
 	MovementChainTracker.ResetChain();
 }
 
@@ -279,7 +296,7 @@ void UAC_EnemyMovementManager::InterruptByReaction()
 {
 	if (!OwnerEnemyASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: CancelMovementAbilities: ASC is null"));
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: OwnerEnemyASC is null"));
 		return;
 	}
 

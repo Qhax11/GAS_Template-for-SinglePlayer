@@ -298,7 +298,6 @@ void UGA_MontageAbility::CleanupMotionWarping()
 void UGA_MontageAbility::CleanupPhaseTags()
 {
 	FGameplayTagContainer PhaseTagsToRemove;
-	PhaseTagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase);
 	PhaseTagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Startup);
 	PhaseTagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
 	PhaseTagsToRemove.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);

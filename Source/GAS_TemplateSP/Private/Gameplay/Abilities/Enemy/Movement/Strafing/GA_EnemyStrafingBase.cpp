@@ -101,6 +101,12 @@ void UGA_EnemyStrafingBase::OnStrafingLocationQueryFinished(TSharedPtr<FEnvQuery
 
 void UGA_EnemyStrafingBase::OnStrafingTimeEnd()
 {
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+	if (EnemyController)
+	{
+		EnemyController->StopMovement();
+	}
+
+	// It wasn't cancelled, we want this.
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 

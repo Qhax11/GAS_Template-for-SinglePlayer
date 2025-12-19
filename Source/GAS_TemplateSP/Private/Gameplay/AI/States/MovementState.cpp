@@ -109,7 +109,7 @@ void UMovementState::TryEnterToAttackState()
 		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
 		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(SelectedAttackData);
 
-		BroadcastTransition(GAS_Tags::TAG_AI_State_Attack, AttackPayload, "Target is in range");
+		BroadcastTransition(GAS_Tags::TAG_AI_State_Attack, AttackPayload, "Reached attack range");
 	}
 	else if (MovementRangeResult == EMovementRangeResult::TooFar) 
 	{
@@ -135,7 +135,14 @@ void UMovementState::OnBackStepEnded(const FCustomAbilityEndedData& ReactionMove
 
 void UMovementState::OnMovementChainEnded()
 {
-	BroadcastTransition(FGameplayTag(), nullptr, "MovementChain ended");
+	EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, SelectedAttackCDO->MinRange, SelectedAttackCDO->MaxRange);
+	if (MovementRangeResult == EMovementRangeResult::InRange) 
+	{
+		BroadcastTransition(FGameplayTag(), nullptr, "Reached attack range");
+		return;
+	}
+
+	StartMovementChain(MovementStateEnterPayload->SelectedMovementChainData);
 }
 
 void UMovementState::OnExit_Implementation()

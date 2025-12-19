@@ -48,16 +48,6 @@ void UAC_StateManager::BeginPlay()
 	}
 } 
 
-void UAC_StateManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	if (CurrentState)
-	{
-		CurrentState->OnExit();
-	}
-
-	Super::EndPlay(EndPlayReason);
-}
-
 void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
 {
 	CreateStates();
@@ -99,6 +89,7 @@ void UAC_StateManager::CreateStates()
 		}
 
 		NewState->StateInitalize(StateInitParams);
+		NewState->OnStateTransitionRequested.AddUObject(this,&UAC_StateManager::HandleStateTransitionRequested);
 		StateInstances.Add(NewState);
 	}
 }
@@ -106,11 +97,6 @@ void UAC_StateManager::CreateStates()
 void UAC_StateManager::StartLogic()
 {
 	RequestStateTreeEnter(StartState);
-}
-
-void UAC_StateManager::StopLogic()
-{
-	bActive = false;
 }
 
 void UAC_StateManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -153,7 +139,7 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag, TS
 	}
 	else if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_TargetDetected) 
 	{
-		HandleTargetDetected();
+		DecideNextStateBasedOnAttackRange();
 	}
 	else if (StateEventTag == GAS_Tags::TAG_AI_StateEvent_BackupReaction)
 	{
@@ -163,21 +149,6 @@ void UAC_StateManager::HandleIncomingEvent(const FGameplayTag& StateEventTag, TS
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: Manager: Unhandled StateEventTag: %s"), *StateEventTag.ToString());
 	}
-}
-
-void UAC_StateManager::HandleTargetDetected()
-{
-	if (!CurrentState || !BehaviorDecisionComponent)
-	{
-		return;
-	}
-
-	if (CurrentState->StateTag == GAS_Tags::TAG_AI_State_InComingAttack)
-	{
-		return;
-	}
-
-	DecideNextStateBasedOnAttackRange();
 }
 
 void UAC_StateManager::DecideNextStateBasedOnAttackRange()
@@ -214,6 +185,47 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 		TSharedPtr<FMovementStatePayload> MovementStatePayload = MakeShared<FMovementStatePayload>(BestMovementChainData, BestAttack);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement, MovementStatePayload);
 	}
+}
+
+void UAC_StateManager::HandleStateTransitionRequested(const FStateTransitionRequest& Request)
+{
+	if (!CurrentState)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: Manager: CurrentState is null."));
+		return;
+	}
+
+	// Only active state can request transition
+	if (CurrentState->StateTag != Request.SourceStateTag)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: Manager: RequestSourceState is not CurrentState, Request failed."));
+		return;
+	}
+
+	// ExitCondition check BEFORE exiting
+	if (!CurrentState->ExitCondition())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: Manager: Condition of %s is false, cannot exit"), *CurrentState->GetName());
+		return;
+	}
+
+	UStateBase* ExitingState = CurrentState;
+
+	// Important: set null BEFORE OnExit to avoid re-entrant callbacks treating it as current
+	CurrentState = nullptr;
+	ExitingState->OnExit();
+
+	// If state suggested a target, try it first
+	if (Request.TargetStateTag.IsValid())
+	{
+		if (RequestStateTreeEnter(Request.TargetStateTag, Request.Payload))
+		{
+			return;
+		}
+	}
+
+	// Fallback decision
+	DecideNextStateBasedOnAttackRange();
 }
 
 bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& TargetStateTag, TSharedPtr<FStatePayloadBase> EnterPayload)
@@ -256,66 +268,6 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& TargetStateTag,
 	}
 }
 
-bool UAC_StateManager::RequestStateTreeExit(const FStateTransitionRequest StateTransitionRequest, FString Reason)
-{
-	if (!bActive) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: StateManager non active"));
-		return false;
-	}
-
-	if (!StateTransitionRequest.SourceStateTag.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: TransitionRequest SourceStateTag is invalid!."));
-		return false;
-	}
-
-	UStateBase* RequestSourceState = GetStateWithTag(StateTransitionRequest.SourceStateTag);
-	if (!RequestSourceState)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: RequestSourceState is null!."));
-		return false;
-	}
-
-	if (RequestSourceState != CurrentState) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: RequestSourceState is not CurrentState, Request failed."));
-		return false;
-	}
-
-	if (bEnableDebug)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: %s state has been requested to exit, reason is: %s"), *CurrentState->GetName(), *Reason);
-	}
-
-	if (!CurrentState->ExitCondition()) 
-	{
-		if (bEnableDebug)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("State: Manager: Condition of %s is false, cannot exit"), *CurrentState->GetName());
-		}
-		return false;
-	}
-
-	const FGameplayTag ExitingStateTag = CurrentState->StateTag;
-	CurrentState->OnExit();
-	CurrentState = nullptr;
-
-	// If request coming with trancastion tag we directly enter
-	if (StateTransitionRequest.TargetStateTag.IsValid())
-	{
-		return RequestStateTreeEnter(StateTransitionRequest.TargetStateTag, StateTransitionRequest.Payload);	
-	}
-
-	// ?? SADECE ATTACK'TAN ÇIKIÞTA KARAR VER
-	if (ExitingStateTag == GAS_Tags::TAG_AI_State_Attack)
-	{
-		DecideNextStateBasedOnAttackRange();
-	}
-
-	return true;
-}
-
 UStateBase* UAC_StateManager::GetStateWithTag(const FGameplayTag& StateTag) const
 {
 	if (!StateTag.IsValid()) 
@@ -335,8 +287,19 @@ UStateBase* UAC_StateManager::GetStateWithTag(const FGameplayTag& StateTag) cons
 	return nullptr;
 }
 
+void UAC_StateManager::StopLogic()
+{
+	bActive = false;
+}
 
+void UAC_StateManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (CurrentState)
+	{
+		CurrentState->OnExit();
+	}
 
-
+	Super::EndPlay(EndPlayReason);
+}
 
 

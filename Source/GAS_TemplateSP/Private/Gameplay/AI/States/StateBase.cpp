@@ -70,6 +70,8 @@ void UStateBase::BroadcastTransition(const FGameplayTag& TargetStateTag, TShared
     Request.TargetStateTag = TargetStateTag;
     Request.Payload = Payload;
 
+    UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: %s has been BroadcastTransition, Reason is: %s"), *StateTag.ToString(), *Reason);
+
     OnStateTransitionRequested.Broadcast(Request);
 }
 

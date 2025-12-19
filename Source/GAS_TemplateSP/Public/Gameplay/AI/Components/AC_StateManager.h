@@ -19,8 +19,10 @@ public:
 
 	virtual void BeginPlay() override;
 
-	void EndPlay(const EEndPlayReason::Type EndPlayReason);
+	UFUNCTION(BlueprintCallable)
+	void StopLogic();
 
+protected:
 	UFUNCTION()
 	void OnAbilitySetGiven(const AActor* OwnerActor);
 
@@ -28,32 +30,25 @@ public:
 
 	void StartLogic();
 
-	UFUNCTION(BlueprintCallable)
-	void StopLogic();
-
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
+public:
 	void HandleIncomingEvent(const FGameplayTag& StateEventTag, TSharedPtr<FStatePayloadBase> EnterPayload = nullptr);
 
-	bool RequestStateTreeExit(const FStateTransitionRequest StateTransitionRequest, FString Reason);
-
-	UPROPERTY(EditDefaultsOnly)
-	bool bEnableDebug = false;
-
-	UPROPERTY(BlueprintReadOnly)
-	UStateBase* CurrentState = nullptr;
-
 protected:
+	void HandleStateTransitionRequested(const FStateTransitionRequest& Request);
+
+	void DecideNextStateBasedOnAttackRange();
+
 	bool RequestStateTreeEnter(const FGameplayTag& TargetStateTag, TSharedPtr<FStatePayloadBase> EnterPayload = nullptr);
-
-	void HandleTargetDetected();
-
-	void  DecideNextStateBasedOnAttackRange();
 
 	// Find the instance of the requested state
 	UStateBase* GetStateWithTag(const FGameplayTag& StateTag) const;
 
 	bool bActive = true;
+
+	UPROPERTY(BlueprintReadOnly)
+	UStateBase* CurrentState = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "States")
 	TArray<TSubclassOf<UStateBase>> StateClassArray;
@@ -69,4 +64,10 @@ protected:
 
 	UPROPERTY()
 	class UAC_TagDelegates* EnemyTagDelegatesComponent;
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	bool bEnableDebug = false;
+
+	void EndPlay(const EEndPlayReason::Type EndPlayReason);
 };

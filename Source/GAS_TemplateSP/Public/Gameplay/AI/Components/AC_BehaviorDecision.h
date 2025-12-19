@@ -69,9 +69,6 @@ public:
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     float GetTargetDistance() const;
 
-    UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
-    bool IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass) const;
-
     // State
     UPROPERTY(BlueprintReadOnly, Category = "AI|Behavior Decision")
     UAttackDataBase* LastSelectedAttackData;

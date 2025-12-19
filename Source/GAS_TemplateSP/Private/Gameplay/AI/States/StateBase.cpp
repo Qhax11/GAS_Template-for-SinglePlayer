@@ -74,17 +74,6 @@ bool UStateBase::ExitRequest(FString Reason, FStateTransitionRequest StateTransi
 	return StateManager->RequestStateTreeExit(StateTransitionRequest, Reason);
 }
 
-bool UStateBase::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass)
-{
-	if (!BehaviorDecisionComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UStateBase: BehaviorDecisionComponent is null in: %s"), *GetName());
-		return false;
-	}
-
-	return BehaviorDecisionComponent->IsAttackInRange(AbilityClass);
-}
-
 UAttackDataBase* UStateBase::GetSelectedAttackAbilityData() const
 {
 	if (!BehaviorDecisionComponent)

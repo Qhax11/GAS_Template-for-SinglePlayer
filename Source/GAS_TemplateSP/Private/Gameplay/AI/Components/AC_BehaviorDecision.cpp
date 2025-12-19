@@ -141,22 +141,5 @@ float UAC_BehaviorDecision::GetTargetDistance() const
     return OwnerController->GetTargetHeroDistance();
 }
 
-bool UAC_BehaviorDecision::IsAttackInRange(TSubclassOf<class UGAS_GameplayAbilityBase> AbilityClass) const
-{
-    if (!AbilityClass)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: Ability Class is null in: %s"), *GetName());
-        return false;
-    }
 
-    UGAS_GameplayAbilityBase* AbilityCDO = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-    if (!AbilityCDO) 
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: AbilityCDO is null in: %s"), *GetName());
-        return false;
-    }
-
-    float Distance = GetTargetDistance();
-    return (AbilityCDO->MaxRange > Distance && AbilityCDO->MinRange < Distance);
-}
 

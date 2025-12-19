@@ -14,7 +14,7 @@
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
-
+#include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 
 UAC_StateManager::UAC_StateManager()
 {
@@ -201,7 +201,9 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 		return;
 	}	
 
-	if (BehaviorDecisionComponent->IsAttackInRange(BestAttack->AbilityClass))
+	const UGAS_GameplayAbilityBase* AttackCDO = BestAttack->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+	const EMovementRangeResult RangeResult = CombatDistance::EvaluateAttackRange(OwnerEnemyBase, HeroBase, AttackCDO->MinRange, AttackCDO->MaxRange);
+	if (RangeResult == EMovementRangeResult::InRange) 
 	{
 		TSharedPtr<FAttackStatePayload> AttackStatePayload = MakeShared<FAttackStatePayload>(BestAttack);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Attack, AttackStatePayload);
@@ -275,6 +277,7 @@ bool UAC_StateManager::RequestStateTreeExit(const FStateTransitionRequest StateT
 		return false;
 	}
 
+	const FGameplayTag ExitingStateTag = CurrentState->StateTag;
 	CurrentState->OnExit();
 	CurrentState = nullptr;
 
@@ -284,7 +287,12 @@ bool UAC_StateManager::RequestStateTreeExit(const FStateTransitionRequest StateT
 		return RequestStateTreeEnter(StateTransitionRequest.TargetStateTag, StateTransitionRequest.Payload);	
 	}
 
-	DecideNextStateBasedOnAttackRange();
+	// ?? SADECE ATTACK'TAN ÇIKIÞTA KARAR VER
+	if (ExitingStateTag == GAS_Tags::TAG_AI_State_Attack)
+	{
+		DecideNextStateBasedOnAttackRange();
+	}
+
 	return true;
 }
 

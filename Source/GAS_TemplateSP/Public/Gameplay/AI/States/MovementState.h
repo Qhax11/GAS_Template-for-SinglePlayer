@@ -49,14 +49,10 @@
 
 class UMovementChainData;
 class UMovementSingleData;
+class UGAS_GameplayAbilityBase;
 struct FMovementExecutionEndedData;
 
-enum class EMovementRangeResult : uint8
-{
-	TooClose,
-	InRange,
-	TooFar
-};
+
 
 UCLASS()
 class GAS_TEMPLATESP_API UMovementState : public UStateBase
@@ -78,8 +74,6 @@ public:
 
 protected:
 	void TryEnterToAttackState();
-
-	EMovementRangeResult EvaluateAttackRange() const;
 
 	void TryBackStep();
 

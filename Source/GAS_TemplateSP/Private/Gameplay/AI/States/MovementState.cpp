@@ -35,6 +35,14 @@ bool UMovementState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return false;
 	}
 
+	const UGAS_GameplayAbilityBase* AttackCDO = MovementStateEnterPayload->SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
+
+	EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, AttackCDO->MinRange, AttackCDO->MaxRange);
+	if (MovementRangeResult == EMovementRangeResult::InRange)
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -85,7 +93,7 @@ void UMovementState::TryEnterToAttackState()
 		return;
 	}
 
-	EMovementRangeResult MovementRangeResult = EvaluateAttackRange();
+	EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, SelectedAttackCDO->MinRange, SelectedAttackCDO->MaxRange);
 	if (MovementRangeResult == EMovementRangeResult::TooClose) 
 	{
 		TryBackStep();
@@ -104,30 +112,6 @@ void UMovementState::TryEnterToAttackState()
 	{
 		// Chain is continue for distance closing
 	}
-}
-
-EMovementRangeResult UMovementState::EvaluateAttackRange() const
-{
-	if (!SelectedAttackCDO || !IsValid(Enemy) || !IsValid(HeroTarget))
-	{
-		return EMovementRangeResult::TooFar;
-	}
-
-	const float Distance = CombatDistance::GetDistance(Enemy, HeroTarget);
-	const float MinRange = FMath::Max(0.f, SelectedAttackCDO->MinRange);
-	const float MaxRange = SelectedAttackCDO->MaxRange;
-
-	if (Distance < MinRange)
-	{
-		return EMovementRangeResult::TooClose;
-	}
-
-	if (Distance > MaxRange)
-	{
-		return EMovementRangeResult::TooFar;
-	}
-
-	return EMovementRangeResult::InRange;
 }
 
 void UMovementState::TryBackStep()

@@ -79,8 +79,6 @@ public:
 protected:
     virtual bool ExitRequest(FString Reason, FStateTransitionRequest StateTransitionRequest = FStateTransitionRequest());
 
-    bool IsAttackInRange(TSubclassOf<UGAS_GameplayAbilityBase> AbilityClass);
-
     UAttackDataBase* GetSelectedAttackAbilityData() const;
 
     //FComingAttackReactionData GetSelectedReactionData() const;

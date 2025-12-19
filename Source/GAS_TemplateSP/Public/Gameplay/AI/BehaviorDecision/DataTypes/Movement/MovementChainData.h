@@ -34,6 +34,8 @@ public:
 
 	virtual bool IsChain() const override { return true; }
 
+	bool IsChainEmpty();
+
 protected:
 	virtual float GetBehaviorStateScore(const FMovementDecisionContext& Context) const;
 

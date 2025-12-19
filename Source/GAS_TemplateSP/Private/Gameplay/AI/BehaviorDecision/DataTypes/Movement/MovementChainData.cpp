@@ -55,6 +55,11 @@ float UMovementChainData::GetScore(const FMovementDecisionContext& Context, FMov
     return TotalScore;
 }
 
+bool UMovementChainData::IsChainEmpty()
+{
+    return false;
+}
+
 float UMovementChainData::GetBehaviorStateScore(const FMovementDecisionContext& Context) const
 {
     float Score = 0.0f;

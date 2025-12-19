@@ -50,9 +50,7 @@
 class UMovementChainData;
 class UMovementSingleData;
 class UGAS_GameplayAbilityBase;
-struct FMovementExecutionEndedData;
-
-
+struct FCustomAbilityEndedData;
 
 UCLASS()
 class GAS_TEMPLATESP_API UMovementState : public UStateBase
@@ -67,6 +65,8 @@ public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 protected:
+	virtual void EvaluateAndStartMovement(TSharedPtr<FMovementStatePayload> Payload);
+
 	void StartMovementChain(UMovementChainData* MovementChainData);
 
 public:
@@ -77,7 +77,7 @@ protected:
 
 	void TryBackStep();
 
-	void OnBackStepEnded(const FMovementExecutionEndedData& ReactionMovementEndedData);
+	void OnBackStepEnded(const FCustomAbilityEndedData& ReactionMovementEndedData);
 
 	UFUNCTION()
 	void OnMovementChainEnded();

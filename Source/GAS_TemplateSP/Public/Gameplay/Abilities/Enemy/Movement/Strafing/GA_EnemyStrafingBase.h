@@ -27,9 +27,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MinStrafeDistance = 150.f;
 
-	UPROPERTY()
-	float LastActivationTime = -100.f;
-
 	virtual void StartEQSForStrafingLocation(FGameplayTag StrafeDirectionTag);
 
 	float ConvertStrafeDirectionTagToFloat(FGameplayTag StrafeDirectionTag);

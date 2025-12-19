@@ -91,7 +91,7 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 
 		if (UAC_EnemyMovementManager* EnemyMovementManagerComp = BossCharacter->GetEnemyMovementManagerComponent())
 		{
-			EnemyMovementManagerComp->StopMovementAbilities();
+			EnemyMovementManagerComp->StopChain();
 		}
 
 		OnBossShadowAttackCompleted.Broadcast(TargetActorData);
@@ -125,7 +125,7 @@ void UGA_BossShadowAttack::EndAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	if (UAC_EnemyMovementManager* EnemyMovementManagerComp = BossCharacter->GetEnemyMovementManagerComponent())
 	{
-		EnemyMovementManagerComp->StopMovementAbilities();
+		EnemyMovementManagerComp->StopChain();
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

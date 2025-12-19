@@ -3,10 +3,10 @@
 #pragma once
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementDataBase.h"
+#include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "MovementSingleData.generated.h"
 
-class UGAS_GameplayAbilityBase;
 class UAbilitySystemComponent;
 
 /**
@@ -46,6 +46,9 @@ UCLASS(EditInlineNew, DefaultToInstanced)
 class GAS_TEMPLATESP_API UMovementSingleData : public UMovementDataBase
 {
 	GENERATED_BODY()
+
+public:
+    bool IsValidData() const;
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Movement. Used for debugging or referencing in logic."))

@@ -16,16 +16,6 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	// === ANTI-SPAM GUARD, LegShake problem, QuickEndAbility, TO:DO Problem is in EQS probably. ================
-	const float Now = GetWorld()->GetTimeSeconds();
-	if (Now - LastActivationTime < 0.25f)
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
-		return;
-	}
-	LastActivationTime = Now;
-	// ===========================================
-
 	if (!TriggerEventData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
@@ -45,19 +35,17 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
-	// Manually ending
-	if (TriggerEventData->EventMagnitude > 0)
+	float ExpectedDuration = TriggerEventData->EventMagnitude;
+	ExpectedDuration = FMath::Max(ExpectedDuration, 0.25f);
+	if (UWorld* World = GetWorld())
 	{
-		if (UWorld* World = GetWorld())
-		{
-			World->GetTimerManager().SetTimer(
-				MovementTimerHandle,
-				this,
-				&UGA_EnemyStrafingBase::OnStrafingTimeEnd,
-				TriggerEventData->EventMagnitude,
-				false
-			);
-		}
+		World->GetTimerManager().SetTimer(
+			MovementTimerHandle,
+			this,
+			&UGA_EnemyStrafingBase::OnStrafingTimeEnd,
+			ExpectedDuration,
+			false
+		);
 	}
 }
 

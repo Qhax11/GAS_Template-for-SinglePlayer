@@ -3,31 +3,15 @@
 #pragma once
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyBase.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "AC_EnemyMovementManager.generated.h"
 
 class UMovementDataBase;
-class UMovementSingleData;
-class UMovementChainDataa;
-
-enum class EMovementExecutionType : uint8
-{
-	Reaction,
-	Corrective,
-	Chain
-};
-
-struct FMovementExecutionEndedData
-{
-	bool bWasCancelled = false;
-	EMovementExecutionType ExecutionType = EMovementExecutionType::Chain;
-	UMovementSingleData* MovementData = nullptr;
-};
+class UMovementChainData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnMovementExecutionEnded, const FMovementExecutionEndedData&);
 
 USTRUCT()
 struct FMovementChainTracker
@@ -39,26 +23,23 @@ public:
 	UGAS_GameplayAbilityBase* CurrentMovementAbility = nullptr;
 	TArray<UMovementSingleData*> ActiveChain;
 	int32 CurrentIndex = 0;
-	bool bIsActive = false;
 
 	void StartChain(const TArray<UMovementSingleData*>& InChain)
 	{
 		ActiveChain = InChain;
 		CurrentIndex = 0;
-		bIsActive = true;
 	}
 
 	void ResetChain()
 	{
 		ActiveChain.Empty();
 		CurrentIndex = 0;
-		bIsActive = false;
 		CurrentMovementAbility = nullptr;
 	}
 
 	bool IsChainFinished() const
 	{
-		return !bIsActive || !ActiveChain.IsValidIndex(CurrentIndex);
+		return GetCurrentValidMovement() == nullptr;
 	}
 
 	UMovementSingleData* GetCurrentMovementAbilityInChain() const
@@ -69,6 +50,19 @@ public:
 	void Advance()
 	{
 		++CurrentIndex;
+	}
+
+	UMovementSingleData* GetCurrentValidMovement() const
+	{
+		for (int32 Index = CurrentIndex; Index < ActiveChain.Num(); ++Index)
+		{
+			UMovementSingleData* Data = ActiveChain[Index];
+			if (IsValid(Data) && Data->IsValidData())
+			{
+				return Data;
+			}
+		}
+		return nullptr;
 	}
 };
 
@@ -89,28 +83,29 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ExecuteMovementChain(UMovementChainData* MovementChain);
 
-	// Reaction context (dodge, evade, panic, vs)
-	bool ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload);
+	// Executes a defensive reaction movement in response to an incoming attack (e.g. dodge, evade, panic).
+	UGAS_GameplayAbilityBase* ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload);
 
-	bool ExecuteCorrectiveMovement(UMovementSingleData* MovementData);
+	// Executes a non-reactive corrective movement to adjust positioning (e.g. step-back, micro-reposition).
+	UGAS_GameplayAbilityBase* ExecuteCorrectiveMovement(UMovementSingleData* MovementData);
 
 	UFUNCTION(BlueprintCallable)
-	void StopMovementAbilities();
+	void StopChain();
 
-	void CancelMovementAbilities();
+	void InterruptByReaction();
 
 	FOnMovementChainEnded OnMovementChainEnded;
-
-	FOnMovementExecutionEnded OnMovementExecutionEnded;
 
 private:
 	void TryExecuteNextMovementAbilityInChain();
 
 	// Generic activation - callback type belirler hangi flow'da olduðumuzu
-	UGAS_GameplayAbilityBase* ActivateAndBindMovementAbility(UMovementSingleData* MovementData, EMovementExecutionType ExecutionType, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
+	UGAS_GameplayAbilityBase* ActivateMovementAbility(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
 
 	/*===============  HELPERS ===============*/
 	bool ValidateMovementData(UMovementSingleData* MovementData) const;
+
+	bool ValidateMovementChainData(UMovementChainData* MovementChainData) const;
 
 	void ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
 
@@ -123,8 +118,6 @@ private:
 	FGameplayTag ResolveAttackDirection(FGameplayTag AttackDirectionTag);
 
 	/*===============  CALLBACKS ===============*/
-	void OnMovementAbilityExecutionEnded(const FCustomAbilityEndedData& EndData);
-
 	UFUNCTION()
 	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
 
@@ -135,5 +128,4 @@ private:
 	// For now, it's dodge.
 	UGAS_GameplayAbilityBase* ActivatedReactionAbility;
 	FMovementChainTracker MovementChainTracker;
-
 };

@@ -4,9 +4,8 @@
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
-#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
-#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Tags/GAS_Tags.h"
@@ -34,73 +33,54 @@ void UAC_EnemyMovementManager::BeginPlay()
 
 void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainData* MovementChain)
 {
-	if (!MovementChain || !OwnerEnemyASC)
+	if (!ValidateMovementChainData(MovementChain)) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementChainData or OwnerEnemyASC is null in: %s!"), *GetName());
 		return;
 	}
 
-	if (MovementChainTracker.bIsActive)
-	{
-		/*
-		if (MovementChainTracker.IsCurrentAbilityStillValid())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Chain already active and current ability still valid. Skipping start."));
-			return;
-		}
-		*/
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain is marked active but ability is invalid. Restarting chain."));
-		MovementChainTracker.ResetChain();
-	}
-
-	if (MovementChain->MovementChain.Num() > 0)
-	{
-		MovementChainTracker.StartChain(MovementChain->MovementChain);
-		TryExecuteNextMovementAbilityInChain();
-	}
+	MovementChainTracker.StartChain(MovementChain->MovementChain);
+	TryExecuteNextMovementAbilityInChain();
 }
 
-bool UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload)
+UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload)
 {
 	if (!ValidateMovementData(MovementData))
 	{
-		return false;
+		return nullptr;
 	}
 
-	// Reaction movements interrupt everything
-	StopMovementAbilities();
+	// Reaction chain interrupt everything
+	StopChain();
 
 	// Activate with attack direction context
-	UGAS_GameplayAbilityBase* ReactionAbility = ActivateAndBindMovementAbility(MovementData, EMovementExecutionType::Reaction, AttackPayload);
+	UGAS_GameplayAbilityBase* ReactionAbility = ActivateMovementAbility(MovementData, AttackPayload);
 	if (!ReactionAbility)
 	{
-		return false;
+		return nullptr;
 	}
 
 	ActivatedReactionAbility = ReactionAbility;
-	return true;
+	return ReactionAbility;
 }
 
-bool UAC_EnemyMovementManager::ExecuteCorrectiveMovement(UMovementSingleData* MovementData)
+UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteCorrectiveMovement(UMovementSingleData* MovementData)
 {
 	if (!ValidateMovementData(MovementData))
 	{
-		return false;
+		return nullptr;
 	}
 
-	// Corrective movements don't need attack direction
-	UGAS_GameplayAbilityBase* CorrectiveAbility = ActivateAndBindMovementAbility(MovementData, EMovementExecutionType::Corrective);
-
-	return CorrectiveAbility != nullptr;
+	// Corrective movements don't need coming attack paylod
+	return ActivateMovementAbility(MovementData);
 }
 
-void UAC_EnemyMovementManager::StopMovementAbilities()
+void UAC_EnemyMovementManager::StopChain()
 {
-	CancelMovementAbilities();
+	InterruptByReaction();
 	MovementChainTracker.ResetChain();
 }
 
-void UAC_EnemyMovementManager::CancelMovementAbilities()
+void UAC_EnemyMovementManager::InterruptByReaction()
 {
 	if (!OwnerEnemyASC)
 	{
@@ -118,14 +98,13 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 {
 	if (MovementChainTracker.IsChainFinished())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain finished."));
-		StopMovementAbilities();
+		StopChain();
 		OnMovementChainEnded.Broadcast();
 		return;
 	}
 
-	UMovementSingleData* MovementData = MovementChainTracker.GetCurrentMovementAbilityInChain();
-	UGAS_GameplayAbilityBase* MovementAbility = ActivateAndBindMovementAbility(MovementData, EMovementExecutionType::Chain);
+	UMovementSingleData* MovementData = MovementChainTracker.GetCurrentValidMovement();
+	UGAS_GameplayAbilityBase* MovementAbility = ActivateMovementAbility(MovementData);
 	if (MovementAbility)
 	{
 		MovementChainTracker.CurrentMovementAbility = MovementAbility;
@@ -137,7 +116,7 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	}
 }
 
-UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ActivateAndBindMovementAbility(UMovementSingleData* MovementData, EMovementExecutionType ExecutionType, const FComingAttackPayload& AttackPayload)
+UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ActivateMovementAbility(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload)
 {
 	if (!ValidateMovementData(MovementData))
 	{
@@ -154,28 +133,7 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ActivateAndBindMovementAbili
 	EventData.InstigatorTags.AddTag(MovementData->DirectionTag);
 	EventData.EventMagnitude = MovementData->AbilityEventMagnitude;
 
-	// Step 3: Activate ability
-	UGAS_GameplayAbilityBase* ActivatedAbility = OwnerEnemyASC->TryActivateAbilityByClassWithEventData(
-		MovementData->MovementAbilityClass, EventData);
-	if (!ActivatedAbility)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: Failed to activate movement ability: %s"), *MovementData->MovementAbilityClass->GetName());
-		return nullptr;
-	}
-
-	// Step 4: Bind callback
-	ActivatedAbility->OnAbilityEnded.RemoveAll(this);
-	if (ExecutionType == EMovementExecutionType::Chain)
-	{
-		ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
-	}
-	// Reaction or Corrective
-	else
-	{
-		ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded);
-	}
-
-	return ActivatedAbility;
+	return OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementData->MovementAbilityClass, EventData);
 }
 
 bool UAC_EnemyMovementManager::ValidateMovementData(UMovementSingleData* MovementData) const
@@ -201,6 +159,23 @@ bool UAC_EnemyMovementManager::ValidateMovementData(UMovementSingleData* Movemen
 	if (!MovementData->MovementAbilityClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementAbilityClass is null!"));
+		return false;
+	}
+
+	return true;
+}
+
+bool UAC_EnemyMovementManager::ValidateMovementChainData(UMovementChainData* MovementChainData) const
+{
+	if (!MovementChainData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementData is null!"));
+		return false;
+	}
+
+	if (!OwnerEnemyASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: OwnerEnemyASC is null!"));
 		return false;
 	}
 
@@ -293,14 +268,6 @@ FGameplayTag UAC_EnemyMovementManager::ResolveAttackDirection(FGameplayTag Attac
 	return FGameplayTag();
 }
 
-void UAC_EnemyMovementManager::OnMovementAbilityExecutionEnded(const FCustomAbilityEndedData& EndData)
-{
-	FMovementExecutionEndedData EndedData;
-	EndedData.bWasCancelled = EndData.bWasCancelled;
-
-	OnMovementExecutionEnded.Broadcast(EndedData);
-}
-
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)
 {
 	if (AbilityEndedData.AbilityThatEnded != MovementChainTracker.CurrentMovementAbility)
@@ -313,7 +280,7 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 	if (AbilityEndedData.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
-		StopMovementAbilities();
+		StopChain();
 		return;
 	}
 

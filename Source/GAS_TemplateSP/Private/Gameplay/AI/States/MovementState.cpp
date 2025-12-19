@@ -36,7 +36,6 @@ bool UMovementState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 	}
 
 	const UGAS_GameplayAbilityBase* AttackCDO = MovementStateEnterPayload->SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-
 	EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, AttackCDO->MinRange, AttackCDO->MaxRange);
 	if (MovementRangeResult == EMovementRangeResult::InRange)
 	{
@@ -56,7 +55,12 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	check(MovementStateEnterPayload->SelectedAttackData->AbilityClass);
 
 	SelectedAttackCDO = MovementStateEnterPayload->SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	StartMovementChain(MovementStateEnterPayload->SelectedMovementChainData);
+	EvaluateAndStartMovement(MovementStateEnterPayload);
+}
+
+void UMovementState::EvaluateAndStartMovement(TSharedPtr<FMovementStatePayload> Payload)
+{
+	StartMovementChain(Payload->SelectedMovementChainData);
 }
 
 void UMovementState::StartMovementChain(UMovementChainData* MovementChainData)
@@ -100,7 +104,7 @@ void UMovementState::TryEnterToAttackState()
 	}
 	else if (MovementRangeResult == EMovementRangeResult::InRange) 
 	{
-		MovementManager->StopMovementAbilities();
+		MovementManager->StopChain();
 
 		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
 		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(SelectedAttackData);
@@ -116,16 +120,16 @@ void UMovementState::TryEnterToAttackState()
 
 void UMovementState::TryBackStep()
 {
-	const bool ExecutionSucces = MovementManager->ExecuteCorrectiveMovement(StepBackMovementData);
-	if (ExecutionSucces)
+	UGAS_GameplayAbilityBase* CorrectiveMovement = MovementManager->ExecuteCorrectiveMovement(StepBackMovementData);
+	if (CorrectiveMovement)
 	{
-		MovementManager->OnMovementExecutionEnded.RemoveAll(this);
-		MovementManager->OnMovementExecutionEnded.AddUObject(this, &UMovementState::OnBackStepEnded);
+		CorrectiveMovement->OnAbilityEnded.RemoveAll(this);
+		CorrectiveMovement->OnAbilityEnded.AddUObject(this, &UMovementState::OnBackStepEnded);
 		bStepBackActive = true;
 	}
 }
 
-void UMovementState::OnBackStepEnded(const FMovementExecutionEndedData& ReactionMovementEndedData)
+void UMovementState::OnBackStepEnded(const FCustomAbilityEndedData& ReactionMovementEndedData)
 {
 	bStepBackActive = false;
 }

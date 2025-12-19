@@ -17,33 +17,25 @@ void UCrowdEnemy_MovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPaylo
 {
 	Super::OnEnter(EnterPayload);
 
-	TSharedPtr<FMovementStatePayload> Payload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
-	if (!Payload.IsValid() || !AICrowdEventManager)
-	{
-		ExitRequest("InvalidPayload");
-		return;
-	}
-
-	DecideAndStartMovement(Payload);
+	check(EnterPayload);
+	MovementStateEnterPayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
+	check(MovementStateEnterPayload.IsValid());
+	check(MovementStateEnterPayload->SelectedAttackData);
+	check(MovementStateEnterPayload->SelectedAttackData->AbilityClass);
+	check(AICrowdEventManager);
 }
 
-void UCrowdEnemy_MovementState::DecideAndStartMovement(TSharedPtr<FMovementStatePayload> Payload)
+void UCrowdEnemy_MovementState::EvaluateAndStartMovement(TSharedPtr<FMovementStatePayload> Payload)
 {
-	if (!Payload->SelectedAttackData || !EnemyASC)
-	{
-		ExitRequest("InvalidAttackData");
-		return;
-	}
-
 	const bool bIsAttackIntender = AICrowdEventManager->RequestToBeAttackIntender(EnemyASC);
-	if (bIsAttackIntender)
-	{
-		StartMovementChain(Payload->SelectedMovementChainData);
-	}
-	else
-	{
-		StartStrafing();
-	}
+    if (bIsAttackIntender)
+    {
+        StartMovementChain(Payload->SelectedMovementChainData);
+    }
+    else
+    {
+        StartStrafing();
+    }
 }
 
 void UCrowdEnemy_MovementState::StartStrafing()

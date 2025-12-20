@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Movement/Strafing/GA_EnemyStrafingBase.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Gameplay/Abilities/Tasks/AT_AIMoveTo.h"
@@ -24,6 +25,13 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	if (!TriggerEventData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+
+	if (!CachedMovementData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: MovementData missing, movement execution failed."));
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
@@ -82,15 +90,16 @@ void UGA_EnemyStrafingBase::OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> 
 	const FVector BestLocation = Result->GetItemAsLocation(0);
 
 	// TEK satır! Her şey task içinde halloluyor
-	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveTo(
+	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveToLocation(
 		this,
 		FName("StrafeMove"),
 		EnemyController,
 		BestLocation,
-		AcceptanceRadius,
-		MinMovementDuration, 
-		MaxMovementDuration,
-		MovementSpeed
+		CachedMovementData->AcceptanceRadius,
+		CachedMovementData->ExpectedDuration,
+		CachedMovementData->MinDuration,
+		CachedMovementData->MaxDuration,
+		CachedMovementData->MovementSpeed
 	);
 
 	ExecuteMoveTask(MoveTask);

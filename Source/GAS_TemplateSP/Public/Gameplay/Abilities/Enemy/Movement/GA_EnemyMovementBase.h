@@ -9,6 +9,7 @@
 #include "GA_EnemyMovementBase.generated.h"
 
 class UAT_AIMoveTo;
+class UMovementSingleData;
 
 UCLASS()
 class GAS_TEMPLATESP_API UGA_EnemyMovementBase : public UGAS_GameplayAbilityBase
@@ -37,6 +38,21 @@ protected:
 	UFUNCTION()
 	virtual void OnMinDurationFinished() { return; }
 
+protected:
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
+
+	UPROPERTY()
+	AGAS_EnemyBase* EnemyCharacter;
+
+	UPROPERTY()
+	AAIControllerBase* EnemyController;
+
+	UPROPERTY()
+	UCharacterMovementComponent* EnemyMovementComp;
+
+	UPROPERTY()
+	const UMovementSingleData* CachedMovementData;
+
 private:
 	/**
 	 * Failsafe handler for movement timeout.
@@ -48,32 +64,4 @@ private:
 	 */
 	UFUNCTION()
 	void HandleMaxDurationReached();
-
-protected:
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
-
-	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
-	float AcceptanceRadius = 20.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
-	float MovementSpeed = 200.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
-	float MinMovementDuration = 0.25f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
-	float MaxMovementDuration = 5.0f;
-
-	UPROPERTY()
-	AGAS_EnemyBase* EnemyCharacter;
-
-	UPROPERTY()
-	AAIControllerBase* EnemyController;
-
-	UPROPERTY()
-	UCharacterMovementComponent* EnemyMovementComp;
-
-private:
-	float CachedExpectedDuration;
-
 };

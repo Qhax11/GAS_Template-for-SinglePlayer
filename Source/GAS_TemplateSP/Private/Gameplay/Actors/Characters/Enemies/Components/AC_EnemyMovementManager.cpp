@@ -108,12 +108,12 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ActivateMovementAbility(UMov
 		return nullptr;
 	}
 
-	// Step 1: Apply direction policies (attack direction used if relevant)
 	ApplyDirectionPoliciesToMovementAbility(MovementData, AttackPayload);
 
-	// Step 2: Build event data
+	// TODO: USE ONLY JUST EVENT TAG AND OPTIONAL OBJECT?
 	FGameplayEventData EventData;
 	EventData.EventTag = MovementData->AbilityTriggerTag;
+	EventData.OptionalObject = MovementData;
 	EventData.InstigatorTags.AddTag(MovementData->DirectionTag);
 	EventData.EventMagnitude = MovementData->ExpectedDuration;
 

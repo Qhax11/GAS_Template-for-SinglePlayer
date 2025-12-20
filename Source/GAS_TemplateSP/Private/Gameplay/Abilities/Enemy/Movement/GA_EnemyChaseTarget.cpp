@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyChaseTarget.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Abilities/Tasks/AT_AIMoveTo.h"
 
 UGA_EnemyChaseTarget::UGA_EnemyChaseTarget()
@@ -38,15 +39,23 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		return;
 	}
 
+	if(!CachedMovementData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyChaseTarget: MovementData missing, movement execution failed."));
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+
 	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveToActor(
 		this,
 		FName("Chase"),
 		EnemyController,
 		TargetActor,
-		AcceptanceRadius,
-		MinMovementDuration,
-		MaxMovementDuration,
-		MovementSpeed
+		CachedMovementData->AcceptanceRadius,
+		CachedMovementData->ExpectedDuration,
+		CachedMovementData->MinDuration,
+		CachedMovementData->MaxDuration,
+		CachedMovementData->MovementSpeed
 	);
 
 	ExecuteMoveTask(MoveTask);

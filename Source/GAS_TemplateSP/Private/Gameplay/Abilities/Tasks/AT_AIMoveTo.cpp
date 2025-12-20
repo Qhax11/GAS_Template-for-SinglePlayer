@@ -6,12 +6,13 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 
-UAT_AIMoveTo* UAT_AIMoveTo::AIMoveTo(
+UAT_AIMoveTo* UAT_AIMoveTo::AIMoveToLocation(
 	UGameplayAbility* OwningAbility,
 	FName TaskInstanceName,
 	AAIController* AIController,
 	FVector GoalLocation,
 	float AcceptanceRadius,
+	float ExpectedDuration,
 	float MinDuration,
 	float MaxDuration,
 	float MovementSpeed)
@@ -20,6 +21,7 @@ UAT_AIMoveTo* UAT_AIMoveTo::AIMoveTo(
 	MyTask->CachedAIController = AIController;
 	MyTask->CachedGoalLocation = GoalLocation;
 	MyTask->CachedAcceptanceRadius = AcceptanceRadius;
+	MyTask->CachedExpectedDuration = ExpectedDuration;
 	MyTask->CachedMinDuration = MinDuration;
 	MyTask->CachedMaxDuration = MaxDuration,
 	MyTask->CachedMovementSpeed = MovementSpeed;
@@ -33,6 +35,7 @@ UAT_AIMoveTo* UAT_AIMoveTo::AIMoveToActor(
 	AAIController* AIController,
 	AActor* GoalActor,
 	float AcceptanceRadius,
+	float ExpectedDuration,
 	float MinDuration,
 	float MaxDuration,
 	float MovementSpeed)
@@ -41,6 +44,7 @@ UAT_AIMoveTo* UAT_AIMoveTo::AIMoveToActor(
 	MyTask->CachedAIController = AIController;
 	MyTask->CachedGoalActor = GoalActor;
 	MyTask->CachedAcceptanceRadius = AcceptanceRadius;
+	MyTask->CachedExpectedDuration = ExpectedDuration;
 	MyTask->CachedMinDuration = MinDuration;
 	MyTask->CachedMaxDuration = MaxDuration;
 	MyTask->CachedMovementSpeed = MovementSpeed;

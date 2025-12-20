@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyPatrolling.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Abilities/Tasks/AT_AIMoveTo.h"
 
 UGA_EnemyPatrolling::UGA_EnemyPatrolling()
@@ -23,6 +24,13 @@ void UGA_EnemyPatrolling::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	if (!CachedMovementData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: MovementData missing, movement execution failed."));
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+
 	if (!TriggerEventData || !TriggerEventData->Target)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyPatrolling: TriggerEventData is null in: %s, ability cannot initialize"), *GetName());
@@ -32,15 +40,16 @@ void UGA_EnemyPatrolling::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 	FVector TargetLocation = TriggerEventData->Target->GetActorLocation();
 
-	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveTo(
+	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveToLocation(
 		this,
 		FName("PatrolMove"),
 		EnemyController,
 		TargetLocation,
-		AcceptanceRadius,
-		MinMovementDuration,
-		MaxMovementDuration,
-		MovementSpeed
+		CachedMovementData->AcceptanceRadius,
+		CachedMovementData->ExpectedDuration,
+		CachedMovementData->MinDuration,
+		CachedMovementData->MaxDuration,
+		CachedMovementData->MovementSpeed
 	);
 
 	ExecuteMoveTask(MoveTask);

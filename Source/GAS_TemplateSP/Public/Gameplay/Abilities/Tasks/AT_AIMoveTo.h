@@ -55,12 +55,13 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "AI Move To Location",
 		HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static UAT_AIMoveTo* AIMoveTo(
+	static UAT_AIMoveTo* AIMoveToLocation(
 		UGameplayAbility* OwningAbility,
 		FName TaskInstanceName,
 		class AAIController* AIController,
 		FVector GoalLocation,
 		float AcceptanceRadius = 50.0f,
+		float ExpectedDuration = 2.0f,
 		float MinDuration = 0.25f,
 		float MaxDuration = 8.0f,
 		float MovementSpeed = 0.0f
@@ -84,15 +85,11 @@ public:
 		class AAIController* AIController,
 		AActor* GoalActor,
 		float AcceptanceRadius = 50.0f,
+		float ExpectedDuration = 2.0f,
 		float MinDuration = 0.25f,
 		float MaxDuration = 8.0f,
 		float MovementSpeed = 0.0f
 	);
-
-	void SetExpectedDuration(float InExpectedDuration)
-	{
-		CachedExpectedDuration = InExpectedDuration;
-	}
 
 protected:
 	virtual void Activate() override;

@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyMovementBase.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Abilities/Tasks/AT_AIMoveTo.h"
 
 UGA_EnemyMovementBase::UGA_EnemyMovementBase()
@@ -15,7 +16,7 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	
 	EnemyCharacter = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
 	if (!EnemyCharacter)
 	{
@@ -40,9 +41,19 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
-	//============ ** ** ============//
-	EnemyMovementComp->MaxWalkSpeed = MovementSpeed;
-	CachedExpectedDuration = TriggerEventData->EventMagnitude;
+	if (!TriggerEventData)
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+
+	CachedMovementData = Cast<UMovementSingleData>(TriggerEventData->OptionalObject);
+	if (!CachedMovementData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MovementData missing, movement execution failed."));
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
 }
 
 void UGA_EnemyMovementBase::ExecuteMoveTask(UAT_AIMoveTo* MoveTask)
@@ -53,8 +64,6 @@ void UGA_EnemyMovementBase::ExecuteMoveTask(UAT_AIMoveTo* MoveTask)
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}
-
-	MoveTask->SetExpectedDuration(CachedExpectedDuration);
 
 	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveCompleted);
 	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveAborted);

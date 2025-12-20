@@ -51,27 +51,43 @@ public:
     bool IsValidData() const;
 
 public:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Movement. Used for debugging or referencing in logic."))
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Name of this Movement. Used for debugging or referencing in logic."))
     FName MovementName;
 
-    // The gameplay ability class used for movement.
-    UPROPERTY(EditDefaultsOnly)
+    // Activated by the MovementManager using a gameplay event.
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Gameplay Ability class that performs the actual movement logic."))
     TSubclassOf<UGAS_GameplayAbilityBase> MovementAbilityClass;
 
     // The gameplay tag used to trigger this ability.
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.AbilityTriggerEvent.Movement"))
+    UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.AbilityTriggerEvent.Movement", ToolTip = "Gameplay event tag used to trigger the movement ability."))
     FGameplayTag AbilityTriggerTag;
 
-    UPROPERTY(EditDefaultsOnly, meta = (Categories = "Gameplay.Direction"))
-    FGameplayTag DirectionTag;;
+    // Defines how close the AI must get to consider the movement completed.
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Acceptance radius used by MoveTo-style movement abilities"))
+    float AcceptanceRadius = 20.0f;
 
-    UPROPERTY(EditDefaultsOnly)
+    // Interpreted by the movement ability or task.
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Movement speed applied while this movement ability is active."))
+    float MovementSpeed = 600.0f;
+
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Expected duration of this movement, used for planning and flow control."))
+    float ExpectedDuration = 2.0f;
+
+    // Used to prevent extremely short or jittery movements.
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Minimum time the movement should remain active before it is allowed to finish."))
+    float MinDuration = 0.25f;
+
+    // Prevents stuck or runaway movement executions.
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = " Maximum allowed duration for this movement as a safety limit."))
+    float MaxDuration = 5.0f;
+
+    UPROPERTY(EditDefaultsOnly, meta = (Categories = "Gameplay.Direction", ToolTip = "Direction tag to be passed directly to the movement ability."))
+    FGameplayTag DirectionTag;
+
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Enables runtime direction resolution via a policy instead of a fixed direction."))
     bool EnableDirectionPolicy = false;
 
     // The policy used to resolve the direction, like random or based on player position.
     UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Policy", EditCondition = "EnableDirectionPolicy", ToolTip = "Defines how the direction should be resolved at runtime (e.g., LastPlayerDirection, Random)."))
     FGameplayTag DirectionPolicyTag;
-
-    UPROPERTY(EditDefaultsOnly)
-    float ExpectedDuration = 1.0f;
 };

@@ -31,15 +31,32 @@ protected:
 	UFUNCTION()
 	virtual void OnMoveFailed();
 
+	UFUNCTION()
+	virtual void OnMinDurationFinished();
+
+	UFUNCTION()
+	virtual void OnMaxDurationFinished();
+
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
 	float AcceptanceRadius = 20.0f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
 	float MovementSpeed = 200.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
+	float MinMovementDuration = 0.25f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
+	float MaxMovementDuration = 5.0f;
+
+	UPROPERTY()
 	AGAS_EnemyBase* EnemyCharacter;
+
+	UPROPERTY()
 	AAIControllerBase* EnemyController;
+
+	UPROPERTY()
 	UCharacterMovementComponent* EnemyMovementComp;
 };

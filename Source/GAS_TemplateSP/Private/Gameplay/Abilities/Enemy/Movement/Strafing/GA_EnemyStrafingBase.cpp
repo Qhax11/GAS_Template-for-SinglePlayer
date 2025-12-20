@@ -89,26 +89,12 @@ void UGA_EnemyStrafingBase::OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> 
 		EnemyController,
 		BestLocation,
 		AcceptanceRadius,
-		DEFAULT_MIN_MOVEMENT_DURATION,  // Min duration support built-in!
+		MinMovementDuration, 
+		MaxMovementDuration,
 		MovementSpeed
 	);
 
 	ExecuteMoveTask(MoveTask);
-}
-
-void UGA_EnemyStrafingBase::OnMoveCompleted()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-}
-
-void UGA_EnemyStrafingBase::OnMoveAborted()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-}
-
-void UGA_EnemyStrafingBase::OnMoveFailed()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 

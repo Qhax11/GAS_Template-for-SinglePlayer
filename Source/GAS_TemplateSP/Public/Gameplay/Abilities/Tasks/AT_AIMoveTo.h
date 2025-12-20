@@ -31,6 +31,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FMoveToTaskDelegate OnFailed;
 
+	/** Fired when minimum duration has elapsed (movement may or may not be finished) */
+	UPROPERTY(BlueprintAssignable)
+	FMoveToTaskDelegate OnMinDurationFinished;
+
+	/** Fired when maximum duration has elapsed (movement may or may not be finished) */
+	UPROPERTY(BlueprintAssignable)
+	FMoveToTaskDelegate OnMaxDurationFinished;
+
 	/**
 	 * Move AI to a specific location with optional minimum duration
 	 * @param OwningAbility - The ability that owns this task
@@ -50,6 +58,7 @@ public:
 		FVector GoalLocation,
 		float AcceptanceRadius = 50.0f,
 		float MinDuration = 0.0f,
+		float MaxDuration,
 		float MovementSpeed = 0.0f
 	);
 
@@ -72,6 +81,7 @@ public:
 		AActor* GoalActor,
 		float AcceptanceRadius = 50.0f,
 		float MinDuration = 0.0f,
+		float MaxDuration,
 		float MovementSpeed = 0.0f
 	);
 
@@ -86,6 +96,9 @@ private:
 	UFUNCTION()
 	void OnMinDurationReached();
 
+	UFUNCTION()
+	void OnMaxDurationReached();
+
 	void TryComplete();
 	void Cleanup();
 
@@ -99,12 +112,14 @@ private:
 	FVector CachedGoalLocation;
 	float CachedAcceptanceRadius;
 	float CachedMinDuration;
+	float CachedMaxDuration;
 	float CachedMovementSpeed;
 
 	bool bUseLocationGoal; // true = location, false = actor
 
 	// State tracking
 	bool bMinDurationReached;
+	bool bMaxDurationReached; 
 	bool bMovementCompleted;
 	bool bMovementStarted;
 

@@ -38,25 +38,11 @@ void UGA_EnemyPatrolling::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		EnemyController, 
 		TargetLocation,
 		AcceptanceRadius, 
-		5, 
+		MinMovementDuration,
+		MaxMovementDuration,
 		MovementSpeed
 	);
 
 	ExecuteMoveTask(MoveTask);
-}
-
-void UGA_EnemyPatrolling::OnMoveCompleted()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-}
-
-void UGA_EnemyPatrolling::OnMoveAborted()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-}
-
-void UGA_EnemyPatrolling::OnMoveFailed()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 

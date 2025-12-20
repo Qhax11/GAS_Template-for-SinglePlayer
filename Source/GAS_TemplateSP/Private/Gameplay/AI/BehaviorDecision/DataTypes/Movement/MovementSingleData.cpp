@@ -10,7 +10,7 @@ bool UMovementSingleData::IsValidData() const
 		return false;
 	}
 
-	if (!EnableDirectionPolicy && !DirectionPolicyTag.IsValid())
+	if (EnableDirectionPolicy && !DirectionPolicyTag.IsValid())
 	{
 		return false;
 	}

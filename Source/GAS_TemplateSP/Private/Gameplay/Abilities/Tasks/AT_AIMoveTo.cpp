@@ -13,6 +13,7 @@ UAT_AIMoveTo* UAT_AIMoveTo::AIMoveTo(
 	FVector GoalLocation,
 	float AcceptanceRadius,
 	float MinDuration,
+	float MaxDuration,  
 	float MovementSpeed)
 {
 	UAT_AIMoveTo* MyTask = NewAbilityTask<UAT_AIMoveTo>(OwningAbility, TaskInstanceName);
@@ -20,9 +21,9 @@ UAT_AIMoveTo* UAT_AIMoveTo::AIMoveTo(
 	MyTask->CachedGoalLocation = GoalLocation;
 	MyTask->CachedAcceptanceRadius = AcceptanceRadius;
 	MyTask->CachedMinDuration = MinDuration;
+	MyTask->CachedMaxDuration = MaxDuration,
 	MyTask->CachedMovementSpeed = MovementSpeed;
 	MyTask->bUseLocationGoal = true;
-
 	return MyTask;
 }
 
@@ -33,6 +34,7 @@ UAT_AIMoveTo* UAT_AIMoveTo::AIMoveToActor(
 	AActor* GoalActor,
 	float AcceptanceRadius,
 	float MinDuration,
+	float MaxDuration,
 	float MovementSpeed)
 {
 	UAT_AIMoveTo* MyTask = NewAbilityTask<UAT_AIMoveTo>(OwningAbility, TaskInstanceName);
@@ -40,9 +42,9 @@ UAT_AIMoveTo* UAT_AIMoveTo::AIMoveToActor(
 	MyTask->CachedGoalActor = GoalActor;
 	MyTask->CachedAcceptanceRadius = AcceptanceRadius;
 	MyTask->CachedMinDuration = MinDuration;
+	MyTask->CachedMaxDuration = MaxDuration;
 	MyTask->CachedMovementSpeed = MovementSpeed;
 	MyTask->bUseLocationGoal = false;
-
 	return MyTask;
 }
 
@@ -52,6 +54,7 @@ void UAT_AIMoveTo::Activate()
 
 	// Reset state
 	bMinDurationReached = false;
+	bMaxDurationReached = false;
 	bMovementCompleted = false;
 	bMovementStarted = false;
 
@@ -88,8 +91,13 @@ void UAT_AIMoveTo::Activate()
 	// Start movement
 	StartMovement();
 
+	if (!bMovementStarted) 
+	{
+		return;
+	}
+
 	// Start min duration timer if specified
-	if (CachedMinDuration > 0.0f && bMovementStarted)
+	if (CachedMinDuration > 0.0f)
 	{
 		UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedMinDuration);
 		WaitTask->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnMinDurationReached);
@@ -99,6 +107,14 @@ void UAT_AIMoveTo::Activate()
 	{
 		// No min duration requirement
 		bMinDurationReached = true;
+	}
+
+	// Start max duration timer (hard timeout)
+	if (CachedMaxDuration > 0.0f)
+	{
+		UAbilityTask_WaitDelay* MaxWaitTask = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedMaxDuration);
+		MaxWaitTask->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnMaxDurationReached);
+		MaxWaitTask->ReadyForActivation();
 	}
 }
 
@@ -172,7 +188,13 @@ void UAT_AIMoveTo::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingR
 
 void UAT_AIMoveTo::OnMinDurationReached()
 {
-	bMinDurationReached = true;
+	bMaxDurationReached = true;
+	OnMaxDurationFinished.Broadcast();
+}
+
+void UAT_AIMoveTo::OnMaxDurationReached()
+{
+	bMaxDurationReached = true;
 	TryComplete();
 }
 

@@ -36,33 +36,17 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		return;
 	}
 
-	// Actor'a doðru chase - min duration 0 (hemen bitebilir)
 	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveToActor(
 		this,
 		FName("Chase"),
 		EnemyController,
 		TargetActor,
 		AcceptanceRadius,
-		0.0f,  // No min duration for chase
+		MinMovementDuration,
+		MaxMovementDuration,
 		MovementSpeed
 	);
 
 	ExecuteMoveTask(MoveTask);
 }
-
-void UGA_EnemyChaseTarget::OnMoveCompleted()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-}
-
-void UGA_EnemyChaseTarget::OnMoveAborted()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-}
-
-void UGA_EnemyChaseTarget::OnMoveFailed()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-}
-
 

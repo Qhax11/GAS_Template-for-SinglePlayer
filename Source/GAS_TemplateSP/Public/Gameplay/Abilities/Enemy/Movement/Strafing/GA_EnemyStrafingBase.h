@@ -24,12 +24,6 @@ protected:
 
 	virtual void OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
 
-	void OnMoveCompleted() override;
-
-	void OnMoveAborted() override;
-
-	void OnMoveFailed() override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStrafingBase|EQS")
 	UEnvQuery* EQSQueryTemplate;
 
@@ -40,7 +34,6 @@ protected:
 	float MinStrafeDistance = 150.f;
 
 private:
-	static constexpr float DEFAULT_MIN_MOVEMENT_DURATION = 0.25f;
 	float CachedExpectedDuration;
 
 };

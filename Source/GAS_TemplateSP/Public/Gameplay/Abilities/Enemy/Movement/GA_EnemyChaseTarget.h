@@ -16,9 +16,4 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	void OnMoveCompleted() override;
-
-	void OnMoveAborted() override;
-
-	void OnMoveFailed() override;
 };

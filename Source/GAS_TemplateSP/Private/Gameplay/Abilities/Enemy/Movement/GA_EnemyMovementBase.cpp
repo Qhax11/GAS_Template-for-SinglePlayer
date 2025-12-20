@@ -43,6 +43,23 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	EnemyMovementComp->MaxWalkSpeed = MovementSpeed;
 }
 
+void UGA_EnemyMovementBase::ExecuteMoveTask(UAT_AIMoveTo* MoveTask)
+{
+	if (!MoveTask)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTask is null in: %s"), *GetName());
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
+		return;
+	}
+
+	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveCompleted);
+	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveAborted);
+	MoveTask->OnFailed.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveFailed);
+	MoveTask->OnMinDurationFinished.AddDynamic(this, &UGA_EnemyMovementBase::OnMinDurationFinished);
+	MoveTask->OnMaxDurationFinished.AddDynamic(this, &UGA_EnemyMovementBase::OnMaxDurationFinished);
+	MoveTask->ReadyForActivation();
+}
+
 void UGA_EnemyMovementBase::OnMoveCompleted()
 {
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
@@ -58,19 +75,14 @@ void UGA_EnemyMovementBase::OnMoveFailed()
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
-void UGA_EnemyMovementBase::ExecuteMoveTask(UAT_AIMoveTo* MoveTask)
+void UGA_EnemyMovementBase::OnMinDurationFinished()
 {
-	if (!MoveTask)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: MoveTask is null in: %s"), *GetName());
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
-		return;
-	}
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+}
 
-	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveCompleted);
-	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveAborted);
-	MoveTask->OnFailed.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveFailed);
-	MoveTask->ReadyForActivation();
+void UGA_EnemyMovementBase::OnMaxDurationFinished()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle, 

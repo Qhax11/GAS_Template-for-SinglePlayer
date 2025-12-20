@@ -38,8 +38,6 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
-
-	CachedExpectedDuration = TriggerEventData->EventMagnitude;
 }
 
 void UGA_EnemyStrafingBase::ExecuteFindLocationQuery(FGameplayTag StrafeDirectionTag)
@@ -97,4 +95,13 @@ void UGA_EnemyStrafingBase::OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> 
 	ExecuteMoveTask(MoveTask);
 }
 
+void UGA_EnemyStrafingBase::OnExpectedDurationFinished()
+{
+	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+}
+
+void UGA_EnemyStrafingBase::OnMinDurationFinished()
+{
+	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+}
 

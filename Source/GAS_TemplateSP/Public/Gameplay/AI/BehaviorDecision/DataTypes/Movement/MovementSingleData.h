@@ -72,8 +72,6 @@ public:
     UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Policy", EditCondition = "EnableDirectionPolicy", ToolTip = "Defines how the direction should be resolved at runtime (e.g., LastPlayerDirection, Random)."))
     FGameplayTag DirectionPolicyTag;
 
-    // Used as movement distance for dash abilities, or as a time limit (in seconds) for other movement types like chase or flee.
-    // Set to 0 to ignore. For dash, this represents how far the actor should move. For chase/flee, this limits how long the ability stays active.
-    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Used as movement distance for dash abilities, or as a time limit (in seconds) for chase/flee behaviors. Set to 0 to ignore."))
-    float AbilityEventMagnitude = 0.f;
+    UPROPERTY(EditDefaultsOnly)
+    float ExpectedDuration = 1.0f;
 };

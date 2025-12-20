@@ -20,6 +20,7 @@ public:
 
 	bool PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug) const override;
 
+	// What movement ability data to use for dodge reaction
 	UPROPERTY(EditDefaultsOnly, Instanced)
 	UMovementSingleData* DodgeMovementAbilityData;
 };

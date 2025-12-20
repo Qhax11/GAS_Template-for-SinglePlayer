@@ -32,11 +32,24 @@ protected:
 	virtual void OnMoveFailed();
 
 	UFUNCTION()
-	virtual void OnMinDurationFinished();
+	virtual void OnExpectedDurationFinished() { return; }
 
 	UFUNCTION()
-	virtual void OnMaxDurationFinished();
+	virtual void OnMinDurationFinished() { return; }
 
+private:
+	/**
+	 * Failsafe handler for movement timeout.
+	 * Called when the movement task exceeds its maximum allowed duration.
+	 *
+	 * This is a safety mechanism to prevent infinite or stuck movement tasks.
+	 * It is NOT part of movement behavior design and must not be overridden.
+	 * Always ends the ability.
+	 */
+	UFUNCTION()
+	void HandleMaxDurationReached();
+
+protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyMovementBase")
@@ -59,4 +72,8 @@ protected:
 
 	UPROPERTY()
 	UCharacterMovementComponent* EnemyMovementComp;
+
+private:
+	float CachedExpectedDuration;
+
 };

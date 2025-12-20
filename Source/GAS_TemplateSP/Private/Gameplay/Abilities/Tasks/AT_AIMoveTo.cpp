@@ -13,7 +13,7 @@ UAT_AIMoveTo* UAT_AIMoveTo::AIMoveTo(
 	FVector GoalLocation,
 	float AcceptanceRadius,
 	float MinDuration,
-	float MaxDuration,  
+	float MaxDuration,
 	float MovementSpeed)
 {
 	UAT_AIMoveTo* MyTask = NewAbilityTask<UAT_AIMoveTo>(OwningAbility, TaskInstanceName);
@@ -52,12 +52,6 @@ void UAT_AIMoveTo::Activate()
 {
 	Super::Activate();
 
-	// Reset state
-	bMinDurationReached = false;
-	bMaxDurationReached = false;
-	bMovementCompleted = false;
-	bMovementStarted = false;
-
 	// Validate
 	if (!CachedAIController)
 	{
@@ -75,46 +69,55 @@ void UAT_AIMoveTo::Activate()
 		return;
 	}
 
-	// Override movement speed if specified
-	if (CachedMovementSpeed > 0.0f)
+	NormalizeDurations();
+	TryToSetMovementSpeed();
+	StartMovement();
+	ActivateWaitDelays();
+}
+
+void UAT_AIMoveTo::NormalizeDurations()
+{
+	// Min / Max mechanical constraints
+	CachedMinDuration = FMath::Max(0.0f, CachedMinDuration);
+	CachedMaxDuration = FMath::Max(0.0f, CachedMaxDuration);
+
+	// Hard safety cap for Max (task protection, NOT design)
+	static constexpr float MAX_TASK_DURATION = 60.0f;
+	if (CachedMaxDuration > MAX_TASK_DURATION)
 	{
-		if (ACharacter* Character = Cast<ACharacter>(CachedAIController->GetPawn()))
-		{
-			if (UCharacterMovementComponent* MovementComp = Character->GetCharacterMovement())
-			{
-				OriginalMaxWalkSpeed = MovementComp->MaxWalkSpeed;
-				MovementComp->MaxWalkSpeed = CachedMovementSpeed;
-			}
-		}
+		UE_LOG(LogTemp, Warning, TEXT("AIMoveTo: MaxDuration clamped to %f"), MAX_TASK_DURATION);
+		CachedMaxDuration = MAX_TASK_DURATION;
 	}
 
-	// Start movement
-	StartMovement();
-
-	if (!bMovementStarted) 
+	// Logical invariant
+	if (CachedMaxDuration > 0.0f && CachedMinDuration > CachedMaxDuration)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("AIMoveTo: MinDuration > MaxDuration, clamping Min to Max"));
+		CachedMinDuration = CachedMaxDuration;
+	}
+
+	// ExpectedDuration: DO NOT clamp, just warn
+	if (CachedExpectedDuration > 0.0f && CachedMaxDuration > 0.0f && CachedExpectedDuration > CachedMaxDuration)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AIMoveTo: ExpectedDuration > MaxDuration (policy issue)"));
+	}
+}
+
+void UAT_AIMoveTo::TryToSetMovementSpeed()
+{
+	if (CachedMovementSpeed <= 0.0f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AIMoveTo: MovementSpeed <= 0, using character default speed"));
 		return;
 	}
 
-	// Start min duration timer if specified
-	if (CachedMinDuration > 0.0f)
+	if (ACharacter* Character = Cast<ACharacter>(CachedAIController->GetPawn()))
 	{
-		UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedMinDuration);
-		WaitTask->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnMinDurationReached);
-		WaitTask->ReadyForActivation();
-	}
-	else
-	{
-		// No min duration requirement
-		bMinDurationReached = true;
-	}
-
-	// Start max duration timer (hard timeout)
-	if (CachedMaxDuration > 0.0f)
-	{
-		UAbilityTask_WaitDelay* MaxWaitTask = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedMaxDuration);
-		MaxWaitTask->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnMaxDurationReached);
-		MaxWaitTask->ReadyForActivation();
+		if (UCharacterMovementComponent* MovementComp = Character->GetCharacterMovement())
+		{
+			OriginalMaxWalkSpeed = MovementComp->MaxWalkSpeed;
+			MovementComp->MaxWalkSpeed = CachedMovementSpeed;
+		}
 	}
 }
 
@@ -157,7 +160,31 @@ void UAT_AIMoveTo::StartMovement()
 	}
 
 	MoveCompletedHandle = PathComp->OnRequestFinished.AddUObject(this, &UAT_AIMoveTo::OnMoveCompleted);
-	bMovementStarted = true;
+}
+
+void UAT_AIMoveTo::ActivateWaitDelays()
+{
+	if (CachedExpectedDuration > 0.0f)
+	{
+		UAbilityTask_WaitDelay* WaitExpectedDuration = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedExpectedDuration);
+		WaitExpectedDuration->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnExpectedDurationReached);
+		WaitExpectedDuration->ReadyForActivation();
+	}
+
+	if (CachedMinDuration > 0.0f)
+	{
+		UAbilityTask_WaitDelay* WaitMinDuration = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedMinDuration);
+		WaitMinDuration->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnMinDurationReached);
+		WaitMinDuration->ReadyForActivation();
+	}
+
+
+	if (CachedMaxDuration > 0.0f)
+	{
+		UAbilityTask_WaitDelay* MaxWaitMaxDuration = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedMaxDuration);
+		MaxWaitMaxDuration->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnMaxDurationReached);
+		MaxWaitMaxDuration->ReadyForActivation();
+	}
 }
 
 void UAT_AIMoveTo::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
@@ -181,31 +208,35 @@ void UAT_AIMoveTo::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingR
 		return;
 	}
 
-	// Movement completed successfully
+	// ?? movement gerçekten bitti
 	bMovementCompleted = true;
-	TryComplete();
-}
-
-void UAT_AIMoveTo::OnMinDurationReached()
-{
-	bMaxDurationReached = true;
-	OnMaxDurationFinished.Broadcast();
-}
-
-void UAT_AIMoveTo::OnMaxDurationReached()
-{
-	bMaxDurationReached = true;
 	TryComplete();
 }
 
 void UAT_AIMoveTo::TryComplete()
 {
-	// Only complete when BOTH conditions are met
-	if (bMinDurationReached && bMovementCompleted)
+	if (bMovementCompleted && bMinDurationReached)
 	{
 		OnCompleted.Broadcast();
 		EndTask();
 	}
+}
+
+void UAT_AIMoveTo::OnExpectedDurationReached()
+{
+	ExpectedDurationReached.Broadcast();
+}
+
+void UAT_AIMoveTo::OnMinDurationReached()
+{
+	bMinDurationReached = true;
+	MinDurationReached.Broadcast();
+	TryComplete();
+}
+
+void UAT_AIMoveTo::OnMaxDurationReached()
+{
+	MaxDurationReached.Broadcast();
 }
 
 void UAT_AIMoveTo::Cleanup()
@@ -229,6 +260,8 @@ void UAT_AIMoveTo::Cleanup()
 		}
 	}
 }
+
+
 
 void UAT_AIMoveTo::OnDestroy(bool bInOwnerFinished)
 {

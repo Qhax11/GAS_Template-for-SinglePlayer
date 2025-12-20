@@ -115,7 +115,7 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ActivateMovementAbility(UMov
 	FGameplayEventData EventData;
 	EventData.EventTag = MovementData->AbilityTriggerTag;
 	EventData.InstigatorTags.AddTag(MovementData->DirectionTag);
-	EventData.EventMagnitude = MovementData->AbilityEventMagnitude;
+	EventData.EventMagnitude = MovementData->ExpectedDuration;
 
 	return OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementData->MovementAbilityClass, EventData);
 }

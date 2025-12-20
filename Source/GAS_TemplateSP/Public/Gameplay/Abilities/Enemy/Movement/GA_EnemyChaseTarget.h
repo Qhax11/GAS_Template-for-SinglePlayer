@@ -16,4 +16,8 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	virtual void OnExpectedDurationFinished() override;
+
+	virtual void OnMinDurationFinished() override;
+
 };

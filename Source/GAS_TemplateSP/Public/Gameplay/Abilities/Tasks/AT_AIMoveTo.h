@@ -31,13 +31,16 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FMoveToTaskDelegate OnFailed;
 
-	/** Fired when minimum duration has elapsed (movement may or may not be finished) */
 	UPROPERTY(BlueprintAssignable)
-	FMoveToTaskDelegate OnMinDurationFinished;
+	FMoveToTaskDelegate ExpectedDurationReached;
 
-	/** Fired when maximum duration has elapsed (movement may or may not be finished) */
+	/** Fired when minimum duration has elapsed  */
 	UPROPERTY(BlueprintAssignable)
-	FMoveToTaskDelegate OnMaxDurationFinished;
+	FMoveToTaskDelegate MinDurationReached;
+
+	/** Fired when maximum duration has elapsed  */
+	UPROPERTY(BlueprintAssignable)
+	FMoveToTaskDelegate MaxDurationReached;
 
 	/**
 	 * Move AI to a specific location with optional minimum duration
@@ -46,7 +49,8 @@ public:
 	 * @param AIController - The AI controller to move
 	 * @param GoalLocation - Target location to move to
 	 * @param AcceptanceRadius - How close to get to the target
-	 * @param MinDuration - Minimum time this movement should take (0 = no minimum)
+	 * @param MinDuration - Minimum time this movement should take
+	 * @param MaxDuration - Maximum time this movement should take
 	 * @param MovementSpeed - Speed override (0 = use character's current speed)
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "AI Move To Location",
@@ -57,8 +61,8 @@ public:
 		class AAIController* AIController,
 		FVector GoalLocation,
 		float AcceptanceRadius = 50.0f,
-		float MinDuration = 0.0f,
-		float MaxDuration,
+		float MinDuration = 0.25f,
+		float MaxDuration = 8.0f,
 		float MovementSpeed = 0.0f
 	);
 
@@ -69,29 +73,47 @@ public:
 	 * @param AIController - The AI controller to move
 	 * @param GoalActor - Target actor to move to
 	 * @param AcceptanceRadius - How close to get to the target
-	 * @param MinDuration - Minimum time this movement should take (0 = no minimum)
+	 * @param MinDuration - Minimum time this movement should take 
+	 * @param MaxDuration - Maximum time this movement should take 
 	 * @param MovementSpeed - Speed override (0 = use character's current speed)
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "AI Move To Actor",
-		HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "AI Move To Actor", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
 	static UAT_AIMoveTo* AIMoveToActor(
 		UGameplayAbility* OwningAbility,
 		FName TaskInstanceName,
 		class AAIController* AIController,
 		AActor* GoalActor,
 		float AcceptanceRadius = 50.0f,
-		float MinDuration = 0.0f,
-		float MaxDuration,
+		float MinDuration = 0.25f,
+		float MaxDuration = 8.0f,
 		float MovementSpeed = 0.0f
 	);
+
+	void SetExpectedDuration(float InExpectedDuration)
+	{
+		CachedExpectedDuration = InExpectedDuration;
+	}
 
 protected:
 	virtual void Activate() override;
 	virtual void OnDestroy(bool bInOwnerFinished) override;
 
 private:
+	void NormalizeDurations();
+
+	// Override movement speed if specified
+	void TryToSetMovementSpeed();
+
 	void StartMovement();
+
+	void ActivateWaitDelays();
+
 	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
+
+	void TryComplete();
+
+	UFUNCTION()
+	void OnExpectedDurationReached();
 
 	UFUNCTION()
 	void OnMinDurationReached();
@@ -99,7 +121,6 @@ private:
 	UFUNCTION()
 	void OnMaxDurationReached();
 
-	void TryComplete();
 	void Cleanup();
 
 	// Movement parameters
@@ -109,19 +130,17 @@ private:
 	UPROPERTY()
 	TObjectPtr<AActor> CachedGoalActor;
 
+	bool bMinDurationReached = false;
+	bool bMovementCompleted = false;
+
 	FVector CachedGoalLocation;
 	float CachedAcceptanceRadius;
 	float CachedMinDuration;
+	float CachedExpectedDuration;
 	float CachedMaxDuration;
 	float CachedMovementSpeed;
 
 	bool bUseLocationGoal; // true = location, false = actor
-
-	// State tracking
-	bool bMinDurationReached;
-	bool bMaxDurationReached; 
-	bool bMovementCompleted;
-	bool bMovementStarted;
 
 	// Cleanup handles
 	FDelegateHandle MoveCompletedHandle;

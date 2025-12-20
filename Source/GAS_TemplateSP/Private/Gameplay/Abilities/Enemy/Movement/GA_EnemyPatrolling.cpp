@@ -33,16 +33,26 @@ void UGA_EnemyPatrolling::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	FVector TargetLocation = TriggerEventData->Target->GetActorLocation();
 
 	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveTo(
-		this, 
-		FName("PatrolMove"), 
-		EnemyController, 
+		this,
+		FName("PatrolMove"),
+		EnemyController,
 		TargetLocation,
-		AcceptanceRadius, 
+		AcceptanceRadius,
 		MinMovementDuration,
 		MaxMovementDuration,
 		MovementSpeed
 	);
 
 	ExecuteMoveTask(MoveTask);
+}
+
+void UGA_EnemyPatrolling::OnExpectedDurationFinished()
+{
+	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+}
+
+void UGA_EnemyPatrolling::OnMinDurationFinished()
+{
+	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 

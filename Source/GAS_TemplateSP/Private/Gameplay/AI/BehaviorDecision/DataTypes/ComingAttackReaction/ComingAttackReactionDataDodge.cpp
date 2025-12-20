@@ -19,12 +19,9 @@ UComingAttackReactionDataDodge::UComingAttackReactionDataDodge()
 	ScoreBias = 0.1f;
 
 	DodgeMovementAbilityData = CreateDefaultSubobject<UMovementSingleData>(TEXT("DodgeMovementAbilityData"));
-
-    // Dash distance
-    DodgeMovementAbilityData->AbilityTriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;
 	DodgeMovementAbilityData->EnableDirectionPolicy = true;
 	DodgeMovementAbilityData->DirectionPolicyTag = GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack;
-    DodgeMovementAbilityData->AbilityEventMagnitude = 300.0f;
+	DodgeMovementAbilityData->AbilityTriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Dodge;
 }
 
 bool UComingAttackReactionDataDodge::IsEnable(FComingAttackPayload ComingAttackPayload, FReactionEnableDebug* OutDebug) const

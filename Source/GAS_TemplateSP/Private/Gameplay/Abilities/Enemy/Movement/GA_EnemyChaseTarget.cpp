@@ -50,3 +50,14 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	ExecuteMoveTask(MoveTask);
 }
 
+void UGA_EnemyChaseTarget::OnExpectedDurationFinished()
+{
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+}
+
+void UGA_EnemyChaseTarget::OnMinDurationFinished()
+{
+}
+
+
+

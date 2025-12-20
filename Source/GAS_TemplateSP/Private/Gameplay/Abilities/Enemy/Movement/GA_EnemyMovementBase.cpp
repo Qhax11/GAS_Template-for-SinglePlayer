@@ -40,7 +40,9 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
+	//============ ** ** ============//
 	EnemyMovementComp->MaxWalkSpeed = MovementSpeed;
+	CachedExpectedDuration = TriggerEventData->EventMagnitude;
 }
 
 void UGA_EnemyMovementBase::ExecuteMoveTask(UAT_AIMoveTo* MoveTask)
@@ -52,40 +54,43 @@ void UGA_EnemyMovementBase::ExecuteMoveTask(UAT_AIMoveTo* MoveTask)
 		return;
 	}
 
+	MoveTask->SetExpectedDuration(CachedExpectedDuration);
+
 	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveCompleted);
 	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveAborted);
 	MoveTask->OnFailed.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveFailed);
-	MoveTask->OnMinDurationFinished.AddDynamic(this, &UGA_EnemyMovementBase::OnMinDurationFinished);
-	MoveTask->OnMaxDurationFinished.AddDynamic(this, &UGA_EnemyMovementBase::OnMaxDurationFinished);
+	MoveTask->ExpectedDurationReached.AddDynamic(this, &UGA_EnemyMovementBase::OnExpectedDurationFinished);
+	MoveTask->MinDurationReached.AddDynamic(this, &UGA_EnemyMovementBase::OnMinDurationFinished);
+	MoveTask->MaxDurationReached.AddDynamic(this, &UGA_EnemyMovementBase::HandleMaxDurationReached);
+
 	MoveTask->ReadyForActivation();
 }
 
 void UGA_EnemyMovementBase::OnMoveCompleted()
 {
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Completed, Ability ended"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_EnemyMovementBase::OnMoveAborted()
 {
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Aborted, Ability ended with canceling"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_EnemyMovementBase::OnMoveFailed()
 {
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Failed, ability ended"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
-void UGA_EnemyMovementBase::OnMinDurationFinished()
+void UGA_EnemyMovementBase::HandleMaxDurationReached()
 {
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: MaxDuration is Reached, ability ended"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
-void UGA_EnemyMovementBase::OnMaxDurationFinished()
-{
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
-}
-
-void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle, 
+void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	bool bReplicateEndAbility, bool bWasCancelled)

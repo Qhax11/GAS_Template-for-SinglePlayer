@@ -22,10 +22,11 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<
     FMovementScoreDebug BestScoreDebug;
     float BestScore = -FLT_MAX;
 
-    UMovementChainsAsset* SelectedAbilityMovementChains = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
-    if (!SelectedAbilityMovementChains)
+    // Seçili attack ability için movement chain asset listesini al
+    TArray<UMovementChainAsset*> MovementChainAssets = GetMovementChainsForSelectedAttackAbility(SelectedAbilityClass);
+    if (MovementChainAssets.Num() == 0)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestMovementChain: SelectedAbilityMovementChains is null in: %s!"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestMovementChain: No movement chains found for ability: %s!"), *SelectedAbilityClass->GetName());
         return nullptr;
     }
 
@@ -34,13 +35,15 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<
     MovementDecisionContext.Owner = Enemy;
     MovementDecisionContext.Target = Hero;
 
-    for (UMovementChainData* MovementChain : SelectedAbilityMovementChains->MovementChains)
+    for (UMovementChainAsset* ChainAsset : MovementChainAssets)
     {
-        if (!MovementChain)
+        if (!ChainAsset || !ChainAsset->MovementChain)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestMovementChain: MovementChain is null!"));
+            UE_LOG(LogTemp, Warning, TEXT("Decision: Service: UBDS_GetBestMovementChain: Invalid ChainAsset or MovementChain is null!"));
             continue;
         }
+
+        UMovementChainData* MovementChain = ChainAsset->MovementChain;
 
         // ---------------- ENABLE CHECK ----------------
         FMovementEnableDebug EnableDebug;
@@ -123,22 +126,24 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<
     return BestMovementChainData;
 }
 
-UMovementChainsAsset* UBDS_GetBestMovementChain::GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const
+TArray<UMovementChainAsset*> UBDS_GetBestMovementChain::GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const
 {
+    TArray<UMovementChainAsset*> EmptyResult;
+
     if (!SelectedAbilityClass || !AttackAbilitiesToMovementChainsAsset)
     {
-        return nullptr;
+        return EmptyResult;
     }
 
-    for (const FAttackAbilityToMovementChain& AttackAbilityToMovementChain : AttackAbilitiesToMovementChainsAsset->AttackAbilityMovementChainMap)
+    for (const FAttackAbilityToMovementChains& AttackAbilityToMovementChain : AttackAbilitiesToMovementChainsAsset->AttackAbilityMovementChainMap)
     {
         if (AttackAbilityToMovementChain.AttackAbilityClass == SelectedAbilityClass)
         {
-            return AttackAbilityToMovementChain.MovementChainsAsset;
+            return AttackAbilityToMovementChain.MovementChains;
         }
     }
 
-    return nullptr;
+    return EmptyResult;
 }
 
 

@@ -96,11 +96,6 @@ void UAC_PatrolHandler::StopPatrolling()
 
 	bInPatrolling = false;
 
-	if (OwnerEnemyASC)
-	{
-		OwnerEnemyASC->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_Rotation_LockTowardsTarget);
-	}
-
 	if (LastPatrolingAbility)
 	{
 		LastPatrolingAbility->OnAbilityEnded.RemoveAll(this);

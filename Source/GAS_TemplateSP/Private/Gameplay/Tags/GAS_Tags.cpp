@@ -415,6 +415,7 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_BackupReaction, "AI.State.BackupReaction");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_HeroFinisher, "AI.State.HeroFinisher");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_IsAttackIntender, "AI.State.IsAttackIntender");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_State_Boss_Dormant, "AI.State.Boss.Dormant");
 
 
 	// ============================================================

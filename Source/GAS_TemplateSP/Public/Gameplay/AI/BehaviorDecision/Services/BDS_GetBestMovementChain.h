@@ -10,7 +10,7 @@ class UMovementSingleData;
 class UMovementChainData;
 
 USTRUCT(BlueprintType)
-struct FAttackAbilityToMovementChain
+struct FAttackAbilityToMovementChains
 {
     GENERATED_BODY()
 
@@ -19,7 +19,7 @@ public:
     TSubclassOf<UGAS_GameplayAbilityBase> AttackAbilityClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    UMovementChainsAsset* MovementChainsAsset;
+    TArray<UMovementChainAsset*> MovementChains;
 };
 
 UCLASS(BlueprintType)
@@ -29,17 +29,17 @@ class UAttackAbilitiesToMovementChainsAsset : public UPrimaryDataAsset
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<FAttackAbilityToMovementChain> AttackAbilityMovementChainMap;
+    TArray<FAttackAbilityToMovementChains> AttackAbilityMovementChainMap;
 };
 
 UCLASS(BlueprintType)
-class UMovementChainsAsset : public UPrimaryDataAsset
+class UMovementChainAsset : public UPrimaryDataAsset
 {
     GENERATED_BODY()
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<UMovementChainData*> MovementChains;
+    UMovementChainData* MovementChain;
 };
 
 UCLASS()
@@ -53,7 +53,7 @@ public:
     UMovementChainData* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
 
 protected:
-    UMovementChainsAsset* GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const;
+    TArray<UMovementChainAsset*> GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const;
     /*
     float CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset);
 

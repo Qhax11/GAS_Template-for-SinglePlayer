@@ -438,6 +438,7 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_BackupReaction);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_HeroFinisher);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_IsAttackIntender);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_State_Boss_Dormant);
 
 
 	// ============================================================

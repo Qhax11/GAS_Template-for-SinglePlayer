@@ -32,21 +32,17 @@ void UGA_EnemyPatrolling::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 	FVector TargetLocation = TriggerEventData->Target->GetActorLocation();
 
-	// TEK satýr! Her þey task içinde halloluyor
 	UAT_AIMoveTo* MoveTask = UAT_AIMoveTo::AIMoveTo(
-		this,
-		FName("StrafeMove"),
-		EnemyController,
+		this, 
+		FName("PatrolMove"), 
+		EnemyController, 
 		TargetLocation,
-		AcceptanceRadius,
-		5,  // Min duration support built-in!
+		AcceptanceRadius, 
+		5, 
 		MovementSpeed
 	);
 
-	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyPatrolling::OnMoveCompleted);
-	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyPatrolling::OnMoveAborted);
-	MoveTask->OnFailed.AddDynamic(this, &UGA_EnemyPatrolling::OnMoveFailed);
-	MoveTask->ReadyForActivation();
+	ExecuteMoveTask(MoveTask);
 }
 
 void UGA_EnemyPatrolling::OnMoveCompleted()

@@ -24,14 +24,11 @@ protected:
 
 	virtual void OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> Result);
 
-	UFUNCTION()
-	void OnMoveCompleted();
+	void OnMoveCompleted() override;
 
-	UFUNCTION()
-	void OnMoveAborted();
+	void OnMoveAborted() override;
 
-	UFUNCTION()
-	void OnMoveFailed();
+	void OnMoveFailed() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStrafingBase|EQS")
 	UEnvQuery* EQSQueryTemplate;

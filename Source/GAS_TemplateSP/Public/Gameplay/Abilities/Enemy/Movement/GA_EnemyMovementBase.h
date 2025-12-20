@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GA_EnemyMovementBase.generated.h"
 
+class UAT_AIMoveTo;
 
 UCLASS()
 class GAS_TEMPLATESP_API UGA_EnemyMovementBase : public UGAS_GameplayAbilityBase
@@ -18,6 +19,17 @@ protected:
 	UGA_EnemyMovementBase();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
+
+	void ExecuteMoveTask(UAT_AIMoveTo* MoveTask);
+
+	UFUNCTION()
+	virtual void OnMoveCompleted();
+
+	UFUNCTION()
+	virtual void OnMoveAborted();
+
+	UFUNCTION()
+	virtual void OnMoveFailed();
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 

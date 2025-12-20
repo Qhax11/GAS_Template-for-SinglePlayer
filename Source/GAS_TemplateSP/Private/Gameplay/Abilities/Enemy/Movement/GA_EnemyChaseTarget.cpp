@@ -47,10 +47,7 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		MovementSpeed
 	);
 
-	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyChaseTarget::OnMoveCompleted);
-	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyChaseTarget::OnMoveAborted);
-	MoveTask->OnFailed.AddDynamic(this, &UGA_EnemyChaseTarget::OnMoveFailed);
-	MoveTask->ReadyForActivation();
+	ExecuteMoveTask(MoveTask);
 }
 
 void UGA_EnemyChaseTarget::OnMoveCompleted()

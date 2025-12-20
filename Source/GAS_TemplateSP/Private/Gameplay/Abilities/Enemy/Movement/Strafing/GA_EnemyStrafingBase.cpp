@@ -93,10 +93,7 @@ void UGA_EnemyStrafingBase::OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> 
 		MovementSpeed
 	);
 
-	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyStrafingBase::OnMoveCompleted);
-	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyStrafingBase::OnMoveAborted);
-	MoveTask->OnFailed.AddDynamic(this, &UGA_EnemyStrafingBase::OnMoveFailed);
-	MoveTask->ReadyForActivation();
+	ExecuteMoveTask(MoveTask);
 }
 
 void UGA_EnemyStrafingBase::OnMoveCompleted()

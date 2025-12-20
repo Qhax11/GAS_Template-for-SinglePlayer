@@ -16,12 +16,9 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	UFUNCTION()
-	void OnMoveCompleted();
+	void OnMoveCompleted() override;
 
-	UFUNCTION()
-	void OnMoveAborted();
+	void OnMoveAborted() override;
 
-	UFUNCTION()
-	void OnMoveFailed();
+	void OnMoveFailed() override;
 };

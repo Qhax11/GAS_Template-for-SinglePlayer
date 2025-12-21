@@ -283,10 +283,10 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 
 void UAC_EnemyMovementManager::BroadcastChainEnd(EMovementChainResult Result)
 {
-	FMovementChainEndData Data;
-	Data.ChainData = ChainData;
-	Data.Result = Result;
-	OnMovementChainEnded.Broadcast(Data);
+	FMovementChainEndData MovementChainEndData;
+	MovementChainEndData.ChainData = MovementChainTracker.CuurentChainData;
+	MovementChainEndData.Result = Result;
+	OnMovementChainEnded.Broadcast(MovementChainEndData);
 }
 
 void UAC_EnemyMovementManager::ClearMovementChain()

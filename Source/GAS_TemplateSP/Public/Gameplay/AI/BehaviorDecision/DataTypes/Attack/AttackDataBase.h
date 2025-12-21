@@ -62,6 +62,7 @@ struct FAttackScoreDebug
 	float Total = 0.f;
 };
 
+
 /**
  * UAttackDataBase
  *
@@ -125,6 +126,9 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
     TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
+	TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Whether this attack is part of a combo chain"))
     bool bIsComboAttack;

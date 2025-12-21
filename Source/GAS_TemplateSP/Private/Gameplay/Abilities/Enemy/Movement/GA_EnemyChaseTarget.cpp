@@ -61,6 +61,7 @@ void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UGA_EnemyChaseTarget::OnExpectedDurationFinished()
 {
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: ExpectedDuration is finished"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 

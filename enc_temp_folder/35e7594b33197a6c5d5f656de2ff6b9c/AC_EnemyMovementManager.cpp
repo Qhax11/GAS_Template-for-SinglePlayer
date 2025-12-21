@@ -51,7 +51,7 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteReactionMovement(UMov
 	}
 
 	// Reaction chain interrupt everything
-	InterruptByReaction();
+	StopChain();
 
 	// Activate with attack direction context
 	UGAS_GameplayAbilityBase* ReactionAbility = ActivateMovementAbility(MovementData, AttackPayload);
@@ -100,7 +100,7 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 		if (MovementChainTracker.IsChainFinished())
 		{
 			BroadcastChainEnd(EMovementChainResult::Aborted);
-			ClearMovementChain();
+			StopChain();
 			return;
 		}
 		TryExecuteNextMovementAbilityInChain();
@@ -263,7 +263,7 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
 		BroadcastChainEnd(EMovementChainResult::Aborted);
-		ClearMovementChain();
+		StopChain();
 		return;
 	}
 
@@ -272,7 +272,7 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain Completed."));
 		BroadcastChainEnd(EMovementChainResult::Completed);
-		ClearMovementChain();
+		StopChain();
 		return;
 	}
 	else
@@ -283,13 +283,13 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 
 void UAC_EnemyMovementManager::BroadcastChainEnd(EMovementChainResult Result)
 {
-	FMovementChainEndData Data;
-	Data.ChainData = ChainData;
-	Data.Result = Result;
-	OnMovementChainEnded.Broadcast(Data);
+	FMovementChainEndData MovementChainEndData;
+	MovementChainEndData.ChainData = MovementChainTracker.CuurentChainData;
+	MovementChainEndData.Result = Result;
+	OnMovementChainEnded.Broadcast(MovementChainEndData);
 }
 
-void UAC_EnemyMovementManager::ClearMovementChain()
+void UAC_EnemyMovementManager::StopChain()
 {
 	if (MovementChainTracker.CurrentMovementAbility)
 	{

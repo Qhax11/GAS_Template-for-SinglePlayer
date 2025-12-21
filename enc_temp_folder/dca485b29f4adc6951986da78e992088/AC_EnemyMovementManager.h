@@ -135,7 +135,8 @@ private:
 
 	/*===============  PUBLIC API ===============*/
 public:
-	void ClearMovementChain();
+	UFUNCTION(BlueprintCallable)
+	void StopChain();
 
 	void InterruptByReaction();
 

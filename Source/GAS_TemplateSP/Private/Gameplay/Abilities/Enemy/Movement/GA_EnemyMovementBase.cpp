@@ -84,6 +84,7 @@ void UGA_EnemyMovementBase::OnMoveCompleted()
 void UGA_EnemyMovementBase::OnMoveAborted()
 {
 	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Aborted, Ability ended with canceling"));
+	StopMovement();
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
@@ -97,6 +98,19 @@ void UGA_EnemyMovementBase::HandleMaxDurationReached()
 {
 	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: MaxDuration is Reached, ability ended"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+}
+
+void UGA_EnemyMovementBase::StopMovement()
+{
+	if (!EnemyController || !EnemyMovementComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyMovementBase: EnemyController or EnemyMovementComp is null!"));
+		return;
+	}
+
+	EnemyController->StopMovement();
+	EnemyMovementComp->StopMovementImmediately();
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Movement stopped!"));
 }
 
 void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,

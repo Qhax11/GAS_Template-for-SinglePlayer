@@ -48,6 +48,7 @@
  * - Keeps positioning logic isolated from attack execution
  */
 
+class UCharacterMovementComponent;
 class UMovementChainData;
 class UMovementSingleData;
 class UGAS_GameplayAbilityBase;
@@ -83,11 +84,18 @@ protected:
 	UFUNCTION()
 	void OnMovementChainEnded(const FMovementChainEndData& EndData);
 
+	void StartPostChainWait(UMovementChainData* ChainData);
+
 	void OnPostChainWaitFinished();
 
 	const EMovementRangeResult GetEvaluateAttackRange() const;
 
 	void HandleMovementChainFallback(UMovementChainData* ChainData);
+
+	void StopEnemyMovement();
+
+	UPROPERTY()
+	UCharacterMovementComponent* EnemyMovementComp;
 
 	TSharedPtr<FMovementStatePayload> MovementStateEnterPayload;
 

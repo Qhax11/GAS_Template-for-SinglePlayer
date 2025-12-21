@@ -106,11 +106,11 @@ void UMovementState::TryEnterToAttackState()
 	}
 	else if (MovementRangeResult == EMovementRangeResult::InRange) 
 	{
-		MovementManager->ClearMovementChain();
-		StopEnemyMovement();
+		MovementManager->StopChain();
 
 		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
 		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(SelectedAttackData);
+
 		BroadcastTransition(GAS_Tags::TAG_AI_State_Attack, AttackPayload, "Reached attack range");
 	}
 	else if (MovementRangeResult == EMovementRangeResult::TooFar) 
@@ -227,8 +227,6 @@ void UMovementState::StopEnemyMovement()
 void UMovementState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
-
-	StopEnemyMovement();
 
 	if (MovementManager && MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
 	{

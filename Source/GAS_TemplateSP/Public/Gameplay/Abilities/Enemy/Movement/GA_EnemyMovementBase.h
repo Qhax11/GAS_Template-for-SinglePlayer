@@ -64,4 +64,6 @@ private:
 	 */
 	UFUNCTION()
 	void HandleMaxDurationReached();
+
+	void StopMovement();
 };

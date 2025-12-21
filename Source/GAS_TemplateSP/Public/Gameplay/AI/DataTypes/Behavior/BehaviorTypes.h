@@ -6,11 +6,9 @@
 #include "BehaviorTypes.generated.h"
 
 UENUM(BlueprintType)
-enum class EBehaviorState : uint8
+enum class EEnemyIntent : uint8
 {
-    None,
-    Passive,
-    Aggressive,
-    Defensive,
-    Confused
+    LowPressure,
+    MidPressure,
+    HighPressure
 };

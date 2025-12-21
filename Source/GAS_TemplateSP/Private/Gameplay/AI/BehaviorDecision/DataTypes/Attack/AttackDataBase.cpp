@@ -65,7 +65,7 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 	float ComboScore = 0.f;
 
 	// Behavior state modifier
-	if (const float* Modifier = BehaviorStateScoreModifiers.Find(Context.BehaviorState))
+	if (const float* Modifier = EnemyIntentScoreModifiers.Find(Context.EnemyIntent))
 	{
 		BehaviorScore = *Modifier;
 	}

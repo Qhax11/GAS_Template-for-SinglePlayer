@@ -68,7 +68,7 @@ public:
 	float PostCompletedWaitMax = 1.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers based on current behavior state (e.g., aggressive, defensive)."))
-	TMap<EBehaviorState, float> BehaviorStateModifiers;
+	TMap<EEnemyIntent, float> IntentModifiers;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Score curve based on distance to target. High values make this chain more likely when far/close depending on the curve."))
 	UCurveFloat* DistanceScoreCurve = nullptr;

@@ -3,6 +3,7 @@
 
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
+#include "Gameplay/AI/Components/AC_IntendManager.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include <Gameplay/Attributes/AS_Base.h>
 
@@ -13,7 +14,7 @@ void UBDS_ComingAttackReactionBase::Initialize(const FBehaviorServiceInitParams&
 
 UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackReaction(FComingAttackPayload& ComingAttackPayload)
 {
-	if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack || !EnemyASC)
+	if (!IsValid(ComingAttackReactionAsset) || !ComingAttackPayload.ComingAttack || !EnemyASC || !IntendManager)
 	{
 		return nullptr;
 	}
@@ -64,7 +65,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 
 		// ---------------- SCORE ----------------
 		FReactionScoreDebug ScoreDebug;
-		const float Score = Reaction->GetScore(ComingAttackPayload, BehaviorState, bEnableDebug ? &ScoreDebug : nullptr);
+		const float Score = Reaction->GetScore(ComingAttackPayload, IntendManager->GetCurrentIntent(), bEnableDebug ? &ScoreDebug : nullptr);
 		if (bEnableDebug)
 		{
 			UE_LOG(LogTemp, Warning,

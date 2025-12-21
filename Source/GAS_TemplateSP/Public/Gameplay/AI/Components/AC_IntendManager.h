@@ -3,15 +3,9 @@
 #pragma once
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
+#include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "AC_IntendManager.generated.h"
 
-UENUM(BlueprintType)
-enum class EAIIntent : uint8
-{
-    LowPressure,
-    MidPressure,
-    HighPressure
-};
 
 class UMovementChainData;
 struct FMovementChainEndData;
@@ -25,7 +19,7 @@ protected:
     virtual void BeginPlay() override;
 
 public:
-    EAIIntent GetCurrentIntent() const { return CurrentIntent; }
+    EEnemyIntent GetCurrentIntent() const { return CurrentIntent; }
 
     void OnMovementChainCompleted(const FMovementChainEndData& MovementChainEndData);
 
@@ -40,7 +34,7 @@ private:
 
 private:
     UPROPERTY()
-    EAIIntent CurrentIntent = EAIIntent::LowPressure;
+    EEnemyIntent CurrentIntent = EEnemyIntent::LowPressure;
 	
 
 };

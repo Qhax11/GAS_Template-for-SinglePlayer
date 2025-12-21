@@ -42,20 +42,20 @@ void UAC_IntendManager::OnMovementChainAborted(const UMovementChainData* Chain)
 
 void UAC_IntendManager::EscalateIntent()
 {
-    if (CurrentIntent == EAIIntent::LowPressure) 
+    if (CurrentIntent == EEnemyIntent::LowPressure)
     {
-        CurrentIntent = EAIIntent::MidPressure;
+        CurrentIntent = EEnemyIntent::MidPressure;
     }
-    else if (CurrentIntent == EAIIntent::MidPressure)
+    else if (CurrentIntent == EEnemyIntent::MidPressure)
     {
-        CurrentIntent = EAIIntent::HighPressure;
+        CurrentIntent = EEnemyIntent::HighPressure;
     }
 }
 
 void UAC_IntendManager::DeescalateIntent()
 {
-    if (CurrentIntent == EAIIntent::HighPressure)
+    if (CurrentIntent == EEnemyIntent::HighPressure)
     {
-        CurrentIntent = EAIIntent::MidPressure;
+        CurrentIntent = EEnemyIntent::MidPressure;
     }
 }

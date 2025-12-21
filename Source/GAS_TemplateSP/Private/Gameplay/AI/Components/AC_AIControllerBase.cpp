@@ -23,6 +23,13 @@ void UAC_AIControllerBase::BeginPlay()
         return;
     }
 
+    IntendManager = OwnerController->GetIntendManagerComponent();
+    if (!IntendManager)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MovementManager is null in: %s !"), *GetName());
+        return;
+    }
+
     OwnerEnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
     if (!OwnerEnemyBase)
     {
@@ -43,8 +50,6 @@ void UAC_AIControllerBase::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
         return;
     }
-
-
 
     ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
     HeroBase = Cast<AGAS_HeroBase>(PlayerCharacter);

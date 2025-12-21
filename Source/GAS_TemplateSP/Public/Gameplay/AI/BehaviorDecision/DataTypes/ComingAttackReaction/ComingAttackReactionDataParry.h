@@ -18,5 +18,5 @@ public:
 
 	virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug = nullptr) const override;
 
-	virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug = nullptr) const override;
+	virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EEnemyIntent BehaviorState, FReactionScoreDebug* OutDebug = nullptr) const override;
 };

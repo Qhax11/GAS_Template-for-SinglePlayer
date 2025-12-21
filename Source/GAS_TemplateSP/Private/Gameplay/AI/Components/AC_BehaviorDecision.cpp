@@ -20,7 +20,7 @@ void UAC_BehaviorDecision::BeginPlay()
 {
 	Super::BeginPlay();
 
-    if(!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase)
+    if(!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase || !IntendManager)
     {
         UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: Some owner variables are already set in: %s !"), *GetName());
         return;
@@ -49,7 +49,7 @@ void UAC_BehaviorDecision::CreateAndInitalizeServiceses()
         return;
     }
 
-    FBehaviorServiceInitParams ServiceInitData = FBehaviorServiceInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, BehaviorState);
+    FBehaviorServiceInitParams ServiceInitData = FBehaviorServiceInitParams(OwnerEnemyBase, OwnerController, OwnerEnemyASC, HeroBase, HeroMovementListenerComp, IntendManager);
 
     if (BehaviorDecisionConfigAsset->AttackDecisionServiceClass) 
     {

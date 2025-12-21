@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "DecisionOptionData.generated.h"
 
 /**

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
-#include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "AC_BehaviorDecision.generated.h"
 
 class UAttackDataBase;
@@ -76,9 +75,6 @@ public:
     UGAS_GameplayAbilityBase* LastSelectedAttackAbilityCDO = nullptr;
 
 protected:
-    UPROPERTY(EditDefaultsOnly)
-    EBehaviorState BehaviorState = EBehaviorState::None;
-
     class UAC_HeroMovementListener* HeroMovementListenerComp;
 
     UPROPERTY(EditDefaultsOnly)

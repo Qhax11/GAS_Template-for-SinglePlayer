@@ -22,7 +22,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 	UAttackDataBase* BestAttackData = nullptr;
 
 	FAttackDecisionContext AttackDecisionContext;
-	AttackDecisionContext.BehaviorState = BehaviorState;
+	AttackDecisionContext.EnemyIntent = IntendManager->GetCurrentIntent();
 	AttackDecisionContext.Owner = Enemy;
 	AttackDecisionContext.Target = Hero;
 	AttackDecisionContext.OwnerASC = EnemyASC;

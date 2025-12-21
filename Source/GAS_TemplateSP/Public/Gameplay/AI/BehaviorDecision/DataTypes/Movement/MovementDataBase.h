@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/DecisionOptionData.h"
-#include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "MovementDataBase.generated.h"
 
@@ -85,7 +84,7 @@ struct FMovementDecisionContext
 
 	// ---- STATE ----
 	UPROPERTY(BlueprintReadOnly)
-	EBehaviorState BehaviorState = EBehaviorState::None;
+	EEnemyIntent Intent = EEnemyIntent::LowPressure;
 
 	// ---- FLOW CONTROL ----
 	UPROPERTY(BlueprintReadOnly)

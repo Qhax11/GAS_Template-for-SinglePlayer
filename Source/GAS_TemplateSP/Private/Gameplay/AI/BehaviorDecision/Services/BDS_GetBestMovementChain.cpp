@@ -4,6 +4,7 @@
 #include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementDataBase.h"
+#include "Gameplay/AI/Components/AC_IntendManager.h"
 
 void UBDS_GetBestMovementChain::Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams)
 {
@@ -31,7 +32,7 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<
     }
 
     FMovementDecisionContext MovementDecisionContext;
-    MovementDecisionContext.BehaviorState = BehaviorState;
+    MovementDecisionContext.Intent = IntendManager->GetCurrentIntent();
     MovementDecisionContext.Owner = Enemy;
     MovementDecisionContext.Target = Hero;
 

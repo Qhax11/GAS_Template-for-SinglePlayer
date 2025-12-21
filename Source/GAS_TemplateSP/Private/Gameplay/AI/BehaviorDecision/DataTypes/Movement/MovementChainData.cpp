@@ -64,7 +64,7 @@ float UMovementChainData::GetBehaviorStateScore(const FMovementDecisionContext& 
 {
     float Score = 0.0f;
 
-    if (const float* FoundScore = BehaviorStateModifiers.Find(Context.BehaviorState))
+    if (const float* FoundScore = IntentModifiers.Find(Context.Intent))
     {
         Score += *FoundScore;
     }

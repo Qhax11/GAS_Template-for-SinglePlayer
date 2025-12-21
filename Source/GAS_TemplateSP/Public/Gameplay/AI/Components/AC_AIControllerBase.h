@@ -26,6 +26,7 @@ class AGAS_EnemyBase;
 class UGAS_AbilitySystemComponent;
 class AGAS_HeroBase;
 class UAC_EnemyMovementManager;
+class UAC_IntendManager;
 
 UCLASS(Abstract, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_AIControllerBase : public UActorComponent
@@ -52,4 +53,7 @@ protected:
 
 	UPROPERTY()
 	UAC_EnemyMovementManager* MovementManager;
+
+	UPROPERTY()
+	UAC_IntendManager* IntendManager;
 };

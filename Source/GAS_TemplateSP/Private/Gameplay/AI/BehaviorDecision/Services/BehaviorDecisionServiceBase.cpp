@@ -10,7 +10,7 @@ void UBehaviorDecisionServiceBase::Initialize(const FBehaviorServiceInitParams& 
 	EnemyASC = BehaviorServiceInitParams.EnemyASC;
 	Hero = BehaviorServiceInitParams.Hero;
 	HeroMovementListenerComp = BehaviorServiceInitParams.HeroMovementListenerComp;
-	BehaviorState = BehaviorServiceInitParams.BehaviorState;
+	IntendManager = BehaviorServiceInitParams.IntendManager;
 	// The InAsset parameter will be cast to the appropriate asset type in subclasses.
 }
 

@@ -28,7 +28,7 @@ public:
 	UAbilitySystemComponent* TargetASC = nullptr;
 
 	UPROPERTY()
-	EBehaviorState BehaviorState = EBehaviorState::None;
+	EEnemyIntent EnemyIntent = EEnemyIntent::LowPressure;
 };
 
 UENUM()
@@ -123,8 +123,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "AI.Cooldown", ToolTip = "You have to choose spesific CooldownTag"))
 	FGameplayTag AbilityCooldownTag;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per behavior state"))
-    TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per intent"))
+    TMap<EEnemyIntent, float> EnemyIntentScoreModifiers;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Whether this attack is part of a combo chain"))
     bool bIsComboAttack;

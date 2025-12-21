@@ -7,6 +7,7 @@
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
+#include "Gameplay/AI/Components/AC_IntendManager.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "BehaviorDecisionServiceBase.generated.h"
@@ -34,7 +35,7 @@ public:
     UAC_HeroMovementListener* HeroMovementListenerComp = nullptr;
 
 	UPROPERTY()
-	EBehaviorState BehaviorState = EBehaviorState::None;
+    UAC_IntendManager* IntendManager = nullptr;
 
     FBehaviorServiceInitParams(
         AGAS_EnemyBase* InEnemy,
@@ -42,13 +43,13 @@ public:
         UAbilitySystemComponent* InEnemyASC,
         AGAS_HeroBase* InHero,
         UAC_HeroMovementListener* InHeroMovementListener,
-        EBehaviorState InBehaviorState)
+        UAC_IntendManager* InIntendManager)
         : Enemy(InEnemy)
         , EnemyController(InEnemyController)
         , EnemyASC(InEnemyASC)
         , Hero(InHero)
         , HeroMovementListenerComp(InHeroMovementListener)
-        , BehaviorState(InBehaviorState)
+        , IntendManager(InIntendManager)
     {}
 
     FBehaviorServiceInitParams() = default;
@@ -127,7 +128,7 @@ protected:
 	UAC_HeroMovementListener* HeroMovementListenerComp;
 
     UPROPERTY()
-	EBehaviorState BehaviorState;
+    UAC_IntendManager* IntendManager;
 
     UPROPERTY(EditDefaultsOnly)
     bool bEnableDebug = true;

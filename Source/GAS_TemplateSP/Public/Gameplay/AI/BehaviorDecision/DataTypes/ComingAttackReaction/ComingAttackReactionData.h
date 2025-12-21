@@ -102,14 +102,14 @@ public:
 
     virtual bool PassesChanceRoll(const UAbilitySystemComponent* ASC, FReactionChanceDebug* OutDebug = nullptr) const;
 
-    virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState, FReactionScoreDebug* OutDebug = nullptr) const;
+    virtual float GetScore(const FComingAttackPayload& ComingAttackPayload, EEnemyIntent EnemyIntent, FReactionScoreDebug* OutDebug = nullptr) const;
 
 protected:
     // Checks whether the incoming attack can currently reach the defender.
     // This is a hard, binary validation based on the attack's effective range.
     bool IsAttackInRange(const FComingAttackPayload& ComingAttackPayload) const;
 
-    virtual float CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EBehaviorState BehaviorState) const;
+    virtual float CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EEnemyIntent EnemyIntent) const;
 
     virtual float CalculateTagScore(const FComingAttackPayload& ComingAttackPayload) const;
 
@@ -148,9 +148,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     float MaxChance = 0.95f;
 
-    // +X score if AI is in this state
+    // +X score if AI is in this Intent
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TMap<EBehaviorState, float> BehaviorStateScoreModifiers;
+    TMap<EEnemyIntent, float> EnemyIntentScoreModifiers;
 
     // +X score if the incoming attack has these tags
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

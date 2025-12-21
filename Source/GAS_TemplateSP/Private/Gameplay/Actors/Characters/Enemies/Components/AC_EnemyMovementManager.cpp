@@ -38,7 +38,8 @@ void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainData* Movement
 		return;
 	}
 
-	MovementChainTracker.StartChain(MovementChain->MovementChain);
+	// Start chain
+	MovementChainTracker.StartChain(MovementChain);
 	TryExecuteNextMovementAbilityInChain();
 }
 
@@ -79,24 +80,30 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	UMovementSingleData* MovementDataInChain = MovementChainTracker.GetCurrentValidMovement();
 	if (!MovementDataInChain)
 	{
-		OnMovementChainEnded.Broadcast();
-		StopChain();
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementDataInChain is null!"));
 		return;
 	}
 
 	UGAS_GameplayAbilityBase* MovementAbilityInChain = ActivateMovementAbility(MovementDataInChain);
-	if (!MovementAbilityInChain)
+	if (MovementAbilityInChain)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementInChain activation failed, try next data!"));
-		MovementChainTracker.Advance();
-		TryExecuteNextMovementAbilityInChain();
+		// Bind end deleagte
+		MovementAbilityInChain->OnAbilityEnded.RemoveAll(this);
+		MovementAbilityInChain->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
+		MovementChainTracker.CurrentMovementAbility = MovementAbilityInChain;
+		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Movement Ability executed: %s"), *MovementAbilityInChain->GetName());
 	}
 	else
 	{
-		MovementAbilityInChain->OnAbilityEnded.RemoveAll(this);
-		MovementAbilityInChain->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityInChainEnded);
-		MovementChainTracker.CurrentMovementAbility = MovementAbilityInChain;
-		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Movement Ability executed: %s"), *MovementAbilityInChain->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: Activation failed, skipping movement data."));
+		MovementChainTracker.Advance();
+		if (MovementChainTracker.IsChainFinished())
+		{
+			BroadcastChainEnd(EMovementChainResult::Aborted);
+			StopChain();
+			return;
+		}
+		TryExecuteNextMovementAbilityInChain();
 	}
 }
 
@@ -242,10 +249,11 @@ FGameplayTag UAC_EnemyMovementManager::ResolveAttackDirection(FGameplayTag Attac
 	return FGameplayTag();
 }
 
-void UAC_EnemyMovementManager::OnMovementAbilityInChainEnded(const FCustomAbilityEndedData& AbilityEndedData)
+void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)
 {
 	if (AbilityEndedData.AbilityThatEnded != MovementChainTracker.CurrentMovementAbility)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: Ended movement ability is not CurrentMovement"), *AbilityEndedData.AbilityThatEnded->GetName());
 		return;
 	}
 
@@ -254,21 +262,29 @@ void UAC_EnemyMovementManager::OnMovementAbilityInChainEnded(const FCustomAbilit
 	if (AbilityEndedData.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
+		BroadcastChainEnd(EMovementChainResult::Aborted);
 		StopChain();
 		return;
 	}
 
 	MovementChainTracker.Advance();
-
 	if (MovementChainTracker.IsChainFinished())
 	{
+		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain Completed."));
+		BroadcastChainEnd(EMovementChainResult::Completed);
 		StopChain();
-		OnMovementChainEnded.Broadcast();
-		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain is finished."), *AbilityEndedData.AbilityThatEnded->GetName());
 		return;
 	}
 
 	TryExecuteNextMovementAbilityInChain();
+}
+
+void UAC_EnemyMovementManager::BroadcastChainEnd(EMovementChainResult Result)
+{
+	FMovementChainEndData MovementChainEndData;
+	MovementChainEndData.ChainData = MovementChainTracker.CuurentChainData;
+	MovementChainEndData.Result = Result;
+	OnMovementChainEnded.Broadcast(MovementChainEndData);
 }
 
 void UAC_EnemyMovementManager::StopChain()

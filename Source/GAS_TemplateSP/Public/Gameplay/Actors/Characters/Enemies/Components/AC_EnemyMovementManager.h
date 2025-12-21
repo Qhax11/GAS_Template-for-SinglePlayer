@@ -4,14 +4,35 @@
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyBase.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "Gameplay/AI/DataTypes/CombatTypes.h"
 #include "AC_EnemyMovementManager.generated.h"
 
 class UMovementDataBase;
-class UMovementChainData;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMovementChainEnded);
+UENUM(BlueprintType)
+enum class EMovementChainResult : uint8
+{
+	Completed,
+	Interrupted,
+	Aborted
+};
+
+USTRUCT(BlueprintType)
+struct FMovementChainEndData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	UMovementChainData* ChainData = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	EMovementChainResult Result = EMovementChainResult::Completed;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMovementChainEnded, const FMovementChainEndData&, EndData);
+
 
 USTRUCT()
 struct FMovementChainTracker
@@ -20,13 +41,17 @@ struct FMovementChainTracker
 
 public:
 	UPROPERTY()
+	UMovementChainData* CuurentChainData = nullptr;
+
+	UPROPERTY()
 	UGAS_GameplayAbilityBase* CurrentMovementAbility = nullptr;
 	TArray<UMovementSingleData*> ActiveChain;
 	int32 CurrentIndex = 0;
 
-	void StartChain(const TArray<UMovementSingleData*>& InChain)
+	void StartChain(UMovementChainData* Chain)
 	{
-		ActiveChain = InChain;
+		CuurentChainData = Chain;
+		ActiveChain = Chain->MovementChain;
 		CurrentIndex = 0;
 	}
 
@@ -35,6 +60,7 @@ public:
 		ActiveChain.Empty();
 		CurrentIndex = 0;
 		CurrentMovementAbility = nullptr;
+		CuurentChainData = nullptr;
 	}
 
 	bool IsChainFinished() const
@@ -114,12 +140,15 @@ public:
 
 	void InterruptByReaction();
 
+	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;
 
 private:
-	/*===============  CALLBACKS ===============*/
+	// Movement ability in movement chain is ended
 	UFUNCTION()
-	void OnMovementAbilityInChainEnded(const FCustomAbilityEndedData& AbilityEndedData);
+	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
+
+	void BroadcastChainEnd(EMovementChainResult Result);
 
 	/*===============  STATE ===============*/
 	UPROPERTY()

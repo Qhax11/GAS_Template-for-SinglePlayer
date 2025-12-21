@@ -10,6 +10,14 @@ class UGA_EnemyMovementBase;
 class UAbilitySystemComponent;
 class UMovementSingleData;
 
+UENUM()
+enum class EMovementChainFallbackPolicy : uint8
+{
+	None,
+	SoftFallback,   // same intent, micro adjust
+	HardFallback    // new chain
+};
+
 /**
  * Represents a scored sequence of movement abilities used by the AI to reposition itself
  * relative to a selected attack. A movement chain is chosen via decision logic (score-based),
@@ -49,6 +57,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Sequence of movement abilities that make up this chain. Executed in order."))
 	TArray<UMovementSingleData*> MovementChain;
+
+	UPROPERTY(EditDefaultsOnly)
+	EMovementChainFallbackPolicy FallbackPolicy = EMovementChainFallbackPolicy::None;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers based on current behavior state (e.g., aggressive, defensive)."))
 	TMap<EBehaviorState, float> BehaviorStateModifiers;

@@ -80,7 +80,7 @@ protected:
 	void OnBackStepEnded(const FCustomAbilityEndedData& ReactionMovementEndedData);
 
 	UFUNCTION()
-	void OnMovementChainEnded();
+	void OnMovementChainEnded(const FMovementChainEndData& EndData);
 
 	TSharedPtr<FMovementStatePayload> MovementStateEnterPayload;
 

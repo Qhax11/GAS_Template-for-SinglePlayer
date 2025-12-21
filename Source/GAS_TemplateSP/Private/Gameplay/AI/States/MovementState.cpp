@@ -133,16 +133,40 @@ void UMovementState::OnBackStepEnded(const FCustomAbilityEndedData& ReactionMove
 	bStepBackActive = false;
 }
 
-void UMovementState::OnMovementChainEnded()
+void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 {
-	EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, SelectedAttackCDO->MinRange, SelectedAttackCDO->MaxRange);
-	if (MovementRangeResult == EMovementRangeResult::InRange) 
+	UMovementChainData* EndedChainData = EndData.ChainData;
+	if (!EndedChainData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: ChainEnd callback but ChainData is null!"));
+		return;
+	}
+
+	// First, check if in range to attack
+	const EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, SelectedAttackCDO->MinRange, SelectedAttackCDO->MaxRange);
+	if (MovementRangeResult == EMovementRangeResult::InRange)
 	{
 		BroadcastTransition(FGameplayTag(), nullptr, "Reached attack range");
 		return;
 	}
 
-	StartMovementChain(MovementStateEnterPayload->SelectedMovementChainData);
+	// 2. Completed = chain görevini yaptý, ama yetmedi
+	if(EndData.Result == EMovementChainResult::Completed)
+	{
+		// Continue current behavior, re-evaluate in next tick
+		return; 
+	}
+
+	// 3. Interrupted / Aborted -> fallback policy devrede
+	if (EndedChainData->FallbackPolicy == EMovementChainFallbackPolicy::SoftFallback) 
+	{
+		// Start same chain
+		StartMovementChain(EndedChainData);
+	}
+	else if (EndedChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
+	{
+		BroadcastTransition(FGameplayTag(), nullptr, "Chain is HardFallback");
+	}
 }
 
 void UMovementState::OnExit_Implementation()

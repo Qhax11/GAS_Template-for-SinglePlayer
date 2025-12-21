@@ -189,6 +189,7 @@ void UMovementState::HandleMovementChainFallback(UMovementChainData* ChainData)
 {
 	if (!ChainData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: HandleMovementChainFallback is null"));
 		return;
 	}
 
@@ -197,9 +198,9 @@ void UMovementState::HandleMovementChainFallback(UMovementChainData* ChainData)
 		// Same intent, start same chain
 		StartMovementChain(ChainData);
 	}
-	else if (ChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
+	else 
 	{
-		BroadcastTransition(FGameplayTag(), nullptr, "Chain is HardFallback after PostChainWait");
+		BroadcastTransition(FGameplayTag(), nullptr, "Chain is HardFallback or none after PostChainWait");
 	}
 }
 

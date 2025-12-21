@@ -62,7 +62,7 @@ public:
 	EMovementChainFallbackPolicy FallbackPolicy = EMovementChainFallbackPolicy::None;
 
 	UPROPERTY(EditDefaultsOnly)
-	float PostCompletedWaitTime = 0.8f;
+	float PostCompletedWaitTime = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers based on current behavior state (e.g., aggressive, defensive)."))
 	TMap<EBehaviorState, float> BehaviorStateModifiers;

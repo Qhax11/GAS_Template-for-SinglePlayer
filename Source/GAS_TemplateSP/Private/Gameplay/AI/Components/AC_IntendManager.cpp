@@ -48,11 +48,6 @@ void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& En
     }
 }
 
-void UAC_IntendManager::OnMovementChainAborted(const UMovementChainData* Chain)
-{
-    DecreasePressure();
-}
-
 void UAC_IntendManager::IncreasePressure()
 {
     if (CurrentIntent == EEnemyIntent::LowPressure)

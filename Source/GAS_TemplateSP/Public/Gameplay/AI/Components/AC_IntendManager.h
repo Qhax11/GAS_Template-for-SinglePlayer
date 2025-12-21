@@ -23,8 +23,6 @@ public:
 
     void OnMovementChainCompleted(const FMovementChainEndData& EndData);
 
-    void OnMovementChainAborted(const UMovementChainData* Chain);
-
 private:
     void OnMovementChainEnded(const FMovementChainEndData& EndData);
 

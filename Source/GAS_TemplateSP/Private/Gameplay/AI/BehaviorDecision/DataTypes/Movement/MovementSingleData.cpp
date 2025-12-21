@@ -5,6 +5,11 @@
 
 bool UMovementSingleData::IsValidData() const
 {
+	if (bDisableMovement) 
+	{
+		return false;
+	}
+
 	if (!MovementAbilityClass || !AbilityTriggerTag.IsValid())
 	{
 		return false;

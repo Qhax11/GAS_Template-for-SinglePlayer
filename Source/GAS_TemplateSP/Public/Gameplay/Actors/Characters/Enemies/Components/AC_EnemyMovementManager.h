@@ -96,10 +96,6 @@ private:
 	UGAS_GameplayAbilityBase* ActivateMovementAbility(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
 
 	/*===============  HELPERS ===============*/
-	bool ValidateMovementData(UMovementSingleData* MovementData) const;
-
-	bool ValidateMovementChainData(UMovementChainData* MovementChainData) const;
-
 	void ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
 
 	FGameplayTag ResolveDirectionFromPolicy(const FGameplayTag& PolicyTag, const FComingAttackPayload& AttackPayload);

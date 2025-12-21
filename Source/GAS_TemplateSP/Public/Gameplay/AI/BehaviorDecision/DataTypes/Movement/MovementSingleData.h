@@ -90,4 +90,7 @@ public:
     // The policy used to resolve the direction, like random or based on player position.
     UPROPERTY(EditDefaultsOnly, meta = (Categories = "AI.Direction.Policy", EditCondition = "EnableDirectionPolicy", ToolTip = "Defines how the direction should be resolved at runtime (e.g., LastPlayerDirection, Random)."))
     FGameplayTag DirectionPolicyTag;
+
+    UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Use for disable movement, for quick debug"))
+    bool bDisableMovement = false;;
 };

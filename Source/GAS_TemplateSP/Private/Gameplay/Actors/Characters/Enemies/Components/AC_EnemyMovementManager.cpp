@@ -33,7 +33,7 @@ void UAC_EnemyMovementManager::BeginPlay()
 
 void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainData* MovementChain)
 {
-	if (!ValidateMovementChainData(MovementChain)) 
+	if (!MovementChain)
 	{
 		return;
 	}
@@ -44,7 +44,7 @@ void UAC_EnemyMovementManager::ExecuteMovementChain(UMovementChainData* Movement
 
 UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteReactionMovement(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload)
 {
-	if (!ValidateMovementData(MovementData))
+	if (!MovementData->IsValidData())
 	{
 		return nullptr;
 	}
@@ -65,7 +65,7 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteReactionMovement(UMov
 
 UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ExecuteCorrectiveMovement(UMovementSingleData* MovementData)
 {
-	if (!ValidateMovementData(MovementData))
+	if (!MovementData->IsValidData())
 	{
 		return nullptr;
 	}
@@ -87,8 +87,7 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	UGAS_GameplayAbilityBase* MovementAbilityInChain = ActivateMovementAbility(MovementDataInChain);
 	if (!MovementAbilityInChain)
 	{
-		UE_LOG(LogTemp, Log, 
-			TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementInChain activation failed, try next data!"));
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementInChain activation failed, try next data!"));
 		MovementChainTracker.Advance();
 		TryExecuteNextMovementAbilityInChain();
 	}
@@ -97,14 +96,21 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 		MovementAbilityInChain->OnAbilityEnded.RemoveAll(this);
 		MovementAbilityInChain->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityInChainEnded);
 		MovementChainTracker.CurrentMovementAbility = MovementAbilityInChain;
+		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Movement Ability executed: %s"), *MovementAbilityInChain->GetName());
 	}
 }
 
 UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ActivateMovementAbility(UMovementSingleData* MovementData, const FComingAttackPayload& AttackPayload)
 {
-	if (!ValidateMovementData(MovementData))
+	if (!MovementData->IsValidData())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: Validation failed!"));
+		return nullptr;
+	}
+
+	if (!OwnerEnemyASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: OwnerEnemyASC is null!"));
 		return nullptr;
 	}
 
@@ -118,52 +124,6 @@ UGAS_GameplayAbilityBase* UAC_EnemyMovementManager::ActivateMovementAbility(UMov
 	EventData.EventMagnitude = MovementData->ExpectedDuration;
 
 	return OwnerEnemyASC->TryActivateAbilityByClassWithEventData(MovementData->MovementAbilityClass, EventData);
-}
-
-bool UAC_EnemyMovementManager::ValidateMovementData(UMovementSingleData* MovementData) const
-{
-	if (!MovementData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementData is null!"));
-		return false;
-	}
-
-	if (!OwnerEnemyASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: OwnerEnemyASC is null!"));
-		return false;
-	}
-
-	if (!MovementData->AbilityTriggerTag.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: AbilityTriggerTag is invalid!"));
-		return false;
-	}
-
-	if (!MovementData->MovementAbilityClass)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementAbilityClass is null!"));
-		return false;
-	}
-
-	return true;
-}
-
-bool UAC_EnemyMovementManager::ValidateMovementChainData(UMovementChainData* MovementChainData) const
-{
-	if (!MovementChainData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: MovementData is null!"));
-		return false;
-	}
-
-	if (!OwnerEnemyASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: OwnerEnemyASC is null!"));
-		return false;
-	}
-
-	return true;
 }
 
 void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, const FComingAttackPayload& AttackPayload)

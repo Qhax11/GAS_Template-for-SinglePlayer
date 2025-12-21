@@ -104,7 +104,7 @@ void UGA_EnemyStrafingBase::OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> 
 
 void UGA_EnemyStrafingBase::OnExpectedDurationFinished()
 {
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+	//EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_EnemyStrafingBase::OnMinDurationFinished()

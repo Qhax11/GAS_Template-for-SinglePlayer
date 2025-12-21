@@ -2,8 +2,9 @@
 
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
-#include "Gameplay/AI/Controllers/AIControllerBase.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include <Kismet/GameplayStatics.h>
 
 UAC_AIControllerBase::UAC_AIControllerBase()
@@ -29,12 +30,21 @@ void UAC_AIControllerBase::BeginPlay()
         return;
     }
 
+    MovementManager = OwnerEnemyBase->GetEnemyMovementManagerComponent();
+    if (!MovementManager)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MovementManager is null in: %s !"), *GetName());
+        return;
+    }
+
     OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
     if (!OwnerEnemyASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
         return;
     }
+
+
 
     ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
     HeroBase = Cast<AGAS_HeroBase>(PlayerCharacter);

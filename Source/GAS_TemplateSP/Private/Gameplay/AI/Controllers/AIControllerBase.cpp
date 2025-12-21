@@ -29,8 +29,8 @@ AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer
 	PerceptionComponent->SetDominantSense(AISenseConfig_Sight->GetSenseImplementation());
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIControllerBase::TargetPreceptionUpdated);
 
-	EnemyIntendManagerComponent = CreateDefaultSubobject<UAC_IntendManager>(TEXT("EnemyIntendManagerComponent"));
 	BehaviorDecisionComponent = CreateDefaultSubobject<UAC_BehaviorDecision>(TEXT("BehaviorDecisionComponent"));
+	EnemyIntendManagerComponent = CreateDefaultSubobject<UAC_IntendManager>(TEXT("EnemyIntendManagerComponent"));
 	EnemyStateManagerComponent = CreateDefaultSubobject<UAC_StateManager>(TEXT("EnemyStateManagerComponent"));
 }
 

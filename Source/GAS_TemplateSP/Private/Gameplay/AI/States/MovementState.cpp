@@ -73,10 +73,9 @@ void UMovementState::StartMovementChain(UMovementChainData* MovementChainData)
 		return;
 	}
 
-	if (!MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
-	{
-		MovementManager->OnMovementChainEnded.AddDynamic(this, &UMovementState::OnMovementChainEnded);
-	}
+	// Bind end deleagte
+	MovementManager->OnMovementChainEnded.RemoveAll(this);
+	MovementManager->OnMovementChainEnded.AddUObject(this, &UMovementState::OnMovementChainEnded);
 
 	MovementManager->ExecuteMovementChain(MovementChainData);
 }
@@ -137,14 +136,7 @@ void UMovementState::OnBackStepEnded(const FCustomAbilityEndedData& ReactionMove
 
 void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 {
-	UMovementChainData* EndedChainData = EndData.ChainData;
-	if (!EndedChainData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: ChainEnd callback but ChainData is null!"));
-		return;
-	}
-
-	// If we are already in range, leave MovementState immediately 
+	// Range’e girdiysek direkt çýk
 	if (GetEvaluateAttackRange() == EMovementRangeResult::InRange)
 	{
 		StopEnemyMovement();
@@ -152,64 +144,11 @@ void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 		return;
 	}
 
-	// Completed + HardFallback => stop movement + wait window
-	if (EndData.Result == EMovementChainResult::Completed && EndedChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
-	{
-		StopEnemyMovement();
-		StartPostChainWait(EndedChainData);
-		return;
-	}
-
-	// Anything else => fallback immediately
-	HandleMovementChainFallback(EndedChainData);
-}
-
-void UMovementState::StartPostChainWait(UMovementChainData* ChainData)
-{
-	if (!ChainData || !GetWorld())
-	{
-		return;
-	}
-
-	const float WaitTime = FMath::RandRange(ChainData->PostCompletedWaitMin, ChainData->PostCompletedWaitMax);
-
-	GetWorld()->GetTimerManager().SetTimer(
-		PostChainWaitTimer,
-		this,
-		&UMovementState::OnPostChainWaitFinished,
-		WaitTime,
-		false
-	);
-}
-
-void UMovementState::OnPostChainWaitFinished()
-{
-	// First, check if in range to attack
-	if (GetEvaluateAttackRange() == EMovementRangeResult::InRange)
-	{
-		BroadcastTransition(FGameplayTag(), nullptr, "Reached attack range");
-		return;
-	}
-
-	HandleMovementChainFallback(MovementStateEnterPayload->SelectedMovementChainData);
-}
-
-void UMovementState::HandleMovementChainFallback(UMovementChainData* ChainData)
-{
-	if (!ChainData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: HandleMovementChainFallback ChainData is null"));
-		return;
-	}
-
-	if (ChainData->FallbackPolicy == EMovementChainFallbackPolicy::SoftFallback)
-	{
-		StartMovementChain(ChainData);
-		return;
-	}
-
+	// MovementState burada biter
 	StopEnemyMovement();
-	BroadcastTransition(FGameplayTag(), nullptr, "Chain is HardFallback or None");
+
+	// Sadece çýk, karar dýþarýda verilecek
+	BroadcastTransition(FGameplayTag(), nullptr, "Movement chain finished");
 }
 
 void UMovementState::StopEnemyMovement()
@@ -235,9 +174,9 @@ void UMovementState::OnExit_Implementation()
 
 	StopEnemyMovement();
 
-	if (MovementManager && MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UMovementState::OnMovementChainEnded))
+	if (MovementManager)
 	{
-		MovementManager->OnMovementChainEnded.RemoveDynamic(this, &UMovementState::OnMovementChainEnded);
+		MovementManager->OnMovementChainEnded.RemoveAll(this);
 	}
 
 	if (GetWorld())

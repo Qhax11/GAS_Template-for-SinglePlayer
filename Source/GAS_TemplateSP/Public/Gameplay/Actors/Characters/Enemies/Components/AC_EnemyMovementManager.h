@@ -31,7 +31,7 @@ struct FMovementChainEndData
 	EMovementChainResult Result = EMovementChainResult::Completed;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMovementChainEnded, const FMovementChainEndData&, EndData);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMovementChainEnded, const FMovementChainEndData&);
 
 
 USTRUCT()
@@ -139,7 +139,6 @@ public:
 
 	void InterruptByReaction();
 
-	UPROPERTY(BlueprintAssignable)
 	FOnMovementChainEnded OnMovementChainEnded;
 
 private:

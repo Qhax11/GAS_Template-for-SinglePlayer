@@ -81,14 +81,7 @@ protected:
 
 	void OnBackStepEnded(const FCustomAbilityEndedData& ReactionMovementEndedData);
 
-	UFUNCTION()
 	void OnMovementChainEnded(const FMovementChainEndData& EndData);
-
-	void StartPostChainWait(UMovementChainData* ChainData);
-
-	void OnPostChainWaitFinished();
-
-	void HandleMovementChainFallback(UMovementChainData* ChainData);
 
 	void StopEnemyMovement();
 

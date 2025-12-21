@@ -60,15 +60,9 @@ bool UAttackDataBase::PassesChance(const FAttackDecisionContext& Context, FAttac
 
 float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug) const
 {
+	float IntentScore = GetIntentScore(Context);
 	float DistanceScore = GetDistanceScore(Context);
-	float BehaviorScore = 0.f;
 	float ComboScore = 0.f;
-
-	// Behavior state modifier
-	if (const float* Modifier = EnemyIntentScoreModifiers.Find(Context.EnemyIntent))
-	{
-		BehaviorScore = *Modifier;
-	}
 
 	// Combo bonus
 	if (bIsComboAttack)
@@ -77,11 +71,11 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 		ComboScore = 0.25f;
 	}
 
-	const float TotalScore = BehaviorScore + ComboScore + DistanceScore + ScoreBias;
+	const float TotalScore = IntentScore + DistanceScore + ComboScore + ScoreBias;
 
 	if (OutDebug)
 	{
-		OutDebug->BehaviorScore = BehaviorScore;
+		OutDebug->IntentScore = IntentScore;
 		OutDebug->ComboScore = ComboScore;
 		OutDebug->DistanceScore = DistanceScore;
 		OutDebug->Bias = ScoreBias;
@@ -89,6 +83,18 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 	}
 
 	return TotalScore;
+}
+
+float UAttackDataBase::GetIntentScore(const FAttackDecisionContext& Context) const
+{
+	float Score = 0.0f;
+
+	if (const float* FoundScore = EnemyIntentScoreModifiers.Find(Context.EnemyIntent))
+	{
+		Score += *FoundScore;
+	}
+
+	return Score;
 }
 
 float UAttackDataBase::GetDistanceScore(const FAttackDecisionContext& Context) const

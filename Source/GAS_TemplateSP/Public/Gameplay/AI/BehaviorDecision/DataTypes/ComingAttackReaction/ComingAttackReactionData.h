@@ -56,7 +56,7 @@ struct FReactionChanceDebug
 
 struct FReactionScoreDebug
 {
-    float BehaviorStateScore = 0.f;
+    float IntentScore = 0.f;
     float TagScore = 0.f;
     float Bias = 0.f;
     float Total = 0.f;
@@ -109,7 +109,7 @@ protected:
     // This is a hard, binary validation based on the attack's effective range.
     bool IsAttackInRange(const FComingAttackPayload& ComingAttackPayload) const;
 
-    virtual float CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EEnemyIntent EnemyIntent) const;
+    virtual float GetIntentScore(const FComingAttackPayload& ComingAttackPayload, EEnemyIntent EnemyIntent) const;
 
     virtual float CalculateTagScore(const FComingAttackPayload& ComingAttackPayload) const;
 

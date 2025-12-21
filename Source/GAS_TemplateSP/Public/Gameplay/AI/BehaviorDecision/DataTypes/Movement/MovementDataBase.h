@@ -60,7 +60,7 @@ struct FMovementScoreDebug
 	float DistanceScore = 0.f;
 
 	UPROPERTY(BlueprintReadOnly)
-	float BehaviorStateScore = 0.f;
+	float IntentScore = 0.f;
 
 	UPROPERTY(BlueprintReadOnly)
 	float TotalScore = 0.f;

@@ -55,7 +55,7 @@ struct FAttackChanceDebug
 
 struct FAttackScoreDebug
 {
-	float BehaviorScore = 0.f;
+	float IntentScore = 0.f;
 	float ComboScore = 0.f;
 	float DistanceScore = 0.f;
 	float Bias = 0.f;
@@ -107,6 +107,8 @@ public:
 	virtual float GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug = nullptr) const;
 
 protected:
+	float GetIntentScore(const FAttackDecisionContext& Context) const;
+
 	float GetDistanceScore(const FAttackDecisionContext& Context) const;
 
 	//float CalculateScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget);

@@ -52,13 +52,14 @@ bool UComingAttackReactionData::PassesChanceRoll(const UAbilitySystemComponent* 
 
 float UComingAttackReactionData::GetScore(const FComingAttackPayload& ComingAttackPayload, EEnemyIntent EnemyIntent, FReactionScoreDebug* OutDebug) const
 {
-	float BehaviorStateScore = CalculateBehaviorStateScore(ComingAttackPayload, EnemyIntent);
+	float IntentScore = GetIntentScore(ComingAttackPayload, EnemyIntent);
 	float TagScore = CalculateTagScore(ComingAttackPayload);
-	float Total = BehaviorStateScore + TagScore + ScoreBias;
+
+	float Total = IntentScore + TagScore + ScoreBias;
 
 	if (OutDebug) 
 	{
-		OutDebug->BehaviorStateScore = BehaviorStateScore;
+		OutDebug->IntentScore = IntentScore;
 		OutDebug->TagScore = TagScore;
 		OutDebug->Bias = ScoreBias;
 		OutDebug->Total = Total;
@@ -72,14 +73,16 @@ bool UComingAttackReactionData::IsAttackInRange(const FComingAttackPayload& Comi
 	return CombatDistance::IsInRange(ComingAttackPayload.Attacker, ComingAttackPayload.Defender, ComingAttackPayload.ComingAttack->MaxRange);
 }
 
-float UComingAttackReactionData::CalculateBehaviorStateScore(const FComingAttackPayload& ComingAttackPayload, EEnemyIntent EnemyIntent) const
+float UComingAttackReactionData::GetIntentScore(const FComingAttackPayload& ComingAttackPayload, EEnemyIntent EnemyIntent) const
 {
-	if (const float* Mod = EnemyIntentScoreModifiers.Find(EnemyIntent))
+	float Score = 0.0f;
+
+	if (const float* FoundScore = EnemyIntentScoreModifiers.Find(EnemyIntent))
 	{
-		return *Mod;
+		Score += *FoundScore;
 	}
 
-	return 0.f;
+	return Score;
 }
 
 float UComingAttackReactionData::CalculateTagScore(const FComingAttackPayload& ComingAttackPayload) const

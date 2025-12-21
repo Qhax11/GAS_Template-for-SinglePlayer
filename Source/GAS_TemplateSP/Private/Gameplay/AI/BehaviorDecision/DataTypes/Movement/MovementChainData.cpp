@@ -40,15 +40,15 @@ bool UMovementChainData::PassesChance(const FMovementDecisionContext& Context, F
 float UMovementChainData::GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug) const
 {
     float DistanceScore = GetDistanceScore(Context);
-    float BehaviorScore = GetBehaviorStateScore(Context);
+    float IntentScore = GetIntentScore(Context);
 
-    const float TotalScore = DistanceScore + BehaviorScore +ScoreBias;
+    const float TotalScore = DistanceScore + IntentScore +ScoreBias;
 
     if (OutDebug)
     {
         OutDebug->BiasScore = ScoreBias;
         OutDebug->DistanceScore = DistanceScore;
-        OutDebug->BehaviorStateScore = BehaviorScore;
+        OutDebug->IntentScore = IntentScore;
         OutDebug->TotalScore = TotalScore;
     }
 
@@ -60,7 +60,7 @@ bool UMovementChainData::IsChainEmpty()
     return false;
 }
 
-float UMovementChainData::GetBehaviorStateScore(const FMovementDecisionContext& Context) const
+float UMovementChainData::GetIntentScore(const FMovementDecisionContext& Context) const
 {
     float Score = 0.0f;
 

@@ -45,7 +45,7 @@ public:
 	bool IsChainEmpty();
 
 protected:
-	virtual float GetBehaviorStateScore(const FMovementDecisionContext& Context) const;
+	virtual float GetIntentScore(const FMovementDecisionContext& Context) const;
 
 	virtual float GetDistanceScore(const FMovementDecisionContext& Context) const;
 

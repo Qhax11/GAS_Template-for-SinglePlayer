@@ -144,33 +144,40 @@ void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 		return;
 	}
 
-	// First, check if in range to attack
-	const EMovementRangeResult MovementRangeResult = GetEvaluateAttackRange();
-	if (MovementRangeResult == EMovementRangeResult::InRange)
+	// If we are already in range, leave MovementState immediately 
+	if (GetEvaluateAttackRange() == EMovementRangeResult::InRange)
 	{
+		StopEnemyMovement();
 		BroadcastTransition(FGameplayTag(), nullptr, "Reached attack range");
 		return;
 	}
 
-	if(EndData.Result == EMovementChainResult::Completed)
+	// Completed + HardFallback => stop movement + wait window
+	if (EndData.Result == EMovementChainResult::Completed && EndedChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
 	{
 		StopEnemyMovement();
 		StartPostChainWait(EndedChainData);
-		return; 
+		return;
 	}
 
+	// Anything else => fallback immediately
 	HandleMovementChainFallback(EndedChainData);
 }
 
 void UMovementState::StartPostChainWait(UMovementChainData* ChainData)
 {
-	const float PostCompletedWaitTime = ChainData->PostCompletedWaitTime;
+	if (!ChainData || !GetWorld())
+	{
+		return;
+	}
+
+	const float WaitTime = FMath::RandRange(ChainData->PostCompletedWaitMin, ChainData->PostCompletedWaitMax);
 
 	GetWorld()->GetTimerManager().SetTimer(
 		PostChainWaitTimer,
 		this,
 		&UMovementState::OnPostChainWaitFinished,
-		PostCompletedWaitTime,
+		WaitTime,
 		false
 	);
 }
@@ -178,8 +185,7 @@ void UMovementState::StartPostChainWait(UMovementChainData* ChainData)
 void UMovementState::OnPostChainWaitFinished()
 {
 	// First, check if in range to attack
-	const EMovementRangeResult MovementRangeResult = GetEvaluateAttackRange();
-	if (MovementRangeResult == EMovementRangeResult::InRange)
+	if (GetEvaluateAttackRange() == EMovementRangeResult::InRange)
 	{
 		BroadcastTransition(FGameplayTag(), nullptr, "Reached attack range");
 		return;
@@ -188,28 +194,22 @@ void UMovementState::OnPostChainWaitFinished()
 	HandleMovementChainFallback(MovementStateEnterPayload->SelectedMovementChainData);
 }
 
-const EMovementRangeResult UMovementState::GetEvaluateAttackRange() const
-{
-	return CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, SelectedAttackCDO->MinRange, SelectedAttackCDO->MaxRange);
-}
-
 void UMovementState::HandleMovementChainFallback(UMovementChainData* ChainData)
 {
 	if (!ChainData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: HandleMovementChainFallback is null"));
+		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: HandleMovementChainFallback ChainData is null"));
 		return;
 	}
 
 	if (ChainData->FallbackPolicy == EMovementChainFallbackPolicy::SoftFallback)
 	{
-		// Same intent, start same chain
 		StartMovementChain(ChainData);
+		return;
 	}
-	else 
-	{
-		BroadcastTransition(FGameplayTag(), nullptr, "Chain is HardFallback or none after PostChainWait");
-	}
+
+	StopEnemyMovement();
+	BroadcastTransition(FGameplayTag(), nullptr, "Chain is HardFallback or None");
 }
 
 void UMovementState::StopEnemyMovement()
@@ -222,6 +222,11 @@ void UMovementState::StopEnemyMovement()
 
 	EnemyController->StopMovement();
 	EnemyMovementComp->StopMovementImmediately();
+}
+
+const EMovementRangeResult UMovementState::GetEvaluateAttackRange() const
+{
+	return CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, SelectedAttackCDO->MinRange, SelectedAttackCDO->MaxRange);
 }
 
 void UMovementState::OnExit_Implementation()

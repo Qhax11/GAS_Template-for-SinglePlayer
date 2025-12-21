@@ -4,7 +4,6 @@
 #include "AIController.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 
 UAT_AIMoveTo* UAT_AIMoveTo::AIMoveToLocation(
 	UGameplayAbility* OwningAbility,
@@ -170,24 +169,35 @@ void UAT_AIMoveTo::ActivateWaitDelays()
 {
 	if (CachedExpectedDuration > 0.0f)
 	{
-		UAbilityTask_WaitDelay* WaitExpectedDuration = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedExpectedDuration);
-		WaitExpectedDuration->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnExpectedDurationReached);
-		WaitExpectedDuration->ReadyForActivation();
+		GetWorld()->GetTimerManager().SetTimer(
+			ExpectedDurationTimer,
+			this,
+			&UAT_AIMoveTo::OnExpectedDurationReached,
+			CachedExpectedDuration,
+			false
+		);
 	}
 
 	if (CachedMinDuration > 0.0f)
 	{
-		UAbilityTask_WaitDelay* WaitMinDuration = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedMinDuration);
-		WaitMinDuration->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnMinDurationReached);
-		WaitMinDuration->ReadyForActivation();
+		GetWorld()->GetTimerManager().SetTimer(
+			MinDurationTimer,
+			this,
+			&UAT_AIMoveTo::OnMinDurationReached,
+			CachedMinDuration,
+			false
+		);
 	}
-
 
 	if (CachedMaxDuration > 0.0f)
 	{
-		UAbilityTask_WaitDelay* MaxWaitMaxDuration = UAbilityTask_WaitDelay::WaitDelay(Ability, CachedMaxDuration);
-		MaxWaitMaxDuration->OnFinish.AddDynamic(this, &UAT_AIMoveTo::OnMaxDurationReached);
-		MaxWaitMaxDuration->ReadyForActivation();
+		GetWorld()->GetTimerManager().SetTimer(
+			MaxDurationTimer,
+			this,
+			&UAT_AIMoveTo::OnMaxDurationReached,
+			CachedMaxDuration,
+			false
+		);
 	}
 }
 

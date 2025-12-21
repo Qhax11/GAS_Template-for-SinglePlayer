@@ -1,10 +1,9 @@
 // Qhax's GAS Template for SinglePlayer
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
-#include "AITypes.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "AITypes.h"
 #include "AT_AIMoveTo.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMoveToTaskDelegate);
@@ -144,4 +143,8 @@ private:
 
 	// Original speed (to restore on cleanup)
 	float OriginalMaxWalkSpeed;
+
+	FTimerHandle ExpectedDurationTimer;
+	FTimerHandle MinDurationTimer;
+	FTimerHandle MaxDurationTimer;
 };

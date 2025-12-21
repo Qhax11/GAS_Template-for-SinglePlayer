@@ -89,11 +89,6 @@ void UGA_BossShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
 		GetAvatarActorFromActorInfo()->SetActorLocation(BossShadowTargetActor->GetActorLocation());
 		GetAvatarActorFromActorInfo()->SetActorRotation(BossShadowTargetActor->GetActorRotation());
 
-		if (UAC_EnemyMovementManager* EnemyMovementManagerComp = BossCharacter->GetEnemyMovementManagerComponent())
-		{
-			EnemyMovementManagerComp->StopChain();
-		}
-
 		OnBossShadowAttackCompleted.Broadcast(TargetActorData);
 
 		Super::OnTargetActorConfirm(TargetActorData);
@@ -123,10 +118,5 @@ void UGA_BossShadowAttack::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
-	if (UAC_EnemyMovementManager* EnemyMovementManagerComp = BossCharacter->GetEnemyMovementManagerComponent())
-	{
-		EnemyMovementManagerComp->StopChain();
-	}
-
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

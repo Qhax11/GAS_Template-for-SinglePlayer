@@ -88,11 +88,11 @@ protected:
 
 	void OnPostChainWaitFinished();
 
-	const EMovementRangeResult GetEvaluateAttackRange() const;
-
 	void HandleMovementChainFallback(UMovementChainData* ChainData);
 
 	void StopEnemyMovement();
+
+	const EMovementRangeResult GetEvaluateAttackRange() const;
 
 	UPROPERTY()
 	UCharacterMovementComponent* EnemyMovementComp;

@@ -25,8 +25,6 @@ public:
     void OnMovementChainCompleted(const FMovementChainEndData& EndData);
 
 private:
-    void OnMovementChainEnded(const FMovementChainEndData& EndData);
-
     void IncreasePressure();
 
     void DecreasePressure();

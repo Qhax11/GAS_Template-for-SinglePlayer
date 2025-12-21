@@ -44,6 +44,7 @@ void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& En
     // Completed + HardFallback → intent değişebilir
     if (EndData.Result == EMovementChainResult::Completed && EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
     {
+        UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_IntendManager: Completed + HardFallback, IncreasePressure."));
         IncreasePressure();
     }
 }
@@ -52,10 +53,12 @@ void UAC_IntendManager::IncreasePressure()
 {
     if (CurrentIntent == EEnemyIntent::LowPressure)
     {
+        UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_IntendManager: CurrentIntent is set to MidPressure."));
         CurrentIntent = EEnemyIntent::MidPressure;
     }
     else if (CurrentIntent == EEnemyIntent::MidPressure)
     {
+        UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_IntendManager: CurrentIntent is set to HighPressure."));
         CurrentIntent = EEnemyIntent::HighPressure;
     }
 }

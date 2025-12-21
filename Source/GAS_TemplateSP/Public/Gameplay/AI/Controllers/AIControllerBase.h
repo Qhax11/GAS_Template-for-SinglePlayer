@@ -5,7 +5,6 @@
 #include "AIController.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "Perception/AISenseConfig_Sight.h"
-#include "Gameplay/AI/StateTree/ST_Base.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Components/GameplayTag/AC_TagDelegates.h"
 #include "AIControllerBase.generated.h"
@@ -13,7 +12,6 @@
 class UAISenseConfig_Sight;
 class UAC_StateManager;
 class UAC_BehaviorDecision;
-class UST_Base;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, DetectedTarget);
 
@@ -26,8 +24,6 @@ class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
 public:
 	AAIControllerBase(const FObjectInitializer& ObjectInitializer);
 
-	FORCEINLINE UST_Base* GetStateTreeComponent() const { return StateTreeAIComponent; }
-
 	FORCEINLINE UAC_BehaviorDecision* GetBehaviorDecisionComponent() const { return BehaviorDecisionComponent; }
 
 	UFUNCTION(BlueprintCallable)
@@ -36,9 +32,6 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UST_Base> StateTreeAIComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UAC_BehaviorDecision> BehaviorDecisionComponent;

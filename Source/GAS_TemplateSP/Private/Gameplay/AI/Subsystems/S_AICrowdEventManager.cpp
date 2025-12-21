@@ -73,7 +73,7 @@ void US_AICrowdEventManager::OnEnemySpawn(const FEnemySpawnData& EnemySpawnData)
         return;
     }
 
-    FEnemyData EnemeyData = FEnemyData(EnemySpawnData.Character, EnemySpawnData.ASC, EnemySpawnData.StateTree);
+    FEnemyData EnemeyData = FEnemyData(EnemySpawnData.Character, EnemySpawnData.ASC);
     Enemies.Add(EnemeyData);
 }
 

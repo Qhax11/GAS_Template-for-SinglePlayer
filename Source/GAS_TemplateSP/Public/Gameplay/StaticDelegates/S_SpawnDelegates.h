@@ -40,14 +40,16 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	UAbilitySystemComponent* ASC = nullptr;
 
-	UPROPERTY(BlueprintReadOnly)
-	UST_Base* StateTree = nullptr;
-
 	FEnemySpawnData() {}
 
-	FEnemySpawnData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC, UST_Base* InStateTree)
-		: Character(InCharacter), ASC(InASC), StateTree(InStateTree)
-	{}
+	FEnemySpawnData(
+		AGAS_CharacterBase* InCharacter,
+		UAbilitySystemComponent* InASC)
+		:
+		Character(InCharacter),
+		ASC(InASC)
+	{
+	}
 };
 
 UENUM(BlueprintType)

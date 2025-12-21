@@ -33,8 +33,8 @@ public:
 
 	FEnemyData() {}
 
-	FEnemyData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC, UST_Base* InStateTree)
-		: Character(InCharacter), ASC(InASC), StateTree(InStateTree)
+	FEnemyData(AGAS_CharacterBase* InCharacter, UAbilitySystemComponent* InASC)
+		: Character(InCharacter), ASC(InASC)
 	{}
 
 	// Equals operator for array operations

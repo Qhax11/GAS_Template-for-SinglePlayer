@@ -14,13 +14,6 @@ void UAC_EnemyRespawn::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
         return;
     }
-
-    StateTree = EnemyController->GetStateTreeComponent();
-    if (!StateTree)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("EnemyStateTree is null in: %s"), *GetName());
-        return;
-    }
 }
 
 void UAC_EnemyRespawn::BindCharacterDeSpawn()
@@ -40,7 +33,7 @@ void UAC_EnemyRespawn::OnEnemyDeSpawn(const FCharacterDeSpawnData& EnemyDeSpawnD
 
     GetWorld()->GetTimerManager().SetTimer(CharacterDeSpawnCountDownTimerHandle, [this, EnemyDeSpawnData]()
         {
-            FEnemySpawnData CharacterSpawnData = FEnemySpawnData(EnemyDeSpawnData.Character, EnemyDeSpawnData.ASC, StateTree);
+            FEnemySpawnData CharacterSpawnData = FEnemySpawnData(EnemyDeSpawnData.Character, EnemyDeSpawnData.ASC);
             OnEnemyReSpawn(CharacterSpawnData);
         },
         ReSpawnDelay, false);
@@ -61,7 +54,6 @@ void UAC_EnemyRespawn::OnEnemyReSpawn(const FEnemySpawnData& EnemySpawnData)
     EnemySpawnData.Character->EnableMovement();
     EnemySpawnData.Character->EnableCollision();
     EnemySpawnData.Character->EnableMesh();
-    EnemyController->GetBrainComponent()->StartLogic();
     ApplyCharacterReSpawnEffect(EnemySpawnData.Character);
     OnCharacterReSpawn.Broadcast(EnemySpawnData.Character);
 }

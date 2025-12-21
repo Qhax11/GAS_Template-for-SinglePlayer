@@ -90,29 +90,21 @@ float UAC_HeroMovementListener::GetDisplacementInLastSeconds(float Seconds) cons
 
 EHeroRelativeDirection UAC_HeroMovementListener::GetHeroLastMovementDirectionByLastInput() const
 {
-    if (!OwnerHero)
-    {
-        return EHeroRelativeDirection::None;
-    }
+    if (!OwnerHero) return EHeroRelativeDirection::None;
 
     FVector2D Input = OwnerHero->GetHeroControlComponent()->LastMovementInput;
-    if (Input.IsNearlyZero())
-    {
-        return EHeroRelativeDirection::None;
-    }
 
-    const float AbsX = FMath::Abs(Input.X);
-    const float AbsY = FMath::Abs(Input.Y);
+    if (Input.IsNearlyZero()) return EHeroRelativeDirection::None;
 
-    // Yatay hareket varsa ve dikey hareketten daha baskýn veya eþitse ? yatay yön ver
-    if (AbsX >= AbsY)
-    {
-        return Input.X > 0 ? EHeroRelativeDirection::Right : EHeroRelativeDirection::Left;
-    }
-    // Sadece dikey hareket daha baskýnsa ? dikey yön ver
-    else
+
+    // Y (Forward/Backward) yönü eþit veya daha baskýnsa onu önceliklendir
+    if (FMath::Abs(Input.Y) >= FMath::Abs(Input.X))
     {
         return Input.Y > 0 ? EHeroRelativeDirection::Forward : EHeroRelativeDirection::Backward;
+    }
+    else
+    {
+        return Input.X > 0 ? EHeroRelativeDirection::Right : EHeroRelativeDirection::Left;
     }
 }
 

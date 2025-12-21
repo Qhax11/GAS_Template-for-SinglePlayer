@@ -68,7 +68,7 @@ public:
 
     // Interpreted by the movement ability or task.
     UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Movement speed applied while this movement ability is active."))
-    float MovementSpeed = 600.0f;
+    float MovementSpeed = 200.0f;
 
     UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Expected duration of this movement, used for planning and flow control."))
     float ExpectedDuration = 2.0f;

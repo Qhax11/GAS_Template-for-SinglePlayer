@@ -173,49 +173,79 @@ void UAC_EnemyMovementManager::ApplyDirectionPoliciesToMovementAbility(UMovement
 		return;
 	}
 
-	// POLICY KAPALI → sadece garanti ver
+	// Policy kapalı → sadece garanti ver
 	if (!MovementAbilityData->EnableDirectionPolicy || !MovementAbilityData->DirectionPolicyTag.IsValid())
 	{
 		if (!MovementAbilityData->DirectionTag.IsValid())
 		{
-			MovementAbilityData->DirectionTag = GetRandomDirectionTag();
+			MovementAbilityData->DirectionTag = GetRandomRepositionDirectionTag();
 		}
 		return;
 	}
 
-	FGameplayTag FinalTag;
-	FGameplayTag AttackDirection = AttackPayload.AttackDirectionTag;
+	// Policy açık → resolve et ve ata
+	MovementAbilityData->DirectionTag = ResolveDirectionFromPolicy(MovementAbilityData->DirectionPolicyTag, AttackPayload);
+}
 
-	if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack)
+FGameplayTag UAC_EnemyMovementManager::ResolveDirectionFromPolicy(const FGameplayTag& PolicyTag, const FComingAttackPayload& AttackPayload)
+{
+	FGameplayTag ResolvedTag;
+
+	if (PolicyTag == GAS_Tags::TAG_AI_Direction_Policy_EscapeFromAttack)
 	{
-		FinalTag = ResolveAttackDirection(AttackDirection);
+		ResolvedTag = ResolveAttackDirection(AttackPayload.AttackDirectionTag);
 	}
-	else if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
+	else if (PolicyTag == GAS_Tags::TAG_AI_Direction_Policy_PlayerLastDirection)
 	{
 		if (HeroMovementListener)
 		{
-			FinalTag = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
+			FGameplayTag LastDirection = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
+			if (LastDirection.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: LastDirection is: %s"), *LastDirection.ToString());
+				if(LastDirection == GAS_Tags::TAG_Gameplay_Direction_Forward || LastDirection == GAS_Tags::TAG_Gameplay_Direction_Backward)
+				{
+					// If the last direction is forward, we want to avoid moving forward as an enemy.
+					ResolvedTag = GetRandomStrafeDirectionTag();
+				}
+				else
+				{
+					ResolvedTag = LastDirection;
+				}
+			}
 		}
 	}
-	else if (MovementAbilityData->DirectionPolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random)
+	else if (PolicyTag == GAS_Tags::TAG_AI_Direction_Policy_Random)
 	{
-		FinalTag = GetRandomDirectionTag();
+		ResolvedTag = GetRandomRepositionDirectionTag();
 	}
 
-	// FINAL GUARANTEE
-	if (!FinalTag.IsValid())
+	// Fallback guarantee
+	if (!ResolvedTag.IsValid())
 	{
-		FinalTag = GetRandomDirectionTag();
+		ResolvedTag = GetRandomRepositionDirectionTag();
 	}
 
-	MovementAbilityData->DirectionTag = FinalTag;
+	return ResolvedTag;
 }
 
-FGameplayTag UAC_EnemyMovementManager::GetRandomDirectionTag()
+FGameplayTag UAC_EnemyMovementManager::GetRandomStrafeDirectionTag()
 {
 	static const TArray<FGameplayTag> PossibleDirections =
 	{
-		//GAS_Tags::TAG_AI_Direction_Resolved_Forward,
+		GAS_Tags::TAG_Gameplay_Direction_Left,
+		GAS_Tags::TAG_Gameplay_Direction_Right
+	};
+
+	int32 RandomIndex = FMath::RandRange(0, PossibleDirections.Num() - 1);
+	return PossibleDirections[RandomIndex];
+}
+
+FGameplayTag UAC_EnemyMovementManager::GetRandomRepositionDirectionTag()
+{
+	static const TArray<FGameplayTag> PossibleDirections =
+	{
+		GAS_Tags::TAG_Gameplay_Direction_Forward,
 		GAS_Tags::TAG_Gameplay_Direction_Backward,
 		GAS_Tags::TAG_Gameplay_Direction_Left,
 		GAS_Tags::TAG_Gameplay_Direction_Right

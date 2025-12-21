@@ -14,4 +14,6 @@ class GAS_TEMPLATESP_API UBoss_State_Dormant : public UStateBase
 public:
 	UBoss_State_Dormant();
 	
+	void OnExit_Implementation() override;
+
 };

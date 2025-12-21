@@ -10,7 +10,6 @@
 UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 {
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
-	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Rotation_LockTowardsTarget);
 
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
 }
@@ -36,17 +35,15 @@ void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
-	if (TriggerEventData->InstigatorTags.IsValidIndex(0))
-	{
-		FGameplayTag DirectionTag = TriggerEventData->InstigatorTags.GetByIndex(0);
-		ExecuteFindLocationQuery(DirectionTag);
-	}
-	else
+	FGameplayTag StrafingDirection = CachedMovementData->DirectionTag;
+	if (!StrafingDirection.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: There is no direction tag in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
+
+	ExecuteFindLocationQuery(StrafingDirection);
 }
 
 void UGA_EnemyStrafingBase::ExecuteFindLocationQuery(FGameplayTag StrafeDirectionTag)

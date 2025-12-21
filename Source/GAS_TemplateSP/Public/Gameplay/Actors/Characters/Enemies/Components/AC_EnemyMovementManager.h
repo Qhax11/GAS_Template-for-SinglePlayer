@@ -102,7 +102,11 @@ private:
 
 	void ApplyDirectionPoliciesToMovementAbility(UMovementSingleData* MovementAbilityData, const FComingAttackPayload& AttackPayload = FComingAttackPayload());
 
-	FGameplayTag GetRandomDirectionTag();
+	FGameplayTag ResolveDirectionFromPolicy(const FGameplayTag& PolicyTag, const FComingAttackPayload& AttackPayload);
+
+	FGameplayTag GetRandomStrafeDirectionTag();
+
+	FGameplayTag GetRandomRepositionDirectionTag();
 
 	// Resolves the final movement direction based on the incoming attack direction.
 	FGameplayTag ResolveAttackDirection(FGameplayTag AttackDirectionTag);

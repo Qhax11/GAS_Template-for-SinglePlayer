@@ -136,19 +136,45 @@ void UMovementState::OnBackStepEnded(const FCustomAbilityEndedData& ReactionMove
 
 void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 {
-	// Range’e girdiysek direkt çýk
 	if (GetEvaluateAttackRange() == EMovementRangeResult::InRange)
 	{
-		StopEnemyMovement();
-		BroadcastTransition(FGameplayTag(), nullptr, "Reached attack range");
+		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
+		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(SelectedAttackData);
+		BroadcastTransition(GAS_Tags::TAG_AI_State_Attack, AttackPayload, "Reached attack range");
 		return;
 	}
 
-	// MovementState burada biter
 	StopEnemyMovement();
 
+	if (EndData.Result == EMovementChainResult::Completed && 
+		EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
+	{
+		const float WaitTime = FMath::RandRange(EndData.ChainData->PostCompletedWaitMin, EndData.ChainData->PostCompletedWaitMax);
+		GetWorld()->GetTimerManager().SetTimer(
+			PostChainWaitTimer,
+			this,
+			&UMovementState::OnPostChainWaitFinished,
+			WaitTime,
+			false
+		);
+		return;
+	}
+	
 	// Sadece çýk, karar dýþarýda verilecek
 	BroadcastTransition(FGameplayTag(), nullptr, "Movement chain finished");
+}
+
+void UMovementState::OnPostChainWaitFinished()
+{
+	if (GetEvaluateAttackRange() == EMovementRangeResult::InRange)
+	{
+		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
+		TSharedPtr<FAttackStatePayload> AttackPayload = MakeShared<FAttackStatePayload>(SelectedAttackData);
+		BroadcastTransition(GAS_Tags::TAG_AI_State_Attack, AttackPayload, "Reached attack range");
+		return;
+	}
+
+	BroadcastTransition(FGameplayTag(), nullptr, "PostChainWaitFinished");
 }
 
 void UMovementState::StopEnemyMovement()

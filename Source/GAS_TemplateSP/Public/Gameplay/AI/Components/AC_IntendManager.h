@@ -19,6 +19,7 @@ protected:
     virtual void BeginPlay() override;
 
 public:
+    UFUNCTION(BlueprintCallable)
     EEnemyIntent GetCurrentIntent() const { return CurrentIntent; }
 
     void OnMovementChainCompleted(const FMovementChainEndData& EndData);

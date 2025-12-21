@@ -91,7 +91,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 	if (bEnableDebug && BestReaction)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("Decision: Service: UBDS_ComingAttackReactionBase: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+			TEXT("Decision: Service: UBDS_ComingAttackReactionBase: WINNER = %s | Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 			*BestReaction->ComingAttackReactionName.ToString(),
 			BestScoreDebug.BehaviorStateScore,
 			BestScoreDebug.TagScore,

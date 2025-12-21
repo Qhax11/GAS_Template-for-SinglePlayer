@@ -72,7 +72,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 		if (bEnableDebug)
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("Decision: Service: UBDS_GetBestAttack: AttackScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("Decision: Service: UBDS_GetBestAttack: AttackScore = %s | Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 				*AttackData->AttackName.ToString(),
 				ScoreDebug.BehaviorScore,
 				ScoreDebug.ComboScore,

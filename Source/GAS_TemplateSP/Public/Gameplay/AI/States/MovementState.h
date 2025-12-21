@@ -83,6 +83,8 @@ protected:
 
 	void OnMovementChainEnded(const FMovementChainEndData& EndData);
 
+	void OnPostChainWaitFinished();
+
 	void StopEnemyMovement();
 
 	const EMovementRangeResult GetEvaluateAttackRange() const;

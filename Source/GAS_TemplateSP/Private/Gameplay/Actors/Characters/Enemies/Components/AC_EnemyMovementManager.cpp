@@ -264,7 +264,6 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 		FMovementChainEndData MovementChainEndData;
 
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
-		// IMPORTANT: clear first, then broadcast
 		BroadcastChainEnd(EMovementChainResult::Aborted);
 		ClearMovementChain();
 		return;
@@ -274,7 +273,6 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 	if (MovementChainTracker.IsChainFinished())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain Completed."));
-		// IMPORTANT: clear first, then broadcast
 		BroadcastChainEnd(EMovementChainResult::Completed);
 		ClearMovementChain();
 		return;

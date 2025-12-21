@@ -21,20 +21,18 @@ protected:
 public:
     EEnemyIntent GetCurrentIntent() const { return CurrentIntent; }
 
-    void OnMovementChainCompleted(const FMovementChainEndData& MovementChainEndData);
+    void OnMovementChainCompleted(const FMovementChainEndData& EndData);
 
     void OnMovementChainAborted(const UMovementChainData* Chain);
 
 private:
     void OnMovementChainEnded(const FMovementChainEndData& EndData);
 
-    void EscalateIntent();
+    void IncreasePressure();
 
-    void DeescalateIntent();
+    void DecreasePressure();
 
-private:
     UPROPERTY()
     EEnemyIntent CurrentIntent = EEnemyIntent::LowPressure;
-	
 
 };

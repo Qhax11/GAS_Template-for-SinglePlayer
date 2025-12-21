@@ -1,4 +1,4 @@
-// Qhax's GAS Template for SinglePlayer
+﻿// Qhax's GAS Template for SinglePlayer
 
 
 #include "Gameplay/AI/Components/AC_IntendManager.h"
@@ -21,26 +21,39 @@ void UAC_IntendManager::BeginPlay()
     MovementManager->OnMovementChainEnded.AddUObject(this, &UAC_IntendManager::OnMovementChainCompleted);
 }
 
-void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& MovementChainEndData)
+void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& EndData)
 { 
-    UMovementChainData* EndedChainData = MovementChainEndData.ChainData;
-    if (!EndedChainData)
+    if (!EndData.ChainData)
     {
         return;
     }
 
-    if (EndedChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
+    // Abort → her zaman geri çekil
+    if (EndData.Result == EMovementChainResult::Aborted)
     {
-        EscalateIntent();
+        DecreasePressure();
+        return;
+    }
+
+    // Completed ama soft → intent sabit
+    if (EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::SoftFallback)
+    {
+        return;
+    }
+
+    // Completed + HardFallback → intent değişebilir
+    if (EndData.Result == EMovementChainResult::Completed && EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
+    {
+        IncreasePressure();
     }
 }
 
 void UAC_IntendManager::OnMovementChainAborted(const UMovementChainData* Chain)
 {
-    DeescalateIntent();
+    DecreasePressure();
 }
 
-void UAC_IntendManager::EscalateIntent()
+void UAC_IntendManager::IncreasePressure()
 {
     if (CurrentIntent == EEnemyIntent::LowPressure)
     {
@@ -52,10 +65,11 @@ void UAC_IntendManager::EscalateIntent()
     }
 }
 
-void UAC_IntendManager::DeescalateIntent()
+void UAC_IntendManager::DecreasePressure()
 {
     if (CurrentIntent == EEnemyIntent::HighPressure)
     {
         CurrentIntent = EEnemyIntent::MidPressure;
     }
 }
+

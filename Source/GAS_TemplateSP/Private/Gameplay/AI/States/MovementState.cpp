@@ -151,6 +151,8 @@ void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 	BroadcastTransition(FGameplayTag(), nullptr, "Movement chain finished");
 }
 
+
+
 void UMovementState::StopEnemyMovement()
 {
 	if (!EnemyController || !EnemyMovementComp)

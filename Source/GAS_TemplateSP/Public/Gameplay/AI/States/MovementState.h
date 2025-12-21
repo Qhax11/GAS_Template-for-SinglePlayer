@@ -4,6 +4,7 @@
 
 #include "Gameplay/AI/States/StateBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
+#include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 #include "MovementState.generated.h"
 
 /**
@@ -82,6 +83,12 @@ protected:
 	UFUNCTION()
 	void OnMovementChainEnded(const FMovementChainEndData& EndData);
 
+	void OnPostChainWaitFinished();
+
+	const EMovementRangeResult GetEvaluateAttackRange() const;
+
+	void HandleMovementChainFallback(UMovementChainData* ChainData);
+
 	TSharedPtr<FMovementStatePayload> MovementStateEnterPayload;
 
 	UPROPERTY()
@@ -91,6 +98,8 @@ protected:
 	UMovementSingleData* StepBackMovementData;
 
 	bool bStepBackActive = false;
+
+	FTimerHandle PostChainWaitTimer;
 
 public:
 	virtual void OnExit_Implementation() override;

@@ -12,6 +12,7 @@
 class UAISenseConfig_Sight;
 class UAC_StateManager;
 class UAC_BehaviorDecision;
+class UAC_IntendManager;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, DetectedTarget);
 
@@ -24,20 +25,25 @@ class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
 public:
 	AAIControllerBase(const FObjectInitializer& ObjectInitializer);
 
+	FORCEINLINE UAC_IntendManager* GetIntendManagerComponent() const { return EnemyIntendManagerComponent; }
+
 	FORCEINLINE UAC_BehaviorDecision* GetBehaviorDecisionComponent() const { return BehaviorDecisionComponent; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UAC_StateManager* GetEnemyStateManagerComponent() const { return EnemyStateManagerComponent; }
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components|Brain")
+	UAC_IntendManager* EnemyIntendManagerComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components|Brain")
 	TObjectPtr<UAC_BehaviorDecision> BehaviorDecisionComponent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	UAC_StateManager* EnemyStateManagerComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UAISenseConfig_Sight> AISenseConfig_Sight;
 
 protected:
 	virtual void BeginPlay();

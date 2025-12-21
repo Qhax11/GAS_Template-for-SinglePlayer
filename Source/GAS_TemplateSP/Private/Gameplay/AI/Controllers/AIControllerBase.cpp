@@ -6,12 +6,12 @@
 #include "Navigation/CrowdFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Gameplay/AI/Components/AC_IntendManager.h"
+#include "Gameplay/AI/Components/AC_StateManager.h"
+#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/Components/AC_Team.h"
 #include <Kismet/GameplayStatics.h>
-#include "Gameplay/AI/Components/AC_StateManager.h"
 #include <Kismet/KismetMathLibrary.h>
-#include "Gameplay/AI/Components/AC_BehaviorDecision.h"
-
 
 AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))
@@ -29,7 +29,9 @@ AAIControllerBase::AAIControllerBase(const FObjectInitializer& ObjectInitializer
 	PerceptionComponent->SetDominantSense(AISenseConfig_Sight->GetSenseImplementation());
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIControllerBase::TargetPreceptionUpdated);
 
+	EnemyIntendManagerComponent = CreateDefaultSubobject<UAC_IntendManager>(TEXT("EnemyIntendManagerComponent"));
 	BehaviorDecisionComponent = CreateDefaultSubobject<UAC_BehaviorDecision>(TEXT("BehaviorDecisionComponent"));
+	EnemyStateManagerComponent = CreateDefaultSubobject<UAC_StateManager>(TEXT("EnemyStateManagerComponent"));
 }
 
 void AAIControllerBase::BeginPlay()

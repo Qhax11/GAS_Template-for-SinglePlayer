@@ -25,9 +25,9 @@ bool UMovementState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return false;
 	}
 
-	if (!MovementStateEnterPayload->SelectedAttackData->AbilityClass)
+	if (!MovementStateEnterPayload->SelectedAttackData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: SelectedAttackData->AbilityClass is invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: SelectedAttackData->SelectedAttackData is invalid in: %s"), *GetName());
 		return false;
 	}
 
@@ -37,8 +37,9 @@ bool UMovementState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return false;
 	}
 
-	const UGAS_GameplayAbilityBase* AttackCDO = MovementStateEnterPayload->SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, AttackCDO->MinRange, AttackCDO->MaxRange);
+	float MinRange = MovementStateEnterPayload->SelectedAttackData->GetMinRange();
+	float MaxRange = MovementStateEnterPayload->SelectedAttackData->GetMaxRange();
+	EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, MinRange, MaxRange);
 	if (MovementRangeResult == EMovementRangeResult::InRange)
 	{
 		return false;
@@ -54,9 +55,8 @@ void UMovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	MovementStateEnterPayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
 	check(MovementStateEnterPayload.IsValid()); 
 	check(MovementStateEnterPayload->SelectedAttackData);
-	check(MovementStateEnterPayload->SelectedAttackData->AbilityClass);
+	check(MovementStateEnterPayload->SelectedAttackData);
 
-	SelectedAttackCDO = MovementStateEnterPayload->SelectedAttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
 	EvaluateAndStartMovement(MovementStateEnterPayload);
 }
 
@@ -92,9 +92,9 @@ void UMovementState::TryEnterToAttackState()
 		return;
 	}
 
-	if (!SelectedAttackCDO)
+	if (!MovementStateEnterPayload->SelectedAttackData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: BehaviorDecisionComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: MovementStateEnterPayload->SelectedAttackData is null in: %s"), *GetName());
 		return;
 	}
 
@@ -191,7 +191,9 @@ void UMovementState::StopEnemyMovement()
 
 const EMovementRangeResult UMovementState::GetEvaluateAttackRange() const
 {
-	return CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, SelectedAttackCDO->MinRange, SelectedAttackCDO->MaxRange);
+	const float MinRange = MovementStateEnterPayload->SelectedAttackData->GetMinRange();
+	const float MaxRange = MovementStateEnterPayload->SelectedAttackData->GetMaxRange();
+	return CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, MinRange, MaxRange);
 }
 
 void UMovementState::OnExit_Implementation()

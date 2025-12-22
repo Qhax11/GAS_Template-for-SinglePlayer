@@ -3,9 +3,8 @@
 #pragma once
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "ComboChainAttackData.generated.h"
-
-class UComboChainsAsset;
 
 UCLASS()
 class GAS_TEMPLATESP_API UComboChainAttackData : public UAttackDataBase
@@ -23,7 +22,11 @@ public:
 
 	virtual EAttackExecutionType GetExecutionType() const override;
 
+	float GetMinRange() const override;
+
+	float GetMaxRange() const override;
+
 public:
 	UPROPERTY(EditDefaultsOnly)
-	UComboChainsAsset* ComboChainAsset;
+	UEnemyComboChainAsset* ComboChainAsset;
 };

@@ -25,42 +25,6 @@ void UAC_MeleeComboManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBaseASC is null in %s, cannot initialize HeroControl."), *GetName());
 		return;
 	}
-
-	InitComboChainTracker(EComboType::GroundCombo);
-}
-
-void UAC_MeleeComboManager::InitComboChainTracker(EComboType NewComboType)
-{
-	if (!ComboChainAsset)
-	{
-		return;
-	}
-
-	// ---- Enum → Index translate ----
-	int32 Index = static_cast<int32>(NewComboType);
-	// EComboType::GroundCombo → 0
-	// EComboType::AirCombo    → 1
-	// EComboType::ShadowCombo → 2
-
-	if (!ComboChainAsset->ComboChains.IsValidIndex(Index))
-	{
-		return;
-	}
-
-	// ---- Initialize tracker ----
-	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[Index];
-	ActiveComboChainTracker.CurrentStepIndex = 0;
-
-	ActiveComboChainTracker.CurrentAbilitySpecHandle = FGameplayAbilitySpecHandle();
-	ActiveComboChainTracker.CurrentAbilityInstance = nullptr;
-	ActiveComboChainTracker.CurrentAbilityClass = nullptr;
-
-	// Pull first step
-	const FComboAbilityData* FirstCombo = ActiveComboChainTracker.GetCurrentCombo();
-	if (FirstCombo)
-	{
-		ActiveComboChainTracker.CurrentAbilityClass = FirstCombo->ComboAbilityClass;
-	}
 }
 
 UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(FName MontageSection, FGameplayTag AdditionalTag)
@@ -111,7 +75,6 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(FName MontageSec
 	}
 
 	// Save handle and instance
-	ActiveComboChainTracker.CurrentAbilitySpecHandle = AbilitySpec->Handle;
 	ActiveComboChainTracker.CurrentAbilityInstance = ActivatedAbility;
 
 	// Bind end event safely
@@ -137,33 +100,6 @@ void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Com
 	}
 }
 
-FComboChainSearchResult UAC_MeleeComboManager::GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass)
-{
-	FComboChainSearchResult Result;
-
-	if (!ComboChainAsset)
-	{
-		return Result;
-	}
-
-	for (int32 i = 0; i < ComboChainAsset->ComboChains.Num(); ++i)
-	{
-		const FComboChainData& ComboChainData = ComboChainAsset->ComboChains[i];
-
-		for (int32 j = 0; j < ComboChainData.ComboAbilities.Num(); j++)
-		{
-			if (ComboChainData.ComboAbilities[j].ComboAbilityClass == ComboMeleeAttackAbilityClass)
-			{
-				Result.ComboChain = ComboChainData;
-				Result.FindedComboIndex = j;
-				return Result;
-			}
-		}
-	}
-
-	return Result;
-}
-
 void UAC_MeleeComboManager::StopCombo()
 {
 	CancelComboAbilities();
@@ -185,17 +121,4 @@ void UAC_MeleeComboManager::CancelComboAbilities()
 	CharacterBaseASC->CancelAbilities(&CancelTags);
 }
 
-void UAC_MeleeComboManager::ContinueComboAfterCurrentStepEnded(bool bWasCancelled)
-{
-	ActiveComboChainTracker.Advance();
-
-	if (ActiveComboChainTracker.IsChainFinished() || bWasCancelled)
-	{
-		ActiveComboChainTracker.Reset();
-		OnComboEnded.Broadcast();
-		return;
-	}
-
-	ActivateComboMelee();
-}
 

@@ -5,6 +5,7 @@
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/ComboChainAttackData.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/SpecialAttackData.h"
 #include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 
 UAttackStateBase::UAttackStateBase()
@@ -35,7 +36,8 @@ bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload
 		return false;
 	}
 
-	if (!AttackStatePayload->AttackData)
+	UAttackDataBase* AttackData = AttackStatePayload->AttackData;
+	if (!AttackData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: AttackData invalid in: %s"), *GetName());
 		return false;
@@ -47,14 +49,7 @@ bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload
 		return false;
 	}
 
-	UGAS_GameplayAbilityBase* SelectedAttackCDO = AttackStatePayload->AttackData->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	if (!SelectedAttackCDO) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: SelectedAttackCDO is null!"));
-		return false;
-	}
-
-	float MaxRange = SelectedAttackCDO->MaxRange;
+	float MaxRange = AttackData->GetMaxRange();
 	if (!CombatDistance::IsInRange(Enemy, HeroTarget, MaxRange))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: Out of Range!"));
@@ -90,13 +85,18 @@ void UAttackStateBase::ExecuteAttack(UAttackDataBase* SelectedAttackData)
 	}
 	else if (AttackExecutionType == EAttackExecutionType::Single)
 	{
-		ExecuteSingleAttack(SelectedAttackData);
+		ExecuteSpecialAttack(Cast<USpecialAttackData>(SelectedAttackData));
 	}
 }
 
-void UAttackStateBase::ExecuteSingleAttack(UAttackDataBase* AttackData)
+void UAttackStateBase::ExecuteSpecialAttack(USpecialAttackData* SpecialAttackData)
 {
-	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(SelectedAttackData);
+	if (!SpecialAttackData || !SpecialAttackData->AbilityClass)
+	{
+		return;
+	}
+
+	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(SpecialAttackData->AbilityClass);
 	if (ActivatedAbility)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase:: ActivatedAbility is valid"));
@@ -118,8 +118,7 @@ void UAttackStateBase::ExecuteComboAttack(UComboChainAttackData* ComboData)
 		return;
 	}
 	
-	ComboData->
-
+	ComboManager->StartComboChain(ComboData->ComboChainAsset);	
 }
 
 void UAttackStateBase::OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)

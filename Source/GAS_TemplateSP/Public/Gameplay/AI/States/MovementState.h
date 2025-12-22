@@ -89,18 +89,15 @@ protected:
 
 	const EMovementRangeResult GetEvaluateAttackRange() const;
 
-	UPROPERTY()
-	UCharacterMovementComponent* EnemyMovementComp;
-
-	TSharedPtr<FMovementStatePayload> MovementStateEnterPayload;
-
-	UPROPERTY()
-	UGAS_GameplayAbilityBase* SelectedAttackCDO;
-
 	UPROPERTY(EditDefaultsOnly, Instanced)
 	UMovementSingleData* StepBackMovementData;
 
 	bool bStepBackActive = false;
+
+	UPROPERTY()
+	UCharacterMovementComponent* EnemyMovementComp;
+
+	TSharedPtr<FMovementStatePayload> MovementStateEnterPayload;
 
 	FTimerHandle PostChainWaitTimer;
 

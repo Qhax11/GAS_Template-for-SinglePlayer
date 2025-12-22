@@ -39,3 +39,35 @@ EAttackExecutionType UComboChainAttackData::GetExecutionType() const
 {
 	return EAttackExecutionType::ComboChain;
 }
+
+float UComboChainAttackData::GetMinRange() const
+{
+	if (!ComboChainAsset || ComboChainAsset->ComboChain.ComboAbilities.Num() == 0)
+	{
+		return 0.f;
+	}
+
+	const FComboAbilityData& FirstStep = ComboChainAsset->ComboChain.ComboAbilities[0];
+	if (!FirstStep.ComboAbilityClass)
+	{
+		return 0.f;
+	}
+
+	return FirstStep.ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>()->MinRange;
+}
+
+float UComboChainAttackData::GetMaxRange() const
+{
+	if (!ComboChainAsset || ComboChainAsset->ComboChain.ComboAbilities.Num() == 0)
+	{
+		return 0.f;
+	}
+
+	const FComboAbilityData& FirstStep = ComboChainAsset->ComboChain.ComboAbilities[0];
+	if (!FirstStep.ComboAbilityClass)
+	{
+		return 0.f;
+	}
+
+	return FirstStep.ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>()->MaxRange;
+}

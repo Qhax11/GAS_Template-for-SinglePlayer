@@ -65,6 +65,7 @@ struct FAttackScoreDebug
 UENUM()
 enum class EAttackExecutionType : uint8
 {
+	None,
 	Single,     // tek ability (special, skill, finisher)
 	ComboChain  // combo manager üzerinden
 };
@@ -113,7 +114,12 @@ public:
 
 	virtual float GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug = nullptr) const;
 
-	virtual EAttackExecutionType GetExecutionType() const { return EAttackExecutionType::Single; }
+public:
+	virtual EAttackExecutionType GetExecutionType() const PURE_VIRTUAL(UAttackDataBase::GetExecutionType, return EAttackExecutionType::None;);
+
+	virtual float GetMinRange() const PURE_VIRTUAL(UAttackDataBase::GetMinRange, return 0.f;);
+
+	virtual float GetMaxRange() const PURE_VIRTUAL(UAttackDataBase::GetMaxRange, return 0.f;);
 
 protected:
 	float GetIntentScore(const FAttackDecisionContext& Context) const;
@@ -133,6 +139,7 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per intent"))
     TMap<EEnemyIntent, float> IntentScoreModifiers;
+
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Base score bias applied to AI decision-making"))
     float ScoreBias = 0.f;

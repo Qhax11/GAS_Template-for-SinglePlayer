@@ -30,6 +30,28 @@ struct FEnemyComboChainEndData
 	UGameplayAbility* LastComboAbility = nullptr;
 };
 
+USTRUCT(BlueprintType)
+struct FComboChainSearchResult
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	FComboChainData ComboChain;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 FindedComboIndex = INDEX_NONE;
+};
+
+UCLASS(BlueprintType)
+class UEnemyComboChainAsset : public UDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FComboChainData ComboChain;
+};
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnemyComboChainEnded, const FEnemyComboChainEndData&);
 
 UCLASS()
@@ -39,7 +61,7 @@ class GAS_TEMPLATESP_API UAC_EnemyMeleeComboManager : public UAC_MeleeComboManag
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass, FName MontageSection = NAME_None);
+	void StartComboChain(UEnemyComboChainAsset* ComboChain, FName MontageSection = NAME_None);
 
 	UFUNCTION(BlueprintCallable)
 	float GetMaxRangeOfCurrentAttack();
@@ -63,6 +85,8 @@ protected:
 	void OnComboAbilityEnd(const FCustomAbilityEndedData& EndedData) override;
 	
 private:
+	//FComboChainSearchResult GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
+
 	void BroadcastComboChainEnd(EEnemyComboChainResult Result);
 
 	class AAIControllerBase* AIController;

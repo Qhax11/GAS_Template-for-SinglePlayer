@@ -34,6 +34,8 @@ bool USpecialAttackData::IsEnable(const FAttackDecisionContext& Context, FAttack
 		}
 		return false;
 	}
+
+	return true;
 }
 
 bool USpecialAttackData::PassesChance(const FAttackDecisionContext& Context, FAttackChanceDebug* OutDebug) const
@@ -51,6 +53,26 @@ float USpecialAttackData::GetScore(const FAttackDecisionContext& Context, FAttac
 {
 	float ParentScore = Super::GetScore(Context, OutDebug);
 	return ParentScore;
+}
+
+float USpecialAttackData::GetMinRange() const
+{
+	if (!AbilityClass)
+	{
+		return 0.f;
+	}
+
+	return AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MinRange;
+}
+
+float USpecialAttackData::GetMaxRange() const
+{
+	if (!AbilityClass)
+	{
+		return 0.f;
+	}
+
+	return AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
 }
 
 EAttackExecutionType USpecialAttackData::GetExecutionType() const

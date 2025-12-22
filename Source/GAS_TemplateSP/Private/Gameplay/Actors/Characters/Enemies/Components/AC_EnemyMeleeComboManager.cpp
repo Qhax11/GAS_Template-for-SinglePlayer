@@ -29,22 +29,24 @@ void UAC_EnemyMeleeComboManager::BeginPlay()
 	}
 }
 
-void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass, FName MontageSection)
+void UAC_EnemyMeleeComboManager::StartComboChain(UEnemyComboChainAsset* ComboChain, FName MontageSection)
 {
-	if (!ComboChainAsset || !AIController)
+	if(!ComboChain || AIController)
 	{
 		return;
 	}
 
-	FComboChainSearchResult SearchResult = GetComboChainOfSelectedComboAbility(ComboMeleeAttackAbilityClass);
-	if (SearchResult.FindedComboIndex == INDEX_NONE)
+	const FComboChainData& InComboChain = ComboChain->ComboChain;
+	if (InComboChain.ComboAbilities.Num() == 0)
 	{
 		return;
 	}
 
-	ActiveComboChainTracker.ComboChain = SearchResult.ComboChain;
-	ActiveComboChainTracker.CurrentStepIndex = SearchResult.FindedComboIndex;
+	// Set tracker
+	ActiveComboChainTracker.ComboChain = InComboChain;
+	ActiveComboChainTracker.CurrentStepIndex = 0;
 
+	// Validate step
 	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
 	if (!ComboAbilityData)
 	{
@@ -52,7 +54,7 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 		return;
 	}
 
-	ActiveComboChainTracker.bIsActive = true;
+	// Start first attack
 	ActivateComboMelee(MontageSection);
 }
  
@@ -135,6 +137,7 @@ void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData
 	if (EndedData.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: Combo cancelled by %s. Resetting."), *EndedData.AbilityThatEnded->GetName());
+		BroadcastComboChainEnd(EEnemyComboChainResult::Cancelled);
 		return;
 	}
 
@@ -145,6 +148,7 @@ void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData
 	if (ActiveComboChainTracker.IsChainFinished())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: Combo Finished."));
+		BroadcastComboChainEnd(EEnemyComboChainResult::Completed);
 		return;
 	}
 	// Continue next combo step

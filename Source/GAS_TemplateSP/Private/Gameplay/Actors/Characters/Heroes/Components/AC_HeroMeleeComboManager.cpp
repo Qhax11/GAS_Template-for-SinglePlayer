@@ -27,7 +27,34 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnAdded).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagAdded);
 	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InAir, EListenMode::OnRemoved).BindDynamic(this, &UAC_HeroMeleeComboManager::OnInAirTagRemoved);
 
-	InitComboChainTracker(EComboType::GroundCombo);
+	InitComboChain(EHeroComboType::GroundCombo);
+}
+
+void UAC_HeroMeleeComboManager::InitComboChain(EHeroComboType ComboType)
+{
+	if (!HeroComboAsset)
+	{
+		return;
+	}
+
+	// Reset tracker
+	ActiveComboChainTracker.Reset();
+
+	// Set new chain based on type
+	switch (ComboType)
+	{
+	case EHeroComboType::GroundCombo:
+		ActiveComboChainTracker.ComboChain = HeroComboAsset->GroundCombo;
+		break;
+	case EHeroComboType::AirCombo:
+		ActiveComboChainTracker.ComboChain = HeroComboAsset->AirCombo;
+		break;
+	case EHeroComboType::ShadowCombo:
+		ActiveComboChainTracker.ComboChain = HeroComboAsset->ShadowCombo;
+		break;
+	}
+
+	ActiveComboChainTracker.CurrentStepIndex = 0;
 }
 
 UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMelee(FName MontageSection, FGameplayTag AdditionalTag)
@@ -76,17 +103,17 @@ void UAC_HeroMeleeComboManager::ChangeComboSet()
 {
 	if (CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InAir))
 	{
-		InitComboChainTracker(EComboType::AirCombo);
+		InitComboChain(EHeroComboType::AirCombo);
 	}
 	else
 	{
-		InitComboChainTracker(EComboType::GroundCombo);
+		InitComboChain(EHeroComboType::GroundCombo);
 	}
 }
 
 void UAC_HeroMeleeComboManager::StartShadowCombo(FName MontageSection, FGameplayTag AdditionalTag)
 {
-	InitComboChainTracker(EComboType::ShadowCombo);
+	InitComboChain(EHeroComboType::ShadowCombo);
 	ActivateComboMelee(MontageSection, AdditionalTag);
 }
 
@@ -103,19 +130,18 @@ void UAC_HeroMeleeComboManager::OnPhaseActiveHitTagAdded(const UAbilitySystemCom
 	if (ActiveComboChainTracker.IsChainFinished())
 	{
 		ChangeComboSet();
-		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}
 }
 
 void UAC_HeroMeleeComboManager::OnInAirTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	InitComboChainTracker(EComboType::AirCombo);
+	InitComboChain(EHeroComboType::AirCombo);
 }
 
 void UAC_HeroMeleeComboManager::OnInAirTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	InitComboChainTracker(EComboType::GroundCombo);
+	InitComboChain(EHeroComboType::GroundCombo);
 }
 
 

@@ -47,6 +47,7 @@
 
 class UAttackDataBase;
 class UComboChainAttackData;
+class USpecialAttackData;
 class UAC_EnemyMeleeComboManager;
 
 UCLASS()
@@ -66,7 +67,7 @@ public:
 protected:
 	void ExecuteAttack(UAttackDataBase* SelectedAttackData);
 
-	void ExecuteSingleAttack(UAttackDataBase* AttackData);
+	void ExecuteSpecialAttack(USpecialAttackData* SpecialAttackData);
 
 	void ExecuteComboAttack(UComboChainAttackData* ComboData);
 

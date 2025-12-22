@@ -21,7 +21,6 @@ void UCrowdEnemy_MovementState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPaylo
 	MovementStateEnterPayload = StaticCastSharedPtr<FMovementStatePayload>(EnterPayload);
 	check(MovementStateEnterPayload.IsValid());
 	check(MovementStateEnterPayload->SelectedAttackData);
-	check(MovementStateEnterPayload->SelectedAttackData->AbilityClass);
 	check(AICrowdEventManager);
 }
 

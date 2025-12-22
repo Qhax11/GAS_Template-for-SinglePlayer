@@ -6,6 +6,29 @@
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "AC_HeroMeleeComboManager.generated.h"
 
+UENUM(BlueprintType)
+enum class EHeroComboType : uint8
+{
+	GroundCombo,
+	AirCombo,
+	ShadowCombo
+};
+
+UCLASS(BlueprintType)
+class UHeroComboChainsAsset : public UDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FComboChainData GroundCombo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FComboChainData AirCombo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FComboChainData ShadowCombo;
+};
 
 UCLASS()
 class GAS_TEMPLATESP_API UAC_HeroMeleeComboManager : public UAC_MeleeComboManager
@@ -14,6 +37,8 @@ class GAS_TEMPLATESP_API UAC_HeroMeleeComboManager : public UAC_MeleeComboManage
 
 protected:
 	virtual void BeginPlay() override;
+
+	void InitComboChain(EHeroComboType ComboType);
 
 	void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData) override;
 
@@ -25,7 +50,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartShadowCombo(FName MontageSection, FGameplayTag AdditionalTag = FGameplayTag());
 
-	AGAS_HeroBase* HeroBase;
+	UPROPERTY(EditDefaultsOnly)
+	UHeroComboChainsAsset* HeroComboAsset; 
 
 private:
 	UFUNCTION()
@@ -37,4 +63,6 @@ private:
 	UFUNCTION()
 	void OnPhaseActiveHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
+	UPROPERTY()
+	class AGAS_HeroBase* HeroBase;
 };

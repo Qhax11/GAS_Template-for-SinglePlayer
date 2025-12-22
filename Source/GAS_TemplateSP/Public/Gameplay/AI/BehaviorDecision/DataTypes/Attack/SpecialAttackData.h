@@ -20,6 +20,10 @@ public:
 
 	virtual float GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug = nullptr) const override;
 
+	float GetMinRange() const override;
+
+	float GetMaxRange() const override;
+
 	virtual EAttackExecutionType GetExecutionType() const override;
 
 public:

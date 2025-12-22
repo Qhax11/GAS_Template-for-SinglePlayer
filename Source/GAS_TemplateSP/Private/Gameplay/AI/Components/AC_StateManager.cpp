@@ -166,14 +166,9 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 		return;
 	}
 
-	if(!BestAttack->AbilityClass)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: BestAttack.AbilityClass is null!"));
-		return;
-	}	
-
-	const UGAS_GameplayAbilityBase* AttackCDO = BestAttack->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-	const EMovementRangeResult RangeResult = CombatDistance::EvaluateAttackRange(OwnerEnemyBase, HeroBase, AttackCDO->MinRange, AttackCDO->MaxRange);
+	const float MinRange = BestAttack->GetMinRange();
+	const float MaxRange = BestAttack->GetMaxRange();
+	const EMovementRangeResult RangeResult = CombatDistance::EvaluateAttackRange(OwnerEnemyBase, HeroBase, MinRange, MaxRange);
 	if (RangeResult == EMovementRangeResult::InRange) 
 	{
 		TSharedPtr<FAttackStatePayload> AttackStatePayload = MakeShared<FAttackStatePayload>(BestAttack);

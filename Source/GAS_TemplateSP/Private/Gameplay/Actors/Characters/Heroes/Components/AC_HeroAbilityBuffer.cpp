@@ -79,7 +79,7 @@ void UAC_HeroAbilityBuffer::TryActivateBufferedAbility()
     {
         if (HeroMeleeComboManager) 
         {
-            HeroMeleeComboManager->ActivateComboMeleeAttackAbility();
+            HeroMeleeComboManager->ActivateComboMelee();
             return;
         }
     }

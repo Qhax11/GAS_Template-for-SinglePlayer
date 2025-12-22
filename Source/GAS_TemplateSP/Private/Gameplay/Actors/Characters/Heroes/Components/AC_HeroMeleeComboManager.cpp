@@ -30,9 +30,9 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 	InitComboChainTracker(EComboType::GroundCombo);
 }
 
-UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
+UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMelee(FName MontageSection, FGameplayTag AdditionalTag)
 {
-	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMeleeAttackAbility(MontageSection, AdditionalTag);
+	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMelee(MontageSection, AdditionalTag);
 	if (!ActivatedComboMeleeAttack) 
 	{
 		return nullptr;
@@ -87,7 +87,7 @@ void UAC_HeroMeleeComboManager::ChangeComboSet()
 void UAC_HeroMeleeComboManager::StartShadowCombo(FName MontageSection, FGameplayTag AdditionalTag)
 {
 	InitComboChainTracker(EComboType::ShadowCombo);
-	ActivateComboMeleeAttackAbility(MontageSection, AdditionalTag);
+	ActivateComboMelee(MontageSection, AdditionalTag);
 }
 
 void UAC_HeroMeleeComboManager::OnPhaseActiveHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

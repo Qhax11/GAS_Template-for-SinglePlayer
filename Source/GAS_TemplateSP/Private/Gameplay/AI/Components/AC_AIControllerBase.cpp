@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
@@ -23,17 +24,17 @@ void UAC_AIControllerBase::BeginPlay()
         return;
     }
 
-    IntendManager = OwnerController->GetIntendManagerComponent();
-    if (!IntendManager)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("IntendManager is null in: %s !"), *GetName());
-        return;
-    }
-
     OwnerEnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
     if (!OwnerEnemyBase)
     {
         UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
+        return;
+    }
+
+    MeleeComboManager = OwnerEnemyBase->GetEnemyMeleeComboManagerComponent();
+    if (!MovementManager)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("MovementManager is null in: %s !"), *GetName());
         return;
     }
 

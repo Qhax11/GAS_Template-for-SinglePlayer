@@ -3,13 +3,15 @@
 
 #include "Gameplay/AI/Components/AC_BehaviorDecision.h"
 #include "Gameplay/AI/BehaviorDecision/Services/ComingAttackReaction/BDS_ComingAttackReactionBase.h"
-#include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
 #include "Gameplay/AI/BehaviorDecision/Services/GetBestAttack/BDS_GetBestAttack.h"
 #include "Gameplay/AI/BehaviorDecision/Services/BDS_GetBestMovementChain.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/ComingAttackReaction/ComingAttackReactionData.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
+#include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
-#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
+#include "Gameplay/AI/Components/AC_IntendManager.h"
 
 UAC_BehaviorDecision::UAC_BehaviorDecision()
 {
@@ -20,18 +22,16 @@ void UAC_BehaviorDecision::BeginPlay()
 {
 	Super::BeginPlay();
 
-    if(!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase || !IntendManager)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: Some owner variables are already set in: %s !"), *GetName());
-        return;
-	}
+    check(OwnerController);
+    check(OwnerEnemyBase);
+    check(OwnerEnemyASC);
+    check(HeroBase);
 
+    IntendManager = OwnerController->GetIntendManagerComponent();
+    check(IntendManager);
+ 
     HeroMovementListenerComp = HeroBase->GetMovementListenerComponent();
-    if (!HeroMovementListenerComp)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Decision: Componnet: HeroMovementListenerComp is null in: %s !"), *GetName());
-        return;
-    }
+    check(HeroMovementListenerComp);
 
     OwnerController->OnTargetDetected.AddDynamic(this, &UAC_BehaviorDecision::OnTargetDetected);
 }

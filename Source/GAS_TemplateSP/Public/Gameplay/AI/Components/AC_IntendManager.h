@@ -8,11 +8,12 @@
 
 class UMovementChainData;
 struct FMovementChainEndData;
+struct FEnemyComboChainEndData;
 
 UCLASS()
 class GAS_TEMPLATESP_API UAC_IntendManager : public UAC_AIControllerBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 protected:
     virtual void BeginPlay() override;
@@ -21,7 +22,10 @@ public:
     UFUNCTION(BlueprintCallable)
     EEnemyIntent GetCurrentIntent() const { return CurrentIntent; }
 
+protected:
     void OnMovementChainCompleted(const FMovementChainEndData& EndData);
+
+    void OnEnemyComboChainCompleted(const FEnemyComboChainEndData& EndData);
 
 private:
     void IncreasePressure();

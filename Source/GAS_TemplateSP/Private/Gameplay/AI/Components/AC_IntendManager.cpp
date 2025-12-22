@@ -2,10 +2,11 @@
 
 
 #include "Gameplay/AI/Components/AC_IntendManager.h"
-#include "Gameplay/AI/Controllers/AIControllerBase.h"
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
 
 void UAC_IntendManager::BeginPlay()
 {
@@ -13,27 +14,13 @@ void UAC_IntendManager::BeginPlay()
 
     check(OwnerEnemyBase);
     check(MovementManager);
-
-    AAIControllerBase* Controller = Cast<AAIControllerBase>(GetOwner());
-
-    UE_LOG(LogTemp, Error, TEXT("=== INTEND MANAGER BEGIN PLAY ==="));
-    UE_LOG(LogTemp, Error, TEXT("IntendManager Instance: %p"), this);
-    UE_LOG(LogTemp, Error, TEXT("Owner Controller: %s (%p)"), *Controller->GetName(), Controller);
-    UE_LOG(LogTemp, Error, TEXT("Controller's IntendManager: %p"), Controller->GetIntendManagerComponent());
-    UE_LOG(LogTemp, Error, TEXT("Enemy: %s (%p)"), *OwnerEnemyBase->GetName(), OwnerEnemyBase);
-    UE_LOG(LogTemp, Error, TEXT("MovementManager: %p"), MovementManager);
-
-    if (Controller->GetIntendManagerComponent() != this)
-    {
-        UE_LOG(LogTemp, Error, TEXT("!!! WARNING: Controller has DIFFERENT IntendManager! This=%p, Controller's=%p"),
-            this, Controller->GetIntendManagerComponent());
-    }
+    check(MeleeComboManager);
 
     // Bind delegate
     MovementManager->OnMovementChainEnded.RemoveAll(this);
     MovementManager->OnMovementChainEnded.AddUObject(this, &UAC_IntendManager::OnMovementChainCompleted);
-
-    UE_LOG(LogTemp, Error, TEXT("=== INTEND MANAGER READY ==="));
+	MeleeComboManager->OnEnemyComboChainEnded.RemoveAll(this);
+	MeleeComboManager->OnEnemyComboChainEnded.AddUObject(this, &UAC_IntendManager::OnEnemyComboChainCompleted);
 }
 
 void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& EndData)
@@ -62,6 +49,11 @@ void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& En
         UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_IntendManager: Completed + HardFallback, IncreasePressure."));
         IncreasePressure();
     }
+}
+
+void UAC_IntendManager::OnEnemyComboChainCompleted(const FEnemyComboChainEndData& EndData)
+{
+
 }
 
 void UAC_IntendManager::IncreasePressure()

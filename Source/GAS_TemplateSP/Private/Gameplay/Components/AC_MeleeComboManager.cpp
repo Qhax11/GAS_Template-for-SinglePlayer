@@ -50,7 +50,6 @@ void UAC_MeleeComboManager::InitComboChainTracker(EComboType NewComboType)
 	// ---- Initialize tracker ----
 	ActiveComboChainTracker.ComboChain = ComboChainAsset->ComboChains[Index];
 	ActiveComboChainTracker.CurrentStepIndex = 0;
-	ActiveComboChainTracker.bNextAttackAllowed = true;
 
 	ActiveComboChainTracker.CurrentAbilitySpecHandle = FGameplayAbilitySpecHandle();
 	ActiveComboChainTracker.CurrentAbilityInstance = nullptr;
@@ -64,7 +63,7 @@ void UAC_MeleeComboManager::InitComboChainTracker(EComboType NewComboType)
 	}
 }
 
-UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
+UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(FName MontageSection, FGameplayTag AdditionalTag)
 {
 	if (!CharacterBaseASC)
 	{
@@ -116,11 +115,10 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMeleeAttackAbility(FNa
 	ActiveComboChainTracker.CurrentAbilityInstance = ActivatedAbility;
 
 	// Bind end event safely
-	ActivatedAbility->OnAbilityEnded.Clear();
+	ActivatedAbility->OnAbilityEnded.RemoveAll(this);
 	ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
 	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: ActivatedAbility ability is binded: %s"), *ActivatedAbility->GetName());
 
-	ActiveComboChainTracker.bNextAttackAllowed = false;
 	LastActivatedCombo = ActivatedAbility;
 
 	return ActivatedAbility;
@@ -185,5 +183,19 @@ void UAC_MeleeComboManager::CancelComboAbilities()
 	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeCombo);
 
 	CharacterBaseASC->CancelAbilities(&CancelTags);
+}
+
+void UAC_MeleeComboManager::ContinueComboAfterCurrentStepEnded(bool bWasCancelled)
+{
+	ActiveComboChainTracker.Advance();
+
+	if (ActiveComboChainTracker.IsChainFinished() || bWasCancelled)
+	{
+		ActiveComboChainTracker.Reset();
+		OnComboEnded.Broadcast();
+		return;
+	}
+
+	ActivateComboMelee();
 }
 

@@ -20,7 +20,7 @@ protected:
 	void ChangeComboSet();
 
 public:
-	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
+	virtual UGA_ComboMeleeAttack* ActivateComboMelee(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
 
 	UFUNCTION(BlueprintCallable)
 	void StartShadowCombo(FName MontageSection, FGameplayTag AdditionalTag = FGameplayTag());

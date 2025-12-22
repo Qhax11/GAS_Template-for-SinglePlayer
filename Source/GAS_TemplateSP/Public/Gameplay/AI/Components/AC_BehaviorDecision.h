@@ -11,6 +11,7 @@ class UComingAttackReactionData;
 class UBDS_ComingAttackReactionBase;
 class UBDS_GetBestAttack;
 class UBDS_GetBestMovementChain;
+class UAC_IntendManager;
 struct FComingAttackPayload;
 
 UCLASS(BlueprintType)
@@ -90,4 +91,6 @@ private:
     UPROPERTY()
     UBDS_ComingAttackReactionBase* ComingAttackReactionService;
 
+    UPROPERTY()
+    UAC_IntendManager* IntendManager;
 };

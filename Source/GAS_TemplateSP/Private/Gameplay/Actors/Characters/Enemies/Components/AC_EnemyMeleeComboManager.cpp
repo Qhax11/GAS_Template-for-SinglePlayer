@@ -53,10 +53,10 @@ void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboM
 	}
 
 	ActiveComboChainTracker.bIsActive = true;
-	ActivateComboMeleeAttackAbility(MontageSection);
+	ActivateComboMelee(MontageSection);
 }
  
-UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbility(FName MontageSection, FGameplayTag AdditionalTag)
+UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMelee(FName MontageSection, FGameplayTag AdditionalTag)
 {
 	const FComboAbilityData* CurrentCombo = ActiveComboChainTracker.GetCurrentCombo();
 	if (!CurrentCombo || !CurrentCombo->ComboAbilityClass)
@@ -79,7 +79,7 @@ UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbilit
 	// Check distance
 	if (AIController->GetTargetHeroDistance() < ComboAbilityMaxRange)
 	{
-		return Super::ActivateComboMeleeAttackAbility(MontageSection);
+		return Super::ActivateComboMelee(MontageSection);
 	}
 	else
 	{
@@ -90,7 +90,6 @@ UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMeleeAttackAbilit
 
 void UAC_EnemyMeleeComboManager::OnEnemyCanActivateNextAttack()
 {
-	ActiveComboChainTracker.bNextAttackAllowed = true;
 	ActiveComboChainTracker.Advance();
 
 	if (ActiveComboChainTracker.IsChainFinished())
@@ -102,27 +101,26 @@ void UAC_EnemyMeleeComboManager::OnEnemyCanActivateNextAttack()
 
 void UAC_EnemyMeleeComboManager::OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnTakeDamageTagAdded: "));
+	UE_LOG(LogTemp, Warning, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: OnTakeDamageTagAdded: "));
 }
 
 void UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnTakeDamageTagRemovedFrom CombatManager: "));
+	UE_LOG(LogTemp, Warning, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: OnTakeDamageTagRemovedFrom"));
 
 	// If combo was active and our take damage ability is finished, we need continue.
 	if (ActiveComboChainTracker.bIsActive) 
 	{
-		ActiveComboChainTracker.bNextAttackAllowed = true;
 		ActiveComboChainTracker.Advance();
-		ActivateComboMeleeAttackAbility();
+		ActivateComboMelee();
 	}
 
 	EnemyTagDelegatesComp->UnregisterAllDelegatesForObject(this);
 }
 
-void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
+void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& EndedData)
 {
-	Super::OnComboAbilityEnd(ComboAbilityEndedData);
+	Super::OnComboAbilityEnd(EndedData);
 
 	// It is mean combo ability ended with take damage, we need listen end of it.
 	bool OnTakeDamage = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
@@ -132,19 +130,37 @@ void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData
 		return;
 	}
 
-	// When the combo ability ends for any reason, we are able to trigger the next combo ability.
-	ActiveComboChainTracker.bNextAttackAllowed = true;
-	ActiveComboChainTracker.Advance();
+	ActiveComboChainTracker.CurrentAbilityInstance = nullptr;
 
-	if (ActiveComboChainTracker.IsChainFinished() || ComboAbilityEndedData.bWasCancelled)
+	if (EndedData.bWasCancelled)
 	{
-		OnComboEnded.Broadcast();
-		ActiveComboChainTracker.Reset();
+		UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: Combo cancelled by %s. Resetting."), *EndedData.AbilityThatEnded->GetName());
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[StateManager]: OnOwnerAbilityEnd: %s"), *ComboAbilityEndedData.AbilityThatEnded->GetName());
-	ActivateComboMeleeAttackAbility();
+	// Advance combo
+	ActiveComboChainTracker.Advance();
+
+	// If its finished
+	if (ActiveComboChainTracker.IsChainFinished())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: Combo Finished."));
+		return;
+	}
+	// Continue next combo step
+	else
+	{
+		ActivateComboMelee();
+	}
+}
+
+void UAC_EnemyMeleeComboManager::BroadcastComboChainEnd(EEnemyComboChainResult Result)
+{
+	FEnemyComboChainEndData EnemyComboChainEndData;
+	EnemyComboChainEndData.Result = Result;
+	EnemyComboChainEndData.LastComboAbility = ActiveComboChainTracker.CurrentAbilityInstance;
+
+	OnEnemyComboChainEnded.Broadcast(EnemyComboChainEndData);
 }
 
 float UAC_EnemyMeleeComboManager::GetMaxRangeOfCurrentAttack()

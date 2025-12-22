@@ -74,9 +74,6 @@ struct FActiveComboChainTracker
 	FGameplayAbilitySpecHandle CurrentAbilitySpecHandle;
 
 	UPROPERTY()
-	bool bNextAttackAllowed = true;
-
-	UPROPERTY()
 	bool bIsActive = false;
 
 	bool IsCurrentComboValid() const
@@ -105,7 +102,6 @@ struct FActiveComboChainTracker
 		CurrentAbilityClass = nullptr;
 		CurrentAbilityInstance = nullptr;
 		CurrentAbilitySpecHandle = FGameplayAbilitySpecHandle();
-		bNextAttackAllowed = true;
 		bIsActive = false;
 	}
 };
@@ -131,7 +127,7 @@ public:
 	UAC_MeleeComboManager();
 
 	UFUNCTION(BlueprintCallable)
-	virtual UGA_ComboMeleeAttack* ActivateComboMeleeAttackAbility(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag());
+	virtual UGA_ComboMeleeAttack* ActivateComboMelee(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag());
 
 	UFUNCTION(BlueprintCallable)
 	void StopCombo();
@@ -158,4 +154,7 @@ protected:
 	UGAS_AbilitySystemComponent* CharacterBaseASC;
 	FActiveComboChainTracker ActiveComboChainTracker;
 	UGAS_GameplayAbilityBase* LastActivatedCombo;
+
+private:
+	void ContinueComboAfterCurrentStepEnded(bool bWasCancelled);
 };

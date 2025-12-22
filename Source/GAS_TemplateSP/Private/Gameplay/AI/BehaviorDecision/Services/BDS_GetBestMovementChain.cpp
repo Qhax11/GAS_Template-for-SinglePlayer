@@ -135,16 +135,18 @@ TArray<UMovementChainAsset*> UBDS_GetBestMovementChain::GetMovementChainsForSele
 {
     TArray<UMovementChainAsset*> EmptyResult;
 
-    if (!SelectedAttackData->AbilityClass || !AttackAbilitiesToMovementChainsAsset)
+    if (!SelectedAttackData || !SelectedAttackData->AttackMovementTag.IsValid() || !AttackAbilitiesToMovementChainsAsset)
     {
         return EmptyResult;
     }
 
-    for (const FAttackAbilityToMovementChains& AttackAbilityToMovementChain : AttackAbilitiesToMovementChainsAsset->AttackAbilityMovementChainMap)
+    const FGameplayTag& SelectedAttackMovementTag = SelectedAttackData->AttackMovementTag;
+
+    for (const FAttackMovementProfileToChains& ProfileMap : AttackAbilitiesToMovementChainsAsset->AttackAbilityMovementChainMap)
     {
-        if (AttackAbilityToMovementChain.AttackData == SelectedAttackData)
+        if (ProfileMap.MovementAttackTag == SelectedAttackMovementTag)
         {
-            return AttackAbilityToMovementChain.MovementChains;
+            return ProfileMap.MovementChains;
         }
     }
 

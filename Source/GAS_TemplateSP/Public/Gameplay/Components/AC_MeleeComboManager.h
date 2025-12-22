@@ -44,7 +44,7 @@ struct FComboChainData
 };
 
 UCLASS(BlueprintType)
-class UComboChainAsset : public UDataAsset
+class UComboChainsAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
@@ -148,7 +148,7 @@ protected:
 	void CancelComboAbilities();
 
 	UPROPERTY(EditDefaultsOnly)
-	UComboChainAsset* ComboChainAsset;
+	UComboChainsAsset* ComboChainAsset;
 
 	AGAS_CharacterBase* CharacterBase;
 	UGAS_AbilitySystemComponent* CharacterBaseASC;

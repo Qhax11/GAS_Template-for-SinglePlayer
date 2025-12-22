@@ -44,6 +44,11 @@
  * (e.g. boss attacks, combo logic, cinematic attacks),
  * while keeping the core execution contract consistent.
  */
+
+class UAttackDataBase;
+class UComboChainAttackData;
+class UAC_EnemyMeleeComboManager;
+
 UCLASS()
 class GAS_TEMPLATESP_API UAttackStateBase : public UStateBase
 {
@@ -59,7 +64,11 @@ public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 protected:
-	void ExecuteAttack(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass);
+	void ExecuteAttack(UAttackDataBase* SelectedAttackData);
+
+	void ExecuteSingleAttack(UAttackDataBase* AttackData);
+
+	void ExecuteComboAttack(UComboChainAttackData* ComboData);
 
 	// Callbacks
 	void OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
@@ -71,4 +80,8 @@ public:
 protected:
 	// Runtime State
 	UGAS_GameplayAbilityBase* LastUsedAttack;
+
+private:
+	UPROPERTY()
+	UAC_EnemyMeleeComboManager* ComboManager;
 };

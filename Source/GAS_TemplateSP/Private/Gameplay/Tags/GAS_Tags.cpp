@@ -419,6 +419,14 @@ namespace GAS_Tags
 
 
 	// ============================================================
+	// AI DECISION
+	// ============================================================
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Decision_Attack_Movement_LowPressure, "AI.Decision.Attack.Movement.LowPressure");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Decision_Attack_Movement_HighPressure_Walk, "AI.Decision.Attack.Movement.HighPressure.Walk");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Decision_Attack_Movement_HighPressure_Run, "AI.Decision.Attack.Movement.HighPressure.Run");
+
+
+	// ============================================================
 	// AI ABILITY TAGS (IDENTITY)
 	// ============================================================
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Ability_PhantomDash, "AI.Ability.PhantomDash");

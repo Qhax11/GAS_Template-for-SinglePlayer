@@ -442,6 +442,14 @@ namespace GAS_Tags
 
 
 	// ============================================================
+	// AI DECISION
+	// ============================================================
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_LowPressure);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_HighPressure_Walk);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_HighPressure_Run);
+
+
+	// ============================================================
 	// AI ABILITY TAGS (IDENTITY)
 	// ============================================================
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_PhantomDash);
@@ -450,8 +458,7 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_ShadowAttack);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Ability_Dash);
 
-	 // GÝDÝP ABÝLÝTLERÝN COOLDOWN TAGLERÝNÝ EDÝTÖRDE GÜNCELLE + 
-	 // 
+
 	// ============================================================
     // AI ABILITY COOLDOWN TAGS (METADATA)
     // ============================================================

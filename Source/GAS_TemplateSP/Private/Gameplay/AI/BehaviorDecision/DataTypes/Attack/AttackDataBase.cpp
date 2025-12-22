@@ -6,26 +6,6 @@
 
 bool UAttackDataBase::IsEnable(const FAttackDecisionContext& Context, FAttackEnableDebug* OutDebug) const
 {
-	// Ability tanýmlý deðilse bu attack seçilemez
-	if (!AbilityClass)
-	{
-		if (OutDebug)
-		{
-			OutDebug->Reason = EAttackDisableReason::InvalidAbility;
-		}
-		return false;
-	}
-
-	// Ability cooldown'daysa bu attack seçilemez
-	if(Context.OwnerASC->HasMatchingGameplayTag(AbilityCooldownTag))
-	{
-		if (OutDebug)
-		{
-			OutDebug->Reason = EAttackDisableReason::OnCooldown;
-		}
-		return false;
-	}
-
 	// Target yoksa saldýrý olmaz
 	if (!Context.Target)
 	{
@@ -62,22 +42,13 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 {
 	float IntentScore = GetIntentScore(Context);
 	float DistanceScore = GetDistanceScore(Context);
-	float ComboScore = 0.f;
 
-	// Combo bonus
-	if (bIsComboAttack)
-	{
-		// Base combo mantýðý: zincirdeysen küçük bir teþvik
-		ComboScore = 0.25f;
-	}
-
-	const float TotalScore = IntentScore + DistanceScore + ComboScore + ScoreBias;
+	const float TotalScore = IntentScore + DistanceScore + ScoreBias;
 
 	if (OutDebug)
 	{
 		OutDebug->CurrentIntent = Context.EnemyIntent;
 		OutDebug->IntentScore = IntentScore;
-		OutDebug->ComboScore = ComboScore;
 		OutDebug->DistanceScore = DistanceScore;
 		OutDebug->Bias = ScoreBias;
 		OutDebug->Total = TotalScore;
@@ -90,7 +61,7 @@ float UAttackDataBase::GetIntentScore(const FAttackDecisionContext& Context) con
 {
 	float Score = 0.0f;
 
-	if (const float* FoundScore = EnemyIntentScoreModifiers.Find(Context.EnemyIntent))
+	if (const float* FoundScore = IntentScoreModifiers.Find(Context.EnemyIntent))
 	{
 		Score += *FoundScore;
 	}
@@ -100,6 +71,8 @@ float UAttackDataBase::GetIntentScore(const FAttackDecisionContext& Context) con
 
 float UAttackDataBase::GetDistanceScore(const FAttackDecisionContext& Context) const
 {
+	return 0.f;
+	/*
 	if (!AbilityClass || !IsValid(Context.Owner) || !IsValid(Context.Target))
 	{
 		return 0.f;
@@ -117,6 +90,7 @@ float UAttackDataBase::GetDistanceScore(const FAttackDecisionContext& Context) c
 
 	// Near = 1.0, Far = 0.0
 	return FMath::Lerp(1.f, 0.f, Alpha);
+	*/
 }
 
 /*

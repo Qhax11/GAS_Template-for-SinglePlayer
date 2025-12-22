@@ -5,5 +5,37 @@
 
 UComboChainAttackData::UComboChainAttackData()
 {
-	bIsComboAttack = true;
+}
+
+bool UComboChainAttackData::IsEnable(const FAttackDecisionContext& Context, FAttackEnableDebug* OutDebug) const
+{
+	// If its fail in parent, fail here too
+	if (!Super::IsEnable(Context, OutDebug))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool UComboChainAttackData::PassesChance(const FAttackDecisionContext& Context, FAttackChanceDebug* OutDebug) const
+{
+	// If its fail in parent, fail here too
+	if (!Super::PassesChance(Context, OutDebug))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+float UComboChainAttackData::GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug) const
+{
+	float ParentScore = Super::GetScore(Context, OutDebug);
+	return ParentScore;
+}
+
+EAttackExecutionType UComboChainAttackData::GetExecutionType() const
+{
+	return EAttackExecutionType::ComboChain;
 }

@@ -103,5 +103,4 @@ public:
 	virtual float GetScore(const FMovementDecisionContext& Context, FMovementScoreDebug* OutDebug = nullptr) const;
 	
 	virtual bool IsChain() const { return false; }
-
 };

@@ -4,6 +4,7 @@
 #include "Gameplay/AI/States/AttackStateBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/ComboChainAttackData.h"
 #include "Gameplay/Utilities/Combat/CombatDistanceUtils.h"
 
 UAttackStateBase::UAttackStateBase()
@@ -14,6 +15,8 @@ UAttackStateBase::UAttackStateBase()
 void UAttackStateBase::StateInitalize(const FStateInitParams& StateInitParams)
 {
 	Super::StateInitalize(StateInitParams);
+	ComboManager = Enemy->GetEnemyMeleeComboManagerComponent();
+	check(ComboManager);
 }
 
 bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
@@ -32,9 +35,9 @@ bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload
 		return false;
 	}
 
-	if (!AttackStatePayload->AttackData || !AttackStatePayload->AttackData->AbilityClass)
+	if (!AttackStatePayload->AttackData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: AttackData or AbilityClass invalid in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: AttackData invalid in: %s"), *GetName());
 		return false;
 	}
 
@@ -68,22 +71,33 @@ void UAttackStateBase::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 	// StaticCastSharedPtr is fast and safe if we trust the logic flow.
 	TSharedPtr<FAttackStatePayload> AttackStatePayload = StaticCastSharedPtr<FAttackStatePayload>(EnterPayload);
 	check(AttackStatePayload.IsValid());
-	check(AttackStatePayload->AttackData);
-	check(AttackStatePayload->AttackData->AbilityClass);
 
-	ExecuteAttack(AttackStatePayload->AttackData->AbilityClass);
+	ExecuteAttack(AttackStatePayload->AttackData);
 }
 
-void UAttackStateBase::ExecuteAttack(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAttackClass)
+void UAttackStateBase::ExecuteAttack(UAttackDataBase* SelectedAttackData)
 {
-	if (!SelectedAttackClass)
+	if (!SelectedAttackData)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: SelectedAttackClass is null in: %s"), *GetName());
 		return;
 	}
 
-	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(SelectedAttackClass);
-	if (ActivatedAbility) 
+	const EAttackExecutionType AttackExecutionType = SelectedAttackData->GetExecutionType();
+	if (AttackExecutionType == EAttackExecutionType::ComboChain)
+	{
+		ExecuteComboAttack(Cast<UComboChainAttackData>(SelectedAttackData));
+	}
+	else if (AttackExecutionType == EAttackExecutionType::Single)
+	{
+		ExecuteSingleAttack(SelectedAttackData);
+	}
+}
+
+void UAttackStateBase::ExecuteSingleAttack(UAttackDataBase* AttackData)
+{
+	UGAS_GameplayAbilityBase* ActivatedAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(SelectedAttackData);
+	if (ActivatedAbility)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase:: ActivatedAbility is valid"));
 		ActivatedAbility->OnAbilityEnded.RemoveAll(this);
@@ -94,6 +108,18 @@ void UAttackStateBase::ExecuteAttack(TSubclassOf<UGAS_GameplayAbilityBase> Selec
 	{
 		BroadcastTransition(FGameplayTag(), nullptr, "AttackAbility activation is failed.");
 	}
+}
+
+void UAttackStateBase::ExecuteComboAttack(UComboChainAttackData* ComboData)
+{
+	if(!ComboManager || !ComboData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: ComboManager or ComboData is null in: %s"), *GetName());
+		return;
+	}
+	
+	ComboData->
+
 }
 
 void UAttackStateBase::OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)

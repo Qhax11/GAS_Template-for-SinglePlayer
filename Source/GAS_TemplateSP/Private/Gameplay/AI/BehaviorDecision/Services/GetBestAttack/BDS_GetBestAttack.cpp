@@ -75,7 +75,6 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 				TEXT("Decision: Service: UBDS_GetBestAttack: AttackScore = %s | Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 				*AttackData->AttackName.ToString(),
 				ScoreDebug.IntentScore,
-				ScoreDebug.ComboScore,
 				ScoreDebug.Bias,
 				ScoreDebug.Total
 			);
@@ -100,7 +99,6 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 				*BestAttackData->AttackName.ToString(),
 				*UEnum::GetValueAsString(BestScoreDebug.CurrentIntent),
 				BestScoreDebug.IntentScore,
-				BestScoreDebug.ComboScore,
 				BestScoreDebug.DistanceScore,
 				BestScoreDebug.Bias,
 				BestScoreDebug.Total

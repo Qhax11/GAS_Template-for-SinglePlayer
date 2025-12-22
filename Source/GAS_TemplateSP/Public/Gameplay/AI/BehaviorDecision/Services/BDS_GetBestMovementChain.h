@@ -10,14 +10,15 @@ class UMovementSingleData;
 class UMovementChainData;
 class UAttackDataBase;
 
+
 USTRUCT(BlueprintType)
-struct FAttackAbilityToMovementChains
+struct FAttackMovementProfileToChains
 {
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    UAttackDataBase* AttackData;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = "AI.Decision.Attack.Movement"))
+    FGameplayTag MovementAttackTag;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<UMovementChainAsset*> MovementChains;
@@ -30,7 +31,7 @@ class UAttackAbilitiesToMovementChainsAsset : public UPrimaryDataAsset
 
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    TArray<FAttackAbilityToMovementChains> AttackAbilityMovementChainMap;
+    TArray<FAttackMovementProfileToChains> AttackAbilityMovementChainMap;
 };
 
 UCLASS(BlueprintType)

@@ -2,7 +2,6 @@
 
 
 #include "Gameplay/AI/Components/AC_AIControllerBase.h"
-#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Actors/Characters/Heroes/GAS_HeroBase.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
@@ -18,47 +17,17 @@ void UAC_AIControllerBase::BeginPlay()
 	Super::BeginPlay();
 
     OwnerController = Cast<AAIControllerBase>(GetOwner());
-    if (!OwnerController)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("OwnerController is null in: %s !"), *GetName());
-        return;
-    }
+    checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 
     OwnerEnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
-    if (!OwnerEnemyBase)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyBase is null in: %s !"), *GetName());
-        return;
-    }
-
-    MeleeComboManager = OwnerEnemyBase->GetEnemyMeleeComboManagerComponent();
-    if (!MovementManager)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("MovementManager is null in: %s !"), *GetName());
-        return;
-    }
-
-    MovementManager = OwnerEnemyBase->GetEnemyMovementManagerComponent();
-    if (!MovementManager)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("MovementManager is null in: %s !"), *GetName());
-        return;
-    }
+    checkf(OwnerEnemyBase, TEXT("OwnerEnemyBase is null in %s"), *GetClass()->GetName());
 
     OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
-    if (!OwnerEnemyASC)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("OwnerEnemyASC is null in: %s !"), *GetName());
-        return;
-    }
+    checkf(OwnerEnemyASC, TEXT("OwnerEnemyASC is null in %s"), *GetClass()->GetName());
 
     ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
     HeroBase = Cast<AGAS_HeroBase>(PlayerCharacter);
-    if (!HeroBase)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s !"), *GetName());
-        return;
-    }
+    checkf(HeroBase, TEXT("HeroBase is null in %s"), *GetClass()->GetName());
 }
 
 

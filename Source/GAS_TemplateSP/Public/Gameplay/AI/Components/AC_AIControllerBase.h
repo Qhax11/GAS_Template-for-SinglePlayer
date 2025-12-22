@@ -25,8 +25,7 @@ class AAIControllerBase;
 class AGAS_EnemyBase;
 class UGAS_AbilitySystemComponent;
 class AGAS_HeroBase;
-class UAC_EnemyMovementManager;
-class UAC_EnemyMeleeComboManager;
+
 
 UCLASS(Abstract, ClassGroup=(Custom))
 class GAS_TEMPLATESP_API UAC_AIControllerBase : public UActorComponent
@@ -51,9 +50,4 @@ protected:
 	UPROPERTY()
 	AGAS_HeroBase* HeroBase;
 
-	UPROPERTY()
-	UAC_EnemyMovementManager* MovementManager;
-
-	UPROPERTY()
-	UAC_EnemyMeleeComboManager* MeleeComboManager;
 };

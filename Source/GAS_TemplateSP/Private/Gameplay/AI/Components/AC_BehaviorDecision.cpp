@@ -22,16 +22,13 @@ void UAC_BehaviorDecision::BeginPlay()
 {
 	Super::BeginPlay();
 
-    check(OwnerController);
-    check(OwnerEnemyBase);
-    check(OwnerEnemyASC);
-    check(HeroBase);
+    checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 
     IntendManager = OwnerController->GetIntendManagerComponent();
-    check(IntendManager);
- 
+    checkf(IntendManager, TEXT("IntendManager is null in %s"), *GetClass()->GetName());
+
     HeroMovementListenerComp = HeroBase->GetMovementListenerComponent();
-    check(HeroMovementListenerComp);
+    checkf(HeroMovementListenerComp, TEXT("HeroMovementListenerComp is null in %s"), *GetClass()->GetName());
 
     OwnerController->OnTargetDetected.AddDynamic(this, &UAC_BehaviorDecision::OnTargetDetected);
 }

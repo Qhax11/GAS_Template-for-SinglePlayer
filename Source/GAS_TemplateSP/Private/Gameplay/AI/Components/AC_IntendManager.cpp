@@ -12,9 +12,17 @@ void UAC_IntendManager::BeginPlay()
 {
     Super::BeginPlay();
 
-    check(OwnerEnemyBase);
-    check(MovementManager);
-    check(MeleeComboManager);
+    AAIControllerBase* OwnerController = Cast<AAIControllerBase>(GetOwner());
+    checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
+
+    AGAS_EnemyBase* OwnerEnemyBase = Cast<AGAS_EnemyBase>(OwnerController->GetPawn());
+    checkf(OwnerEnemyBase, TEXT("OwnerEnemyBase is null in %s"), *GetClass()->GetName());
+
+    MovementManager = OwnerEnemyBase->GetEnemyMovementManagerComponent();
+    checkf(MovementManager, TEXT("MovementManager is null in %s"), *GetClass()->GetName());
+
+    MeleeComboManager = OwnerEnemyBase->GetEnemyMeleeComboManagerComponent();
+    checkf(MeleeComboManager, TEXT("MeleeComboManager is null in %s"), *GetClass()->GetName());
 
     // Bind delegate
     MovementManager->OnMovementChainEnded.RemoveAll(this);

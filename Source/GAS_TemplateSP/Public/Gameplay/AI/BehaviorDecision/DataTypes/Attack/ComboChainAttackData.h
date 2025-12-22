@@ -3,15 +3,15 @@
 #pragma once
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Attack/AttackDataBase.h"
-#include "ComboAttackData.generated.h"
+#include "ComboChainAttackData.generated.h"
 
 
 UCLASS()
-class GAS_TEMPLATESP_API UComboAttackData : public UAttackDataBase
+class GAS_TEMPLATESP_API UComboChainAttackData : public UAttackDataBase
 {
 	GENERATED_BODY()
 
 public:
-	UComboAttackData();
+	UComboChainAttackData();
 	
 };

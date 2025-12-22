@@ -181,7 +181,7 @@ void UAC_StateManager::DecideNextStateBasedOnAttackRange()
 	}
 	else
 	{
-		UMovementChainData* BestMovementChainData = BehaviorDecisionComponent->GetBestMovementChain(BestAttack->AbilityClass);
+		UMovementChainData* BestMovementChainData = BehaviorDecisionComponent->GetBestMovementChain(BestAttack);
 		TSharedPtr<FMovementStatePayload> MovementStatePayload = MakeShared<FMovementStatePayload>(BestMovementChainData, BestAttack);
 		RequestStateTreeEnter(GAS_Tags::TAG_AI_State_Movement, MovementStatePayload);
 	}

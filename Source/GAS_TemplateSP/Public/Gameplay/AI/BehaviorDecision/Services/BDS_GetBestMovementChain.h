@@ -8,6 +8,7 @@
 class UMovementDataBase;
 class UMovementSingleData;
 class UMovementChainData;
+class UAttackDataBase;
 
 USTRUCT(BlueprintType)
 struct FAttackAbilityToMovementChains
@@ -16,7 +17,7 @@ struct FAttackAbilityToMovementChains
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TSubclassOf<UGAS_GameplayAbilityBase> AttackAbilityClass;
+    UAttackDataBase* AttackData;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<UMovementChainAsset*> MovementChains;
@@ -50,10 +51,10 @@ class GAS_TEMPLATESP_API UBDS_GetBestMovementChain : public UBehaviorDecisionSer
 public:
     virtual void Initialize(const FBehaviorServiceInitParams& BehaviorServiceInitParams) override;
 
-    UMovementChainData* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
+    UMovementChainData* GetBestMovementChain(UAttackDataBase* SelectedAttackData);
 
 protected:
-    TArray<UMovementChainAsset*> GetMovementChainsForSelectedAttackAbility(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass) const;
+    TArray<UMovementChainAsset*> GetMovementChainsForSelectedAttackAbility(UAttackDataBase* SelectedAttackData) const;
     /*
     float CalculateMovementChainScoreBasedOnTargetDistance(UMovementChainAsset* MovementChainAsset);
 

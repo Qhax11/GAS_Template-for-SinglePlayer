@@ -82,15 +82,10 @@ UAttackDataBase* UAC_BehaviorDecision::GetBestAttack()
     }
 
     LastSelectedAttackData = BestAttack;
-    if (BestAttack->AbilityClass)
-    {
-        LastSelectedAttackAbilityCDO = BestAttack->AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>();
-    }
-
     return BestAttack;
 }
 
-UMovementChainData* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass)
+UMovementChainData* UAC_BehaviorDecision::GetBestMovementChain(UAttackDataBase* SelectedAttackData)
 {
     if (!GetBestMovementChainService)
     {
@@ -102,7 +97,7 @@ UMovementChainData* UAC_BehaviorDecision::GetBestMovementChain(TSubclassOf<UGAS_
 
     if (IsValid(GetBestMovementChainService)) 
     {
-        BestMovementChainData = GetBestMovementChainService->GetBestMovementChain(SelectedAbilityClass);
+        BestMovementChainData = GetBestMovementChainService->GetBestMovementChain(SelectedAttackData);
     }
 
     if (!BestMovementChainData)
@@ -125,17 +120,6 @@ UComingAttackReactionData* UAC_BehaviorDecision::GetBestComingAttackReaction(FCo
     UComingAttackReactionData* BestComingAttackData = nullptr;
     BestComingAttackData = ComingAttackReactionService->GetBestComingAttackReaction(ComingAttackPayload);
     return BestComingAttackData;
-}
-
-
-float UAC_BehaviorDecision::GetTargetDistance() const
-{
-    if (!OwnerController)
-    {
-        return -1.0f;
-    }
-
-    return OwnerController->GetTargetHeroDistance();
 }
 
 

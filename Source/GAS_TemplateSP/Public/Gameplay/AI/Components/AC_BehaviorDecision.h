@@ -60,20 +60,14 @@ public:
     UAttackDataBase* GetBestAttack();
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
-    UMovementChainData* GetBestMovementChain(TSubclassOf<UGAS_GameplayAbilityBase> SelectedAbilityClass);
+    UMovementChainData* GetBestMovementChain(UAttackDataBase* SelectedAttackData);
 
     UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
     UComingAttackReactionData* GetBestComingAttackReaction(FComingAttackPayload ComingAttackPayload);
 
-    // Utility Functions
-    UFUNCTION(BlueprintCallable, Category = "AI|Behavior Decision")
-    float GetTargetDistance() const;
-
     // State
     UPROPERTY(BlueprintReadOnly, Category = "AI|Behavior Decision")
     UAttackDataBase* LastSelectedAttackData;
-
-    UGAS_GameplayAbilityBase* LastSelectedAttackAbilityCDO = nullptr;
 
 protected:
     class UAC_HeroMovementListener* HeroMovementListenerComp;

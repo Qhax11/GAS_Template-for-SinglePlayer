@@ -31,9 +31,8 @@ void UAC_EnemyMeleeComboManager::BeginPlay()
 
 void UAC_EnemyMeleeComboManager::StartComboChain(UEnemyComboChainAsset* ComboChain, FName MontageSection)
 {
-	if(!ComboChain || !AIController)
+	if(!ComboChain || AIController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Attack: UAC_EnemyMeleeComboManager: ComboChain or AIController is null!"));
 		return;
 	}
 
@@ -104,12 +103,12 @@ void UAC_EnemyMeleeComboManager::OnEnemyCanActivateNextAttack()
 
 void UAC_EnemyMeleeComboManager::OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Execution: Attack: UAC_EnemyMeleeComboManager: OnTakeDamageTagAdded: "));
+	UE_LOG(LogTemp, Warning, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: OnTakeDamageTagAdded: "));
 }
 
 void UAC_EnemyMeleeComboManager::OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Execution: Attack: UAC_EnemyMeleeComboManager: OnTakeDamageTagRemovedFrom"));
+	UE_LOG(LogTemp, Warning, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: OnTakeDamageTagRemovedFrom"));
 
 	// If combo was active and our take damage ability is finished, we need continue.
 	if (ActiveComboChainTracker.bIsActive) 

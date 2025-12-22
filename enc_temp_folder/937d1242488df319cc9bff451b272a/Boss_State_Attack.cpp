@@ -11,4 +11,5 @@ void UBoss_State_Attack::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 void UBoss_State_Attack::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
+
 }

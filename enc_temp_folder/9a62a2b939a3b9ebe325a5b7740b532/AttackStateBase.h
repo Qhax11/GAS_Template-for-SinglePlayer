@@ -49,7 +49,6 @@ class UAttackDataBase;
 class UComboChainAttackData;
 class USpecialAttackData;
 class UAC_EnemyMeleeComboManager;
-struct FEnemyComboChainEndData;
 
 UCLASS()
 class GAS_TEMPLATESP_API UAttackStateBase : public UStateBase
@@ -68,12 +67,11 @@ public:
 protected:
 	void ExecuteAttack(UAttackDataBase* SelectedAttackData);
 
-	void ExecuteComboAttack(UComboChainAttackData* ComboData);
-
 	void ExecuteSpecialAttack(USpecialAttackData* SpecialAttackData);
 
-	void OnComboEnd(const FEnemyComboChainEndData& EndData);
+	void ExecuteComboAttack(UComboChainAttackData* ComboData);
 
+	// Callbacks
 	void OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
 public:

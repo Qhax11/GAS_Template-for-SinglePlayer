@@ -74,13 +74,11 @@ void UAttackStateBase::ExecuteAttack(UAttackDataBase* SelectedAttackData)
 {
 	if (!SelectedAttackData)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: SelectedAttackData is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: SelectedAttackClass is null in: %s"), *GetName());
 		return;
 	}
 
 	const EAttackExecutionType AttackExecutionType = SelectedAttackData->GetExecutionType();
-	UE_LOG(LogTemp, Log, TEXT("State: UAttackStateBase: AttackExecutionType is: %s"), *UEnum::GetValueAsString(AttackExecutionType));
-
 	if (AttackExecutionType == EAttackExecutionType::ComboChain)
 	{
 		ExecuteComboAttack(Cast<UComboChainAttackData>(SelectedAttackData));
@@ -89,20 +87,6 @@ void UAttackStateBase::ExecuteAttack(UAttackDataBase* SelectedAttackData)
 	{
 		ExecuteSpecialAttack(Cast<USpecialAttackData>(SelectedAttackData));
 	}
-}
-
-void UAttackStateBase::ExecuteComboAttack(UComboChainAttackData* ComboData)
-{
-	if (!ComboManager || !ComboData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: ComboManager or ComboData is null in: %s"), *GetName());
-		return;
-	}
-
-	ComboManager->OnEnemyComboChainEnded.RemoveAll(this);
-	ComboManager->OnEnemyComboChainEnded.AddUObject(this, &UAttackStateBase::OnComboEnd);
-
-	ComboManager->StartComboChain(ComboData->ComboChainAsset);
 }
 
 void UAttackStateBase::ExecuteSpecialAttack(USpecialAttackData* SpecialAttackData)
@@ -126,9 +110,15 @@ void UAttackStateBase::ExecuteSpecialAttack(USpecialAttackData* SpecialAttackDat
 	}
 }
 
-void UAttackStateBase::OnComboEnd(const FEnemyComboChainEndData& EndData)
+void UAttackStateBase::ExecuteComboAttack(UComboChainAttackData* ComboData)
 {
-	BroadcastTransition(FGameplayTag(), nullptr, "ComboChain is ended.");
+	if(!ComboManager || !ComboData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: ComboManager or ComboData is null in: %s"), *GetName());
+		return;
+	}
+	
+	ComboManager->StartComboChain(ComboData->ComboChainAsset);	
 }
 
 void UAttackStateBase::OnAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)

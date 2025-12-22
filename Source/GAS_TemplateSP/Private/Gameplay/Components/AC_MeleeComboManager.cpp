@@ -94,6 +94,11 @@ void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Com
 		ComboAbilityEndedData.AbilityThatEnded->OnAbilityEnded.RemoveAll(this);
 	}
 
+	if (ActiveComboChainTracker.CurrentAbilityInstance == ComboAbilityEndedData.AbilityThatEnded)
+	{
+		ActiveComboChainTracker.CurrentAbilityInstance = nullptr;
+	}
+
 	if (LastActivatedCombo == ComboAbilityEndedData.AbilityThatEnded)
 	{
 		LastActivatedCombo = nullptr;
@@ -119,6 +124,12 @@ void UAC_MeleeComboManager::CancelComboAbilities()
 	CancelTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_MeleeCombo);
 
 	CharacterBaseASC->CancelAbilities(&CancelTags);
+}
+
+void UAC_MeleeComboManager::ClearComboChain()
+{
+	ActiveComboChainTracker.CurrentAbilityInstance = nullptr;
+	ActiveComboChainTracker.Reset();
 }
 
 

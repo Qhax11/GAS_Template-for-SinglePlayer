@@ -63,9 +63,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartComboChain(UEnemyComboChainAsset* ComboChain, FName MontageSection = NAME_None);
 
-	UFUNCTION(BlueprintCallable)
-	float GetMaxRangeOfCurrentAttack();
-
 	FOnEnemyComboChainEnded OnEnemyComboChainEnded;
 
 protected:
@@ -73,23 +70,18 @@ protected:
 
 	virtual UGA_ComboMeleeAttack* ActivateComboMelee(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
 
-	UFUNCTION()
-	void OnEnemyCanActivateNextAttack();
-
-	UFUNCTION()
-	void OnTakeDamageTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
-	UFUNCTION()
-	void OnTakeDamageTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
-
 	void OnComboAbilityEnd(const FCustomAbilityEndedData& EndedData) override;
 	
 private:
-	//FComboChainSearchResult GetComboChainOfSelectedComboAbility(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass);
+	void FinishComboChain(EEnemyComboChainResult Result);
 
-	void BroadcastComboChainEnd(EEnemyComboChainResult Result);
+	void BroadcastComboChainEnd(UGameplayAbility* LastComboAbility, EEnemyComboChainResult Result);
 
+	UPROPERTY()
 	class AAIControllerBase* AIController;
+
+	UPROPERTY()
 	class UAC_TagDelegates* EnemyTagDelegatesComp;
+
 	bool bOnTakeDamageState;
 };

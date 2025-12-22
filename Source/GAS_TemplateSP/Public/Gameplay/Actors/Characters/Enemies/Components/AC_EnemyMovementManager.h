@@ -33,7 +33,6 @@ struct FMovementChainEndData
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnMovementChainEnded, const FMovementChainEndData&);
 
-
 USTRUCT()
 struct FMovementChainTracker
 {
@@ -104,8 +103,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	/*===============  PUBLIC API ===============*/
 public:
+	/*===============  PUBLIC API ===============*/
 	UFUNCTION(BlueprintCallable)
 	void ExecuteMovementChain(UMovementChainData* MovementChain);
 
@@ -114,6 +113,12 @@ public:
 
 	// Executes a non-reactive corrective movement to adjust positioning (e.g. step-back, micro-reposition).
 	UGAS_GameplayAbilityBase* ExecuteCorrectiveMovement(UMovementSingleData* MovementData);
+
+	void ClearMovementChain();
+
+	void InterruptByReaction();
+
+	FOnMovementChainEnded OnMovementChainEnded;
 
 private:
 	void TryExecuteNextMovementAbilityInChain();
@@ -133,14 +138,6 @@ private:
 	// Resolves the final movement direction based on the incoming attack direction.
 	FGameplayTag ResolveAttackDirection(FGameplayTag AttackDirectionTag);
 
-	/*===============  PUBLIC API ===============*/
-public:
-	void ClearMovementChain();
-
-	void InterruptByReaction();
-
-	FOnMovementChainEnded OnMovementChainEnded;
-
 private:
 	// Movement ability in movement chain is ended
 	UFUNCTION()
@@ -155,6 +152,7 @@ private:
 	UAC_HeroMovementListener* HeroMovementListener;
 
 	// For now, it's dodge.
+	UPROPERTY()
 	UGAS_GameplayAbilityBase* ActivatedReactionAbility;
 	FMovementChainTracker MovementChainTracker;
 };

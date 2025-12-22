@@ -260,10 +260,7 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 	}
 
 	MovementChainTracker.CurrentMovementAbility = nullptr;
-	/*
-LogTemp: Warning: Execution: Movement: OnMovementAbilityEnded CALLED for BP_GA_AI_Enemy_AttackIntendStrafing_C_3(Ptr : 000001E764782400), Current : 0000000000000000
-LogTemp : Warning : Execution : Movement : UAC_EnemyMovementManager : Ended movement ability is not CurrentMovement
-*/
+
 	if (AbilityEndedData.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());

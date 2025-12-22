@@ -46,6 +46,12 @@ struct FActiveComboChainTracker
 	UPROPERTY()
 	bool bIsActive = false; 
 
+	void StartChain(const FComboChainData& InComboChain)
+	{
+		ComboChain = InComboChain;
+		CurrentStepIndex = 0;
+	}
+
 	bool IsCurrentComboValid() const
 	{
 		return ComboChain.ComboAbilities.IsValidIndex(CurrentStepIndex);
@@ -98,6 +104,8 @@ protected:
 	virtual void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData);
 
 	void CancelComboAbilities();
+
+	void ClearComboChain();
 
 	UPROPERTY()
 	AGAS_CharacterBase* CharacterBase;

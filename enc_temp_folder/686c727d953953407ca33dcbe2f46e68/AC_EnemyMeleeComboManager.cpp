@@ -78,6 +78,8 @@ UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMelee(FName Monta
 
 void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& EndedData)
 {
+	Super::OnComboAbilityEnd(EndedData);
+
 	if (EndedData.AbilityThatEnded != ActiveComboChainTracker.CurrentAbilityInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Execution: Attack: UAC_EnemyMeleeComboManager: Ended ComboAttack is not Current ComboAttack"), *EndedData.AbilityThatEnded->GetName());

@@ -24,16 +24,21 @@ public:
     UFUNCTION(BlueprintCallable)
     EEnemyIntent GetCurrentIntent() const { return CurrentIntent; }
 
-protected:
-    void OnMovementChainCompleted(const FMovementChainEndData& EndData);
+private:
+    void OnMovementChainEnd(const FMovementChainEndData& EndData);
 
-    void OnEnemyComboChainCompleted(const FEnemyComboChainEndData& EndData);
+    void OnEnemyComboChainEnd(const FEnemyComboChainEndData& EndData);
 
 private:
+    void HandleMovementChainCompleted(const FMovementChainEndData& EndData);
+
+    void HandleComboChainCompleted(const FEnemyComboChainEndData& EndData);
+
     void IncreasePressure();
 
     void DecreasePressure();
 
+private:
     UPROPERTY()
     EEnemyIntent CurrentIntent = EEnemyIntent::LowPressure;
 
@@ -42,4 +47,6 @@ private:
 
     UPROPERTY()
     UAC_EnemyMeleeComboManager* MeleeComboManager;
+
+    int32 ConsecutiveSoftMovementCount = 0;
 };

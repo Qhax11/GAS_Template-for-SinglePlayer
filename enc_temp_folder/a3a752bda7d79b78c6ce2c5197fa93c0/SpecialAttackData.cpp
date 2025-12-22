@@ -47,7 +47,7 @@ bool USpecialAttackData::PassesChance(const FAttackDecisionContext& Context, FAt
 		return false;
 	}
 
-	return true;
+	return false;
 }
 
 float USpecialAttackData::GetScore(const FAttackDecisionContext& Context, FAttackScoreDebug* OutDebug) const

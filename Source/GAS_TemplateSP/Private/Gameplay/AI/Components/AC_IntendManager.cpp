@@ -26,44 +26,34 @@ void UAC_IntendManager::BeginPlay()
 
     // Bind delegate
     MovementManager->OnMovementChainEnded.RemoveAll(this);
-    MovementManager->OnMovementChainEnded.AddUObject(this, &UAC_IntendManager::OnMovementChainCompleted);
+    MovementManager->OnMovementChainEnded.AddUObject(this, &UAC_IntendManager::OnMovementChainEnd);
 	MeleeComboManager->OnEnemyComboChainEnded.RemoveAll(this);
-	MeleeComboManager->OnEnemyComboChainEnded.AddUObject(this, &UAC_IntendManager::OnEnemyComboChainCompleted);
+	MeleeComboManager->OnEnemyComboChainEnded.AddUObject(this, &UAC_IntendManager::OnEnemyComboChainEnd);
 }
 
-void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& EndData)
+void UAC_IntendManager::OnMovementChainEnd(const FMovementChainEndData& EndData)
 { 
     if (!EndData.ChainData)
     {
         return;
     }
-
-    // Abort → her zaman geri çekil
-    if (EndData.Result == EMovementChainResult::Aborted)
+    
+    if (EndData.Result == EMovementChainResult::Completed)
+    {
+        HandleMovementChainCompleted(EndData);
+    }
+    else if (EndData.Result == EMovementChainResult::Aborted)
     {
         DecreasePressure();
         return;
     }
-
-    // Completed ama soft → intent sabit
-    if (EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::SoftFallback)
-    {
-        return;
-    }
-
-    // Completed + HardFallback → intent değişebilir // TODO: HardFallback may also allow attack selection, not only pressure increase
-    if (EndData.Result == EMovementChainResult::Completed && EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
-    {
-        UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_IntendManager: Completed + HardFallback, IncreasePressure."));
-        IncreasePressure();
-    }
 }
 
-void UAC_IntendManager::OnEnemyComboChainCompleted(const FEnemyComboChainEndData& EndData)
+void UAC_IntendManager::OnEnemyComboChainEnd(const FEnemyComboChainEndData& EndData)
 {
     if (EndData.Result == EEnemyComboChainResult::Completed)
     {
-        IncreasePressure();
+        HandleComboChainCompleted(EndData);
     }
     else if (EndData.Result == EEnemyComboChainResult::OutOfRange)
     {
@@ -81,6 +71,31 @@ void UAC_IntendManager::OnEnemyComboChainCompleted(const FEnemyComboChainEndData
     {
         return;
     }
+}
+
+void UAC_IntendManager::HandleMovementChainCompleted(const FMovementChainEndData& EndData)
+{
+    if (EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::SoftFallback)
+    {
+        ConsecutiveSoftMovementCount++;
+        if (ConsecutiveSoftMovementCount >= 2)
+        {
+            IncreasePressure();
+            ConsecutiveSoftMovementCount = 0;
+        }
+        return;
+    }
+
+    if (EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
+    {
+        ConsecutiveSoftMovementCount = 0;
+        IncreasePressure();
+    }
+}
+
+void UAC_IntendManager::HandleComboChainCompleted(const FEnemyComboChainEndData& EndData)
+{
+    IncreasePressure();
 }
 
 void UAC_IntendManager::IncreasePressure()

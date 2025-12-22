@@ -23,6 +23,8 @@ protected:
 
 	void ExecuteMoveTask(UAT_AIMoveTo* MoveTask);
 
+	class UAT_AIMoveTo* ActiveMoveToTask;
+
 	UFUNCTION()
 	virtual void OnMoveCompleted();
 
@@ -66,4 +68,6 @@ private:
 	void HandleMaxDurationReached();
 
 	void StopMovement();
+
+	bool bAbilityEnded = false;
 };

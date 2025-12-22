@@ -95,13 +95,6 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: Activation failed, skipping movement data."));
-		MovementChainTracker.Advance();
-		if (MovementChainTracker.IsChainFinished())
-		{
-			UMovementChainData* ChacedCurrentChainData = MovementChainTracker.CuurentChainData;
-			ClearMovementChain();
-			BroadcastChainEnd(ChacedCurrentChainData, EMovementChainResult::Completed);
-		}
 		TryExecuteNextMovementAbilityInChain();
 	}
 }

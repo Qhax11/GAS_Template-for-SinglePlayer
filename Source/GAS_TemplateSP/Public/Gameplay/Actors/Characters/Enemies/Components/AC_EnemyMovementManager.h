@@ -146,7 +146,7 @@ private:
 	UFUNCTION()
 	void OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData);
 
-	void BroadcastChainEnd(EMovementChainResult Result);
+	void BroadcastChainEnd(UMovementChainData* EndChain, EMovementChainResult Result);
 
 	/*===============  STATE ===============*/
 	UPROPERTY()

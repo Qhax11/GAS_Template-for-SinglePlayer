@@ -15,6 +15,8 @@ void UGA_EnemyMovementBase::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	const FGameplayEventData* TriggerEventData)
 {
+	bAbilityEnded = false;
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
 	EnemyCharacter = Cast<AGAS_EnemyBase>(GetAvatarActorFromActorInfo());
@@ -64,6 +66,19 @@ void UGA_EnemyMovementBase::ExecuteMoveTask(UAT_AIMoveTo* MoveTask)
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 		return;
 	}
+
+	// Eski task varsa bağları sök (stale callback riskini azaltır)
+	if (ActiveMoveToTask && IsValid(ActiveMoveToTask))
+	{
+		ActiveMoveToTask->OnCompleted.RemoveAll(this);
+		ActiveMoveToTask->OnAborted.RemoveAll(this);
+		ActiveMoveToTask->OnFailed.RemoveAll(this);
+		ActiveMoveToTask->ExpectedDurationReached.RemoveAll(this);
+		ActiveMoveToTask->MinDurationReached.RemoveAll(this);
+		ActiveMoveToTask->MaxDurationReached.RemoveAll(this);
+	}
+
+	ActiveMoveToTask = MoveTask;
 
 	MoveTask->OnCompleted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveCompleted);
 	MoveTask->OnAborted.AddDynamic(this, &UGA_EnemyMovementBase::OnMoveAborted);
@@ -120,7 +135,41 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo, 
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (bAbilityEnded)
+	{
+		UE_LOG(LogTemp, VeryVerbose, TEXT("Ability: UGA_EnemyMovementBase: Duplicate EndAbility ignored"));
+		return;
+	}
+
+	bAbilityEnded = true;
+
+	if (ActiveMoveToTask && IsValid(ActiveMoveToTask))
+	{
+		if (ActiveMoveToTask->IsActive())
+		{
+			ActiveMoveToTask->EndTask();
+		}
+		ActiveMoveToTask = nullptr;
+	}
+
+	if (ActiveMoveToTask && IsValid(ActiveMoveToTask))
+	{
+		ActiveMoveToTask->OnCompleted.RemoveAll(this);
+		ActiveMoveToTask->OnAborted.RemoveAll(this);
+		ActiveMoveToTask->OnFailed.RemoveAll(this);
+		ActiveMoveToTask->ExpectedDurationReached.RemoveAll(this);
+		ActiveMoveToTask->MinDurationReached.RemoveAll(this);
+		ActiveMoveToTask->MaxDurationReached.RemoveAll(this);
+
+		if (ActiveMoveToTask->IsActive())
+		{
+			ActiveMoveToTask->EndTask();
+		}
+		ActiveMoveToTask = nullptr;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: ActiveMoveToTask is cleared in EndAbility()"));
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Ability is ended."));
 }
 

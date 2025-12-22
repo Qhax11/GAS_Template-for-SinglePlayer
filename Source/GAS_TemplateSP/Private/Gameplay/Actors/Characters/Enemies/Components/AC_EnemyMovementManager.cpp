@@ -98,9 +98,9 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 		MovementChainTracker.Advance();
 		if (MovementChainTracker.IsChainFinished())
 		{
-			UMovementChainData* ChacedCurrentChainData = MovementChainTracker.CuurentChainData;
-			ClearMovementChain();
-			BroadcastChainEnd(ChacedCurrentChainData, EMovementChainResult::Completed);
+			UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain Completed."));
+			FinishChain(EMovementChainResult::Aborted);
+			return;
 		}
 		TryExecuteNextMovementAbilityInChain();
 	}
@@ -266,27 +266,34 @@ LogTemp : Warning : Execution : Movement : UAC_EnemyMovementManager : Ended move
 */
 	if (AbilityEndedData.bWasCancelled)
 	{
-		UMovementChainData* ChacedCurrentChainData = MovementChainTracker.CuurentChainData;
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
-		ClearMovementChain();
-		BroadcastChainEnd(ChacedCurrentChainData, EMovementChainResult::Aborted);
-		ClearMovementChain();
+		FinishChain(EMovementChainResult::Aborted);
 		return;
 	}
 
 	MovementChainTracker.Advance();
 	if (MovementChainTracker.IsChainFinished())
 	{
-		UMovementChainData* ChacedCurrentChainData = MovementChainTracker.CuurentChainData;
-		ClearMovementChain();
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain Completed."));
-		BroadcastChainEnd(ChacedCurrentChainData, EMovementChainResult::Completed);
+		FinishChain(EMovementChainResult::Completed);
 		return;
 	}
 	else
 	{
 		TryExecuteNextMovementAbilityInChain();
 	}
+}
+
+void UAC_EnemyMovementManager::FinishChain(EMovementChainResult Result)
+{
+	// Cache chain data BEFORE clearing
+	UMovementChainData* CachedChainData = MovementChainTracker.CuurentChainData;
+
+	// Clear internal state
+	ClearMovementChain();
+
+	// Broadcast with cached data
+	BroadcastChainEnd(CachedChainData, Result);
 }
 
 void UAC_EnemyMovementManager::BroadcastChainEnd(UMovementChainData* EndChain, EMovementChainResult Result)

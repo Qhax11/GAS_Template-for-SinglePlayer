@@ -17,8 +17,8 @@ struct FAttackMovementProfileToChains
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = "AI.Decision.Attack.Movement"))
-    FGameplayTag MovementAttackTag;
+    UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (Categories = "AI.Decision.Attack.Movement.Approach"))
+    FGameplayTag AttackMovementApproach;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<UMovementChainAsset*> MovementChains;

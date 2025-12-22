@@ -37,8 +37,6 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(UAttackDataB
     MovementDecisionContext.Owner = Enemy;
     MovementDecisionContext.Target = Hero;
 
-    UE_LOG(LogTemp, Error, TEXT("INTEND READ | IntendManager=%p | Intent=%d"), IntendManager, (int32)MovementDecisionContext.Intent);
-
     for (UMovementChainAsset* ChainAsset : MovementChainAssets)
     {
         if (!ChainAsset || !ChainAsset->MovementChain)
@@ -126,8 +124,6 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(UAttackDataB
         }
     }
 
-   // ApplyDirectionPoliciesToSelectedMovementChain(BestMovementChainDataAsset);
-
     return BestMovementChainData;
 }
 
@@ -135,16 +131,16 @@ TArray<UMovementChainAsset*> UBDS_GetBestMovementChain::GetMovementChainsForSele
 {
     TArray<UMovementChainAsset*> EmptyResult;
 
-    if (!SelectedAttackData || !SelectedAttackData->AttackMovementTag.IsValid() || !AttackAbilitiesToMovementChainsAsset)
+    if (!SelectedAttackData || !SelectedAttackData->AttackMovementApproach.IsValid() || !AttackAbilitiesToMovementChainsAsset)
     {
         return EmptyResult;
     }
 
-    const FGameplayTag& SelectedAttackMovementTag = SelectedAttackData->AttackMovementTag;
+    const FGameplayTag& SelectedAttackMovementTag = SelectedAttackData->AttackMovementApproach;
 
     for (const FAttackMovementProfileToChains& ProfileMap : AttackAbilitiesToMovementChainsAsset->AttackAbilityMovementChainMap)
     {
-        if (ProfileMap.MovementAttackTag == SelectedAttackMovementTag)
+        if (ProfileMap.AttackMovementApproach == SelectedAttackMovementTag)
         {
             return ProfileMap.MovementChains;
         }

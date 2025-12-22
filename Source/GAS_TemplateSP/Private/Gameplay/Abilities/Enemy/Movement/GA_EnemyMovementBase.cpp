@@ -72,31 +72,33 @@ void UGA_EnemyMovementBase::ExecuteMoveTask(UAT_AIMoveTo* MoveTask)
 	MoveTask->MinDurationReached.AddDynamic(this, &UGA_EnemyMovementBase::OnMinDurationFinished);
 	MoveTask->MaxDurationReached.AddDynamic(this, &UGA_EnemyMovementBase::HandleMaxDurationReached);
 
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Move to task is ReadyForActivation for: %s"), *GetName());
+
 	MoveTask->ReadyForActivation();
 }
 
 void UGA_EnemyMovementBase::OnMoveCompleted()
 {
-	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Completed, Ability ended"));
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Completed, Call EndAbility()"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_EnemyMovementBase::OnMoveAborted()
 {
-	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Aborted, Ability ended with canceling"));
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Aborted, Call EndAbility() with canceling"));
 	StopMovement();
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
 void UGA_EnemyMovementBase::OnMoveFailed()
 {
-	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Failed, ability ended"));
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Moving is Failed, Call EndAbility()"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
 void UGA_EnemyMovementBase::HandleMaxDurationReached()
 {
-	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: MaxDuration is Reached, ability ended"));
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: MaxDuration is Reached, Call EndAbility()"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 
@@ -119,5 +121,6 @@ void UGA_EnemyMovementBase::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	UE_LOG(LogTemp, Log, TEXT("Ability: UGA_EnemyMovementBase: Ability is ended."));
 }
 

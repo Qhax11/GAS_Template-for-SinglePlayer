@@ -5,7 +5,7 @@
 
 USpecialAttackData::USpecialAttackData()
 {
-	AttackMovementTag = GAS_Tags::TAG_AI_Decision_Attack_Movement_HighPressure_Walk;
+	AttackMovementApproach = GAS_Tags::TAG_AI_Decision_Attack_Movement_Approach_Pressure;
 }
 
 bool USpecialAttackData::IsEnable(const FAttackDecisionContext& Context, FAttackEnableDebug* OutDebug) const

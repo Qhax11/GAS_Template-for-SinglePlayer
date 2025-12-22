@@ -87,11 +87,10 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 	UGAS_GameplayAbilityBase* MovementAbilityInChain = ActivateMovementAbility(MovementDataInChain);
 	if (MovementAbilityInChain)
 	{
-		// Bind end deleagte
 		MovementAbilityInChain->OnAbilityEnded.RemoveAll(this);
 		MovementAbilityInChain->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
 		MovementChainTracker.CurrentMovementAbility = MovementAbilityInChain;
-		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Movement Ability executed: %s"), *MovementAbilityInChain->GetName());
+		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: %s (Ptr: %p) is bound to OnMovementAbilityEnded"), *MovementAbilityInChain->GetName(), MovementAbilityInChain);
 	}
 	else
 	{
@@ -251,6 +250,9 @@ FGameplayTag UAC_EnemyMovementManager::ResolveAttackDirection(FGameplayTag Attac
 
 void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedData& AbilityEndedData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: OnMovementAbilityEnded CALLED for %s (Ptr: %p), Current: %p"),
+		*AbilityEndedData.AbilityThatEnded->GetName(), AbilityEndedData.AbilityThatEnded, MovementChainTracker.CurrentMovementAbility);
+
 	if (AbilityEndedData.AbilityThatEnded != MovementChainTracker.CurrentMovementAbility)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: Ended movement ability is not CurrentMovement"), *AbilityEndedData.AbilityThatEnded->GetName());
@@ -261,9 +263,8 @@ void UAC_EnemyMovementManager::OnMovementAbilityEnded(const FCustomAbilityEndedD
 
 	if (AbilityEndedData.bWasCancelled)
 	{
-		FMovementChainEndData MovementChainEndData;
-
 		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: Chain cancelled by %s. Resetting."), *AbilityEndedData.AbilityThatEnded->GetName());
+		FMovementChainEndData MovementChainEndData;
 		BroadcastChainEnd(EMovementChainResult::Aborted);
 		ClearMovementChain();
 		return;

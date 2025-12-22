@@ -132,26 +132,27 @@ void UGAS_GameplayAbilityBase::EndAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	for (const FActiveGameplayEffectHandle& HandleToRemove : ActiveEffectsOnOwner)
-	{
-		if (HandleToRemove.IsValid()) 
-		{
-			GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(HandleToRemove);
-		}
-	}
-
-	// DIRECT BROADCAST — no timer
 	if (GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
 	{
 		UGAS_GameplayAbilityBase* CDO = Cast<UGAS_GameplayAbilityBase>(GetClass()->GetDefaultObject());
 		if (CDO)
 		{
+			UE_LOG(LogTemp, Log, TEXT("Ability: Broadcasting via CDO for %s, IsBound: %d"), *GetName(), CDO->OnAbilityEnded.IsBound());
 			CDO->OnAbilityEnded.Broadcast(FCustomAbilityEndedData(this, bWasCancelled));
 		}
 	}
 	else
 	{
+		UE_LOG(LogTemp, Log, TEXT("Ability: Broadcasting via Instance for %s (Ptr: %p), IsBound: %d"), *GetName(), this, OnAbilityEnded.IsBound());
 		OnAbilityEnded.Broadcast(FCustomAbilityEndedData(this, bWasCancelled));
+	}
+
+	for (const FActiveGameplayEffectHandle& HandleToRemove : ActiveEffectsOnOwner)
+	{
+		if (HandleToRemove.IsValid())
+		{
+			GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(HandleToRemove);
+		}
 	}
 }
 

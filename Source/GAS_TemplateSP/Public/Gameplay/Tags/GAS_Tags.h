@@ -444,10 +444,10 @@ namespace GAS_Tags
 	// ============================================================
 	// AI DECISION
 	// ============================================================
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_LowPressure);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_HighPressure_Walk);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_HighPressure_Run);
-
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_Approach_Observe); // Observe: Minimal commitment. Keeps distance, slow walk or micro-adjusts.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_Approach_Pressure); // Pressure: Controlled forward intent. Applies space pressure with walking / strafing.
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Decision_Attack_Movement_Approach_CloseFast); // CloseFast: High - commit approach.Rapid distance closing via run, dash, or chained movement.
+	 
 
 	// ============================================================
 	// AI ABILITY TAGS (IDENTITY)

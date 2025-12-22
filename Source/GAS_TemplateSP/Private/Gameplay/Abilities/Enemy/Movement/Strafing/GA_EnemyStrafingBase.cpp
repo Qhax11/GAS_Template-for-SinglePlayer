@@ -10,8 +10,6 @@
 UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 {
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
-
-	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
 }
 
 void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -104,6 +102,7 @@ void UGA_EnemyStrafingBase::OnLocationQueryFinished(TSharedPtr<FEnvQueryResult> 
 
 void UGA_EnemyStrafingBase::OnExpectedDurationFinished()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyStrafingBase: Expected Duration is Finished Call EndAbility()"));
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 }
 

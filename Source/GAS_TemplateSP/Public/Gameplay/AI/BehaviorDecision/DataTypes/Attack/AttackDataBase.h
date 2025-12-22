@@ -134,8 +134,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Name of this Attack. Used for debugging or referencing in logic."))
 	FName AttackName;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (Categories = "AI.Decision.Attack.Movement"))
-	FGameplayTag AttackMovementTag;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (Categories = "AI.Decision.Attack.Movement.Approach"))
+	FGameplayTag AttackMovementApproach;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ToolTip = "Optional score modifiers per intent"))
     TMap<EEnemyIntent, float> IntentScoreModifiers;

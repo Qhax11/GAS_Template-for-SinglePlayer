@@ -9,10 +9,11 @@ UENUM(BlueprintType)
 enum class EEnemyComboChainResult : uint8
 {
 	Completed,          // Tüm combo baþarýyla bitti
+	HitTaken,          // damage aldý
+	ParryTriggered,    // parry seçildi
+	DodgeTriggered,    // dodge / evade
 	Cancelled,          // Ability cancel oldu (generic)
-	InterruptedByHit,   // TakeDamage yüzünden kesildi
 	OutOfRange,         // Mesafe yüzünden devam edemedi
-	InvalidStep         // Data / ability invalid
 };
 
 USTRUCT(BlueprintType)

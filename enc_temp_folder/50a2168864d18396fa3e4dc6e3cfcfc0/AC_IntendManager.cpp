@@ -75,11 +75,11 @@ void UAC_IntendManager::OnEnemyComboChainCompleted(const FEnemyComboChainEndData
     }
     else if (EndData.Result == EEnemyComboChainResult::ParryTriggered)
     {
-        IncreasePressure();
+        //DecreasePressure();
     }
     else if (EndData.Result == EEnemyComboChainResult::DodgeTriggered)
     {
-        return;
+        //DecreasePressure();
     }
 }
 

@@ -86,8 +86,17 @@ void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData
 
 	if (EndedData.bWasCancelled)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: Combo cancelled by %s. Resetting."), *EndedData.AbilityThatEnded->GetName());
-		FinishComboChain(EEnemyComboChainResult::Cancelled);
+		UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: ComboChain Cancelled"));
+		if (CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage)) 
+		{
+			UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: Combo cancelled with HitTaken"));
+			FinishComboChain(EEnemyComboChainResult::HitTaken);
+		}
+		else if (CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry))
+		{
+			UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: Combo cancelled with ParryTriggered"));
+			FinishComboChain(EEnemyComboChainResult::ParryTriggered);
+		}
 		return;
 	}
 

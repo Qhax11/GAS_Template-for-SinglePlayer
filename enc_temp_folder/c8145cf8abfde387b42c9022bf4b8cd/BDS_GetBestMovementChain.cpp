@@ -110,9 +110,8 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(TSubclassOf<
         if (BestMovementChainData) 
         {
             UE_LOG(LogTemp, Warning,
-                TEXT("Decision: Service: UBDS_GetBestMovementChain: WINNER = %s | Current Intent: %s |  Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+                TEXT("Decision: Service: UBDS_GetBestMovementChain: WINNER = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
                 *BestMovementChainData->MovementChainName.ToString(),
-                *UEnum::GetValueAsString(BestScoreDebug.CurrentIntent),
                 BestScoreDebug.IntentScore,
                 BestScoreDebug.DistanceScore,
                 BestScoreDebug.BiasScore,

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Gameplay/AI/BehaviorDecision/DataTypes/DecisionOptionData.h"
-#include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "Gameplay/Tags/GAS_Tags.h"
 #include "MovementDataBase.generated.h"
 
@@ -54,10 +53,16 @@ struct FMovementScoreDebug
 {
 	GENERATED_BODY()
 
-	EEnemyIntent CurrentIntent;
-	float IntentScore = 0.f;
-	float DistanceScore = 0.f;
+	UPROPERTY(BlueprintReadOnly)
 	float BiasScore = 0.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	float DistanceScore = 0.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	float IntentScore = 0.f;
+
+	UPROPERTY(BlueprintReadOnly)
 	float TotalScore = 0.f;
 };
 

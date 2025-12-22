@@ -55,7 +55,6 @@ struct FAttackChanceDebug
 
 struct FAttackScoreDebug
 {
-	EEnemyIntent CurrentIntent;
 	float IntentScore = 0.f;
 	float ComboScore = 0.f;
 	float DistanceScore = 0.f;

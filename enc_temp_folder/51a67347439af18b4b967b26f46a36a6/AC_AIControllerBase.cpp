@@ -26,7 +26,7 @@ void UAC_AIControllerBase::BeginPlay()
     IntendManager = OwnerController->GetIntendManagerComponent();
     if (!IntendManager)
     {
-        UE_LOG(LogTemp, Warning, TEXT("IntendManager is null in: %s !"), *GetName());
+        UE_LOG(LogTemp, Warning, TEXT("MovementManager is null in: %s !"), *GetName());
         return;
     }
 

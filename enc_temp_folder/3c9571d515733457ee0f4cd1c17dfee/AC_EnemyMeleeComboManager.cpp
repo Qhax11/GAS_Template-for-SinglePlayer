@@ -27,6 +27,7 @@ void UAC_EnemyMeleeComboManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s"), *GetName());
 		return;
 	}
+
 }
 
 void UAC_EnemyMeleeComboManager::StartComboChainWithClass(TSubclassOf<UGA_ComboMeleeAttack> ComboMeleeAttackAbilityClass, FName MontageSection)

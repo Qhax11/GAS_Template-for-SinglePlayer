@@ -56,7 +56,6 @@ struct FReactionChanceDebug
 
 struct FReactionScoreDebug
 {
-    EEnemyIntent CurrentIntent;
     float IntentScore = 0.f;
     float TagScore = 0.f;
     float Bias = 0.f;

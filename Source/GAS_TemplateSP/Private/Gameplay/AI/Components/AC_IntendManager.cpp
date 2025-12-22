@@ -10,10 +10,8 @@ void UAC_IntendManager::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (!MovementManager)
-    {
-        return;
-    }
+    check(OwnerEnemyBase);
+    check(MovementManager);
 
     // Bind end deleagte
     OwnerEnemyBase->GetEnemyMovementManagerComponent();
@@ -51,16 +49,18 @@ void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& En
 
 void UAC_IntendManager::IncreasePressure()
 {
+    UE_LOG(LogTemp, Error, TEXT("INTEND SET | this=%p | Before=%d"), this, (int32)CurrentIntent);
+
     if (CurrentIntent == EEnemyIntent::LowPressure)
     {
-        UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_IntendManager: CurrentIntent is set to MidPressure."));
         CurrentIntent = EEnemyIntent::MidPressure;
     }
     else if (CurrentIntent == EEnemyIntent::MidPressure)
     {
-        UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_IntendManager: CurrentIntent is set to HighPressure."));
         CurrentIntent = EEnemyIntent::HighPressure;
     }
+
+    UE_LOG(LogTemp, Error, TEXT("INTEND SET | this=%p | After=%d"), this, (int32)CurrentIntent);
 }
 
 void UAC_IntendManager::DecreasePressure()

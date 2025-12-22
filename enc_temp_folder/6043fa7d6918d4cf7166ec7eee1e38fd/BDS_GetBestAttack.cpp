@@ -96,9 +96,8 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 		if (BestAttackData) 
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("Decision: Service: UBDS_GetBestAttack: WINNER: %s | Current intent: %s | Score: Intent = %.2f, Combo = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("Decision: Service: UBDS_GetBestAttack: WINNER = %s | Score: Intent = %.2f, Combo = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
 				*BestAttackData->AttackName.ToString(),
-				*UEnum::GetValueAsString(BestScoreDebug.CurrentIntent),
 				BestScoreDebug.IntentScore,
 				BestScoreDebug.ComboScore,
 				BestScoreDebug.DistanceScore,

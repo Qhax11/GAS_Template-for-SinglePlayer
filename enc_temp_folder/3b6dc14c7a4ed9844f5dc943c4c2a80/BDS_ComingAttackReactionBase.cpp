@@ -69,7 +69,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 		if (bEnableDebug)
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("Decision: Service: UBDS_ComingAttackReactionBase: ReactionScore = %s | Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("Decision: Service: UBDS_ComingAttackReactionBase: ReactionScore = %s | Behavior = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 				*Reaction->ComingAttackReactionName.ToString(),
 				ScoreDebug.IntentScore,
 				ScoreDebug.TagScore,
@@ -91,8 +91,7 @@ UComingAttackReactionData* UBDS_ComingAttackReactionBase::GetBestComingAttackRea
 	if (bEnableDebug && BestReaction)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("Decision: Service: UBDS_ComingAttackReactionBase: WINNER = %s | Current Intent: %s | Score: Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
-			*UEnum::GetValueAsString(BestScoreDebug.CurrentIntent),
+			TEXT("Decision: Service: UBDS_ComingAttackReactionBase: WINNER = %s | Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
 			*BestReaction->ComingAttackReactionName.ToString(),
 			BestScoreDebug.IntentScore,
 			BestScoreDebug.TagScore,

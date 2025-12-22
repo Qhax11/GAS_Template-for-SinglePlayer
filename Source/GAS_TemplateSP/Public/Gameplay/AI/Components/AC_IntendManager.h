@@ -6,7 +6,6 @@
 #include "Gameplay/AI/DataTypes/Behavior/BehaviorTypes.h"
 #include "AC_IntendManager.generated.h"
 
-
 class UMovementChainData;
 struct FMovementChainEndData;
 

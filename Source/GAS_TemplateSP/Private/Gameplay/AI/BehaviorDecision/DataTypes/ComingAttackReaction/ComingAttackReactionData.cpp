@@ -59,6 +59,7 @@ float UComingAttackReactionData::GetScore(const FComingAttackPayload& ComingAtta
 
 	if (OutDebug) 
 	{
+		OutDebug->CurrentIntent = EnemyIntent;
 		OutDebug->IntentScore = IntentScore;
 		OutDebug->TagScore = TagScore;
 		OutDebug->Bias = ScoreBias;

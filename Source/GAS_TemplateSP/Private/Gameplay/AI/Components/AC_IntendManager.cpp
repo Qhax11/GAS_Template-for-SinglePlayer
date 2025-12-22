@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/AI/Components/AC_IntendManager.h"
+#include "Gameplay/AI/Controllers/AIControllerBase.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMovementManager.h"
 #include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementChainData.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
@@ -13,10 +14,26 @@ void UAC_IntendManager::BeginPlay()
     check(OwnerEnemyBase);
     check(MovementManager);
 
-    // Bind end deleagte
-    OwnerEnemyBase->GetEnemyMovementManagerComponent();
+    AAIControllerBase* Controller = Cast<AAIControllerBase>(GetOwner());
+
+    UE_LOG(LogTemp, Error, TEXT("=== INTEND MANAGER BEGIN PLAY ==="));
+    UE_LOG(LogTemp, Error, TEXT("IntendManager Instance: %p"), this);
+    UE_LOG(LogTemp, Error, TEXT("Owner Controller: %s (%p)"), *Controller->GetName(), Controller);
+    UE_LOG(LogTemp, Error, TEXT("Controller's IntendManager: %p"), Controller->GetIntendManagerComponent());
+    UE_LOG(LogTemp, Error, TEXT("Enemy: %s (%p)"), *OwnerEnemyBase->GetName(), OwnerEnemyBase);
+    UE_LOG(LogTemp, Error, TEXT("MovementManager: %p"), MovementManager);
+
+    if (Controller->GetIntendManagerComponent() != this)
+    {
+        UE_LOG(LogTemp, Error, TEXT("!!! WARNING: Controller has DIFFERENT IntendManager! This=%p, Controller's=%p"),
+            this, Controller->GetIntendManagerComponent());
+    }
+
+    // Bind delegate
     MovementManager->OnMovementChainEnded.RemoveAll(this);
     MovementManager->OnMovementChainEnded.AddUObject(this, &UAC_IntendManager::OnMovementChainCompleted);
+
+    UE_LOG(LogTemp, Error, TEXT("=== INTEND MANAGER READY ==="));
 }
 
 void UAC_IntendManager::OnMovementChainCompleted(const FMovementChainEndData& EndData)

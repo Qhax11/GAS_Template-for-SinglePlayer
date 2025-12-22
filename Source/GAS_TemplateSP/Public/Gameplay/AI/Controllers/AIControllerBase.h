@@ -16,7 +16,6 @@ class UAISenseConfig_Sight;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDetected, AActor*, DetectedTarget);
 
-
 UCLASS()
 class GAS_TEMPLATESP_API AAIControllerBase : public AAIController
 {

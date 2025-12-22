@@ -46,9 +46,10 @@ float UMovementChainData::GetScore(const FMovementDecisionContext& Context, FMov
 
     if (OutDebug)
     {
-        OutDebug->BiasScore = ScoreBias;
-        OutDebug->DistanceScore = DistanceScore;
+        OutDebug->CurrentIntent = Context.Intent;
         OutDebug->IntentScore = IntentScore;
+        OutDebug->DistanceScore = DistanceScore;
+        OutDebug->BiasScore = ScoreBias;
         OutDebug->TotalScore = TotalScore;
     }
 

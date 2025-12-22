@@ -75,6 +75,7 @@ float UAttackDataBase::GetScore(const FAttackDecisionContext& Context, FAttackSc
 
 	if (OutDebug)
 	{
+		OutDebug->CurrentIntent = Context.EnemyIntent;
 		OutDebug->IntentScore = IntentScore;
 		OutDebug->ComboScore = ComboScore;
 		OutDebug->DistanceScore = DistanceScore;

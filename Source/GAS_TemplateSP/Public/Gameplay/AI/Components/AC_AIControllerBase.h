@@ -28,7 +28,7 @@ class AGAS_HeroBase;
 class UAC_EnemyMovementManager;
 class UAC_IntendManager;
 
-UCLASS(Abstract, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Abstract, ClassGroup=(Custom))
 class GAS_TEMPLATESP_API UAC_AIControllerBase : public UActorComponent
 {
 	GENERATED_BODY()

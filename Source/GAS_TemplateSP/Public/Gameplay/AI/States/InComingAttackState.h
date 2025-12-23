@@ -48,7 +48,8 @@ protected:
 	UFUNCTION()
 	void OnComingAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
 
-	UGAS_GameplayAbilityBase* LastComingAttackAbility;
+	UPROPERTY()
+	UGAS_GameplayAbilityBase* LastComingAttack;
 
 	//********************* PARRY *********************/
 
@@ -64,7 +65,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGA_ParryBase> EnemyParryAbilityClass;
 
-	UGAS_GameplayAbilityBase* LastUsedParryAbility;
+	UPROPERTY()
+	UGAS_GameplayAbilityBase* LastUsedParry;
 	
 	UFUNCTION()
 	void OnParryKnocbackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);
@@ -72,11 +74,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGA_ParryKnockbackBase> EnemyParryKnocbackAbilityClass;
 
-	UGAS_GameplayAbilityBase* LastUsedParryKnocbackAbility;
+	UPROPERTY()
+	UGAS_GameplayAbilityBase* LastUsedParryKnocback;
 
 	void CleanupDelegates();
 
-private:
+protected:
 	FDelegateHandle ComingAttackEndHandle;
 	FDelegateHandle TakeDamageEndHandle;
 	FDelegateHandle ParryEndHandle;

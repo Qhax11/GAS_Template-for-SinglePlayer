@@ -104,7 +104,7 @@ void UInComingAttackState::BindTargetComingAttackEnd()
 		}
 		ComingAttackEndHandle = ComingAttack->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnComingAttackAbilityEnded);
 	}
-	LastComingAttackAbility = ComingAttack;
+	LastComingAttack = ComingAttack;
 }
 
 void UInComingAttackState::OnComingAttackAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData)
@@ -125,10 +125,10 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 
 void UInComingAttackState::UnBindTargetComingAttackEnd()
 {
-	if (IsValid(LastComingAttackAbility))
+	if (IsValid(LastComingAttack))
 	{
-		LastComingAttackAbility->OnAbilityEnded.RemoveAll(this);
-		LastComingAttackAbility = nullptr;
+		LastComingAttack->OnAbilityEnded.RemoveAll(this);
+		LastComingAttack = nullptr;
 	}
 }
 
@@ -136,12 +136,12 @@ void UInComingAttackState::ExecuteParry(const UComingAttackReactionData* BestCom
 {
 	UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: MakeParryAbility entered."));
 
-	if (LastUsedParryAbility && LastUsedParryAbility->IsActive())
+	if (LastUsedParry && LastUsedParry->IsActive())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: LastUsedParryAbility is active from: %s"), *GetClass()->GetName());
-		if (LastUsedParryAbility)
+		if (LastUsedParry)
 		{
-			EnemyASC->CancelAbilityHandle(LastUsedParryAbility->GetCurrentAbilitySpecHandle());
+			EnemyASC->CancelAbilityHandle(LastUsedParry->GetCurrentAbilitySpecHandle());
 			//LastUsedParryAbility->EndAbilityManually();
 		}
 	}
@@ -187,7 +187,7 @@ void UInComingAttackState::ExecuteParryKnocback(const FDamageData& DamageData)
 		ParryKnockbackEndHandle = ParryKnocbackAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
 		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: ParryKnocbackAbility executed from: %s"), *GetClass()->GetName());
 	}
-	LastUsedParryKnocbackAbility = ParryKnocbackAbility;
+	LastUsedParryKnocback = ParryKnocbackAbility;
 }
 
 void UInComingAttackState::FaceTargetBeforeParry()
@@ -248,18 +248,18 @@ void UInComingAttackState::CleanupDelegates()
 		Enemy->GetTagDelegatesComponent()->UnregisterAllDelegatesForObject(this);
 	}
 
-	if (IsValid(LastUsedParryAbility) && ParryEndHandle.IsValid())
+	if (IsValid(LastUsedParry) && ParryEndHandle.IsValid())
 	{
-		LastUsedParryAbility->OnAbilityEnded.Remove(ParryEndHandle);
+		LastUsedParry->OnAbilityEnded.Remove(ParryEndHandle);
 		ParryEndHandle.Reset();
-		LastUsedParryAbility = nullptr;
+		LastUsedParry = nullptr;
 	}
 
-	if (IsValid(LastUsedParryKnocbackAbility) && ParryKnockbackEndHandle.IsValid())
+	if (IsValid(LastUsedParryKnocback) && ParryKnockbackEndHandle.IsValid())
 	{
-		LastUsedParryKnocbackAbility->OnAbilityEnded.Remove(ParryKnockbackEndHandle);
+		LastUsedParryKnocback->OnAbilityEnded.Remove(ParryKnockbackEndHandle);
 		ParryKnockbackEndHandle.Reset();
-		LastUsedParryKnocbackAbility = nullptr;
+		LastUsedParryKnocback = nullptr;
 	}
 }
 

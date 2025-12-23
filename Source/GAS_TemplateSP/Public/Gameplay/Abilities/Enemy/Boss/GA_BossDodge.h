@@ -19,5 +19,4 @@ protected:
 
 	virtual FVector CalculateMotionWarpingLocation() const override;
 
-	FGameplayTag DirectionTag;
 };

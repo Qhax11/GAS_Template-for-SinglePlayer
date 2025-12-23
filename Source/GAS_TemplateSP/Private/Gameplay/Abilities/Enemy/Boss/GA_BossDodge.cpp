@@ -26,18 +26,17 @@ void UGA_BossDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
-	if (TriggerEventData->InstigatorTags.IsValidIndex(0)) 
-	{
-		DirectionTag = TriggerEventData->InstigatorTags.GetByIndex(0);
-	}
-	else
+	if (!TriggerEventData->InstigatorTags.IsValidIndex(0)) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_BossDodge: There is no direction tag in: %s, ability cannot initialize"), *GetName());
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
 
-	UAnimMontage* FoundDodgeMontage = DirectionToDodgeMontageAsset->FindDodgetMontage(DirectionTag);
+	// Get direction tag from TriggerEventData and set to DirectionTag
+	DirectionTag = TriggerEventData->InstigatorTags.GetByIndex(0);
+
+	UAnimMontage* FoundDodgeMontage = DirectionToDodgeDataAsset->FindDodgetMontage(DirectionTag);
 	if (!FoundDodgeMontage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_BossDodge: No montage found for direction tag: %s"), *DirectionTag.ToString());
@@ -46,6 +45,7 @@ void UGA_BossDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 
 	AnimMontage = FoundDodgeMontage;
+	MotionWarpingDistance = DirectionToDodgeDataAsset->FindMotionWarpingDistance(DirectionTag);
 
 	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune);
 

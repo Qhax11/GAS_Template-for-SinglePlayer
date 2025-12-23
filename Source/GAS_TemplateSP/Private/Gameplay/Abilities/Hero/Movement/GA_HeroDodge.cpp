@@ -48,7 +48,7 @@ void UGA_HeroDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
         return;
     }
 
-    if (!DirectionToDodgeMontageAsset)
+    if (!DirectionToDodgeDataAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: InputDirectionToDodgeMontageAsset is null in: %s"), *GetName());
         EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
@@ -83,7 +83,7 @@ void UGA_HeroDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void UGA_HeroDodge::OnAfterFrame()
 {
-    if (!HeroBase || !HeroControlComponent || !DirectionToDodgeMontageAsset)
+    if (!HeroBase || !HeroControlComponent || !DirectionToDodgeDataAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: HeroBase or HeroControlComponent is null"));
         EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
@@ -107,7 +107,7 @@ void UGA_HeroDodge::OnAfterFrame()
         InputDirectionTag = GAS_Tags::TAG_Gameplay_Direction_Forward;
     }
 
-    UAnimMontage* FoundDodgeMontage = DirectionToDodgeMontageAsset->FindDodgetMontage(InputDirectionTag);
+    UAnimMontage* FoundDodgeMontage = DirectionToDodgeDataAsset->FindDodgetMontage(InputDirectionTag);
     if (!FoundDodgeMontage)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroDodge: No montage found for direction tag: %s"), *InputDirectionTag.ToString());
@@ -117,6 +117,7 @@ void UGA_HeroDodge::OnAfterFrame()
 
     AnimMontage = FoundDodgeMontage;
     DirectionTag = InputDirectionTag;
+    MotionWarpingDistance = DirectionToDodgeDataAsset->FindMotionWarpingDistance(DirectionTag);
 
     // Activate the ability now that input is read correctly
     Super::ActivateAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), nullptr);

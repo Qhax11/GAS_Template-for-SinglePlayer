@@ -5,6 +5,19 @@
 #include "Gameplay/Abilities/GA_MontageAbility.h"
 #include "GA_DodgeBase.generated.h"
 
+
+USTRUCT(BlueprintType)
+struct FDodgeMontageData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UAnimMontage> DodgeMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MoitonWarpingDistance = 300;
+};
+
 USTRUCT(BlueprintType)
 struct FDirectionDodgeMontagePair
 {
@@ -14,11 +27,11 @@ struct FDirectionDodgeMontagePair
 	FGameplayTag DirectionTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<UAnimMontage> DodgeMontage;
+	FDodgeMontageData MontageData;
 };
 
 UCLASS(BlueprintType)
-class GAS_TEMPLATESP_API UDirectionToDodgeMontageAsset : public UDataAsset
+class GAS_TEMPLATESP_API UDirectionToDodgeDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
@@ -32,10 +45,22 @@ public:
 		{
 			if (Pair.DirectionTag == InComingAttackDirectionTag)
 			{
-				return Pair.DodgeMontage.LoadSynchronous();
+				return Pair.MontageData.DodgeMontage.LoadSynchronous();
 			}
 		}
 		return nullptr;
+	}
+
+	float FindMotionWarpingDistance(FGameplayTag InComingAttackDirectionTag) const
+	{
+		for (const FDirectionDodgeMontagePair& Pair : DirectionDodgeMontagePair)
+		{
+			if (Pair.DirectionTag == InComingAttackDirectionTag)
+			{
+				return Pair.MontageData.MoitonWarpingDistance;
+			}
+		}
+		return 200;
 	}
 };
 
@@ -63,5 +88,5 @@ protected:
 	float DodgeDamageImmunityDuration = 0.3f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UDirectionToDodgeMontageAsset* DirectionToDodgeMontageAsset;
+	UDirectionToDodgeDataAsset* DirectionToDodgeDataAsset;
 };

@@ -115,7 +115,7 @@ void UAttackStateBase::ExecuteSpecialAttack(USpecialAttackData* SpecialAttackDat
 	}
 	else
 	{
-		BroadcastTransition(FGameplayTag(), nullptr, "AttackAbility activation is failed.");
+		BroadcastTransition(GAS_Tags::TAG_AI_State_Movement, nullptr, "AttackAbility activation is failed.");
 	}
 }
 

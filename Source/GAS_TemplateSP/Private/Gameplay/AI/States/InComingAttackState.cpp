@@ -48,6 +48,12 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 		return false;
 	}
 
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack))
+	{
+		UE_LOG(LogTemp, Log, TEXT("State: UTakeHitState: Enemy is on Active Attack, not allowed enter the InComingAttackState"), *GetName());
+		return false;
+	}
+
 	return true;
 }
 
@@ -96,15 +102,19 @@ bool UInComingAttackState::SelectAndExecuteReaction(UComingAttackReactionData* S
 void UInComingAttackState::BindTargetComingAttackEnd()
 {
 	UGAS_GameplayAbilityBase* ComingAttack = InComingAttackStatePayload->AttackPayload.ComingAttack;
-	if (ComingAttack)
+	if (!IsValid(ComingAttack))
 	{
-		if (ComingAttackEndHandle.IsValid()) 
-		{
-			LastComingAttack->OnAbilityEnded.Remove(ComingAttackEndHandle); 
-			ComingAttackEndHandle.Reset(); 
-		}
-		ComingAttackEndHandle = ComingAttack->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnComingAttackAbilityEnded);
+		return;
 	}
+
+	// Remove previous binding from previous ability instance
+	if (ComingAttackEndHandle.IsValid() && IsValid(LastComingAttack))
+	{
+		LastComingAttack->OnAbilityEnded.Remove(ComingAttackEndHandle);
+		ComingAttackEndHandle.Reset();
+	}
+
+	ComingAttackEndHandle = ComingAttack->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnComingAttackAbilityEnded);
 	LastComingAttack = ComingAttack;
 }
 
@@ -127,6 +137,10 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 	{
 		ExecuteParryKnocback(DamageData);
 	}
+	else
+	{
+		BroadcastTransition(FGameplayTag(), nullptr, "Parry failed (took damage).");
+	}
 }
 
 void UInComingAttackState::UnBindTargetComingAttackEnd()
@@ -144,27 +158,24 @@ void UInComingAttackState::ExecuteParry(const UComingAttackReactionData* BestCom
 {
 	UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: MakeParryAbility entered."));
 
-	if (LastUsedParry && LastUsedParry->IsActive())
+	if (IsValid(LastUsedParry) && LastUsedParry->IsActive())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: LastUsedParryAbility is active from: %s"), *GetClass()->GetName());
 		LastUsedParry->EndAbilityManually();
 	}
 
-	const bool bIsInActiveAttackPhase = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
-	if (bIsInActiveAttackPhase)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: bIsInActiveAttackPhase TRUE."));
-	}
-
 	FaceTargetBeforeParry();
 
 	UGAS_GameplayAbilityBase* ActivatedParryAbility = EnemyASC->TryActivateAbilityByClassAndReturnInstance(EnemyParryAbilityClass);
-	if (ActivatedParryAbility && ActivatedParryAbility->IsActive())
+	if (IsValid(ActivatedParryAbility) && ActivatedParryAbility->IsActive())
 	{
-		if (ParryEndHandle.IsValid()) 
+		// Remove previous binding safely
+		if (ParryEndHandle.IsValid() && IsValid(LastUsedParry))
 		{
-			ActivatedParryAbility->OnAbilityEnded.RemoveAll(this);
+			LastUsedParry->OnAbilityEnded.Remove(ParryEndHandle);
+			ParryEndHandle.Reset();
 		}
+
 		ParryEndHandle = ActivatedParryAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryAbilityEnded);
 		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: MakeParryAbility executed from: %s"), *GetClass()->GetName());
 	}
@@ -181,17 +192,28 @@ void UInComingAttackState::ExecuteParryKnocback(const FDamageData& DamageData)
 	Payload.ContextHandle = DamageData.ExecCalculationParameters.GetSpec().GetContext();
 	Payload.InstigatorTags = DamageData.ExecCalculationParameters.GetSpec().CapturedSourceTags.GetActorTags();
 
-	UGAS_GameplayAbilityBase* ParryKnocbackAbility = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyParryKnocbackAbilityClass, Payload);
-	if (ParryKnocbackAbility && ParryKnocbackAbility->IsActive())
+	UGAS_GameplayAbilityBase* Knockback = EnemyASC->TryActivateAbilityByClassWithEventData(EnemyParryKnocbackAbilityClass, Payload);
+
+	// ❗If activation failed, don't wait for end delegates that will never fire.
+	if (!IsValid(Knockback) || !Knockback->IsActive())
 	{
-		if (ParryKnockbackEndHandle.IsValid())
-		{
-			ParryKnocbackAbility->OnAbilityEnded.RemoveAll(this);
-		}
-		ParryKnockbackEndHandle = ParryKnocbackAbility->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
-		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: ParryKnocbackAbility executed from: %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: ParryKnocback activation FAILED -> exiting"));
+		BroadcastTransition(FGameplayTag(), nullptr, "ParryKnockback activation failed.");
+		LastUsedParryKnocback = Knockback;
+		return;
 	}
-	LastUsedParryKnocback = ParryKnocbackAbility;
+
+	// Remove previous binding safely
+	if (ParryKnockbackEndHandle.IsValid() && IsValid(LastUsedParryKnocback))
+	{
+		LastUsedParryKnocback->OnAbilityEnded.Remove(ParryKnockbackEndHandle);
+		ParryKnockbackEndHandle.Reset();
+	}
+
+	ParryKnockbackEndHandle = Knockback->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnParryKnocbackAbilityEnded);
+	UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: ParryKnocbackAbility executed from: %s"), *GetClass()->GetName());
+
+	LastUsedParryKnocback = Knockback;
 }
 
 void UInComingAttackState::FaceTargetBeforeParry()
@@ -244,7 +266,7 @@ void UInComingAttackState::CleanupDelegates()
 {
 	if (IsValid(DamageSubsystem))
 	{
-		DamageSubsystem->OnDamageDealt.RemoveAll(this);
+		DamageSubsystem->OnDamageDealt.RemoveDynamic(this, &UInComingAttackState::OnDamageDealt);
 	}
 
 	if (IsValid(Enemy) && Enemy->GetTagDelegatesComponent())

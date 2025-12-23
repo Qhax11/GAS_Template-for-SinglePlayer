@@ -37,6 +37,14 @@ bool UMovementState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return false;
 	}
 
+	float MinRange = MovementStateEnterPayload->SelectedAttackData->GetMinRange();
+	float MaxRange = MovementStateEnterPayload->SelectedAttackData->GetMaxRange();
+	EMovementRangeResult MovementRangeResult = CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, MinRange, MaxRange);
+	if (MovementRangeResult == EMovementRangeResult::InRange)
+	{
+		return false;
+	}
+
 	return true;
 }
 

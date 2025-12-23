@@ -10,7 +10,7 @@
 
 bool AGCN_SoundBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
 {
-	if (!Source && !Target)
+	if (!Source || !Target)
 	{
 		return false;
 	}

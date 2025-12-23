@@ -376,13 +376,13 @@ namespace GAS_Tags
 	// ============================================================
 	// Play On Target
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnTarget);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnTarget_Footstep);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnTarget_TakeDamage);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnTarget_Finisher);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnTarget_Kick);
 
 	// Play On Source
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnSource);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnSource_Footstep);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnSource_ParryKnocback);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnSource_AttackSwing);
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_Sound_PlayOnSource_Death);

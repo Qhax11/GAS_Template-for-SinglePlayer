@@ -32,12 +32,13 @@ void UAC_FootstepBase::BeginPlay()
 	}
 
 	OwnerASC->AddGameplayEventTagContainerDelegate(EventTags, FGameplayEventTagMulticastDelegate::FDelegate::CreateUObject(this, &UAC_FootstepBase::OnGameplayEvent));
-
 }
 
 void UAC_FootstepBase::OnGameplayEvent(FGameplayTag EventTag, const FGameplayEventData* Payload) const
 {
+	/*
 	FGameplayCueParameters GameplayCueParameters;
 	GameplayCueParameters.EffectCauser = OwnerCharacter;
 	OwnerASC->ExecuteGameplayCue(GAS_Tags::TAG_GameplayCue_Sound_PlayOnSource_Footstep, GameplayCueParameters);
+	*/
 }

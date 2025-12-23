@@ -54,6 +54,12 @@ bool UInComingAttackState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPay
 		return false;
 	}
 
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack))
+	{
+		UE_LOG(LogTemp, Log, TEXT("State: UTakeHitState: Enemy is on Unstoppable Attack, not allowed enter the InComingAttackState"), *GetName());
+		return false;
+	}
+
 	return true;
 }
 

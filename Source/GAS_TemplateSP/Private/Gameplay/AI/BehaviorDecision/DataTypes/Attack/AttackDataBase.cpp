@@ -71,77 +71,40 @@ float UAttackDataBase::GetIntentScore(const FAttackDecisionContext& Context) con
 
 float UAttackDataBase::GetDistanceScore(const FAttackDecisionContext& Context) const
 {
-	return 0.f;
-	/*
-	if (!AbilityClass || !IsValid(Context.Owner) || !IsValid(Context.Target))
+	if (!IsValid(Context.Owner) || !IsValid(Context.Target))
 	{
 		return 0.f;
 	}
 
-	const float AttackRange = AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
-	if (AttackRange <= 0.f)
-	{
-		return 0.f;
-	}
-
+	const float MinRange = GetMinRange();
+	const float MaxRange = GetMaxRange();
 	const float Distance = CombatDistance::GetDistance(Context.Owner, Context.Target);
 
-	const float Alpha = FMath::Clamp(Distance / AttackRange, 0.f, 1.f);
+	// Çok yakýn ? aðýr ceza
+	if (Distance < MinRange)
+	{
+		return -1.0f;
+	}
 
-	// Near = 1.0, Far = 0.0
-	return FMath::Lerp(1.f, 0.f, Alpha);
-	*/
+	// Çok uzak ? aðýr ceza
+	if (Distance > MaxRange)
+	{
+		return -0.5f;
+	}
+
+	// Min–Max arasý: ideal noktaya göre normalize
+	const float IdealDistance = MaxRange;
+	const float RangeSpan = MaxRange - MinRange;
+
+	if (RangeSpan <= 0.f)
+	{
+		return 0.f;
+	}
+
+	const float DistFromIdeal = FMath::Abs(Distance - IdealDistance);
+	const float Normalized = 1.f - (DistFromIdeal / RangeSpan);
+
+	return FMath::Lerp(-1.f, 1.f, Normalized);
 }
 
-/*
-float UAttackDataBase::CalculateScoreBasedOnTargetDistance(FAttackData AttackData, float DistanceToTarget)
-{
-	float AbilityMinRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MinRange;
-	float AbilityMaxRange = AttackData.AbilityClass->GetDefaultObject<UGAS_GameplayAbilityBase>()->MaxRange;
-	if (AbilityMaxRange <= 0.f)
-	{
-		return 0.0f;
-	}
 
-	// Saldýrýnýn ideal noktasý: MaxRange
-	float DistanceFromIdeal = FMath::Abs(DistanceToTarget - AbilityMaxRange);
-
-	// Skoru mesafeye göre ters orantýlý olarak hesapla
-	float Score = 1.f - (DistanceFromIdeal / AbilityMaxRange);
-
-	// Minimum Range'in ALTINDA mesafedeyse ekstra ceza uygula (isteðe baðlý)
-	if (DistanceToTarget < AbilityMinRange)
-	{
-		Score = -100; // Çok yakýnsa etkisizleþtir
-	}
-
-	return Score;
-}
-
-float UAttackDataBase::CalculateComboScore(FAttackData AttackData)
-{
-	// If there is no valid last attack or it wasn't part of a combo chain
-	if (!LastSelectedAttackAbilityData.AbilityClass || !LastSelectedAttackAbilityData.bIsComboAttack)
-	{
-		return 0.0f;
-	}
-
-	// If the current candidate isn't a combo attack, skip
-	if (!AttackData.bIsComboAttack)
-	{
-		return 0.0f;
-	}
-
-	// Expected combo index is always the next step after the last selected
-	int32 ExpectedNextIndex = LastSelectedAttackAbilityData.ComboIndex + 1;
-
-	// If this attack matches the expected combo step, give it a strong score
-	if (AttackData.ComboIndex == ExpectedNextIndex)
-	{
-		return 3.0f;
-	}
-
-	return 0.0f;
-}
-
-*/

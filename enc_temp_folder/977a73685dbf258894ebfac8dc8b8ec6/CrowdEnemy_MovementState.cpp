@@ -63,6 +63,11 @@ void UCrowdEnemy_MovementState::OnWaitTimeFinished()
 void UCrowdEnemy_MovementState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();
+	/*
+	if (MovementManager && MovementManager->OnMovementChainEnded.IsAlreadyBound(this, &UCrowdEnemy_MovementState::OnMovementChainEnded))
+	{
+		MovementManager->OnMovementChainEnded.RemoveDynamic(this, &UCrowdEnemy_MovementState::OnMovementChainEnded);
+	}
 
 	if (LastUsedStrafingAbility && LastUsedStrafingAbility->IsValidLowLevel())
 	{
@@ -71,4 +76,5 @@ void UCrowdEnemy_MovementState::OnExit_Implementation()
 	}
 
 	GetWorld()->GetTimerManager().ClearTimer(WaitForNextStrafingOrbitTimerHandle);
+	*/
 }

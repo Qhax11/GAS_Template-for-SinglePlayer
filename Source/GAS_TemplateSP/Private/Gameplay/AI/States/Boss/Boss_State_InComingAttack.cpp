@@ -78,6 +78,17 @@ void UBoss_State_InComingAttack::OnDodgeAbilityEnded(const FCustomAbilityEndedDa
 	BroadcastTransition(FGameplayTag(), nullptr, "Dodge Ability is ended.");
 }
 
+bool UBoss_State_InComingAttack::ExitCondition_Implementation()
+{
+	// Dodge ability aktifken asla çýkma
+	if (IsValid(LastUsedDodgeAbility) && LastUsedDodgeAbility->IsActive())
+	{
+		return false;
+	}
+
+	return Super::ExitCondition_Implementation();
+}
+
 void UBoss_State_InComingAttack::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();

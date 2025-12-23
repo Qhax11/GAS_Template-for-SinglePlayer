@@ -25,5 +25,7 @@ public:
 
 	UGAS_GameplayAbilityBase* LastUsedDodgeAbility;
 
+	virtual bool ExitCondition_Implementation() override;
+
 	virtual void OnExit_Implementation() override;
 };

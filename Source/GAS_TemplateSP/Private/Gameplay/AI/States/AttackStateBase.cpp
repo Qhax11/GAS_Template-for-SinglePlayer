@@ -49,13 +49,6 @@ bool UAttackStateBase::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload
 		return false;
 	}
 
-	float MaxRange = AttackData->GetMaxRange();
-	if (!CombatDistance::IsInRange(Enemy, HeroTarget, MaxRange))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: UAttackStateBase: Out of Range!"));
-		return false;
-	}
-
 	return true;
 }
 

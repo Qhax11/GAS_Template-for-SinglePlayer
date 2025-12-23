@@ -72,7 +72,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGA_ParryKnockbackBase> EnemyParryKnocbackAbilityClass;
 
-	UGAS_GameplayAbilityBase* LastUsedParryKnocbackAbility;
+	UGAS_GameplayAbilityBase* LastUsedParryKnocback;
 
 	void CleanupDelegates();
 
@@ -82,4 +82,6 @@ private:
 	FDelegateHandle ParryEndHandle;
 	FDelegateHandle ParryKnockbackEndHandle;
 	FDelegateHandle DamageSubsystemHandle;
+
+	bool bWaitingForParryKnockbackEnd = false;
 };

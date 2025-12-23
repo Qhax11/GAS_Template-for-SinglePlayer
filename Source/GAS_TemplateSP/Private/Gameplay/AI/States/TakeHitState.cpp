@@ -92,7 +92,7 @@ void UTakeHitState::OnExit_Implementation()
 {
 	Super::OnExit_Implementation();	
 
-	UE_LOG(LogTemp, Warning, TEXT("State: UTakeHitState:  OnExit_Implementation entered."));
+	UE_LOG(LogTemp, Warning, TEXT("State: UTakeHitState: OnExit_Implementation entered."));
 
 	if (EnemyTagDelegatesComp)
 	{

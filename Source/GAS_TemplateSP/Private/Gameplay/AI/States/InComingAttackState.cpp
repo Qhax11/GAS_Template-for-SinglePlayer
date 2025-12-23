@@ -100,7 +100,8 @@ void UInComingAttackState::BindTargetComingAttackEnd()
 	{
 		if (ComingAttackEndHandle.IsValid()) 
 		{
-			ComingAttack->OnAbilityEnded.RemoveAll(this);
+			LastComingAttack->OnAbilityEnded.Remove(ComingAttackEndHandle); 
+			ComingAttackEndHandle.Reset(); 
 		}
 		ComingAttackEndHandle = ComingAttack->OnAbilityEnded.AddUObject(this, &UInComingAttackState::OnComingAttackAbilityEnded);
 	}
@@ -114,6 +115,11 @@ void UInComingAttackState::OnComingAttackAbilityEnded(const FCustomAbilityEndedD
 
 void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 {
+	if (DamageData.ExecCalculationParameters.TargetActor != Enemy)
+	{
+		return;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: OnDamageDealt entered from: %s"), *GetClass()->GetName());
 	UnBindTargetComingAttackEnd();
 
@@ -125,11 +131,13 @@ void UInComingAttackState::OnDamageDealt(const FDamageData& DamageData)
 
 void UInComingAttackState::UnBindTargetComingAttackEnd()
 {
-	if (IsValid(LastComingAttack))
+	if (ComingAttackEndHandle.IsValid() && IsValid(LastComingAttack)) 
 	{
-		LastComingAttack->OnAbilityEnded.RemoveAll(this);
-		LastComingAttack = nullptr;
+		LastComingAttack->OnAbilityEnded.Remove(ComingAttackEndHandle); 
+		ComingAttackEndHandle.Reset();
 	}
+
+	LastComingAttack = nullptr;
 }
 
 void UInComingAttackState::ExecuteParry(const UComingAttackReactionData* BestComingAttackReaction)
@@ -139,11 +147,7 @@ void UInComingAttackState::ExecuteParry(const UComingAttackReactionData* BestCom
 	if (LastUsedParry && LastUsedParry->IsActive())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: LastUsedParryAbility is active from: %s"), *GetClass()->GetName());
-		if (LastUsedParry)
-		{
-			EnemyASC->CancelAbilityHandle(LastUsedParry->GetCurrentAbilitySpecHandle());
-			//LastUsedParryAbility->EndAbilityManually();
-		}
+		LastUsedParry->EndAbilityManually();
 	}
 
 	const bool bIsInActiveAttackPhase = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
@@ -165,7 +169,7 @@ void UInComingAttackState::ExecuteParry(const UComingAttackReactionData* BestCom
 		UE_LOG(LogTemp, Warning, TEXT("State: UInComingAttackState: MakeParryAbility executed from: %s"), *GetClass()->GetName());
 	}
 
-	LastUsedParryAbility = ActivatedParryAbility;
+	LastUsedParry = ActivatedParryAbility;
 }
 
 void UInComingAttackState::ExecuteParryKnocback(const FDamageData& DamageData)

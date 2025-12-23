@@ -10,6 +10,7 @@
 UGA_EnemyStrafingBase::UGA_EnemyStrafingBase()
 {
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Strafing);
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Rotation_LockTowardsTarget);
 }
 
 void UGA_EnemyStrafingBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

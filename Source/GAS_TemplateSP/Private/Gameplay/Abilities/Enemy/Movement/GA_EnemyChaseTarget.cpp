@@ -13,6 +13,8 @@ UGA_EnemyChaseTarget::UGA_EnemyChaseTarget()
 	TriggerData.TriggerTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_ChaseTarget;
 
 	AbilityTriggers.Add(TriggerData);
+
+	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Rotation_LockTowardsTarget);
 }
 
 void UGA_EnemyChaseTarget::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

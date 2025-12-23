@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_PatrolHandler.h"
+#include "Gameplay/AI/BehaviorDecision/DataTypes/Movement/MovementSingleData.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 
@@ -29,15 +30,17 @@ void UAC_PatrolHandler::BeginPlay()
 	}
 }
 
-void UAC_PatrolHandler::StartPatrolling()
+void UAC_PatrolHandler::StartPatrolling(UMovementSingleData* MovementData)
 {
-	if (PatrolPoints.Num() == 0 || !OwnerEnemyASC)
+	if (PatrolPoints.Num() == 0 || !OwnerEnemyASC || !MovementData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UAC_PatrolHandler: EnemyASC is or MovementData null in %s."), *GetName());
 		return;
 	}
 
-	MoveToNextPatrolPoint();
+	ChacedMovementData = MovementData;
 	bInPatrolling = true;
+	MoveToNextPatrolPoint();
 }
 
 void UAC_PatrolHandler::MoveToNextPatrolPoint()
@@ -71,6 +74,7 @@ void UAC_PatrolHandler::ActivatePatrollingAbility()
 	}
 
 	FGameplayEventData MoveToLocationEventData;
+	MoveToLocationEventData.OptionalObject = ChacedMovementData;
 	MoveToLocationEventData.EventTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Patrolling;
 	MoveToLocationEventData.Target = PatrolPoints[CurrentIndex];
 

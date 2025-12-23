@@ -90,7 +90,7 @@ void UAC_EnemyMovementManager::TryExecuteNextMovementAbilityInChain()
 		MovementAbilityInChain->OnAbilityEnded.RemoveAll(this);
 		MovementAbilityInChain->OnAbilityEnded.AddUObject(this, &UAC_EnemyMovementManager::OnMovementAbilityEnded);
 		MovementChainTracker.CurrentMovementAbility = MovementAbilityInChain;
-		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: %s (Ptr: %p) is bound to OnMovementAbilityEnded"), *MovementAbilityInChain->GetName(), MovementAbilityInChain);
+		UE_LOG(LogTemp, Log, TEXT("Execution: Movement: UAC_EnemyMovementManager: %s is bound to OnMovementAbilityEnded"), *MovementAbilityInChain->GetName());
 	}
 	else
 	{
@@ -168,7 +168,6 @@ FGameplayTag UAC_EnemyMovementManager::ResolveDirectionFromPolicy(const FGamepla
 			FGameplayTag LastDirection = HeroMovementListener->GetHeroLastMovementDirectionTagByLastInput();
 			if (LastDirection.IsValid())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Execution: Movement: UAC_EnemyMovementManager: LastDirection is: %s"), *LastDirection.ToString());
 				if(LastDirection == GAS_Tags::TAG_Gameplay_Direction_Forward || LastDirection == GAS_Tags::TAG_Gameplay_Direction_Backward)
 				{
 					// If the last direction is forward, we want to avoid moving forward as an enemy.

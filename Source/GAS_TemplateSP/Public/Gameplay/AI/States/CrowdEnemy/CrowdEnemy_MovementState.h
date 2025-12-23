@@ -17,7 +17,7 @@ public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
 protected:
-	virtual void EvaluateAndStartMovement(TSharedPtr<FMovementStatePayload> Payload);
+	virtual void EvaluateAndStartMovement(TSharedPtr<FMovementStatePayload> Payload) override;
 
 	void StartStrafing();
 

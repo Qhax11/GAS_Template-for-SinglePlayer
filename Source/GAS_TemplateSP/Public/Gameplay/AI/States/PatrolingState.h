@@ -5,7 +5,9 @@
 #include "Gameplay/AI/States/StateBase.h"
 #include "PatrolingState.generated.h"
 
+class UMovementSingleData;
 class UAC_PatrolHandler;
+class UCharacterMovementComponent;
 
 UCLASS()
 class GAS_TEMPLATESP_API UPatrolingState : public UStateBase
@@ -15,12 +17,23 @@ class GAS_TEMPLATESP_API UPatrolingState : public UStateBase
 public:
 	UPatrolingState();
 
+	virtual void StateInitalize(const FStateInitParams& StateInitParams) override;
+
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
+	virtual void OnExit_Implementation() override;
+
+protected:
 	void OnPatrollingStopped();
 	
-	virtual void OnExit_Implementation() override;
+	void StopEnemyMovement();
+
+	UPROPERTY(EditDefaultsOnly)
+	UMovementSingleData* MovementData;
 
 	UPROPERTY()
 	UAC_PatrolHandler* PatrolHandler;
+
+	UPROPERTY()
+	UCharacterMovementComponent* EnemyMovementComp;
 };

@@ -8,6 +8,8 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnPatrollingStopped);
 
+class UMovementSingleData;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_PatrolHandler : public UActorComponent
 {
@@ -17,7 +19,7 @@ public:
 	UAC_PatrolHandler();
 
 	UFUNCTION(BlueprintCallable)
-	void StartPatrolling();
+	void StartPatrolling(UMovementSingleData* MovementData);
 
 	UFUNCTION(BlueprintCallable)
 	void StopPatrolling();
@@ -65,4 +67,7 @@ private:
 	FTimerHandle WaitForNextPatrolTimerHandle;
 	int32 CurrentIndex = 0;
 	bool bInPatrolling = false;
+
+	UPROPERTY()
+	UMovementSingleData* ChacedMovementData;
 };

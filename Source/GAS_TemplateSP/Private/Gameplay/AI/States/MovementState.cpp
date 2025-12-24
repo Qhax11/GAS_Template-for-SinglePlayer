@@ -97,7 +97,7 @@ void UMovementState::TryEnterToAttackState()
 	}
 	else if (MovementRangeResult == EMovementRangeResult::InRange) 
 	{
-		MovementManager->OnMovementChainEnded.RemoveAll(this);
+		MovementManager->ClearMovementChain();
 		StopEnemyMovement();
 
 		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;

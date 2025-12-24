@@ -15,10 +15,5 @@ bool UMovementSingleData::IsValidData() const
 		return false;
 	}
 
-	if (EnableDirectionPolicy && !DirectionPolicyTag.IsValid())
-	{
-		return false;
-	}
-
 	return true;
 }

@@ -39,7 +39,16 @@ void UCrowdEnemy_MovementState::EvaluateAndStartMovement(TSharedPtr<FMovementSta
 
 void UCrowdEnemy_MovementState::StartStrafing()
 {
-	UGAS_GameplayAbilityBase* ActivatedStrafingAbility = EnemyASC->TryActivateAbilityByClassWithEventData(StrafingAbilityClass, StrafingAbilityEventData);
+	if (!StrafingOrbitMovementData->IsValidData())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StrafingOrbitMovementData is invalid!"));
+        return;
+	}
+
+	FGameplayEventData StrafingAbilityEventData;
+	StrafingAbilityEventData.EventTag = GAS_Tags::TAG_AI_AbilityTriggerEvent_Movement_Strafing_Orbit;
+	StrafingAbilityEventData.OptionalObject = StrafingOrbitMovementData;
+	UGAS_GameplayAbilityBase* ActivatedStrafingAbility = EnemyASC->TryActivateAbilityByClassWithEventData(StrafingOrbitMovementData->MovementAbilityClass, StrafingAbilityEventData);
 	if (ActivatedStrafingAbility)
 	{
 		ActivatedStrafingAbility->OnAbilityEnded.RemoveAll(this);

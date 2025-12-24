@@ -128,6 +128,20 @@ void UMovementState::OnBackStepEnded(const FCustomAbilityEndedData& ReactionMove
 
 void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 {
+	if (!EndData.ChainData)
+	{
+		StopEnemyMovement();
+		BroadcastTransition(FGameplayTag(), nullptr, "Movement chain finished (null chain data)");
+		return;
+	}
+
+	if (HasValidAttackContext())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: Invalid attack context in: %s"), *GetName());
+		BroadcastTransition(FGameplayTag(), nullptr, "Post Chain Wait is Finished but attack data invalid!");
+		return;
+	}
+
 	if (GetEvaluateAttackRange() == EMovementRangeResult::InRange)
 	{
 		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
@@ -158,6 +172,13 @@ void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 
 void UMovementState::OnPostChainWaitFinished()
 {
+	if(HasValidAttackContext())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: Invalid attack context in: %s"), *GetName());
+		BroadcastTransition(FGameplayTag(), nullptr, "Post Chain Wait is Finished but attack data invalid!");
+		return;
+	}
+
 	if (GetEvaluateAttackRange() == EMovementRangeResult::InRange)
 	{
 		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
@@ -186,6 +207,14 @@ const EMovementRangeResult UMovementState::GetEvaluateAttackRange() const
 	const float MinRange = MovementStateEnterPayload->SelectedAttackData->GetMinRange();
 	const float MaxRange = MovementStateEnterPayload->SelectedAttackData->GetMaxRange();
 	return CombatDistance::EvaluateAttackRange(Enemy, HeroTarget, MinRange, MaxRange);
+}
+
+bool UMovementState::HasValidAttackContext() const
+{
+	return MovementStateEnterPayload.IsValid()
+		&& MovementStateEnterPayload->SelectedAttackData
+		&& IsValid(Enemy)
+		&& IsValid(HeroTarget);
 }
 
 void UMovementState::OnExit_Implementation()

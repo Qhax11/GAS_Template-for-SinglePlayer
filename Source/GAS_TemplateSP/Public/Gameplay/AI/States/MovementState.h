@@ -89,6 +89,8 @@ protected:
 
 	const EMovementRangeResult GetEvaluateAttackRange() const;
 
+	bool HasValidAttackContext() const;
+
 	UPROPERTY(EditDefaultsOnly, Instanced)
 	UMovementSingleData* StepBackMovementData;
 

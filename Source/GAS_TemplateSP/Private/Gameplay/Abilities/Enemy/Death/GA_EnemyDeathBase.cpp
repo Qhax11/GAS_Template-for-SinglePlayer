@@ -29,15 +29,14 @@ void UGA_EnemyDeathBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		return;
 	}
 
-	UBrainComponent* EnemyBrainComponent = EnemyController->GetBrainComponent();
-	if (!EnemyBrainComponent)
+	UAC_StateManager* EnemyStateManagerComponent = EnemyController->GetEnemyStateManagerComponent();
+	if (!EnemyStateManagerComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyDeathBase: EnemyBrainComponent is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_EnemyDeathBase: EnemyStateManagerComponent is null in: %s"), *GetName());
 		return;
 	}
 
 	EnemyController->GetEnemyStateManagerComponent()->StopLogic();
-	EnemyController->GetBrainComponent()->StopLogic(TEXT("Enemey is dead"));
 }
 
 void UGA_EnemyDeathBase::BroadcastDeSpawn(const FCharacterDeSpawnData& DespawnData)

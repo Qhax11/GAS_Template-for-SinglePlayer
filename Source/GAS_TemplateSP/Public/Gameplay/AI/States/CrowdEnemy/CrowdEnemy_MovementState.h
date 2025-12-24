@@ -29,18 +29,15 @@ protected:
 	virtual void OnExit_Implementation() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGAS_GameplayAbilityBase> StrafingAbilityClass;
-
-	UGAS_GameplayAbilityBase* LastUsedStrafingAbility;
-
-	UPROPERTY(EditDefaultsOnly)
-	FGameplayEventData StrafingAbilityEventData;
-
-	UPROPERTY(EditDefaultsOnly)
 	float MinStrafingWaitTime= 0.5f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float MaxStrafingWaitTime = 3.0f;
+
+	UPROPERTY(EditDefaultsOnly, Instanced)
+	UMovementSingleData* StrafingOrbitMovementData;
+
+	UGAS_GameplayAbilityBase* LastUsedStrafingAbility;
 
 private:
 	FTimerHandle WaitForNextStrafingOrbitTimerHandle;

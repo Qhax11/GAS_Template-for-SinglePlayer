@@ -46,7 +46,4 @@ protected:
 	// Multiplier applied to posture reduction when the owner takes damage.
 	UPROPERTY(EditDefaultsOnly, Category = "PostureHandler")
 	float PostureDamageMultiplier = 2.f;
-
-	UPROPERTY()
-	class UAS_Base* BaseAttributes;
 };

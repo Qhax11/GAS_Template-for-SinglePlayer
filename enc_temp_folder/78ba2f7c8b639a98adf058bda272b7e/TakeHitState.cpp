@@ -30,16 +30,9 @@ bool UTakeHitState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return false;
 	}
 
-	const bool bEnemyInUnstoppable = EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
-	const bool bHeroCanInterrupt = HeroTargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Ability_Combat_Attack_Type_CanInterruptUnstoppable);
-
-	if (bEnemyInUnstoppable && bHeroCanInterrupt)
+	if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack))
 	{
-		return true;
-	}
-
-	if (bEnemyInUnstoppable)
-	{
+		UE_LOG(LogTemp, Log, TEXT("State: UTakeHitState: Enemy is on UnstoppableAttack, not allowed enter the TakeHitState"), *GetName());
 		return false;
 	}
 

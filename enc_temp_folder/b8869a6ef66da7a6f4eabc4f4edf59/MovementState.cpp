@@ -152,7 +152,6 @@ void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 
 	StopEnemyMovement();
 
-	/*
 	if (EndData.Result == EMovementChainResult::Completed && 
 		EndData.ChainData->FallbackPolicy == EMovementChainFallbackPolicy::HardFallback)
 	{
@@ -166,8 +165,7 @@ void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 		);
 		return;
 	}
-		*/
-
+	
 	// Sadece çýk, karar dýþarýda verilecek
 	BroadcastTransition(FGameplayTag(), nullptr, "Movement chain finished");
 }

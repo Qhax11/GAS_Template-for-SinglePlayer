@@ -28,14 +28,13 @@ bool UGA_HeroRun::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 		return false;
 	}
 
-	/*
 	if (UAS_Base* BaseAttributes = const_cast<UAS_Base*>(ASC->GetSet<UAS_Base>()))
 	{
 		if (BaseAttributes->GetPosture() <= 0)
 		{
 			return false;
 		}
-	}*/
+	}
 
 	if (UAC_HeroControl* HeroControl = CastChecked<AGAS_HeroBase>(GetAvatarActorFromActorInfo())->GetHeroControlComponent())
 	{
@@ -68,15 +67,6 @@ void UGA_HeroRun::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
-	UGameplayEffect* GE_SpeedBoost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GE_SpeedBoostClass);
-	if (!GE_SpeedBoost) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroRun: GE_SpeedBoost is null in"));
-		EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
-	}
-	GE_SpeedBoostHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_SpeedBoost, 1, FGameplayEffectContextHandle());
-
-	/*
 	FGameplayEffectSpec PostureDecreaseSpec;
 	bool bIsPostureRegenSpecValid = UGAS_EffectBlueprintFunctionLibary::CreateEffectSpecWithSetByCallerValue(
 		PostureDecreaseSpec,
@@ -92,10 +82,13 @@ void UGA_HeroRun::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
 		return;
 	}
-	GE_PostureDecreaseHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(PostureDecreaseSpec);
 
-	*/
-	//HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnAdded).BindDynamic(this, &UGA_HeroRun::OnPostureEmptyTagAdded);
+	HeroTagDelegatesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnAdded).BindDynamic(this, &UGA_HeroRun::OnPostureEmptyTagAdded);
+
+	UGameplayEffect* GE_SpeedBoost = UGAS_EffectBlueprintFunctionLibary::CreateEffectWithTSubclass(GE_SpeedBoostClass);
+	GE_SpeedBoostHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectToSelf(GE_SpeedBoost, 1, FGameplayEffectContextHandle());
+
+	GE_PostureDecreaseHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(PostureDecreaseSpec);
 }
 
 void UGA_HeroRun::OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)
@@ -108,14 +101,14 @@ void UGA_HeroRun::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActivationInfo ActivationInfo,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
-	if (GE_SpeedBoostHandle.IsValid())
+	if (GE_SpeedBoostHandle.IsValid() && GE_PostureDecreaseHandle.IsValid())
 	{
 		GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(GE_SpeedBoostHandle);
-	}
-
-	if ( GE_PostureDecreaseHandle.IsValid())
-	{
 		GetAbilitySystemComponentFromActorInfo()->RemoveActiveGameplayEffect(GE_PostureDecreaseHandle);
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroRun: GE_SpeedBoostHandle or GE_PostureDecreaseHandle is null in %s"), *GetName());
 	}
 
 	HeroTagDelegatesComp->UnregisterAllDelegatesForObject(this);

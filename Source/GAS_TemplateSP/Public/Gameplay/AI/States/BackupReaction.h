@@ -30,4 +30,6 @@ public:
 
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 
+	UFUNCTION()
+	void OnFinisherTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 };

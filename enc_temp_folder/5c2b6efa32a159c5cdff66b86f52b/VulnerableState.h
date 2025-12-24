@@ -14,9 +14,7 @@ class GAS_TEMPLATESP_API UVulnerableState : public UStateBase
 public:
 	virtual void OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload) override;
 	
-	void ActivatHeroShadowFinisher();
-
-	void ActivateVulnerable();
+	void ActivateVulnerableAbility();
 
 	UFUNCTION()
 	void OnVulnerableAbilityEnded(const FCustomAbilityEndedData& DodgeAbilityEndedData);

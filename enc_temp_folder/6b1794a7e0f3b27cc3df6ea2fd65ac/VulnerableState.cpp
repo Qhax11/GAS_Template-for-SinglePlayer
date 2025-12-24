@@ -11,25 +11,17 @@ void UVulnerableState::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 {
 	Super::OnEnter();
 
-	ActivatHeroShadowFinisher();
-	ActivateVulnerable();
-}
-
-void UVulnerableState::ActivatHeroShadowFinisher()
-{
 	UGAS_GameplayAbilityBase* ActivatedHeroShadowFinisher = HeroTargetASC->TryActivateAbilityByClassAndReturnInstance(HeroShadowFinisherAbilityClass);
 	if (ActivatedHeroShadowFinisher)
 	{
 		ActivatedHeroShadowFinisher->OnAbilityEnded.RemoveAll(this);
 		ActivatedHeroShadowFinisher->OnAbilityEnded.AddUObject(this, &UVulnerableState::OnHeroShadowFinisherAbilityEnded);
 	}
-	else
-	{
-		BroadcastTransition(FGameplayTag(), nullptr, "Hero Shadow Finisher activation is failed.");
-	}
+
+	ActivateVulnerableAbility();
 }
 
-void UVulnerableState::ActivateVulnerable()
+void UVulnerableState::ActivateVulnerableAbility()
 {
 	/*
 	// If enemy before executed then timer we shouldn't activate vulnerable ability, because its interreptud dead ability.

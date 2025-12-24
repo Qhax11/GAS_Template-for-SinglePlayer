@@ -30,7 +30,7 @@ void UBackupReaction::OnEnter(TSharedPtr<FStatePayloadBase> EnterPayload)
 		return;
 	}
 
-	HeroTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Finisher, EListenMode::OnRemoved).BindDynamic(this, &UBackupReaction::OnFinisherTagRemoved);
+	HeroTagDelegateComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_Moving_Patrolling, EListenMode::OnRemoved).BindDynamic(this, &UBackupReaction::OnFinisherTagRemoved);
 }
 
 void UBackupReaction::OnFinisherTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

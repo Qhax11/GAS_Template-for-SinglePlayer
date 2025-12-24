@@ -97,7 +97,7 @@ void UMovementState::TryEnterToAttackState()
 	}
 	else if (MovementRangeResult == EMovementRangeResult::InRange) 
 	{
-		MovementManager->OnMovementChainEnded.RemoveAll(this);
+		MovementManager->ClearMovementChain();
 		StopEnemyMovement();
 
 		UAttackDataBase* SelectedAttackData = MovementStateEnterPayload->SelectedAttackData;
@@ -135,7 +135,7 @@ void UMovementState::OnMovementChainEnded(const FMovementChainEndData& EndData)
 		return;
 	}
 
-	if (!HasValidAttackContext())
+	if (HasValidAttackContext())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("State: UMovementState: Invalid attack context in: %s"), *GetName());
 		BroadcastTransition(FGameplayTag(), nullptr, "Post Chain Wait is Finished but attack data invalid!");

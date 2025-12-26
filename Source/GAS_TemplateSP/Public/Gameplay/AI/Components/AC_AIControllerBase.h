@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "Gameplay/StaticDelegates/S_SpawnDelegates.h"
 #include "AC_AIControllerBase.generated.h"
 
 /**
@@ -37,6 +38,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	virtual void OnHeroSpawned(const FHeroSpawnData& HeroSpawnData);
 
 	UPROPERTY()
 	AAIControllerBase* OwnerController;

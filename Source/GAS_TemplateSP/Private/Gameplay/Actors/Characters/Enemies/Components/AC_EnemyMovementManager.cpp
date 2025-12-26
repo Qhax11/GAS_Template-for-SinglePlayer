@@ -18,13 +18,16 @@ UAC_EnemyMovementManager::UAC_EnemyMovementManager()
 void UAC_EnemyMovementManager::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void UAC_EnemyMovementManager::OnHeroSpawned(const FHeroSpawnData& HeroSpawnData) 
+{
+	Super::OnHeroSpawned(HeroSpawnData);
 
 	// Parent's check
 	checkf(OwnerEnemy, TEXT("OwnerEnemy is null in %s"), *GetClass()->GetName());
 	checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 	checkf(OwnerEnemyASC, TEXT("OwnerEnemyASC is null in %s"), *GetClass()->GetName());
-
-	AGAS_HeroBase* Hero = OwnerController->GetTargetHero();
 	checkf(Hero, TEXT("Hero is null in %s"), *GetClass()->GetName());
 
 	HeroMovementListener = Hero->GetMovementListenerComponent();

@@ -42,19 +42,42 @@ void US_LevelManager::HandlePostLoadMap(UWorld* LoadedWorld)
 	UE_LOG(LogTemp, Warning, TEXT("Broadcasted loaded level: %s"), *CleanLevelName.ToString());
 }
 
-void US_LevelManager::OpenLevelByName(FName LevelName)
+void US_LevelManager::OpenLevel(FName LevelName)
 {
-	if (!LevelName.IsNone())
-	{
-		UGameplayStatics::OpenLevel(GetWorld(), LevelName);
-		UE_LOG(LogTemp, Log, TEXT("[LevelManagerSubsystem] Opening level: %s"), *LevelName.ToString());
-
-		CurrentLevelName = LevelName;
-	}
-	else
+	if (LevelName.IsNone())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[LevelManagerSubsystem] Tried to open level with invalid name."));
+		return;
 	}
+
+	UGameplayStatics::OpenLevel(GetWorld(), LevelName);
+	CurrentLevelName = LevelName;
+}
+
+void US_LevelManager::OpenLevelWithLoading(FName LevelName, bool bShowLoadingScreen)
+{
+	if (LevelName.IsNone())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[LevelManagerSubsystem] Tried to open level with invalid name."));
+		return;
+	}
+
+	LastLevelName = LevelName;
+	UGameplayStatics::OpenLevel(GetWorld(), FName("LoadingScreen"));
+}
+
+void US_LevelManager::OpenLastLevel()
+{
+	if (LastLevelName.IsNone())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[LevelManagerSubsystem] Tried to open level with invalid name."));
+		return;
+
+	}
+
+	const FName Target = LastLevelName;
+	LastLevelName = NAME_None;                
+	UGameplayStatics::OpenLevel(GetWorld(), Target);
 }
 
 bool US_LevelManager::IsCurrentLevel(FName LevelName) const

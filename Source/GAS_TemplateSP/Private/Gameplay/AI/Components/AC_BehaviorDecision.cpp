@@ -21,6 +21,11 @@ UAC_BehaviorDecision::UAC_BehaviorDecision()
 void UAC_BehaviorDecision::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void UAC_BehaviorDecision::OnHeroSpawned(const FHeroSpawnData& HeroSpawnData)
+{
+	Super::OnHeroSpawned(HeroSpawnData);
 
     checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 

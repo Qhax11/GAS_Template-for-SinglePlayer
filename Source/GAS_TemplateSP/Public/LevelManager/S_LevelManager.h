@@ -20,7 +20,13 @@ public:
 	void HandlePostLoadMap(UWorld* LoadedWorld);
 
 	UFUNCTION(BlueprintCallable)
-	void OpenLevelByName(FName LevelName);
+	void OpenLevel(FName LevelName);
+
+	UFUNCTION(BlueprintCallable)
+	void OpenLevelWithLoading(FName LevelName, bool bShowLoadingScreen);
+
+	UFUNCTION(BlueprintCallable)
+	void OpenLastLevel();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCurrentLevel(FName LevelName) const;
@@ -36,4 +42,7 @@ protected:
 
 	UPROPERTY()
 	FName CurrentLevelName;
+
+	UPROPERTY()
+	FName LastLevelName;
 };

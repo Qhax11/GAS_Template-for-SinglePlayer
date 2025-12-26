@@ -34,6 +34,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void OnHeroSpawned(const FHeroSpawnData& HeroSpawnData) override;
+
 	UFUNCTION()
 	void OnTargetDetected(AActor* DetectedTarget);
 

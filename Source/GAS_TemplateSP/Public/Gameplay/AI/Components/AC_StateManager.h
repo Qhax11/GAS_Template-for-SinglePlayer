@@ -23,6 +23,8 @@ public:
 	void StopLogic();
 
 protected:
+	virtual void OnHeroSpawned(const FHeroSpawnData& HeroSpawnData) override;
+
 	UFUNCTION()
 	void OnAbilitySetGiven(const AActor* OwnerActor);
 

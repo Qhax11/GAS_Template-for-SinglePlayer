@@ -16,6 +16,18 @@ void UAC_AIControllerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+    if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
+    {
+        SpawnDelegatesSubsystem->OnHeroSpawn.AddDynamic(this, &UAC_AIControllerBase::OnHeroSpawned);
+    }
+}
+
+void UAC_AIControllerBase::OnHeroSpawned(const FHeroSpawnData& HeroSpawnData)
+{
+    checkf(HeroSpawnData.Character, TEXT(" HeroSpawnData.Character is null in %s"), *GetClass()->GetName());
+    HeroBase = Cast<AGAS_HeroBase>(HeroSpawnData.Character);
+    checkf(HeroBase, TEXT("HeroBase is null in %s"), *GetClass()->GetName());
+
     OwnerController = Cast<AAIControllerBase>(GetOwner());
     checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 
@@ -24,10 +36,6 @@ void UAC_AIControllerBase::BeginPlay()
 
     OwnerEnemyASC = Cast<UGAS_AbilitySystemComponent>(OwnerEnemyBase->GetAbilitySystemComponent());
     checkf(OwnerEnemyASC, TEXT("OwnerEnemyASC is null in %s"), *GetClass()->GetName());
-
-    ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-    HeroBase = Cast<AGAS_HeroBase>(PlayerCharacter);
-    checkf(HeroBase, TEXT("HeroBase is null in %s"), *GetClass()->GetName());
 }
 
 

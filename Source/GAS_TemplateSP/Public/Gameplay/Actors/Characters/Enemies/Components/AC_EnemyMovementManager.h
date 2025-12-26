@@ -91,7 +91,6 @@ public:
 	}
 };
 
-class UAC_HeroMovementListener;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAS_TEMPLATESP_API UAC_EnemyMovementManager : public UAC_EnemyBase
@@ -102,6 +101,8 @@ protected:
 	UAC_EnemyMovementManager();
 
 	virtual void BeginPlay() override;
+
+	virtual void OnHeroSpawned(const FHeroSpawnData& HeroSpawnData) override;
 
 public:
 	/*===============  PUBLIC API ===============*/
@@ -147,9 +148,6 @@ private:
 
 	void BroadcastChainEnd(UMovementChainData* EndChain, EMovementChainResult Result);
 
-	/*===============  STATE ===============*/
-	UPROPERTY()
-	UAC_HeroMovementListener* HeroMovementListener;
 
 	// For now, it's dodge.
 	UPROPERTY()

@@ -20,6 +20,11 @@ UAC_IntendHandlerBase::UAC_IntendHandlerBase()
 void UAC_IntendHandlerBase::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void UAC_IntendHandlerBase::OnHeroSpawned(const FHeroSpawnData& HeroSpawnData)
+{
+	Super::OnHeroSpawned(HeroSpawnData);
 
 	checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 	checkf(OwnerEnemyBase, TEXT("OwnerEnemyBase is null in %s"), *GetClass()->GetName());

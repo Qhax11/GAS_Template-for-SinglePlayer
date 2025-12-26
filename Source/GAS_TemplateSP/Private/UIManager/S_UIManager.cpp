@@ -41,11 +41,6 @@ void US_UIManager::Initialize(FSubsystemCollectionBase& Collection)
 	SpawnDelegatesSubsystem->OnPlayerControllerSpawn.AddDynamic(this, &US_UIManager::OnPlayerControllerSpawn);
 }
 
-void US_UIManager::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
-{
-	ESCMenuWidget = nullptr;
-}
-
 void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
 {
 	PlayerController = PC;
@@ -256,5 +251,9 @@ void US_UIManager::CloseMenu(UUserWidget* WidgetToClose, const FWidgetData& Widg
 	SetPause(false);
 }
 
+void US_UIManager::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
+{
+	ESCMenuWidget = nullptr;
+}
 
 

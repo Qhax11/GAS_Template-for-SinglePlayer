@@ -50,5 +50,5 @@ public:
 
 	UPROPERTY(Config, EditDefaultsOnly, Category = "UI")
 	FWidgetData SettingsMenu;
-	
+
 };

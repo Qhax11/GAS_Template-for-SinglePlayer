@@ -24,6 +24,11 @@ UAC_StateManager::UAC_StateManager()
 void UAC_StateManager::BeginPlay()
 {
 	Super::BeginPlay();
+} 
+
+void UAC_StateManager::OnHeroSpawned(const FHeroSpawnData& HeroSpawnData)
+{
+	Super::OnHeroSpawned(HeroSpawnData);
 
 	if (!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase)
 	{
@@ -46,7 +51,7 @@ void UAC_StateManager::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("State: Manager: EnemyTagDelegatesComponent is null in: %s !"), *GetName());
 		return;
 	}
-} 
+}
 
 void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
 {

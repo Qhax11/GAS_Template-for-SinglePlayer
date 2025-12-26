@@ -2,6 +2,7 @@
 
 
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyBase.h"
+#include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroMovementListener.h"
 #include "Gameplay/Actors/Characters/Enemies/GAS_EnemyBase.h"
 #include "Gameplay/Components/GAS_AbilitySystemComponent.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
@@ -15,6 +16,14 @@ void UAC_EnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
+	{
+		SpawnDelegatesSubsystem->OnHeroSpawn.AddDynamic(this, &UAC_EnemyBase::OnHeroSpawned);
+	}
+}
+
+void UAC_EnemyBase::OnHeroSpawned(const FHeroSpawnData& HeroSpawnData)
+{
 	OwnerEnemy = Cast<AGAS_EnemyBase>(GetOwner());
 	if (!OwnerEnemy)
 	{
@@ -30,11 +39,16 @@ void UAC_EnemyBase::BeginPlay()
 	}
 
 	OwnerController = Cast<AAIControllerBase>(OwnerEnemy->GetController());
-    if (!OwnerController)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
-        return;
-    }
+	if (!OwnerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
+		return;
+	}
+
+	check(HeroSpawnData.Character);
+
+	Hero = Cast<AGAS_HeroBase>(HeroSpawnData.Character);
+	checkf(Hero, TEXT("Hero is null in %s"), *GetClass()->GetName());
 }
 
 void UAC_EnemyBase::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

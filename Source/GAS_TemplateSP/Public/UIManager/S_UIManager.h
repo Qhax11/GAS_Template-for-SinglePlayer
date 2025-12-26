@@ -15,10 +15,17 @@ class GAS_TEMPLATESP_API US_UIManager : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
-	void OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources);
+	UFUNCTION()
+	void HandleLoadingScreenRequest(bool bShow);
 
 	UFUNCTION()
 	void OnPlayerControllerSpawn(APlayerController* PC);
+
+	void ShowLoadingScreen();
+
+	void HideLoadingScreen();
+
+	void TryCreateLevelWidget();
 
 	UFUNCTION(BlueprintCallable)
 	UUserWidget* CreateAndShowWidget(const FWidgetData& WidgetData, APlayerController* PC = nullptr);
@@ -45,16 +52,29 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleESCMenu(); 
 
+	void OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources);
+
 protected:
 	void OpenMenu(UUserWidget* WidgetToOpen, const FWidgetData& WidgetData);
 
 	void CloseMenu(UUserWidget* WidgetToClose, const FWidgetData& WidgetData);
 
-	UUserWidget* ESCMenuWidget;
+	UPROPERTY()
+	UUserWidget* ESCMenuWidget = nullptr;
 
 private:
+	UPROPERTY()
 	class US_LevelManager* LevelManager;
+
+	UPROPERTY()
 	APlayerController* PlayerController;
+
+	UPROPERTY()
 	const class UDS_UIManager* UIManagerSettings;
 
+	UPROPERTY()
+	UUserWidget* LoadingScreenWidget = nullptr;
+
+	bool bIsLevelLoaded = false;
+	bool bIsPlayerControllerReady = false;
 };

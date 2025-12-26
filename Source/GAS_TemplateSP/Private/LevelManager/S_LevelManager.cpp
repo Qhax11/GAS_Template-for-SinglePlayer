@@ -17,15 +17,17 @@ void US_LevelManager::Initialize(FSubsystemCollectionBase& Collection)
 		return;
 	}
 	
+	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &US_LevelManager::HandlePreLoadMap);
 	// Bind to world load complete
 	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &US_LevelManager::HandlePostLoadMap);
 }
 
-void US_LevelManager::Deinitialize()
+void US_LevelManager::HandlePreLoadMap(const FString& MapName)
 {
-	Super::Deinitialize();
-
-	FCoreUObjectDelegates::PostLoadMapWithWorld.RemoveAll(this);
+	if (bAllowLoadingScreen)
+	{
+		OnLoadingScreenRequest.Broadcast(true);
+	}
 }
 
 void US_LevelManager::HandlePostLoadMap(UWorld* LoadedWorld)
@@ -39,10 +41,15 @@ void US_LevelManager::HandlePostLoadMap(UWorld* LoadedWorld)
 	FName CleanLevelName = GetCleanLevelName();
 	OnLevelChanged.Broadcast(CleanLevelName);
 
-	UE_LOG(LogTemp, Warning, TEXT("Broadcasted loaded level: %s"), *CleanLevelName.ToString());
+	OnLevelChanged.Broadcast(GetCleanLevelName());
+
+	if (bAllowLoadingScreen)
+	{
+		OnLoadingScreenRequest.Broadcast(false);
+	}
 }
 
-void US_LevelManager::OpenLevelByName(FName LevelName)
+void US_LevelManager::OpenLevelByName(FName LevelName, bool bShowLoadingScreen)
 {
 	if (!LevelName.IsNone())
 	{
@@ -85,3 +92,10 @@ FName US_LevelManager::GetCleanLevelName() const
 	return FName(MapName);
 }
 
+void US_LevelManager::Deinitialize()
+{
+	Super::Deinitialize();
+
+	FCoreUObjectDelegates::PreLoadMap.RemoveAll(this);
+	FCoreUObjectDelegates::PostLoadMapWithWorld.RemoveAll(this);
+}

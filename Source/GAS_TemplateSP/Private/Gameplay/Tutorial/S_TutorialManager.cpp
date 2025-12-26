@@ -295,6 +295,6 @@ void US_TutorialManager::OnTutorialCompleted()
 {
     if (US_LevelManager* LevelManagerSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_LevelManager>())
     {
-        LevelManagerSubsystem->OpenLevelByName(FName("MainMenu"));
+        LevelManagerSubsystem->OpenLevelByName(FName("MainMenu"), false);
     }
 }

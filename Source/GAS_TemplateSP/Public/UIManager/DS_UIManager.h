@@ -51,4 +51,6 @@ public:
 	UPROPERTY(Config, EditDefaultsOnly, Category = "UI")
 	FWidgetData SettingsMenu;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	FWidgetData LoadingScreen; 
 };

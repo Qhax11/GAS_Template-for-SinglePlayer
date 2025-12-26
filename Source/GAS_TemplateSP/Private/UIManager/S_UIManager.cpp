@@ -37,27 +37,102 @@ void US_UIManager::Initialize(FSubsystemCollectionBase& Collection)
 		return;
 	}
 
+	LevelManager->OnLoadingScreenRequest.AddDynamic(this, &US_UIManager::HandleLoadingScreenRequest);
 	FWorldDelegates::OnWorldCleanup.AddUObject(this, &US_UIManager::OnWorldCleanup);
 	SpawnDelegatesSubsystem->OnPlayerControllerSpawn.AddDynamic(this, &US_UIManager::OnPlayerControllerSpawn);
 }
 
-void US_UIManager::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
+void US_UIManager::HandleLoadingScreenRequest(bool bShow)
 {
-	ESCMenuWidget = nullptr;
+	if (bShow)
+	{
+		bIsLevelLoaded = false;
+		ShowLoadingScreen();
+	}
+	else
+	{
+		bIsLevelLoaded = true;
+		HideLoadingScreen();
+		TryCreateLevelWidget();
+	}
+}
+
+void US_UIManager::ShowLoadingScreen()
+{
+	if (!UIManagerSettings)
+	{
+		return;
+	}
+
+	const FWidgetData& Data = UIManagerSettings->LoadingScreen;
+	if (Data.WidgetClass.IsNull())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LoadingScreen WidgetClass is null"));
+		return;
+	}
+
+	if (!Data.WidgetClass.IsValid())
+	{
+		Data.WidgetClass.LoadSynchronous();
+	}
+
+	LoadingScreenWidget = CreateWidget<UUserWidget>(GetWorld(), Data.WidgetClass.Get());
+	if (!LoadingScreenWidget)
+	{
+		return;
+	}
+
+	ApplyWidgetContextInputSettings(PlayerController, Data.Context, LoadingScreenWidget);
+	ApplyPauseBehavior(Data.PauseBehavior);
+
+	LoadingScreenWidget->AddToViewport(999);
+}
+
+void US_UIManager::HideLoadingScreen()
+{
+	if (!LoadingScreenWidget)
+	{
+		return;
+	}
+
+	LoadingScreenWidget->RemoveFromParent();
+	LoadingScreenWidget = nullptr;
 }
 
 void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
 {
-	PlayerController = PC;
-
-	if (UIManagerSettings->LevelToWidgetMap.Contains(LevelManager->GetCleanLevelName()))
+	if (!PC) 
 	{
-		if (const FWidgetData* WidgetData = UIManagerSettings->LevelToWidgetMap.Find(LevelManager->GetCleanLevelName()))
-		{
-			CreateAndShowWidget(*WidgetData, PC);
-			UE_LOG(LogTemp, Warning, TEXT("Found widget class for map!"));
-		}
+		UE_LOG(LogTemp, Warning, TEXT("US_UIManager: PC is null"));
+		return;
 	}
+
+	PlayerController = PC;
+	bIsPlayerControllerReady = true;
+
+	TryCreateLevelWidget();
+}
+
+void US_UIManager::TryCreateLevelWidget()
+{
+	if (!UIManagerSettings)
+	{
+		return;
+	}
+
+	const FName LevelName = LevelManager->GetCleanLevelName();
+	if (!UIManagerSettings->LevelToWidgetMap.Contains(LevelName))
+	{
+		return;
+	}
+
+	const FWidgetData* WidgetData =UIManagerSettings->LevelToWidgetMap.Find(LevelName);
+	if (!WidgetData)
+	{
+		return;
+	}
+
+	CreateAndShowWidget(*WidgetData, PlayerController);
 }
 
 UUserWidget* US_UIManager::CreateAndShowWidget(const FWidgetData& WidgetData, APlayerController* PC)
@@ -256,5 +331,11 @@ void US_UIManager::CloseMenu(UUserWidget* WidgetToClose, const FWidgetData& Widg
 	SetPause(false);
 }
 
-
+void US_UIManager::OnWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
+{
+	ESCMenuWidget = nullptr;
+	LoadingScreenWidget = nullptr;
+	bIsLevelLoaded = false;
+	bIsPlayerControllerReady = false;
+}
 

@@ -43,9 +43,21 @@ void US_UIManager::Initialize(FSubsystemCollectionBase& Collection)
 
 void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
 {
-	if (!PC || !LevelManager) return;
-
 	PlayerController = PC;
+
+
+	// 1?? STARTUP LOADING VAR MI?
+	if (LevelManager && LevelManager->bShowStartupLoading)
+	{
+		CreateAndShowWidget(UIManagerSettings->LoadingScreen, PC);
+
+		// input tamamen kilit
+		SetInputModeUIOnly(PC, nullptr);
+		SetCursorVisible(PC, false);
+
+		// flag’i temizle (bir kere olsun)
+		LevelManager->bShowStartupLoading = false;
+	}
 
 	if (UIManagerSettings->LevelToWidgetMap.Contains(LevelManager->GetCleanLevelName()))
 	{
@@ -54,13 +66,6 @@ void US_UIManager::OnPlayerControllerSpawn(APlayerController* PC)
 			CreateAndShowWidget(*WidgetData, PC);
 			UE_LOG(LogTemp, Warning, TEXT("Found widget class for map!"));
 		}
-	}
-
-	// Loading Screen (optinal)
-	if (LevelManager->bShowStartupLoading)
-	{
-		CreateAndShowWidget(UIManagerSettings->LoadingScreen, PC);
-		LevelManager->bShowStartupLoading = false;
 	}
 }
 

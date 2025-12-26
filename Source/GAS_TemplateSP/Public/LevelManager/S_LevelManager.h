@@ -20,13 +20,7 @@ public:
 	void HandlePostLoadMap(UWorld* LoadedWorld);
 
 	UFUNCTION(BlueprintCallable)
-	void OpenLevel(FName LevelName);
-
-	UFUNCTION(BlueprintCallable)
-	void OpenLevelWithLoading(FName LevelName, bool bShowLoadingScreen);
-
-	UFUNCTION(BlueprintCallable)
-	void OpenLastLevel();
+	void OpenLevel(FName LevelName, bool bShowLoadingScreen);
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCurrentLevel(FName LevelName) const;
@@ -36,6 +30,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnLevelChanged OnLevelChanged;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bShowStartupLoading = false;
 
 protected:
 	const class UDS_LevelManager* LevelManagerSettings;

@@ -18,8 +18,6 @@ class GAS_TEMPLATESP_API AGAS_CharacterBase : public ACharacter, public IAbility
 public:
 	AGAS_CharacterBase(const class FObjectInitializer& ObjectInitializer);
 
-	virtual void BeginPlay() override;
-
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	FORCEINLINE class UAC_AbilitySet* GetAbilitySetComponent() const { return AbilitySetComponent; }
@@ -34,6 +32,10 @@ public:
 	FORCEINLINE UMotionWarpingComponent* GetMotionWarpingComponent() const { return MotionWarpingComp; }
 
 protected:
+	virtual void BeginPlay() override;
+
+	virtual void BrodcastCharacterSpawn();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	UGAS_AbilitySystemComponent* CharacterASC;
 

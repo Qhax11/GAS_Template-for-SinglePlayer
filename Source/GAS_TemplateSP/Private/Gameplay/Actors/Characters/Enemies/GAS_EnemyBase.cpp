@@ -8,6 +8,7 @@
 #include "Gameplay/Actors/Characters/Enemies/Components/AC_PatrolHandler.h"
 #include "Gameplay/Actors/Characters/Enemies/Components/Listener/AC_EnemyTagListener.h"
 #include "Gameplay/AI/Controllers/AIControllerBase.h"
+#include "Gameplay/Components/AC_AbilitySet.h"
 
 
 AGAS_EnemyBase::AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer):
@@ -42,7 +43,10 @@ void AGAS_EnemyBase::PossessedBy(AController* NewController)
 		UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
 		return;
 	}
+}
 
+void AGAS_EnemyBase::BrodcastCharacterSpawn()
+{
 	if (US_SpawnDelegates* SpawnDelegatesSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<US_SpawnDelegates>())
 	{
 		FEnemySpawnData EnemySpawnData = FEnemySpawnData(this, GetAbilitySystemComponent());

@@ -30,43 +30,34 @@ void UAC_StateManager::OnHeroSpawned(const FHeroSpawnData& HeroSpawnData)
 {
 	Super::OnHeroSpawned(HeroSpawnData);
 
-	if (!OwnerController || !OwnerEnemyBase || !OwnerEnemyASC || !HeroBase)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: Some owner variables are missing in: %s !"), *GetName());
-		return;
-	}
+	checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
+	checkf(OwnerEnemyBase, TEXT("OwnerEnemyBase is null in %s"), *GetClass()->GetName());
+	checkf(OwnerEnemyASC, TEXT("OwnerEnemyASC is null in %s"), *GetClass()->GetName());
+	checkf(HeroBase, TEXT("HeroBase is null in %s"), *GetClass()->GetName());
+	checkf(HeroASC, TEXT("HeroASC is null in %s"), *GetClass()->GetName());
 
-	OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
+	//OwnerEnemyBase->GetAbilitySetComponent()->OnAbilitySetGiven.AddDynamic(this, &UAC_StateManager::OnAbilitySetGiven);
 
 	BehaviorDecisionComponent = OwnerController->GetBehaviorDecisionComponent();
-	if (!BehaviorDecisionComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: BehaviorDecisionComponent is null in: %s"), *GetName());
-		return;
-	}
+	checkf(BehaviorDecisionComponent, TEXT("BehaviorDecisionComponent is null in %s"), *GetClass()->GetName());
 
 	EnemyTagDelegatesComponent = OwnerEnemyBase->GetTagDelegatesComponent();
-	if (!EnemyTagDelegatesComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: EnemyTagDelegatesComponent is null in: %s !"), *GetName());
-		return;
-	}
-}
+	checkf(EnemyTagDelegatesComponent, TEXT("EnemyTagDelegatesComponent is null in %s"), *GetClass()->GetName());
 
-void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
-{
 	CreateStates();
 	StartLogic();
 }
 
+void UAC_StateManager::OnAbilitySetGiven(const AActor* OwnerActor)
+{
+	/*
+	CreateStates();
+	StartLogic();
+	*/
+}
+
 void UAC_StateManager::CreateStates()
 {
-	UGAS_AbilitySystemComponent* TargetASC = nullptr;
-	if (OwnerController->GetTargetHero())
-	{
-		TargetASC = Cast<UGAS_AbilitySystemComponent>(OwnerController->GetTargetHero()->GetAbilitySystemComponent());
-	}
-
 	FStateInitParams StateInitParams;
 	StateInitParams.Enemy = OwnerEnemyBase;
 	StateInitParams.EnemyController = OwnerController;
@@ -74,7 +65,7 @@ void UAC_StateManager::CreateStates()
 	StateInitParams.EnemyTagDelegatesComp = EnemyTagDelegatesComponent;
 	StateInitParams.BehaviorDecisionComponent = BehaviorDecisionComponent;
 	StateInitParams.HeroTarget = OwnerController->GetTargetActor();
-	StateInitParams.HeroTargetASC = TargetASC;
+	StateInitParams.HeroTargetASC = HeroASC;
 	StateInitParams.StateManager = this;
 	StateInitParams.MovementManager = OwnerEnemyBase->GetEnemyMovementManagerComponent();
 

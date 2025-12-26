@@ -60,6 +60,13 @@ void AGAS_CharacterBase::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Weapon socket '%s' not found or WeaponChildComponent is null on %s"), *WeaponSocketName.ToString(), *GetName());
 	}
+
+	BrodcastCharacterSpawn();
+}
+
+void AGAS_CharacterBase::BrodcastCharacterSpawn()
+{
+	// Implementation will be in child classes
 }
 
 UAbilitySystemComponent* AGAS_CharacterBase::GetAbilitySystemComponent() const

@@ -28,6 +28,9 @@ void UAC_AIControllerBase::OnHeroSpawned(const FHeroSpawnData& HeroSpawnData)
     HeroBase = Cast<AGAS_HeroBase>(HeroSpawnData.Character);
     checkf(HeroBase, TEXT("HeroBase is null in %s"), *GetClass()->GetName());
 
+    HeroASC = Cast<UGAS_AbilitySystemComponent>(HeroBase->GetAbilitySystemComponent());
+    checkf(HeroASC, TEXT("HeroASC is null in %s"), *GetClass()->GetName());
+
     OwnerController = Cast<AAIControllerBase>(GetOwner());
     checkf(OwnerController, TEXT("OwnerController is null in %s"), *GetClass()->GetName());
 

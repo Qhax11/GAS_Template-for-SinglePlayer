@@ -16,6 +16,7 @@
 #include "Gameplay/Actors/Characters/Heroes/Components/Listener/AC_HeroEnemyAttackListener.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAbilityBuffer.h"
 #include "Gameplay/Actors/Characters/Heroes/Components/AC_HeroAimAssist.h"
+#include "Gameplay/Components/AC_AbilitySet.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 

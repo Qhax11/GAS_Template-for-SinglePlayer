@@ -17,11 +17,6 @@ class GAS_TEMPLATESP_API AGAS_HeroBase : public AGAS_CharacterBase
 public:
 	AGAS_HeroBase(const class FObjectInitializer& ObjectInitializer);
 
-	virtual void BeginPlay() override;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UInputMappingContext* HeroInputMappingContext;
-
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
@@ -41,6 +36,13 @@ public:
 	FORCEINLINE class APlayerController* GetPlayerController() const { return Cast<APlayerController>(GetController()); }
 
 protected:
+	virtual void BeginPlay() override;
+
+	virtual void BrodcastCharacterSpawn();
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputMappingContext* HeroInputMappingContext;
+
 	//* Components *//
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Hero|Components|Camera")
 	class USpringArmComponent* CameraBoom;

@@ -27,7 +27,6 @@ class AGAS_EnemyBase;
 class UGAS_AbilitySystemComponent;
 class AGAS_HeroBase;
 
-
 UCLASS(Abstract, ClassGroup=(Custom))
 class GAS_TEMPLATESP_API UAC_AIControllerBase : public UActorComponent
 {
@@ -53,5 +52,8 @@ protected:
 
 	UPROPERTY()
 	AGAS_HeroBase* HeroBase;
+
+	UPROPERTY()
+	UGAS_AbilitySystemComponent* HeroASC;
 
 };

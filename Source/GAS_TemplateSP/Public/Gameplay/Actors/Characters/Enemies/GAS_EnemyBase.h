@@ -14,10 +14,6 @@ class GAS_TEMPLATESP_API AGAS_EnemyBase : public AGAS_CharacterBase
 public:
 	AGAS_EnemyBase(const class FObjectInitializer& ObjectInitializer);
 	
-	virtual void BeginPlay() override;
-
-	virtual void PossessedBy(AController* NewController) override;
-
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class AAIControllerBase* GetEnemyController() const { return EnemyController; }
 
@@ -34,6 +30,12 @@ public:
 	FORCEINLINE class UAC_PatrolHandler* GetPatrolHandlerComponent() const { return PatrolHandlerComponent; }
 
 protected:
+	virtual void BeginPlay() override;
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void BrodcastCharacterSpawn() override;
+
 	//* Components *//
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
 	class UAC_EnemyRespawn* EnemyRespawnComponent;

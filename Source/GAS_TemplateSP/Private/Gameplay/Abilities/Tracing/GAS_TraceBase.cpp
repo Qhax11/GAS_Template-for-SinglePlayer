@@ -6,6 +6,54 @@
 #include "Kismet/KismetSystemLibrary.h"
 
 
+void UGAS_TraceBase::CreateTrace(const UWorld* World, AActor* Owner, TArray<AActor*>& OutActors)
+{
+	FVector StartLocation;
+	FVector EndLocation;
+	FRotator Direction;
+
+	// StartLocation and Direction
+	if (TraceStartLocation == ETraceStartLocation::Camera)
+	{
+		if (AGAS_HeroBase* HeroBase = Cast<AGAS_HeroBase>(Owner))
+		{
+			const FVector CameraLoc = HeroBase->GetFollowCamera()->GetComponentLocation();
+			const FVector CameraForward = HeroBase->GetFollowCamera()->GetForwardVector();
+
+			StartLocation = CameraLoc + CameraForward * StartLocationForwardOffset;
+
+			if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
+			{
+				Direction = CameraForward.Rotation();
+			}
+		}
+	}
+	else if (TraceStartLocation == ETraceStartLocation::Avatar)
+	{
+		StartLocation = Owner->GetActorLocation();
+
+		if (TraceDirectionType == ETraceDirectionType::ForwardDirection)
+		{
+			Direction = Owner->GetActorForwardVector().Rotation();
+		}
+	}
+
+	// EndLocation
+	if (TraceEndLocation == ETraceEndLocation::ForwardVector)
+	{
+		EndLocation = StartLocation + Direction.Vector() * TraceDistance;
+	}
+
+	// Final TraceRequest
+	FTraceRequest TraceRequest;
+	TraceRequest.StartLocation = StartLocation;
+	TraceRequest.EndLocation = EndLocation;
+	TraceRequest.Direction = Direction;
+
+	// Perform trace
+	MakeTrace(Owner, World, TraceRequest, OutActors);
+}
+
 void UGAS_TraceBase::CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors, const FTraceRequest& TraceRequests)
 {
 	FVector StartLocation;

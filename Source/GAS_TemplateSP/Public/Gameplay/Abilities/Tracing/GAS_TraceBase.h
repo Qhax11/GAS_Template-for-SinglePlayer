@@ -57,6 +57,8 @@ protected:
 	const AActor* OwnerActor = nullptr;
 
 public:
+	void CreateTrace(const UWorld* World, AActor* Owner, TArray<AActor*>& OutActors);
+
 	void CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<AActor*>& OutActors, const FTraceRequest& TraceRequest = FTraceRequest());
 
 	void CreateTraceWithTeamFilter(const UWorld* World, AActor* Owner, ETeamAttitude::Type TeamAttidue, TArray<FHitResult>& HitResults, const FTraceRequest& TraceRequest = FTraceRequest());

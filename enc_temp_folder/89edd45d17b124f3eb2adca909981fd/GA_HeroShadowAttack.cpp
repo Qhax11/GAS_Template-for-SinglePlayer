@@ -51,8 +51,8 @@ void UGA_HeroShadowAttack::OnTargetActorConfirm(const FGAS_TargetActorData& Targ
         return;
     }
 
-    //GetAvatarActorFromActorInfo()->SetActorLocation(HeroShadowTargetActor->GetActorLocation());
-    //GetAvatarActorFromActorInfo()->SetActorRotation(HeroShadowTargetActor->GetActorRotation());
+    GetAvatarActorFromActorInfo()->SetActorLocation(HeroShadowTargetActor->GetActorLocation());
+    GetAvatarActorFromActorInfo()->SetActorRotation(HeroShadowTargetActor->GetActorRotation());
 
     // Temporarily remove the targeting state tag to prevent HeroComboManager from responding to input while this ability is active.
     // The tag will be re-applied automatically when the ability ends, but we need it removed earlier for proper input blocking.

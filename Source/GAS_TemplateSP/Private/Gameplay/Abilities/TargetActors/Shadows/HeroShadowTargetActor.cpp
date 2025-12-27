@@ -94,6 +94,11 @@ void AHeroShadowTargetActor::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* O
 
 	bIsTargetInRange = true;
 
+	if (!TargetLockSystemComponent) 
+	{
+		return;
+	}
+
 	if (TargetLockSystemComponent->CurrentTarget)
 	{
 		if (TargetLockSystemComponent->CurrentTarget == OtherActor) 
@@ -136,6 +141,11 @@ void AHeroShadowTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* Ove
 	if (SkeletalMesh->bPauseAnims)
 	{
 		SkeletalMesh->bPauseAnims = false;
+	}
+
+	if (!TargetLockSystemComponent) 
+	{
+		return;
 	}
 
 	if (TargetLockSystemComponent->CurrentTarget) 

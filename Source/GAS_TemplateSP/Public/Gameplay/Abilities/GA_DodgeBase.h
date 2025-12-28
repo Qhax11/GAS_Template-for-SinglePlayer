@@ -74,8 +74,6 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	virtual FVector CalculateMotionWarpingLocation() const override;
-
 	UFUNCTION()
 	void RemoveDamageImmuneTag();
 

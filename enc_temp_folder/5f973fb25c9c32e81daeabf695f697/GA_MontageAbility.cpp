@@ -97,70 +97,23 @@ bool UGA_MontageAbility::TryBuildWarpTarget(FVector& OutLocation, FRotator& OutR
 	{
 		OutLocation = CustomTargetLocation;
 		OutRotation = CustomTargetRotation;
-		return true;
 	}
 	else if (WarpTargetMode == EWarpTargetMode::Directional) 
 	{
-		OutLocation = CalculateDirectionalWarpLocation();
-		return true;
+		TryCalculateReachLocationToTarget(OutLocation);
 	}
 	else if (WarpTargetMode == EWarpTargetMode::TargetReach)
 	{
-		TryCalculateReachLocationToTarget(OutLocation);
+		OutLocation = CalculateDirectionalWarpLocation();
+		if (OutLocation.IsNearlyZero())
+		{
+			return false;
+		}
 	}
 
 	return false;
 }
 
-FVector UGA_MontageAbility::CalculateDirectionalWarpLocation() const
-{
-	const AActor* Avatar = GetAvatarActorFromActorInfo();
-	if (!Avatar)
-	{
-		return FVector::ZeroVector;
-	}
-
-	const FVector OwnerLocation = Avatar->GetActorLocation();
-	const FVector Forward = Avatar->GetActorForwardVector();
-	const FVector Right = Avatar->GetActorRightVector();
-
-	FVector DesiredDirection;
-
-	if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Forward)
-	{
-		DesiredDirection = Forward;
-	}
-	if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardLeft)
-	{
-		DesiredDirection = (Forward - Right).GetSafeNormal();
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardRight)
-	{
-		DesiredDirection = (Forward + Right).GetSafeNormal();
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Backward) 
-	{
-		DesiredDirection = -Forward;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardLeft)
-	{
-		DesiredDirection = (-Forward - Right).GetSafeNormal();
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardRight)
-	{
-		DesiredDirection = (-Forward + Right).GetSafeNormal();
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Left)
-	{
-		DesiredDirection = -Right;
-	}
-	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Right)
-	{
-		DesiredDirection = Right;
-	}
-
-	return OwnerLocation + DesiredDirection * MotionWarpingDistance;
-}
 
 bool UGA_MontageAbility::TryCalculateReachLocationToTarget(FVector& OutTargetLocation) const
 {
@@ -183,11 +136,44 @@ bool UGA_MontageAbility::TryCalculateReachLocationToTarget(FVector& OutTargetLoc
 
 	if (Distance > TargetReachDistance)
 	{
-		OutTargetLocation = Target->GetActorLocation() - ToTarget.GetSafeNormal() * TargetReachDistance;
+		OutTargetLocation = Target->GetActorLocation() -
+			ToTarget.GetSafeNormal() * TargetReachDistance;
 		return true;
 	}
 
 	return false;
+}
+
+FVector UGA_MontageAbility::CalculateDirectionalWarpLocation() const
+{
+	const AActor* Avatar = GetAvatarActorFromActorInfo();
+	if (!Avatar)
+	{
+		return FVector::ZeroVector;
+	}
+
+	const FVector OwnerLocation = Avatar->GetActorLocation();
+	const FVector Forward = Avatar->GetActorForwardVector();
+	const FVector Right = Avatar->GetActorRightVector();
+
+	FVector Direction = Forward;
+
+	if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardLeft)
+		Direction = (Forward - Right).GetSafeNormal();
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_ForwardRight)
+		Direction = (Forward + Right).GetSafeNormal();
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Backward)
+		Direction = -Forward;
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardLeft)
+		Direction = (-Forward - Right).GetSafeNormal();
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_BackwardRight)
+		Direction = (-Forward + Right).GetSafeNormal();
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Left)
+		Direction = -Right;
+	else if (DirectionTag == GAS_Tags::TAG_Gameplay_Direction_Right)
+		Direction = Right;
+
+	return OwnerLocation + Direction * MotionWarpingDistance;
 }
 
 AActor* UGA_MontageAbility::GetCurrentTargetActor() const

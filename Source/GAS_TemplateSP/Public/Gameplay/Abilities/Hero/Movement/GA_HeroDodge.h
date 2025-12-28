@@ -22,7 +22,7 @@ public:
 
     FGameplayTag GetDirectionTagFromInput(const FVector2D& Input) const;
 
-    virtual FVector CalculateMotionWarpingLocation() const override;
+    virtual FVector CalculateDirectionalWarpLocation() const override;
 
     UFUNCTION(BlueprintImplementableEvent)
     void OnPerfectDodgeReceivedBP();

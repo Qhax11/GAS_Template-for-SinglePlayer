@@ -45,9 +45,9 @@ public:
 
 	bool TryBuildWarpTarget(FVector& OutLocation, FRotator& OutRotation);
 
-	virtual FVector CalculateDirectionalWarpLocation() const;
-
 	bool TryCalculateReachLocationToTarget(FVector& OutTargetLocation) const;
+
+	virtual FVector CalculateDirectionalWarpLocation() const;
 
 	AActor* GetCurrentTargetActor() const;
 
@@ -101,7 +101,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
 	FName MotionWarpingName = NAME_None;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
 	EWarpTargetMode WarpTargetMode = EWarpTargetMode::Directional;
 
 	UPROPERTY(EditAnywhere, Category = "Motion Warping", meta = (EditCondition = "bUseCustomLocationAndRotation"))
@@ -110,13 +110,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Motion Warping", meta = (EditCondition = "bUseCustomLocationAndRotation"))
 	FRotator CustomTargetRotation = FRotator::ZeroRotator;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping && !bUseTargetReachDistance"))
 	float MotionWarpingDistance = 150.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
 	float TargetReachDistance = 150.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (Categories = "Gameplay.Direction", EditCondition = "bEnableMotionWarping"))
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (Categories = "Gameplay.Direction"))
 	FGameplayTag DirectionTag = GAS_Tags::TAG_Gameplay_Direction_Forward;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))

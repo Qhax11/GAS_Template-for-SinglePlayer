@@ -170,7 +170,7 @@ FGameplayTag UGA_HeroDodge::GetDirectionTagFromInput(const FVector2D& Input) con
     }
 }
 
-FVector UGA_HeroDodge::CalculateMotionWarpingLocation() const
+FVector UGA_HeroDodge::CalculateDirectionalWarpLocation() const
 {
     if (!HeroBase)
     {
@@ -182,7 +182,7 @@ FVector UGA_HeroDodge::CalculateMotionWarpingLocation() const
         GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
         // Parent class'ın DirectionTag bazlı hesaplamasını kullan
-        return Super::CalculateMotionWarpingLocation();
+        return Super::CalculateDirectionalWarpLocation();
     }
 
     // Target locked değilse input yönüne göre hareket et

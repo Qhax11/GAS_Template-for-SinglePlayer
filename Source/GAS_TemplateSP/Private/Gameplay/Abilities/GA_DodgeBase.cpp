@@ -34,11 +34,6 @@ void UGA_DodgeBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	WaitDelayTask->ReadyForActivation();
 }
 
-FVector UGA_DodgeBase::CalculateMotionWarpingLocation() const
-{
-	return Super::CalculateMotionWarpingLocation();
-}
-
 void UGA_DodgeBase::RemoveDamageImmuneTag()
 {
 	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune, 100);

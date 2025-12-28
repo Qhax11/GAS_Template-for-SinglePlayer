@@ -52,9 +52,5 @@ void UGA_BossDodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-FVector UGA_BossDodge::CalculateMotionWarpingLocation() const
-{
-	return Super::CalculateMotionWarpingLocation();
-}
 
 

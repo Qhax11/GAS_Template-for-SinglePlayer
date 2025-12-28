@@ -14,6 +14,8 @@ UGA_DodgeBase::UGA_DodgeBase()
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead_Finisher);
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Moving_Dodge);
+
+	WarpTargetMode = EWarpTargetMode::Directional;
 }
 
 void UGA_DodgeBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

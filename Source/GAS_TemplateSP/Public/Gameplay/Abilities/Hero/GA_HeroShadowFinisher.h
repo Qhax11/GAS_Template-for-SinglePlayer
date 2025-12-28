@@ -26,6 +26,8 @@ protected:
 
 	virtual void OnTargetActorConfirm(const FGAS_TargetActorData& TargetActorData) override;
 
+	void SetActorLookAtLocationYawOnly(AActor* FinisherTargetActor, const FVector& LookAtWorldLocation);
+
 	UFUNCTION()
 	void OnEnemyTargetVulnerableTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 

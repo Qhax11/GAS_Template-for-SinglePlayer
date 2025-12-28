@@ -121,19 +121,19 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
         return;
     }
 
-    AActor* CurrentTarget = HeroShadowTargetActor->GetCurrentTarget();
-    if (!CurrentTarget)
+    AActor* CurrentFinisherTarget = HeroShadowTargetActor->GetCurrentTarget();
+    if (!CurrentFinisherTarget)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: CurrentTarget is null in %s, cannot initialize ShadowFinisher."), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
 
-    UAbilitySystemComponent* TargetEnemyASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CurrentTarget);
+    UAbilitySystemComponent* TargetEnemyASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CurrentFinisherTarget);
     if (!TargetEnemyASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: TargetEnemyASC is null for actor: %s in %s, cannot initialize ShadowFinisher."),
-            *CurrentTarget->GetName(), *GetName());
+            *CurrentFinisherTarget->GetName(), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
@@ -142,22 +142,34 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
     if (!EnemyASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: Failed to cast ASC to UGAS_AbilitySystemComponent for actor: %s in %s"),
-            *CurrentTarget->GetName(), *GetName());
+            *CurrentFinisherTarget->GetName(), *GetName());
         Super::OnTargetActorConfirm(TargetActorData);
         return;
     }
 
-    BP_OnTargetActorConfirm(TargetActorData);
+    SetActorLookAtLocationYawOnly(CurrentFinisherTarget, HeroShadowTargetActor->GetActorLocation());
 
-    GetAvatarActorFromActorInfo()->SetActorLocation(HeroShadowTargetActor->GetActorLocation());
-    GetAvatarActorFromActorInfo()->SetActorRotation(HeroShadowTargetActor->GetActorRotation());
+    BP_OnTargetActorConfirm(TargetActorData);
 
     if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher))
     {
         GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_CanActivateFinisher);
     }
 
-    UGA_MeleeFinisher* ActivatedMeleeFinisher = Cast<UGA_MeleeFinisher>(GetASC()->TryActivateAbilityByClassAndReturnInstance(MeleeFinisherClass));
+    FGameplayAbilitySpec* AbilitySpec = GetASC()->FindAbilitySpecFromClass(MeleeFinisherClass);
+    if (!AbilitySpec)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: AbilitySpec is null"));
+        Super::OnTargetActorConfirm(TargetActorData);
+        return;
+    }
+
+    if (UGA_MeleeFinisher* PrimaryInstance = Cast<UGA_MeleeFinisher>(AbilitySpec->GetPrimaryInstance()))
+    {
+        PrimaryInstance->SetPreActivationWarpTarget(HeroShadowTargetActor->GetActorLocation(), HeroShadowTargetActor->GetActorRotation());
+    }
+
+    UGAS_GameplayAbilityBase* ActivatedMeleeFinisher = GetASC()->TryActivateAbilityByClassAndReturnInstance(MeleeFinisherClass);
     if (!ActivatedMeleeFinisher)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: ActivatedMeleeFinisher is null in %s, cannot initialize ShadowFinisher."), *GetName());
@@ -165,16 +177,42 @@ void UGA_HeroShadowFinisher::OnTargetActorConfirm(const FGAS_TargetActorData& Ta
         return;
     }
 
-    FGameplayEventData EnemyDeathFinisher;
-    EnemyDeathFinisher.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Finisher;
     FGameplayEffectContextHandle GE_ContextHandleForDeathFinisher = GetAbilitySystemComponentFromActorInfo()->MakeEffectContext();
     GE_ContextHandleForDeathFinisher.SetAbility(ActivatedMeleeFinisher);
+
+    FGameplayEventData EnemyDeathFinisher;
+    EnemyDeathFinisher.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_Death_Finisher;
     EnemyDeathFinisher.ContextHandle = GE_ContextHandleForDeathFinisher;
     EnemyDeathFinisher.Instigator = GetAvatarActorFromActorInfo();
+    EnemyDeathFinisher.Target = HeroShadowTargetActor;
 
     EnemyASC->TryActivateAbilityByEventData(EnemyDeathFinisher);
 
     Super::OnTargetActorConfirm(TargetActorData);
+}
+
+void UGA_HeroShadowFinisher::SetActorLookAtLocationYawOnly(AActor* FinisherTargetActor, const FVector& LookAtWorldLocation)
+{
+    if (!FinisherTargetActor)
+    {
+        return;
+    }
+
+    FVector From = FinisherTargetActor->GetActorLocation();
+    FVector To = LookAtWorldLocation;
+
+    FVector Direction = To - From;
+    Direction.Z = 0.f; // Pitch'i kilitle (çok kritik)
+
+    if (Direction.IsNearlyZero())
+    {
+        return;
+    }
+
+    const FRotator LookAtRotation = Direction.Rotation();
+    const FRotator Final = FRotator(0.f, LookAtRotation.Yaw, 0.f);
+
+    FinisherTargetActor->SetActorRotation(Final);
 }
 
 void UGA_HeroShadowFinisher::OnEnemyTargetVulnerableTagRemoved(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

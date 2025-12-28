@@ -90,15 +90,7 @@ void UGA_MontageAbility::TryActivateMotionWarping()
 	DebugDrawWarpTarget(Location);
 #endif // WITH_EDITOR
 
-	// For right now, we just use rotation warping with PreActivation.
-	if (WarpTargetMode == EWarpTargetMode::PreActivation)
-	{
-		MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, Location, Rotation);
-	}
-	else
-	{
-		MotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, Location);
-	}
+	MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, Location, Rotation);
 }
 
 bool UGA_MontageAbility::TryBuildWarpTarget(FVector& OutLocation, FRotator& OutRotation)

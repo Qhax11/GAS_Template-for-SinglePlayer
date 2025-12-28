@@ -21,8 +21,6 @@ UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
 	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback;
 
 	AbilityTriggers.Add(TriggerData);
-
-	WarpTargetMode = EWarpTargetMode::Directional;
 }
 
 bool UGA_ParryKnockbackBase::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const

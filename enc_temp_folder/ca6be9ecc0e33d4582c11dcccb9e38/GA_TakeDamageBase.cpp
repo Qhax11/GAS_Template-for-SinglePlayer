@@ -27,8 +27,6 @@ UGA_TakeDamageBase::UGA_TakeDamageBase()
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_TakeDamage);
-
-	WarpTargetMode = EWarpTargetMode::Directional;
 }
 
 void UGA_TakeDamageBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

@@ -92,7 +92,7 @@ public:
 
 	// ****************************** MOTION WARPING ****************************** //
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
-	EWarpTargetMode WarpTargetMode = EWarpTargetMode::Directional;
+	EWarpTargetMode WarpTargetMode = EWarpTargetMode::TargetReach;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "WarpTargetMode != EWarpTargetMode::None"))
 	FName MotionWarpingName = NAME_None;

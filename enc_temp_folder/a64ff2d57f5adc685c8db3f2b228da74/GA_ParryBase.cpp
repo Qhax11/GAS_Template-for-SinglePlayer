@@ -14,8 +14,6 @@ UGA_ParryBase::UGA_ParryBase()
 	SetAssetTags(AbiltiyTags);
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);
-
-	WarpTargetMode = EWarpTargetMode::None;
 }
 
 bool UGA_ParryBase::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const

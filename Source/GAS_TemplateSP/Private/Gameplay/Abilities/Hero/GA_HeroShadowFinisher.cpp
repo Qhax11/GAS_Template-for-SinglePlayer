@@ -67,7 +67,7 @@ void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector
         return;
     }
 
-    AGAS_CharacterBase* CurrentEnemyTargetCharacter = Cast<AGAS_CharacterBase>(TargetLockSystemComponent->CurrentTarget);
+    AGAS_CharacterBase* CurrentEnemyTargetCharacter = Cast<AGAS_CharacterBase>(TargetLockSystemComponent->GetCurrentTarget());
     if (!CurrentEnemyTargetCharacter)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: CurrentTarget is null in: %s, cannot initalize the ability"), *GetName());
@@ -85,7 +85,7 @@ void UGA_HeroShadowFinisher::SpawnAndSetupTargetActor(FRotator Rotation, FVector
 
     EnemyTargetTageDeleagtesComp->RegisterDelegateForTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable, EListenMode::OnRemoved).BindDynamic(this, &UGA_HeroShadowFinisher::OnEnemyTargetVulnerableTagRemoved);
 
-    UAbilitySystemComponent* CurrentTargetASC = TargetLockSystemComponent->CurrentTargetASC;
+    UAbilitySystemComponent* CurrentTargetASC = TargetLockSystemComponent->GetCurrentTargetASC();
     if (!CurrentTargetASC)
     {
         UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_HeroShadowFinisher: CurrentTargetASC is null in: %s, cannot initalize the ability"), *GetName());

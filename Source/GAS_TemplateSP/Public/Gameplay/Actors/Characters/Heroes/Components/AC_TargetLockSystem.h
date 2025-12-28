@@ -128,11 +128,15 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	bool bLocked = false;
 
-public:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* CurrentTarget;
 
 	UAbilitySystemComponent* CurrentTargetASC;
+
+public:
+	AActor* GetCurrentTarget() const;
+
+	UAbilitySystemComponent* GetCurrentTargetASC() const;
 
 private:
 	float TryToFindNewTargetLastExecutionTimeRight = 0.0f;

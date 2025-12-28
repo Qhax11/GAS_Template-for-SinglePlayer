@@ -102,7 +102,7 @@ void USC_HeroShadowController::OrientToPlayerView()
 
 void USC_HeroShadowController::LookAtTarget()
 {
-	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->CurrentTarget->GetActorLocation());
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetComponentLocation(), TargetLockSystem->GetCurrentTarget()->GetActorLocation());
 	SetWorldRotation(FRotator(0, LookAtRotation.Yaw, 0));
 }
 
@@ -209,7 +209,7 @@ void USC_HeroShadowController::SetHeroShadowActor(AHeroShadowTargetActor* HeroSh
 
 void USC_HeroShadowController::SetShadowLocationWithCumulativeMouseValuesTargetLocked()
 {
-	if (!HeroShadow || !TargetLockSystem->CurrentTarget)
+	if (!HeroShadow || !TargetLockSystem->GetCurrentTarget())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HeroHologram or CurrentTarget is null in: %s, Cannot set HologramLocation"), *GetName());
 		return;
@@ -251,13 +251,13 @@ void USC_HeroShadowController::OnStartTargetLock()
 
 float USC_HeroShadowController::GetPointDistToLine(AActor* ReferanceActor, FVector& OutClosestPoint)
 {
-	if (!ReferanceActor || !TargetLockSystem->CurrentTarget || !HeroShadow->IsValidLowLevel())
+	if (!ReferanceActor || !TargetLockSystem->GetCurrentTarget() || !HeroShadow->IsValidLowLevel())
 	{
 		return 0;
 	}
 	
 	FVector HeroShadowLocation = HeroShadow.Get()->GetActorLocation();
-	FVector TargetLocation = TargetLockSystem->CurrentTarget->GetActorLocation();
+	FVector TargetLocation = TargetLockSystem->GetCurrentTarget()->GetActorLocation();
 	FVector HeroLocation = HeroBase->GetActorLocation();
 
 	// Adjust the target's Z coordinate to match the hero's Z coordinate, focusing only on the XY plane for direction calculation.

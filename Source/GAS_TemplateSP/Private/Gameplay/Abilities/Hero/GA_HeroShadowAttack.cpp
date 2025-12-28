@@ -98,7 +98,7 @@ void UGA_HeroShadowAttack::SpawnAndSetupTargetActor(FRotator Rotation, FVector L
 
     if (HeroBase->GetAbilitySystemComponent()->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_TargetLockSystem_Hero_TargetLocked))
     {
-        FVector CurrentTargetLocation = HeroBase->GetTargetLockSystemComponent()->CurrentTarget->GetActorLocation();
+        FVector CurrentTargetLocation = HeroBase->GetTargetLockSystemComponent()->GetCurrentTarget()->GetActorLocation();
         FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(ShadowSpawnLocation, CurrentTargetLocation);
         Super::SpawnAndSetupTargetActor(FRotator(0, LookAtRotation.Yaw, 0), ShadowSpawnLocation);
 

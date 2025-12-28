@@ -33,9 +33,10 @@ void AHeroShadowTargetActor::BeginPlay()
 	TargetLockSystemComponent->OnTargetChanged.AddDynamic(this, &AHeroShadowTargetActor::OnTargetChaned);
 	TargetLockSystemComponent->OnEndTargetLock.AddDynamic(this, &AHeroShadowTargetActor::OnEndTargetLock);
 
-	if (TargetLockSystemComponent->CurrentTarget) 
+	AActor* CurrentLockedTarget = TargetLockSystemComponent->GetCurrentTarget();
+	if (CurrentLockedTarget)
 	{
-		CurrentTarget = TargetLockSystemComponent->CurrentTarget;
+		CurrentTarget = CurrentLockedTarget;
 	}
 }
 
@@ -99,9 +100,10 @@ void AHeroShadowTargetActor::OnEnemyDetectionBeginOverlap(UPrimitiveComponent* O
 		return;
 	}
 
-	if (TargetLockSystemComponent->CurrentTarget)
+	AActor* CurrentLockedTarget = TargetLockSystemComponent->GetCurrentTarget();
+	if (CurrentLockedTarget)
 	{
-		if (TargetLockSystemComponent->CurrentTarget == OtherActor) 
+		if (CurrentLockedTarget == OtherActor)
 		{
 			// If the direction hasn't changed, we play the montage manually. This is for first time detection.
 			if (!UpdateRelativeDirectionToTarget())
@@ -148,9 +150,9 @@ void AHeroShadowTargetActor::OnEnemyDetectionEndOverlap(UPrimitiveComponent* Ove
 		return;
 	}
 
-	if (TargetLockSystemComponent->CurrentTarget) 
+	if (TargetLockSystemComponent->GetCurrentTarget())
 	{
-		if (OtherActor == TargetLockSystemComponent->CurrentTarget) 
+		if (OtherActor == TargetLockSystemComponent->GetCurrentTarget())
 		{
 			if (AnimInstance)
 			{

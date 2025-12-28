@@ -457,5 +457,25 @@ void UAC_TargetLockSystem::RotateHeroToTarget(float DeltaTime)
 	HeroBase->SetActorRotation(NewHeroRotation);
 }
 
+AActor* UAC_TargetLockSystem::GetCurrentTarget() const
+{
+	if (bLocked && CurrentTarget) 
+	{
+		return CurrentTarget;
+	}
+
+	return nullptr;
+}
+
+UAbilitySystemComponent* UAC_TargetLockSystem::GetCurrentTargetASC() const
+{
+	if (bLocked && CurrentTarget)
+	{
+		return CurrentTargetASC;
+	}
+
+	return nullptr;
+}
+
 
 

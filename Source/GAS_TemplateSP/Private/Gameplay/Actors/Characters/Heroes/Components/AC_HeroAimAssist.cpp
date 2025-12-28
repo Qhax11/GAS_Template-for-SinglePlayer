@@ -77,12 +77,19 @@ void UAC_HeroAimAssist::OnHeroAbilityActivated(UGameplayAbility* Ability)
 
 	if (HeroTargetLocked && !HeroOrientRotationToMovement)
 	{
-		if (HeroTargetLock && HeroTargetLock->CurrentTarget)
+		if (!HeroTargetLock)
 		{
-			TargetActor = HeroTargetLock->CurrentTarget;
-			StartRotation(Ability);
+			return;
 		}
-		return;
+
+		AActor* CurrentTarget = HeroTargetLock->GetCurrentTarget();
+		if (!CurrentTarget) 
+		{
+			return;
+		}
+
+		TargetActor = CurrentTarget;
+		StartRotation(Ability);
 	}
 
 	TArray<AActor*> OutResultActors;

@@ -90,7 +90,15 @@ void UGA_MontageAbility::TryActivateMotionWarping()
 	DebugDrawWarpTarget(Location);
 #endif // WITH_EDITOR
 
-	MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, Location, Rotation);
+	// For right now, we just use rotation warping with PreActivation.
+	if (WarpTargetMode == EWarpTargetMode::PreActivation)
+	{
+		MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, Location, Rotation);
+	}
+	else
+	{
+		MotionWarpingComp->AddOrUpdateWarpTargetFromLocation(MotionWarpingName, Location);
+	}
 }
 
 bool UGA_MontageAbility::TryBuildWarpTarget(FVector& OutLocation, FRotator& OutRotation)
@@ -102,7 +110,13 @@ bool UGA_MontageAbility::TryBuildWarpTarget(FVector& OutLocation, FRotator& OutR
 	}
 	else if (WarpTargetMode == EWarpTargetMode::TargetReach)
 	{
-		return TryCalculateReachLocationToTarget(OutLocation);
+		bool ValidReachLocation = TryCalculateReachLocationToTarget(OutLocation);
+		if (!ValidReachLocation) 
+		{
+			OutLocation = CalculateDirectionalWarpLocation();
+		}
+
+		return true;
 	}
 	else if (WarpTargetMode == EWarpTargetMode::PreActivation)
 	{
@@ -169,7 +183,7 @@ bool UGA_MontageAbility::TryCalculateReachLocationToTarget(FVector& OutTargetLoc
 	const AActor* Avatar = GetAvatarActorFromActorInfo();
 	AActor* Target = GetCurrentTargetActor();
 
-	if (!Avatar || !Target)
+	if (!IsValid(Avatar) || !IsValid(Target))
 	{
 		return false;
 	}
@@ -205,7 +219,7 @@ AActor* UGA_MontageAbility::GetCurrentTargetActor() const
 	{
 		const AGAS_HeroBase* Hero = Cast<AGAS_HeroBase>(Avatar);
 		return Hero && Hero->GetTargetLockSystemComponent()
-			? Hero->GetTargetLockSystemComponent()->CurrentTarget
+			? Hero->GetTargetLockSystemComponent()->GetCurrentTarget()
 			: nullptr;
 	}
 

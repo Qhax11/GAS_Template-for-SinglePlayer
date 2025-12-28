@@ -68,35 +68,43 @@ UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMelee(const FCombo
 	return ActivatedComboMeleeAttack;
 }
 
-void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
+void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Data)
 {
-	Super::OnComboAbilityEnd(ComboAbilityEndedData);
+	Super::OnComboAbilityEnd(Data);
 
-	// If it is another ability or if it is UGA_HeroHologram return. 
-	if (!ComboAbilityEndedData.AbilityThatEnded->IsA<UGA_ComboMeleeAttack>() || ComboAbilityEndedData.AbilityThatEnded->IsA<UGA_HeroShadowAttack>())
+	UGAS_GameplayAbilityBase* Ability = Data.AbilityThatEnded;
+	if (!Ability)
 	{
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("UAC_HeroMeleeComboManager: OnComboAbilityEnd: %s"), *ComboAbilityEndedData.AbilityThatEnded->GetName());
+	// ?? SADECE aktif combo ability konuþabilir
+	if (Ability != ActiveComboChainTracker.CurrentAbilityInstance)
+	{
+		return;
+	}
 
-	if (ComboAbilityEndedData.bWasCancelled)
+	const bool bStillInCombo = CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo);
+
+	// Normal end
+	if (!Data.bWasCancelled)
 	{
-		// It is mean Interrupted by any ability that doesen't combo, so we need a reset
-		if (!CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo))
+		FinishCombo();
+		return;
+	}
+
+	// Combo ? combo geçiþi
+	if (bStillInCombo)
+	{
+		if (bComboChainConsumed)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UAC_HeroMeleeComboManager: Combo Interreptued from non-combo ability"));
-			ActiveComboChainTracker.Reset();
-			OnComboEnded.Broadcast();
+			FinishCombo();
 		}
+		return;
 	}
-	// If ComboMelee ability ended as normal
-	else if(!ComboAbilityEndedData.bWasCancelled)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_HeroMeleeComboManager: ability ended as normal!"));
-		ActiveComboChainTracker.Reset();
-		OnComboEnded.Broadcast();
-	}
+
+	// Dýþ interrupt
+	FinishCombo();
 }
 
 void UAC_HeroMeleeComboManager::ChangeComboSet()
@@ -129,9 +137,17 @@ void UAC_HeroMeleeComboManager::OnPhaseActiveHitTagAdded(const UAbilitySystemCom
 
 	if (ActiveComboChainTracker.IsChainFinished())
 	{
-		ChangeComboSet();
-		OnComboEnded.Broadcast();
+		bComboChainConsumed = true;
 	}
+}
+
+void UAC_HeroMeleeComboManager::FinishCombo()
+{
+	bComboChainConsumed = false;
+	ActiveComboChainTracker.CurrentAbilityInstance = nullptr;
+	ActiveComboChainTracker.Reset();
+	ChangeComboSet();
+	OnComboEnded.Broadcast();
 }
 
 void UAC_HeroMeleeComboManager::OnInAirTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

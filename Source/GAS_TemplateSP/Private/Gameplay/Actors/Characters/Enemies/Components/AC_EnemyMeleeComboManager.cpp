@@ -77,15 +77,15 @@ UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMelee(const FComb
 	}
 }
 
-void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& EndedData)
+void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Data)
 {
-	if (EndedData.AbilityThatEnded != ActiveComboChainTracker.CurrentAbilityInstance)
+	if (Data.AbilityThatEnded != ActiveComboChainTracker.CurrentAbilityInstance)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Attack: UAC_EnemyMeleeComboManager: Ended ComboAttack is not Current ComboAttack"), *EndedData.AbilityThatEnded->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Execution: Attack: UAC_EnemyMeleeComboManager: Ended ComboAttack is not Current ComboAttack"), *Data.AbilityThatEnded->GetName());
 		return;
 	}
 
-	if (EndedData.bWasCancelled)
+	if (Data.bWasCancelled)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Execution: Attack:  UAC_EnemyMeleeComboManager: ComboChain Cancelled"));
 		if (CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage)) 

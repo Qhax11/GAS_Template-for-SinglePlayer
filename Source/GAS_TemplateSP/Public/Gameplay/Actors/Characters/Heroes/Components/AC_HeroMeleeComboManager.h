@@ -40,7 +40,7 @@ protected:
 
 	void InitComboChain(EHeroComboType ComboType);
 
-	void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData) override;
+	void OnComboAbilityEnd(const FCustomAbilityEndedData& Data) override;
 
 	void ChangeComboSet();
 
@@ -63,6 +63,10 @@ private:
 	UFUNCTION()
 	void OnPhaseActiveHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
+	void FinishCombo();
+
 	UPROPERTY()
 	class AGAS_HeroBase* HeroBase;
+
+	bool bComboChainConsumed = false;
 };

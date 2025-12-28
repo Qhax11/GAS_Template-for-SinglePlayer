@@ -14,6 +14,8 @@
 UGA_MontageAbility::UGA_MontageAbility()
 {
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Dodge);
+	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Parry);
 
 	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping);
 }

@@ -71,7 +71,7 @@ protected:
 
 	virtual UGA_ComboMeleeAttack* ActivateComboMelee(const FComboPreActivationData& Data = FComboPreActivationData()) override;
 
-	void OnComboAbilityEnd(const FCustomAbilityEndedData& EndedData) override;
+	void OnComboAbilityEnd(const FCustomAbilityEndedData& Data) override;
 	
 private:
 	void FinishComboChain(EEnemyComboChainResult Result);

@@ -121,7 +121,7 @@ protected:
 	void SetPreActivationData(FGameplayAbilitySpec* AbilitySpec, const FComboPreActivationData& Data);
 
 	UFUNCTION()
-	virtual void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData);
+	virtual void OnComboAbilityEnd(const FCustomAbilityEndedData& Data);
 
 	void CancelComboAbilities();
 
@@ -132,9 +132,6 @@ protected:
 
 	UPROPERTY()
 	UGAS_AbilitySystemComponent* CharacterBaseASC;
-
-	UPROPERTY()
-	UGAS_GameplayAbilityBase* LastActivatedCombo;
 
 	FActiveComboChainTracker ActiveComboChainTracker;
 };

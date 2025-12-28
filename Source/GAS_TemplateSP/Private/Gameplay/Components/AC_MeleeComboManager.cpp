@@ -70,7 +70,6 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(const FComboPreA
 	// Bind end event safely
 	ActivatedAbility->OnAbilityEnded.RemoveAll(this);
 	ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
-	LastActivatedCombo = ActivatedAbility;
 	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: ActivatedAbility ability is binded: %s"), *ActivatedAbility->GetName());
 
 	return ActivatedAbility;
@@ -89,21 +88,11 @@ void UAC_MeleeComboManager::SetPreActivationData(FGameplayAbilitySpec* AbilitySp
 	}
 }
 
-void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)
+void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Data)
 {
-	if (ComboAbilityEndedData.AbilityThatEnded)
+	if (Data.AbilityThatEnded)
 	{
-		ComboAbilityEndedData.AbilityThatEnded->OnAbilityEnded.RemoveAll(this);
-	}
-
-	if (ActiveComboChainTracker.CurrentAbilityInstance == ComboAbilityEndedData.AbilityThatEnded)
-	{
-		ActiveComboChainTracker.CurrentAbilityInstance = nullptr;
-	}
-
-	if (LastActivatedCombo == ComboAbilityEndedData.AbilityThatEnded)
-	{
-		LastActivatedCombo = nullptr;
+		Data.AbilityThatEnded->OnAbilityEnded.RemoveAll(this);
 	}
 }
 

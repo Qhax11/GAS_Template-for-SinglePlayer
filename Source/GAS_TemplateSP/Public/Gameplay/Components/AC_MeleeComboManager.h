@@ -29,6 +29,24 @@ struct FComboChainData
 	TArray<FComboAbilityData> ComboAbilities;
 };
 
+USTRUCT(BlueprintType)
+struct FComboPreActivationData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ComboMontageSection = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag AdditionalTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector MotionWarpingLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRotator MotionWarpingRotation = FRotator::ZeroRotator;
+};
+
 USTRUCT()
 struct FActiveComboChainTracker
 {
@@ -98,7 +116,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	virtual UGA_ComboMeleeAttack* ActivateComboMelee(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag());
+	virtual UGA_ComboMeleeAttack* ActivateComboMelee(const FComboPreActivationData& Data = FComboPreActivationData());
+
+	void SetPreActivationData(FGameplayAbilitySpec* AbilitySpec, const FComboPreActivationData& Data);
 
 	UFUNCTION()
 	virtual void OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData);

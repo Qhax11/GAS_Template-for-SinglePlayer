@@ -27,7 +27,7 @@ void UAC_MeleeComboManager::BeginPlay()
 	}
 }
 
-UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(FName MontageSection, FGameplayTag AdditionalTag)
+UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(const FComboPreActivationData& Data)
 {
 	if (!CharacterBaseASC)
 	{
@@ -41,7 +41,6 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(FName MontageSec
 		return nullptr;
 	}
 
-	// Get ability spec
 	FGameplayAbilitySpec* AbilitySpec = CharacterBaseASC->FindAbilitySpecFromClass(ComboAbilityData->ComboAbilityClass);
 	if (!AbilitySpec)
 	{
@@ -49,24 +48,16 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(FName MontageSec
 		return nullptr;
 	}
 
-	// Add temp tag to help with activation filters
-	AbilitySpec->DynamicAbilityTags.AddTag(AdditionalTag);
-
-	// For PerActor instancing, set SectionName on PrimaryInstance BEFORE activation
-	if (UGA_ComboMeleeAttack* PrimaryInstance = Cast<UGA_ComboMeleeAttack>(AbilitySpec->GetPrimaryInstance()))
-	{
-		PrimaryInstance->SectionName = MontageSection;
-	}
-
 	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: TryActivate Ability: %s, index is: %d"), *ComboAbilityData->ComboAbilityClass->GetName(), ActiveComboChainTracker.CurrentStepIndex);
+
+	SetPreActivationData(AbilitySpec, Data);
 
 	// Try activate ability and get its instance
 	UGA_ComboMeleeAttack* ActivatedAbility = Cast<UGA_ComboMeleeAttack>(
-		CharacterBaseASC->TryActivateAbilityByClassAndReturnInstance(ComboAbilityData->ComboAbilityClass)
-	);
+		CharacterBaseASC->TryActivateAbilityByClassAndReturnInstance(ComboAbilityData->ComboAbilityClass));
 
 	// Remove the tag AFTER activation attempt
-	AbilitySpec->DynamicAbilityTags.RemoveTag(AdditionalTag);
+	AbilitySpec->DynamicAbilityTags.RemoveTag(Data.AdditionalTag);
 
 	if (!ActivatedAbility)
 	{
@@ -76,15 +67,26 @@ UGA_ComboMeleeAttack* UAC_MeleeComboManager::ActivateComboMelee(FName MontageSec
 
 	// Save handle and instance
 	ActiveComboChainTracker.CurrentAbilityInstance = ActivatedAbility;
-
 	// Bind end event safely
 	ActivatedAbility->OnAbilityEnded.RemoveAll(this);
 	ActivatedAbility->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
+	LastActivatedCombo = ActivatedAbility;
 	UE_LOG(LogTemp, Warning, TEXT("[ComboMeleeAttack]: ActivatedAbility ability is binded: %s"), *ActivatedAbility->GetName());
 
-	LastActivatedCombo = ActivatedAbility;
-
 	return ActivatedAbility;
+}
+
+void UAC_MeleeComboManager::SetPreActivationData(FGameplayAbilitySpec* AbilitySpec, const FComboPreActivationData& Data)
+{
+	// Add temp tag to help with activation filters
+	AbilitySpec->DynamicAbilityTags.AddTag(Data.AdditionalTag);
+
+	// For PerActor instancing, set SectionName on PrimaryInstance BEFORE activation
+	if (UGA_ComboMeleeAttack* PrimaryInstance = Cast<UGA_ComboMeleeAttack>(AbilitySpec->GetPrimaryInstance()))
+	{
+		PrimaryInstance->SectionName = Data.ComboMontageSection;
+		PrimaryInstance->SetPreActivationWarpTarget(Data.MotionWarpingLocation, Data.MotionWarpingRotation);
+	}
 }
 
 void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& ComboAbilityEndedData)

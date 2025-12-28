@@ -47,7 +47,7 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: %s is will play."), *AnimMontage->GetName());
 
 	PlayMontageWaitForEventTask = UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(
-		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, bStopWhenAbilityEnds, 1.0f);
+		this, NAME_None, AnimMontage, WaitForEventTag, PlayRate, SectionName, 1.0f);
 
 	PlayMontageWaitForEventTask->OnBlendOut.AddDynamic(this, &UGA_MontageAbility::OnMontageBlendOut);
 	PlayMontageWaitForEventTask->OnCompleted.AddDynamic(this, &UGA_MontageAbility::OnMontageCompleted);
@@ -58,9 +58,9 @@ void UGA_MontageAbility::CreatePlayMontageWaitForEvent()
 	PlayMontageWaitForEventTask->ReadyForActivation();
 }
 
-void UGA_MontageAbility::ActivateMotionWarping()
+void UGA_MontageAbility::TryActivateMotionWarping()
 {
-	if (!bEnableMotionWarping || !CharacterBase)
+	if (WarpTargetMode == EWarpTargetMode::None || !CharacterBase)
 	{
 		return;
 	}
@@ -86,27 +86,29 @@ void UGA_MontageAbility::ActivateMotionWarping()
 		return;
 	}
 
+#if WITH_EDITOR
 	DebugDrawWarpTarget(Location);
+#endif // WITH_EDITOR
 
 	MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, Location, Rotation);
 }
 
 bool UGA_MontageAbility::TryBuildWarpTarget(FVector& OutLocation, FRotator& OutRotation)
 {
-	if (WarpTargetMode == EWarpTargetMode::Custom) 
-	{
-		OutLocation = CustomTargetLocation;
-		OutRotation = CustomTargetRotation;
-		return true;
-	}
-	else if (WarpTargetMode == EWarpTargetMode::Directional) 
+	if (WarpTargetMode == EWarpTargetMode::Directional) 
 	{
 		OutLocation = CalculateDirectionalWarpLocation();
 		return true;
 	}
 	else if (WarpTargetMode == EWarpTargetMode::TargetReach)
 	{
-		TryCalculateReachLocationToTarget(OutLocation);
+		return TryCalculateReachLocationToTarget(OutLocation);
+	}
+	else if (WarpTargetMode == EWarpTargetMode::PreActivation)
+	{
+		OutLocation = PreActivationWarpLocation;
+		OutRotation = PreActivationWarpRotation;
+		return true;
 	}
 
 	return false;
@@ -219,6 +221,13 @@ AActor* UGA_MontageAbility::GetCurrentTargetActor() const
 	return nullptr;
 }
 
+void UGA_MontageAbility::SetPreActivationWarpTarget(const FVector& InLocation, const FRotator& InRotation)
+{
+	PreActivationWarpLocation = InLocation;
+	PreActivationWarpRotation = InRotation;
+	WarpTargetMode = EWarpTargetMode::PreActivation;
+}
+
 bool UGA_MontageAbility::IsWarpDistanceValid(const FVector& TargetLocation) const
 {
 	constexpr float MinWarpDist = 10.f;
@@ -226,6 +235,7 @@ bool UGA_MontageAbility::IsWarpDistanceValid(const FVector& TargetLocation) cons
 	return FVector::DistSquared(OwnerLocation, TargetLocation) > FMath::Square(MinWarpDist);
 }
 
+#if WITH_EDITOR
 void UGA_MontageAbility::DebugDrawWarpTarget(const FVector& TargetLocation) const
 {
 	if (bDebugPointMotionWarping)
@@ -239,17 +249,12 @@ void UGA_MontageAbility::DebugDrawWarpTarget(const FVector& TargetLocation) cons
 			2.f);
 	}
 }
+#endif // WITH_EDITOR
 
 void UGA_MontageAbility::CleanupMotionWarping()
 {
-	if (!bEnableMotionWarping)
+	if (WarpTargetMode == EWarpTargetMode::None || !CharacterBase)
 	{
-		return;
-	}
-
-	if (!CharacterBase)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: CharacterBase is null in: %s, ability cannot CleanupMotionWarping"), *GetName());
 		return;
 	}
 
@@ -374,10 +379,7 @@ void UGA_MontageAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventDa
 	// Purpose: Activates Motion Warping to align the character precisely with the target position/rotation at the specific moment determined by the animation.
 	if (EventTag == GAS_Tags::TAG_Gameplay_Event_AnimNotify_Movement_MotionWarping)
 	{
-		if (bEnableMotionWarping)
-		{
-			ActivateMotionWarping();
-		}
+		TryActivateMotionWarping();
 	}
 }
 

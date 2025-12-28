@@ -87,7 +87,6 @@ public:
 		FGameplayTagContainer EventTags,
 		float Rate = 1.f,
 		FName StartSection = NAME_None,
-		bool bStopWhenAbilityEnds = true,
 		float AnimRootMotionTranslationScale = 1.f);
 
 private:
@@ -111,9 +110,6 @@ private:
 	UPROPERTY()
 	float AnimRootMotionTranslationScale;
 
-	/** Rather montage should be aborted if ability ends */
-	UPROPERTY()
-	bool bStopWhenAbilityEnds = true;
 
 	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
 	void OnAbilityCancelled();

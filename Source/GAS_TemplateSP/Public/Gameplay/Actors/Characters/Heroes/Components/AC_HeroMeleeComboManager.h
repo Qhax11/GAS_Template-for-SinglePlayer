@@ -45,10 +45,10 @@ protected:
 	void ChangeComboSet();
 
 public:
-	virtual UGA_ComboMeleeAttack* ActivateComboMelee(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
+	virtual UGA_ComboMeleeAttack* ActivateComboMelee(const FComboPreActivationData& Data = FComboPreActivationData()) override;
 
 	UFUNCTION(BlueprintCallable)
-	void StartShadowCombo(FName MontageSection, FGameplayTag AdditionalTag = FGameplayTag());
+	void StartShadowCombo(const FComboPreActivationData& Data);
 
 	UPROPERTY(EditDefaultsOnly)
 	UHeroComboChainsAsset* HeroComboAsset; 

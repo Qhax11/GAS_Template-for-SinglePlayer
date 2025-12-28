@@ -69,7 +69,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	virtual UGA_ComboMeleeAttack* ActivateComboMelee(FName MontageSection = NAME_None, FGameplayTag AdditionalTag = FGameplayTag()) override;
+	virtual UGA_ComboMeleeAttack* ActivateComboMelee(const FComboPreActivationData& Data = FComboPreActivationData()) override;
 
 	void OnComboAbilityEnd(const FCustomAbilityEndedData& EndedData) override;
 	

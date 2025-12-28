@@ -5,6 +5,11 @@
 #include "Gameplay/Abilities/GAS_GameplayAbilityBase.h"
 #include "GA_MontageAbility.generated.h"
 
+// Determines from which montage events the ability should end.
+// Completed → End when the montage reaches the end
+// BlendOut → End when the montage starts blending out
+// Interrupted → End if the montage is interrupted
+// Any → End on any of the above events
 UENUM(BlueprintType)
 enum EMontageEndPolicy : uint8
 {
@@ -21,10 +26,10 @@ enum EMontageEndPolicy : uint8
 UENUM()
 enum class EWarpTargetMode : uint8
 {
-	None,
-	Custom,
-	TargetReach,
-	Directional
+	None           UMETA(DisplayName = "Disabled"),
+	Directional    UMETA(DisplayName = "Directional"),
+	TargetReach    UMETA(DisplayName = "Target Reach"),
+	PreActivation  UMETA(DisplayName = "PreActivation")
 };
 
 class UAbilityTask_WaitDelay;
@@ -39,9 +44,11 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
+	virtual void EndAbilityManually() override;
+
 	void CreatePlayMontageWaitForEvent();
 
-	void ActivateMotionWarping();
+	void TryActivateMotionWarping();
 
 	bool TryBuildWarpTarget(FVector& OutLocation, FRotator& OutRotation);
 
@@ -51,23 +58,21 @@ public:
 
 	AActor* GetCurrentTargetActor() const;
 
+	void SetPreActivationWarpTarget(const FVector& InLocation, const FRotator& InRotation);
+
 	bool IsWarpDistanceValid(const FVector& TargetLocation) const;
 
+#if WITH_EDITOR
 	void DebugDrawWarpTarget(const FVector& TargetLocation) const;
+#endif // WITH_EDITOR
 
 	void CleanupMotionWarping();
 
 	void CleanupPhaseTags();
 
-	virtual void EndAbilityManually() override;
-
+	// ****************************** ANIMATION MONTAGE ****************************** //
 	class UGAS_Task_PlayMontageWaitForEvent* PlayMontageWaitForEventTask;
 
-	// Determines from which montage events the ability should end.
-    // Completed → End when the montage reaches the end
-    // BlendOut → End when the montage starts blending out
-    // Interrupted → End if the montage is interrupted
-    // Any → End on any of the above events
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	TEnumAsByte<EMontageEndPolicy> MontageEndPolicy = EMontageEndPolicy::Standard;
 
@@ -85,41 +90,27 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
 	FGameplayTagContainer WaitForEventTag;
 
-	/** If we need to turn off characters rotation during the gameplay effect */
-	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
-	bool bTurnOffRotation;
-
-	/** If we want that montage doesen't stop after ability end */
-	UPROPERTY(EditDefaultsOnly, Category = "MontageAbility")
-	bool bStopWhenAbilityEnds = true;
-
 	// ****************************** MOTION WARPING ****************************** //
-
 	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping")
-	bool bEnableMotionWarping = false;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	FName MotionWarpingName = NAME_None;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
 	EWarpTargetMode WarpTargetMode = EWarpTargetMode::Directional;
 
-	UPROPERTY(EditAnywhere, Category = "Motion Warping", meta = (EditCondition = "bUseCustomLocationAndRotation"))
-	FVector CustomTargetLocation = FVector::ZeroVector;
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "WarpTargetMode != EWarpTargetMode::None"))
+	FName MotionWarpingName = NAME_None;
 
-	UPROPERTY(EditAnywhere, Category = "Motion Warping", meta = (EditCondition = "bUseCustomLocationAndRotation"))
-	FRotator CustomTargetRotation = FRotator::ZeroRotator;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "WarpTargetMode == EWarpTargetMode::Directional"))
 	float MotionWarpingDistance = 150.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
-	float TargetReachDistance = 150.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (Categories = "Gameplay.Direction", EditCondition = "bEnableMotionWarping"))
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (Categories = "Gameplay.Direction", EditCondition = "WarpTargetMode == EWarpTargetMode::Directional"))
 	FGameplayTag DirectionTag = GAS_Tags::TAG_Gameplay_Direction_Forward;
 
-	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "bEnableMotionWarping"))
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "WarpTargetMode == EWarpTargetMode::TargetReach"))
+	float TargetReachDistance = 150.0f;
+
+	FVector PreActivationWarpLocation = FVector::ZeroVector;
+
+	FRotator PreActivationWarpRotation = FRotator::ZeroRotator;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MotionWarping", meta = (EditCondition = "WarpTargetMode != EWarpTargetMode::None"))
 	bool bDebugPointMotionWarping = false;
 
 protected:

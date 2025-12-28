@@ -102,7 +102,7 @@ FString UGAS_Task_PlayMontageWaitForEvent::GetDebugString() const
 void UGAS_Task_PlayMontageWaitForEvent::OnDestroy(bool AbilityEnded)
 {
     // Eðer task sonlanýyorsa ve montage durdurulacaksa
-    if (Ability && bStopWhenAbilityEnds)
+    if (Ability)
     {
         StopPlayingMontage();
     }
@@ -134,7 +134,7 @@ void UGAS_Task_PlayMontageWaitForEvent::UnbindAllDelegate()
     EventReceived.Clear();
 }
 
-UGAS_Task_PlayMontageWaitForEvent* UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(UGameplayAbility* OwningAbility, FName TaskInstanceName, UAnimMontage* MontageToPlay, FGameplayTagContainer EventTags, float Rate, FName StartSection, bool bStopWhenAbilityEnds, float AnimRootMotionTranslationScale)
+UGAS_Task_PlayMontageWaitForEvent* UGAS_Task_PlayMontageWaitForEvent::PlayMontageAndWaitForEvent(UGameplayAbility* OwningAbility, FName TaskInstanceName, UAnimMontage* MontageToPlay, FGameplayTagContainer EventTags, float Rate, FName StartSection, float AnimRootMotionTranslationScale)
 {
     UAbilitySystemGlobals::NonShipping_ApplyGlobalAbilityScaler_Rate(Rate);
 
@@ -152,7 +152,6 @@ UGAS_Task_PlayMontageWaitForEvent* UGAS_Task_PlayMontageWaitForEvent::PlayMontag
     MyObj->Rate = Rate;
     MyObj->StartSection = StartSection;
     MyObj->AnimRootMotionTranslationScale = AnimRootMotionTranslationScale;
-    MyObj->bStopWhenAbilityEnds = bStopWhenAbilityEnds;
 
     return MyObj;
 }

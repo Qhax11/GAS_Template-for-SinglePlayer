@@ -13,7 +13,7 @@ void UAC_HeroMeleeComboManager::BeginPlay()
 	HeroBase = Cast<AGAS_HeroBase>(CharacterBase);
 	if (!HeroBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HeroBase is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("UAC_HeroMeleeComboManager is null in: %s"), *GetName());
 		return;
 	}
 
@@ -57,9 +57,9 @@ void UAC_HeroMeleeComboManager::InitComboChain(EHeroComboType ComboType)
 	ActiveComboChainTracker.CurrentStepIndex = 0;
 }
 
-UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMelee(FName MontageSection, FGameplayTag AdditionalTag)
+UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMelee(const FComboPreActivationData& Data)
 {
-	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMelee(MontageSection, AdditionalTag);
+	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMelee(Data);
 	if (!ActivatedComboMeleeAttack) 
 	{
 		return nullptr;
@@ -78,14 +78,14 @@ void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData&
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("ComboMeleeAttack: OnComboAbilityEnd: %s"), *ComboAbilityEndedData.AbilityThatEnded->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("UAC_HeroMeleeComboManager: OnComboAbilityEnd: %s"), *ComboAbilityEndedData.AbilityThatEnded->GetName());
 
 	if (ComboAbilityEndedData.bWasCancelled)
 	{
 		// It is mean Interrupted by any ability that doesen't combo, so we need a reset
 		if (!CharacterBaseASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_MeleeCombo))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ComboMeleeAttack: Combo Interreptued from non-combo ability"));
+			UE_LOG(LogTemp, Warning, TEXT("UAC_HeroMeleeComboManager: Combo Interreptued from non-combo ability"));
 			ActiveComboChainTracker.Reset();
 			OnComboEnded.Broadcast();
 		}
@@ -93,7 +93,7 @@ void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData&
 	// If ComboMelee ability ended as normal
 	else if(!ComboAbilityEndedData.bWasCancelled)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ComboMeleeAttack: ability ended as normal!"));
+		UE_LOG(LogTemp, Warning, TEXT("UAC_HeroMeleeComboManager: ability ended as normal!"));
 		ActiveComboChainTracker.Reset();
 		OnComboEnded.Broadcast();
 	}
@@ -111,10 +111,10 @@ void UAC_HeroMeleeComboManager::ChangeComboSet()
 	}
 }
 
-void UAC_HeroMeleeComboManager::StartShadowCombo(FName MontageSection, FGameplayTag AdditionalTag)
+void UAC_HeroMeleeComboManager::StartShadowCombo(const FComboPreActivationData& Data)
 {
 	InitComboChain(EHeroComboType::ShadowCombo);
-	ActivateComboMelee(MontageSection, AdditionalTag);
+	ActivateComboMelee(Data);
 }
 
 void UAC_HeroMeleeComboManager::OnPhaseActiveHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

@@ -45,10 +45,11 @@ void UAC_EnemyMeleeComboManager::StartComboChain(UEnemyComboChainAsset* ComboCha
 	}
 
 	ActiveComboChainTracker.StartChain(InComboChain);
-	ActivateComboMelee(MontageSection);
+
+	ActivateComboMelee();
 }
  
-UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMelee(FName MontageSection, FGameplayTag AdditionalTag)
+UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMelee(const FComboPreActivationData& Data)
 {
 	const FComboAbilityData* CurrentCombo = ActiveComboChainTracker.GetCurrentCombo();
 	if (!CurrentCombo || !CurrentCombo->ComboAbilityClass)
@@ -67,7 +68,7 @@ UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMelee(FName Monta
 	float ComboAbilityMaxRange = DefaultAbilityCDO->MaxRange;
 	if (AIController->GetTargetHeroDistance() < ComboAbilityMaxRange)
 	{
-		return Super::ActivateComboMelee(MontageSection);
+		return Super::ActivateComboMelee(Data);
 	}
 	else
 	{

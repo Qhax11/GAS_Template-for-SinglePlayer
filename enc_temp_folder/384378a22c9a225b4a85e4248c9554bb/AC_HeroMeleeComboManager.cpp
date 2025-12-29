@@ -121,20 +121,7 @@ void UAC_HeroMeleeComboManager::ChangeComboSet()
 void UAC_HeroMeleeComboManager::StartShadowCombo(const UComboPreActivationData* Data)
 {
 	InitComboChain(EHeroComboType::ShadowCombo);
-	
-	if (!CharacterBaseASC || !Data)
-		return;
-
-	FGameplayEventData EventData;
-	EventData.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ShadowCombo;
-	EventData.OptionalObject = Data;
-	EventData.Instigator = CharacterBase;
-	EventData.Target = CharacterBase;
-
-	CharacterBaseASC->HandleGameplayEvent(
-		EventData.EventTag,
-		&EventData
-	);
+	ActivateComboMelee(Data);
 }
 
 void UAC_HeroMeleeComboManager::OnPhaseActiveHitTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag)

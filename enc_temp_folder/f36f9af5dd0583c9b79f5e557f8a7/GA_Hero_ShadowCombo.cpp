@@ -14,11 +14,6 @@ UGA_Hero_ShadowCombo::UGA_Hero_ShadowCombo()
 	AbilityTriggers.Add(TriggerData);
 
 	WarpTargetMode = EWarpTargetMode::PreActivation;
-
-	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
-	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_PostAttack);
-	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Dodge);
-	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Parry);
 }
 
 void UGA_Hero_ShadowCombo::PreActivate(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, FOnGameplayAbilityEnded::FDelegate* OnGameplayAbilityEndedDelegate, const FGameplayEventData* TriggerEventData)
@@ -27,22 +22,30 @@ void UGA_Hero_ShadowCombo::PreActivate(const FGameplayAbilitySpecHandle Handle, 
 
 	if (!TriggerEventData || !TriggerEventData->OptionalObject)
 	{
-		UE_LOG(LogTemp, Error, TEXT("GA_Hero_ShadowCombo: TriggerEventData is REQUIRED. Cancelling ability."));
+		UE_LOG(LogTemp, Error,
+			TEXT("GA_Hero_ShadowCombo: TriggerEventData is REQUIRED. Cancelling ability."));
+
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
 	const UComboPreActivationData* PreActivationData = Cast<UComboPreActivationData>(TriggerEventData->OptionalObject);
+
 	if (!PreActivationData)
 	{
-		UE_LOG(LogTemp, Error, TEXT("GA_Hero_ShadowCombo: Invalid PreActivationData type. Cancelling ability."));
+		UE_LOG(LogTemp, Error,
+			TEXT("GA_Hero_ShadowCombo: Invalid PreActivationData type. Cancelling ability."));
+
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
 	WarpTargetMode = EWarpTargetMode::PreActivation;
 
-	SetPreActivationWarpTarget(PreActivationData->MotionWarpingLocation, PreActivationData->MotionWarpingRotation);
+	SetPreActivationWarpTarget(
+		PreActivationData->MotionWarpingLocation,
+		PreActivationData->MotionWarpingRotation
+	);
 
 	UE_LOG(LogTemp, Log,
 		TEXT("GA_Hero_ShadowCombo: PreActivation OK | Loc=%s Rot=%s"),

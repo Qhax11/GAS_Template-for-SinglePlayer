@@ -57,15 +57,14 @@ void UAC_HeroMeleeComboManager::InitComboChain(EHeroComboType ComboType)
 	ActiveComboChainTracker.CurrentStepIndex = 0;
 }
 
-UGA_ComboMeleeAttack* UAC_HeroMeleeComboManager::ActivateComboMelee(const FComboPreActivationData& Data)
+void UAC_HeroMeleeComboManager::ActivateComboMelee(const UComboPreActivationData* Data)
 {
-	UGA_ComboMeleeAttack* ActivatedComboMeleeAttack = Super::ActivateComboMelee(Data);
-	if (!ActivatedComboMeleeAttack) 
-	{
-		return nullptr;
-	}
+	Super::ActivateComboMelee(Data);
+}
 
-	return ActivatedComboMeleeAttack;
+void UAC_HeroMeleeComboManager::OnComboAbilityActivated(UGA_ComboMeleeAttack* Instance)
+{
+	Super::OnComboAbilityActivated(Instance);
 }
 
 void UAC_HeroMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Data)
@@ -119,7 +118,7 @@ void UAC_HeroMeleeComboManager::ChangeComboSet()
 	}
 }
 
-void UAC_HeroMeleeComboManager::StartShadowCombo(const FComboPreActivationData& Data)
+void UAC_HeroMeleeComboManager::StartShadowCombo(const UComboPreActivationData* Data)
 {
 	InitComboChain(EHeroComboType::ShadowCombo);
 	ActivateComboMelee(Data);

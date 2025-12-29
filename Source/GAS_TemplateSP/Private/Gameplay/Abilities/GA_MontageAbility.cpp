@@ -96,6 +96,14 @@ void UGA_MontageAbility::TryActivateMotionWarping()
 	if (WarpTargetMode == EWarpTargetMode::PreActivation)
 	{
 		MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, Location, Rotation);
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("UGA_MontageAbility: PreActivation WarpTarget | Name=%s | Location=%s | Rotation=%s"),
+			*MotionWarpingName.ToString(),
+			*Location.ToString(),
+			*Rotation.ToString()
+		);
 	}
 	else
 	{
@@ -422,4 +430,5 @@ void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 	CleanupMotionWarping();
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
+
 

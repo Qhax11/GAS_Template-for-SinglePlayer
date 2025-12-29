@@ -15,11 +15,9 @@ UGA_ParryKnockbackBase::UGA_ParryKnockbackBase()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_ParryKnockback);
 
 	TEnumAsByte<EGameplayAbilityTriggerSource::Type> TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
-
 	FAbilityTriggerData TriggerData = FAbilityTriggerData();
 	TriggerData.TriggerSource = TriggerSource;
 	TriggerData.TriggerTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ParryKnockback;
-
 	AbilityTriggers.Add(TriggerData);
 
 	WarpTargetMode = EWarpTargetMode::Directional;

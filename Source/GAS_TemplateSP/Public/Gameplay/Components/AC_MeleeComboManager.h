@@ -5,6 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "Gameplay/Abilities/InCombat/Attack/GA_ComboMeleeAttack.h"
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/Abilities/DataTypes/Combo/ComboPreActivationData.h"
 #include "AC_MeleeComboManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboEnded);
@@ -27,24 +28,6 @@ struct FComboChainData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FComboAbilityData> ComboAbilities;
-};
-
-USTRUCT(BlueprintType)
-struct FComboPreActivationData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ComboMontageSection = NAME_None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FGameplayTag AdditionalTag;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector MotionWarpingLocation = FVector::ZeroVector;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FRotator MotionWarpingRotation = FRotator::ZeroRotator;
 };
 
 USTRUCT()
@@ -106,6 +89,8 @@ class GAS_TEMPLATESP_API UAC_MeleeComboManager : public UActorComponent
 public:	
 	UAC_MeleeComboManager();
 
+	virtual void OnComboAbilityActivated(UGA_ComboMeleeAttack* Instance);
+
 	UFUNCTION(BlueprintCallable)
 	void StopCombo();
 
@@ -116,9 +101,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	virtual UGA_ComboMeleeAttack* ActivateComboMelee(const FComboPreActivationData& Data = FComboPreActivationData());
-
-	void SetPreActivationData(FGameplayAbilitySpec* AbilitySpec, const FComboPreActivationData& Data);
+	virtual void ActivateComboMelee(const UComboPreActivationData* Data = nullptr);
 
 	UFUNCTION()
 	virtual void OnComboAbilityEnd(const FCustomAbilityEndedData& Data);

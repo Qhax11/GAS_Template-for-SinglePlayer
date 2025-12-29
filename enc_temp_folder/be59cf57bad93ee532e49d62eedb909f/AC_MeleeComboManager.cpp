@@ -15,64 +15,41 @@ void UAC_MeleeComboManager::BeginPlay()
 	CharacterBase = Cast<AGAS_CharacterBase>(GetOwner());
 	if (!CharacterBase)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_MeleeComboManager: CharacterBase is null in: %s)"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBase is null in: %s)"), *GetName());
 		return;
 	}
 
 	CharacterBaseASC = Cast<UGAS_AbilitySystemComponent>(CharacterBase->GetAbilitySystemComponent());
 	if (!CharacterBaseASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_MeleeComboManager: CharacterBaseASC is null in %s, cannot initialize HeroControl."), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBaseASC is null in %s, cannot initialize HeroControl."), *GetName());
 		return;
 	}
 }
 
 void UAC_MeleeComboManager::ActivateComboMelee(const UComboPreActivationData* Data)
 {
-	if (!CharacterBaseASC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_MeleeComboManager: CharacterBaseASC is null!"));
+	if (!CharacterBaseASC || !Data)
 		return;
-	}
 
 	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
 	if (!ComboAbilityData || !ComboAbilityData->ComboAbilityClass)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_MeleeComboManager: No valid combo ability at current step!"));
 		return;
-	}
 
-	FGameplayAbilitySpec* FoundSpec = nullptr;
-	for (FGameplayAbilitySpec& Spec : CharacterBaseASC->GetActivatableAbilities())
-	{
-		if (Spec.Ability && Spec.Ability->GetClass() == ComboAbilityData->ComboAbilityClass)
-		{
-			FoundSpec = &Spec;
-			break;
-		}
-	}
-
-	if (!FoundSpec)
-	{
-		UE_LOG(LogTemp, Error, TEXT("UAC_MeleeComboManager: Could not find or create ability spec!"));
-		return;
-	}
-
+	// 1) event data hazırla
 	FGameplayEventData EventData;
 	EventData.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ComboMelee;
 	EventData.OptionalObject = Data;
 	EventData.Instigator = CharacterBase;
 	EventData.Target = CharacterBase;
 
-	CharacterBaseASC->TriggerAbilityFromGameplayEvent(
-		FoundSpec->Handle,
-		CharacterBaseASC->AbilityActorInfo.Get(),
-		EventData.EventTag,
-		&EventData,
-		*CharacterBaseASC
-	);
+	// 2) EVENT DISPATCH (asıl tetik bu)
+	CharacterBaseASC->HandleGameplayEvent(EventData.EventTag, &EventData);
 
-	// NOT: Instance tracking OnComboAbilityActivated callback'inde yapılacak
+	// 3) instance yakalamak istiyorsan:
+	// InstancedPerExecution ise "hemen sonra instance döndürmek" garanti değil.
+	// Bu yüzden tracking'i Ability'nin kendisinden broadcast et.
+	return;
 }
 
 void UAC_MeleeComboManager::OnComboAbilityActivated(UGA_ComboMeleeAttack* Instance)
@@ -104,7 +81,7 @@ void UAC_MeleeComboManager::CancelComboAbilities()
 {
 	if (!CharacterBaseASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_MeleeComboManager: CharacterBaseASC is null in: %s"), *GetName());
+		UE_LOG(LogTemp, Warning, TEXT("CharacterBaseASC is null in: %s"), *GetName());
 		return;
 	}
 

@@ -49,32 +49,29 @@ void UAC_EnemyMeleeComboManager::StartComboChain(UEnemyComboChainAsset* ComboCha
 	ActivateComboMelee();
 }
  
-UGA_ComboMeleeAttack* UAC_EnemyMeleeComboManager::ActivateComboMelee(const FComboPreActivationData& Data)
+void UAC_EnemyMeleeComboManager::ActivateComboMelee(const UComboPreActivationData* Data)
 {
-	const FComboAbilityData* CurrentCombo = ActiveComboChainTracker.GetCurrentCombo();
-	if (!CurrentCombo || !CurrentCombo->ComboAbilityClass)
+	Super::ActivateComboMelee(Data);
+}
+
+void UAC_EnemyMeleeComboManager::OnComboAbilityActivated(UGA_ComboMeleeAttack* Instance)
+{
+	if (!Instance || !AIController)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Attack: UAC_EnemyMeleeComboManager: CurrentCombo is null!"));
-		return nullptr;
+		FinishComboChain(EEnemyComboChainResult::Invalid);
+		return;
 	}
 
-	UGA_ComboMeleeAttack* DefaultAbilityCDO = CurrentCombo->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>();
-	if (!DefaultAbilityCDO)
+	const float Distance = AIController->GetTargetHeroDistance();
+	if (Distance < Instance->MaxRange)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execution: Attack: UAC_EnemyMeleeComboManager: DefaultAbilityCDO is null!"));
-		return nullptr;
-	}
-
-	float ComboAbilityMaxRange = DefaultAbilityCDO->MaxRange;
-	if (AIController->GetTargetHeroDistance() < ComboAbilityMaxRange)
-	{
-		return Super::ActivateComboMelee(Data);
+		return;
 	}
 	else
 	{
 		FinishComboChain(EEnemyComboChainResult::OutOfRange);
-		return nullptr;
 	}
+
 }
 
 void UAC_EnemyMeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Data)

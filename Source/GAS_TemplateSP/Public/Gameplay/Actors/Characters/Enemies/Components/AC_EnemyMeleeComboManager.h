@@ -8,6 +8,8 @@
 UENUM(BlueprintType)
 enum class EEnemyComboChainResult : uint8
 {
+	ActivationFailed,
+	Invalid,
 	Completed,          // Tüm combo baþarýyla bitti
 	HitTaken,          // damage aldý
 	ParryTriggered,    // parry seçildi
@@ -61,6 +63,8 @@ class GAS_TEMPLATESP_API UAC_EnemyMeleeComboManager : public UAC_MeleeComboManag
 	GENERATED_BODY()
 
 public:
+	virtual void OnComboAbilityActivated(UGA_ComboMeleeAttack* Instance) override;
+
 	UFUNCTION(BlueprintCallable)
 	void StartComboChain(UEnemyComboChainAsset* ComboChain, FName MontageSection = NAME_None);
 
@@ -69,7 +73,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	virtual UGA_ComboMeleeAttack* ActivateComboMelee(const FComboPreActivationData& Data = FComboPreActivationData()) override;
+	virtual void ActivateComboMelee(const UComboPreActivationData* Data = nullptr) override;
 
 	void OnComboAbilityEnd(const FCustomAbilityEndedData& Data) override;
 	

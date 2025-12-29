@@ -44,11 +44,13 @@ protected:
 
 	void ChangeComboSet();
 
+	virtual void OnComboAbilityActivated(UGA_ComboMeleeAttack* Instance) override;
+
 public:
-	virtual UGA_ComboMeleeAttack* ActivateComboMelee(const FComboPreActivationData& Data = FComboPreActivationData()) override;
+	virtual void ActivateComboMelee(const UComboPreActivationData* Data = nullptr) override;
 
 	UFUNCTION(BlueprintCallable)
-	void StartShadowCombo(const FComboPreActivationData& Data);
+	void StartShadowCombo(const UComboPreActivationData* Data);
 
 	UPROPERTY(EditDefaultsOnly)
 	UHeroComboChainsAsset* HeroComboAsset; 

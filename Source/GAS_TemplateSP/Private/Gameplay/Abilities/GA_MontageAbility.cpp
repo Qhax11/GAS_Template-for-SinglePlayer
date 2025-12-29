@@ -95,6 +95,12 @@ void UGA_MontageAbility::TryActivateMotionWarping()
 	// For right now, we just use rotation warping with PreActivation.
 	if (WarpTargetMode == EWarpTargetMode::PreActivation)
 	{
+		// ❗ PreActivation datası YOKSA warp yapma
+		if (PreActivationWarpLocation.IsNearlyZero())
+		{
+			return;
+		}
+
 		MotionWarpingComp->AddOrUpdateWarpTargetFromLocationAndRotation(MotionWarpingName, Location, Rotation);
 		UE_LOG(
 			LogTemp,

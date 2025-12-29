@@ -42,7 +42,10 @@ void UAC_MeleeComboManager::ActivateComboMelee(const UComboPreActivationData* Da
 		return;
 	}
 
+	// ✅ ÇÖZÜM: Ability'yi önce spec'ten bul veya grant et
 	FGameplayAbilitySpec* FoundSpec = nullptr;
+
+	// Mevcut spec'lerde ara
 	for (FGameplayAbilitySpec& Spec : CharacterBaseASC->GetActivatableAbilities())
 	{
 		if (Spec.Ability && Spec.Ability->GetClass() == ComboAbilityData->ComboAbilityClass)
@@ -52,18 +55,36 @@ void UAC_MeleeComboManager::ActivateComboMelee(const UComboPreActivationData* Da
 		}
 	}
 
+	// Bulunamadıysa grant et
+	if (!FoundSpec)
+	{
+		FGameplayAbilitySpecHandle NewHandle = CharacterBaseASC->GiveAbility(
+			FGameplayAbilitySpec(ComboAbilityData->ComboAbilityClass, 1, INDEX_NONE, CharacterBase)
+		);
+		FoundSpec = CharacterBaseASC->FindAbilitySpecFromHandle(NewHandle);
+	}
+
 	if (!FoundSpec)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UAC_MeleeComboManager: Could not find or create ability spec!"));
 		return;
 	}
 
+	// ✅ ÇÖZÜM: Data'yı EventData ile gönder, CDO'ya set etme!
 	FGameplayEventData EventData;
 	EventData.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ComboMelee;
-	EventData.OptionalObject = Data;
+	EventData.OptionalObject = Data; // Instance'da okunacak
 	EventData.Instigator = CharacterBase;
 	EventData.Target = CharacterBase;
 
+	if (Data)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UAC_MeleeComboManager: Sending PreActivation data - Loc: %s, Rot: %s"),
+			*Data->MotionWarpingLocation.ToString(),
+			*Data->MotionWarpingRotation.ToString());
+	}
+
+	// ✅ Ability'yi trigger et
 	CharacterBaseASC->TriggerAbilityFromGameplayEvent(
 		FoundSpec->Handle,
 		CharacterBaseASC->AbilityActorInfo.Get(),
@@ -71,8 +92,6 @@ void UAC_MeleeComboManager::ActivateComboMelee(const UComboPreActivationData* Da
 		&EventData,
 		*CharacterBaseASC
 	);
-
-	// NOT: Instance tracking OnComboAbilityActivated callback'inde yapılacak
 }
 
 void UAC_MeleeComboManager::OnComboAbilityActivated(UGA_ComboMeleeAttack* Instance)
@@ -83,6 +102,8 @@ void UAC_MeleeComboManager::OnComboAbilityActivated(UGA_ComboMeleeAttack* Instan
 
 	Instance->OnAbilityEnded.RemoveAll(this);
 	Instance->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
+
+	UE_LOG(LogTemp, Log, TEXT("UAC_MeleeComboManager: Combo ability activated - %s"),*Instance->GetClass()->GetName())
 }
 
 void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Data)

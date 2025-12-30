@@ -51,7 +51,24 @@ void UAC_EnemyMeleeComboManager::StartComboChain(UEnemyComboChainAsset* ComboCha
  
 void UAC_EnemyMeleeComboManager::ActivateComboMelee(const UComboPreActivationData* Data)
 {
-	Super::ActivateComboMelee(Data);
+	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
+	if (!ComboAbilityData || !ComboAbilityData->ComboAbilityClass) 
+	{
+		return;
+	}
+
+	UGA_ComboMeleeAttack* NextComboCDO = ComboAbilityData->ComboAbilityClass->GetDefaultObject<UGA_ComboMeleeAttack>();
+	const float Distance = AIController->GetTargetHeroDistance();
+	if (Distance < NextComboCDO->MaxRange)
+	{
+		Super::ActivateComboMelee(Data);
+		return;
+	}
+	else
+	{
+		FinishComboChain(EEnemyComboChainResult::OutOfRange);
+		return;
+	}
 }
 
 void UAC_EnemyMeleeComboManager::OnComboAbilityActivated(UGA_ComboMeleeAttack* Instance)
@@ -62,15 +79,10 @@ void UAC_EnemyMeleeComboManager::OnComboAbilityActivated(UGA_ComboMeleeAttack* I
 		return;
 	}
 
-	const float Distance = AIController->GetTargetHeroDistance();
-	if (Distance < Instance->MaxRange)
-	{
-		return;
-	}
-	else
-	{
-		FinishComboChain(EEnemyComboChainResult::OutOfRange);
-	}
+	// Bind ComboEnd delegate
+	Super::OnComboAbilityActivated(Instance);
+
+
 
 }
 

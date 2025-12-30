@@ -105,11 +105,10 @@ void UGA_MontageAbility::TryActivateMotionWarping()
 		UE_LOG(
 			LogTemp,
 			Warning,
-			TEXT("UGA_MontageAbility: PreActivation WarpTarget | Name=%s | Location=%s | Rotation=%s | in this: %s"),
+			TEXT("UGA_MontageAbility: PreActivation WarpTarget | Name=%s | Location=%s | Rotation=%s"),
 			*MotionWarpingName.ToString(),
 			*Location.ToString(),
-			*Rotation.ToString(),
-			*GetName()
+			*Rotation.ToString()
 		);
 	}
 	else
@@ -122,25 +121,21 @@ bool UGA_MontageAbility::TryBuildWarpTarget(FVector& OutLocation, FRotator& OutR
 {
 	if (WarpTargetMode == EWarpTargetMode::Directional) 
 	{
-		UE_LOG(LogTemp, Log, TEXT("Ability: UGA_MontageAbility: WarpTargetMode is Directional in this: %s"), *GetName());
 		OutLocation = CalculateDirectionalWarpLocation();
 		return true;
 	}
 	else if (WarpTargetMode == EWarpTargetMode::TargetReach)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Ability: UGA_MontageAbility: TargetReach is Directional in this: %s"), *GetName());
 		bool ValidReachLocation = TryCalculateReachLocationToTarget(OutLocation);
 		if (!ValidReachLocation) 
 		{
-			UE_LOG(LogTemp, Log, TEXT("Ability: UGA_MontageAbility: InValid ReachLocation, try with CalculateDirectionalWarpLocation(), in this: %s"), *GetName());
 			OutLocation = CalculateDirectionalWarpLocation();
 		}
 
-		return false;
+		return true;
 	}
 	else if (WarpTargetMode == EWarpTargetMode::PreActivation)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Ability: UGA_MontageAbility: TargetReach is PreActivation in this: %s"), *GetName());
 		OutLocation = PreActivationWarpLocation;
 		OutRotation = PreActivationWarpRotation;
 		return true;
@@ -206,7 +201,6 @@ bool UGA_MontageAbility::TryCalculateReachLocationToTarget(FVector& OutTargetLoc
 
 	if (!IsValid(Avatar) || !IsValid(Target))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: TargetReach: Target or Avatar is invalid! in this: %s"), *GetName());
 		return false;
 	}
 
@@ -216,28 +210,21 @@ bool UGA_MontageAbility::TryCalculateReachLocationToTarget(FVector& OutTargetLoc
 	const float Distance = ToTarget.Size();
 	if (Distance <= KINDA_SMALL_NUMBER)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: TargetReach: Distance is so low in this: %s"), *GetName());
 		return false;
 	}
 
 	if (Distance > MaxRange)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: TargetReach: Distance is bigger than MaxRange! in this: %s"), *GetName());
 		return false;
 	}
 
 	if (Distance > TargetReachDistance)
 	{
 		OutTargetLocation = Target->GetActorLocation() - ToTarget.GetSafeNormal() * TargetReachDistance;
-		UE_LOG(LogTemp, Log, TEXT("Ability: UGA_MontageAbility: TargetReach: Moving closer to target, Distance = %f"), Distance);
 		return true;
 	}
-	else
-	{
-		OutTargetLocation = OwnerLocation;
-		UE_LOG(LogTemp, Log, TEXT("Ability: UGA_MontageAbility: TargetReach: TargetReach Already close, staying in place, Distance=%f"), Distance);
-		return true;
-	}
+
+	return false;
 }
 
 AActor* UGA_MontageAbility::GetCurrentTargetActor() const

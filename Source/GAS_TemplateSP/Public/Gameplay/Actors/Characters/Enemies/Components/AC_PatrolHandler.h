@@ -4,6 +4,7 @@
 
 #include "Components/ActorComponent.h"
 #include "Gameplay/Abilities/Enemy/Movement/GA_EnemyPatrolling.h"
+#include "Engine/TargetPoint.h"
 #include "AC_PatrolHandler.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnPatrollingStopped);
@@ -47,7 +48,7 @@ protected:
 	float MaxPatrolWaitTime = 3.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Patrolling")
-	TArray<AActor*> PatrolPoints;
+	TArray<ATargetPoint*> PatrolPoints;
 
 	UPROPERTY(EditAnywhere, Category = "Patrolling")
 	TSubclassOf<UGA_EnemyPatrolling> EnemyPatrollingAbilityClass;

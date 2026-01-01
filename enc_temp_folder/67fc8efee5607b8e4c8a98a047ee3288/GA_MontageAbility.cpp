@@ -128,7 +128,7 @@ bool UGA_MontageAbility::TryBuildWarpTarget(FVector& OutLocation, FRotator& OutR
 	}
 	else if (WarpTargetMode == EWarpTargetMode::TargetReach)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Ability: UGA_MontageAbility: WarpTargetMode is TargetReach in this: %s"), *GetName());
+		UE_LOG(LogTemp, Log, TEXT("Ability: UGA_MontageAbility: TargetReach is Directional in this: %s"), *GetName());
 		bool ValidReachLocation = TryCalculateReachLocationToTarget(OutLocation);
 		if (!ValidReachLocation) 
 		{
@@ -136,7 +136,7 @@ bool UGA_MontageAbility::TryBuildWarpTarget(FVector& OutLocation, FRotator& OutR
 			OutLocation = CalculateDirectionalWarpLocation();
 		}
 
-		return true;
+		return false;
 	}
 	else if (WarpTargetMode == EWarpTargetMode::PreActivation)
 	{

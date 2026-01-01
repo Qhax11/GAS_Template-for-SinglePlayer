@@ -76,16 +76,6 @@ void UGA_ParryBase::OnPostureEmptyTagAdded(const UAbilitySystemComponent* Abilit
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, true);
 }
 
-void UGA_ParryBase::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	// Parry is using montage loop. Override parent EndAbility() execution.
-}
-
-void UGA_ParryBase::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
-{
-	// Parry is using montage loop. Override parent EndAbility() execution.
-}
-
 void UGA_ParryBase::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	TargetCharacterTagDelegatesComp->UnregisterAllDelegatesForObject(this);

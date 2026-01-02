@@ -345,7 +345,8 @@ namespace GAS_Tags
 	// Special VFX
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Parry, "GameplayCue.VFX.Parry");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Heal, "GameplayCue.VFX.Heal");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Hero_Ghost, "GameplayCue.VFX.Hero.Ghost");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Hero_Shadow, "GameplayCue.VFX.Hero.Shadow");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Hero_BehindShadow, "GameplayCue.VFX.Hero.BehindShadow");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Boss_Ghost, "GameplayCue.VFX.Boss.Ghost");
 
 	// Dissolve VFX

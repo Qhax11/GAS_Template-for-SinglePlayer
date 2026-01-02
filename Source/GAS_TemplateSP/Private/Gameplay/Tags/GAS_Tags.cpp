@@ -351,8 +351,6 @@ namespace GAS_Tags
 
 	// Dissolve VFX
 	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Dissolve_CharacterDead, "GameplayCue.VFX.Dissolve.CharacterDead");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Dissolve_SpawnShadow_Hero, "GameplayCue.VFX.Dissolve.SpawnShadow.Hero");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_GameplayCue_VFX_Dissolve_SpawnShadow_Boss, "GameplayCue.VFX.Dissolve.SpawnShadow.Boss");
 
 
 	// ============================================================

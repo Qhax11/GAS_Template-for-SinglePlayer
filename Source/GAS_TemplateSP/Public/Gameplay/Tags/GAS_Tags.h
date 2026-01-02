@@ -369,8 +369,6 @@ namespace GAS_Tags
 
 	// Dissolve VFX
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_VFX_Dissolve_CharacterDead);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_VFX_Dissolve_SpawnShadow_Hero);
-	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_GameplayCue_VFX_Dissolve_SpawnShadow_Boss);
 
 
 	// ============================================================

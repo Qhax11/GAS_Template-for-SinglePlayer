@@ -66,6 +66,12 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnTargetActorInitialized OnInitialized;
 
+	UFUNCTION(BlueprintCallable)
+	void TriggerInitializedEvent()
+	{
+		OnInitialized.Broadcast();
+	}
+
 protected:
 	// Prevents overlap logic from running during actor destruction
 	bool bBeingDestroyed = false;

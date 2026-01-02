@@ -15,10 +15,6 @@ UGA_ParryBase::UGA_ParryBase()
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);
 
-	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Start);
-	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_Continue);
-	WaitForEventTag.AddTag(GAS_Tags::TAG_Gameplay_Event_AnimNotifyState_AttackTrace_End);
-
 	WarpTargetMode = EWarpTargetMode::None;
 }
 

@@ -53,7 +53,6 @@ class GAS_TEMPLATESP_API AGAS_TargetActorBase : public AActor
 public:
 	virtual void Confirm();
 
-	UFUNCTION(BlueprintCallable)
 	virtual void Cancel();
 
 	virtual void DestroyTargetActor();
@@ -68,7 +67,10 @@ public:
 	FOnTargetActorInitialized OnInitialized;
 
 	UFUNCTION(BlueprintCallable)
-	void BorcastInitalized();
+	void TriggerInitializedEvent()
+	{
+		OnInitialized.Broadcast();
+	}
 
 protected:
 	// Prevents overlap logic from running during actor destruction

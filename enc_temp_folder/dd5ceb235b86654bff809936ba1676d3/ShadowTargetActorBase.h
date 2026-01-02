@@ -1,0 +1,110 @@
+// Qhax's GAS Template for SinglePlayer
+
+#pragma once
+
+#include "Gameplay/Abilities/TargetActors/GAS_TargetActorBase.h"
+#include "Gameplay/Abilities/InCombat/Attack/GA_MeleeAttackBase.h"
+#include "AbilitySystemGlobals.h"
+#include "ShadowTargetActorBase.generated.h"
+
+UENUM(BlueprintType)
+enum EShadowDirectionToTarget : uint8
+{
+	HDT_None,
+	HDT_Left,
+	HDT_Right,
+	HDT_Forward,
+	HDT_Backward
+};
+
+UCLASS()
+class GAS_TEMPLATESP_API AShadowTargetActorBase : public AGAS_TargetActorBase
+{
+	GENERATED_BODY()
+
+protected:
+	AShadowTargetActorBase();
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void Confirm() override;
+
+	virtual void Cancel() override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "HeroHologramTargetActor")
+	float RotationSpeed = 5.0f;
+
+	void RotateToTarget(AActor* TargetActor, float DeltaTime);
+
+	// Checks if the direction has changed.
+	UFUNCTION(BlueprintCallable)
+	bool UpdateRelativeDirectionToTarget();
+
+	UPROPERTY(EditDefaultsOnly, Category = "ShadowTargetActorBase")
+	TArray<TSubclassOf<UGA_MeleeAttackBase>> ShadowAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AHologramTargetActorBase")
+	TMap<TEnumAsByte<EShadowDirectionToTarget>, TSubclassOf<UGA_MeleeAttackBase>> DirectionalAttackAbilities;
+
+public:
+	void SetCurrentTarget(AActor* NewCurrentTarget);
+
+	AActor* GetCurrentTarget();
+
+	TSubclassOf<UGA_MeleeAttackBase> GetSelectedAttackAbilityClass();
+
+protected:
+	TSubclassOf<UGA_MeleeAttackBase> SelectedAttackAbilityClass;
+
+	UGA_MeleeAttackBase* SelectedShadowAbilityCDO;
+
+	UAnimMontage* AttackMontage;
+
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<AActor> CurrentTarget;
+
+	class AGAS_CharacterBase* InstigatorCharacter;
+
+	void OnDirectionToTargetChanged(EShadowDirectionToTarget NewDirection);
+
+	void UptadeAttackAbilityClassAndMontageFromRelativePositionToTarget();
+
+	TSubclassOf<UGA_MeleeAttackBase> GetAttackAbilityFromRelativePositionToTarget();
+
+	UPROPERTY(BlueprintReadOnly)
+	TEnumAsByte<EShadowDirectionToTarget> LastDirectionToTarget = EShadowDirectionToTarget::HDT_None;
+
+protected:
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UCapsuleComponent> CapsuleComponent;
+
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* SkeletalMesh;
+
+	bool bIsTargetInRange;
+
+	UPROPERTY(VisibleAnywhere, Category = "Collision", BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* EnemyDetectionSphere;
+
+	UFUNCTION()
+	virtual void OnEnemyDetectionBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnEnemyDetectionEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	class UAnimInstance* AnimInstance;
+
+	void PlayMontageWithCallback(UAnimMontage* MontageToPlay);
+
+	UFUNCTION()
+	void OnPlayMontageNotify(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+
+	UFUNCTION()
+	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
+};

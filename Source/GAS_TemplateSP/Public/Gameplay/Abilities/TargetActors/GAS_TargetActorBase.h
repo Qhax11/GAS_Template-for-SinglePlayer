@@ -43,6 +43,7 @@ public:
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetActorConfirm, const FGAS_TargetActorData&, TargetActorData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetActorCancel, const FGAS_TargetActorData&, TargetActorData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTargetActorInitialized);
 
 UCLASS()
 class GAS_TEMPLATESP_API AGAS_TargetActorBase : public AActor
@@ -61,6 +62,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnTargetActorCancel OnCancel;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTargetActorInitialized OnInitialized;
 
 protected:
 	// Prevents overlap logic from running during actor destruction

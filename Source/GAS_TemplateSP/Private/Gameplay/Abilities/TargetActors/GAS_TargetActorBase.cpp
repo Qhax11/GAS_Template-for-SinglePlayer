@@ -21,3 +21,8 @@ void AGAS_TargetActorBase::DestroyTargetActor()
 	Destroy();
 }
 
+void AGAS_TargetActorBase::BrodcastInitalized()
+{
+	OnInitialized.Broadcast();
+}
+

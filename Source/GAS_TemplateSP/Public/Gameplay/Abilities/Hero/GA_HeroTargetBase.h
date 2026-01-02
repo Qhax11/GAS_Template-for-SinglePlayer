@@ -14,7 +14,7 @@ class GAS_TEMPLATESP_API UGA_HeroTargetBase : public UGA_TargetBase
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 
-	virtual void OnTargetActorInitialized();
+	virtual void OnTargetActorInitialized() override;
 
 	bool BindInputForConfirmAndCancel();
 

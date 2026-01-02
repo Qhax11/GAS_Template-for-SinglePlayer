@@ -68,7 +68,7 @@ public:
 	FOnTargetActorInitialized OnInitialized;
 
 	UFUNCTION(BlueprintCallable)
-	void BorcastInitalized();
+	void BrodcastInitalized();
 
 protected:
 	// Prevents overlap logic from running during actor destruction

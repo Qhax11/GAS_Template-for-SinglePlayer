@@ -64,8 +64,6 @@ void AGCN_GameplayCameraBase::ExecuteCameraEffect(AActor* HeroActor)
 	}
 	else if (GameplayCueTag == GAS_Tags::TAG_GameplayCue_Combat_Camera_ZoomOut)
 	{
-		HeroGameplayCameraComponent->StartCameraZoomOut();
-		/*
 		float ZoomAmount = 100.0f;
 		float ZoomDuracion = 0.2f;
 		UDA_AttackTypeToCameraZoom* AttackTypeToCameraZoomData = SourceDataComponent->GetAttackTypeToCameraZoomData();
@@ -75,7 +73,6 @@ void AGCN_GameplayCameraBase::ExecuteCameraEffect(AActor* HeroActor)
 			ZoomDuracion = AttackTypeToCameraZoomData->FindZoomDuration(SourceMeleeAttackType);
 			HeroGameplayCameraComponent->StartCameraZoomOut();
 		}
-		*/
 	}
 }
 

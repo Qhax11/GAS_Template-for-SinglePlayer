@@ -6,34 +6,34 @@
 
 bool AGCN_CombatBase::OnExecuted(AActor* Source, AActor* Target, const FGameplayCueParameters& Parameters)
 {
-	if (!Source || !Target)
+	if (!Source && !Target)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: Source or Target is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: Source and Target is null!"));
 		return false;
 	}
 
 	SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Source);
 	TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
-	if (!SourceASC || !TargetASC)
+	if (!SourceASC && !TargetASC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: SourceASC or TargetASC is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: SourceASC and TargetASC is null!"));
 		return false;
 	}
 
 	SourceMeleeAttack = Cast<UGA_MeleeAttackBase>(Parameters.EffectContext.GetAbility());
-	if (!SourceMeleeAttack)
+	if (SourceMeleeAttack)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: SourceMeleeAttack is null!"));
-		return false;
+		SourceMeleeAttackType = SourceMeleeAttack->GetAttackTypeTagFromAbilityTags();
 	}
 
-	SourceMeleeAttackType = SourceMeleeAttack->GetAttackTypeTagFromAbilityTags();
-
-	SourceDataComponent = Source->GetComponentByClass<UAC_GameplayData>();
-	if (!SourceDataComponent)
+	if (Source)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: SourceDataComponent is null!"));
-		return false;
+		SourceDataComponent = Source->GetComponentByClass<UAC_GameplayData>();
+		if (!SourceDataComponent)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Combat Gameplaycue: SourceDataComponent is null!"));
+		}
 	}
 
 	return true;

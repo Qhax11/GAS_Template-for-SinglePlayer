@@ -3,7 +3,7 @@
 
 #include "Gameplay/AI/States/TakeHitState.h"
 #include "Gameplay/Abilities/Enemy/GA_EnemyTakeDamage.h"
-
+#include "Gameplay/Actors/Characters/Enemies/Components/AC_EnemyMeleeComboManager.h"
 
 UTakeHitState::UTakeHitState()
 {
@@ -13,6 +13,8 @@ UTakeHitState::UTakeHitState()
 void UTakeHitState::StateInitalize(const FStateInitParams& StateInitParams)
 {
 	Super::StateInitalize(StateInitParams);
+
+	ComboManager = Enemy->GetEnemyMeleeComboManagerComponent();
 }
 
 bool UTakeHitState::EnterCondition(TSharedPtr<FStatePayloadBase> EnterPayload)
@@ -72,10 +74,13 @@ void UTakeHitState::ExecuteTakeHit(TSharedPtr<FTakeHitStatePayload> TakeHitPaylo
 
 void UTakeHitState::TriggerTakeHitAbility(TSharedPtr<FTakeHitStatePayload> TakeHitPayload)
 {
-	if (!EnemyTakeDamageAbilityClass || !EnemyASC)
+	if (!EnemyTakeDamageAbilityClass || !EnemyASC || !ComboManager)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UTakeHitState: TriggerTakeHitAbility: Invalid Data"));
 		return;
 	}
+
+	ComboManager->StopCombo();
 
 	FDamageData DamageData = TakeHitPayload->DamageData;
 	FGameplayEventData Payload;

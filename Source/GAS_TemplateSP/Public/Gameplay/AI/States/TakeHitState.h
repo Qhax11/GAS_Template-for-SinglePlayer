@@ -6,6 +6,7 @@
 #include "TakeHitState.generated.h"
 
 class UGA_EnemyTakeDamage;
+class UAC_EnemyMeleeComboManager;
 
 UCLASS()
 class GAS_TEMPLATESP_API UTakeHitState : public UStateBase
@@ -43,4 +44,6 @@ protected:
 	UPROPERTY()
 	UGAS_GameplayAbilityBase* LastUsedTakeDamageAbility = nullptr;
 
+	UPROPERTY()
+	UAC_EnemyMeleeComboManager* ComboManager;
 };

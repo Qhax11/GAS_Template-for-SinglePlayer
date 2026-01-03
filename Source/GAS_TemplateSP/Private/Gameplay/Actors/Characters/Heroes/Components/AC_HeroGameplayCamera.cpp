@@ -47,7 +47,10 @@ void UAC_HeroGameplayCamera::StartCameraZoomOut()
 
 void UAC_HeroGameplayCamera::StartZoom(const FCameraZoomParams& Params)
 {
-	if (!CameraBoom) return;
+	if (!CameraBoom)
+	{
+		return;
+	}
 
 	ActiveZoomParams = Params;
 	ZoomElapsed = 0.f;
@@ -59,7 +62,6 @@ void UAC_HeroGameplayCamera::StartZoom(const FCameraZoomParams& Params)
 void UAC_HeroGameplayCamera::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	TickZoom(DeltaTime);
 }
 

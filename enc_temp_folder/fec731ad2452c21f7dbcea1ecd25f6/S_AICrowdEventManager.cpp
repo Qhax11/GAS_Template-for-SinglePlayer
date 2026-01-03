@@ -201,6 +201,11 @@ bool US_AICrowdEventManager::AddAttackIntender(UAbilitySystemComponent* ASC)
         return false;
     }
 
+    if (!ASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Rotation_LockTowardsTarget)) 
+    {
+        return false;
+    }
+
     FindedData->SetAttackIntender(true);
     return true;
 }

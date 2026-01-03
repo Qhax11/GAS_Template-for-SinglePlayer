@@ -97,12 +97,6 @@ void UMovementState::TryEnterToAttackState()
 	}
 	else if (MovementRangeResult == EMovementRangeResult::InRange) 
 	{
-		// TO DO: This line is temporory for quick bug fix, change it later.
-		if (EnemyASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Dodge)) 
-		{
-			return;
-		}
-
 		MovementManager->ClearMovementChain();
 		StopEnemyMovement();
 

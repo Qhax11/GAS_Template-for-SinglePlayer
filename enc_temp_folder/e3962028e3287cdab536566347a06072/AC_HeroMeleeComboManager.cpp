@@ -122,10 +122,8 @@ void UAC_HeroMeleeComboManager::StartShadowCombo(const UComboPreActivationData* 
 {
 	InitComboChain(EHeroComboType::ShadowCombo);
 	
-	if (!CharacterBaseASC || !Data) 
-	{
+	if (!CharacterBaseASC || !Data)
 		return;
-	}
 
 	FGameplayEventData EventData;
 	EventData.EventTag = GAS_Tags::TAG_Gameplay_AbilityTriggerEvent_ShadowCombo;

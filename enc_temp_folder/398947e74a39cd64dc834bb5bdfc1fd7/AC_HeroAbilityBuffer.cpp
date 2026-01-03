@@ -45,7 +45,6 @@ void UAC_HeroAbilityBuffer::OnAbilityFailed(const UGameplayAbility* FailedAbilit
     // Only buffer during relevant phases
     if (!TagExplaining.HasTag(GAS_Tags::TAG_Gameplay_State_Phase_Active))
     {
-        UE_LOG(LogTemp, Log, TEXT("UAC_HeroAbilityBuffer: %s Ability is failed, has Active Tag."), *FailedAbility->GetName());
         return;
     }
 

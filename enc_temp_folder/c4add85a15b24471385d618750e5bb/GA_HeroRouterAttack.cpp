@@ -45,7 +45,6 @@ void UGA_HeroRouterAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
     }
     else
     {
-        UE_LOG(LogTemp, Log, TEXT("UGA_HeroRouterAttack: ActivateComboMelee"));
         HeroMeleeComboManager->ActivateComboMelee();
     }
    

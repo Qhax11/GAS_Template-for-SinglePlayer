@@ -108,7 +108,6 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo1, "Gameplay.State.InCombat.MeleeCombo1");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo2, "Gameplay.State.InCombat.MeleeCombo2");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_MeleeCombo3, "Gameplay.State.InCombat.MeleeCombo3");
-	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_ShadowCombo, "Gameplay.State.InCombat.ShadowCombo");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_AirKick, "Gameplay.State.InCombat.AirKick");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnparryableAttack, "Gameplay.State.InCombat.UnparryableAttack");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_Gameplay_State_InCombat_UnDodgebleAttack, "Gameplay.State.InCombat.UnDodgebleAttack");

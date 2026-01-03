@@ -29,20 +29,13 @@ void UAC_MeleeComboManager::BeginPlay()
 
 void UAC_MeleeComboManager::ActivateComboMelee(const UComboPreActivationData* Data)
 {
-	if (!CharacterBaseASC) 
-	{
+	if (!CharacterBaseASC)
 		return;
-	}
 
 	const FComboAbilityData* ComboAbilityData = ActiveComboChainTracker.GetCurrentCombo();
-	if (!ComboAbilityData || !ComboAbilityData->ComboAbilityClass) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UAC_MeleeComboManager: ComboAbilityData Invalid"));
+	if (!ComboAbilityData || !ComboAbilityData->ComboAbilityClass)
 		return;
-	}
 
-
-	UE_LOG(LogTemp, Log, TEXT("UAC_MeleeComboManager: Try activate combo ability: %s"), *ComboAbilityData->ComboAbilityClass->GetName());
 	CharacterBaseASC->TryActivateAbilityByClass(ComboAbilityData->ComboAbilityClass);
 }
 
@@ -55,7 +48,7 @@ void UAC_MeleeComboManager::OnComboAbilityActivated(UGA_ComboMeleeAttack* Instan
 	Instance->OnAbilityEnded.RemoveAll(this);
 	Instance->OnAbilityEnded.AddUObject(this, &UAC_MeleeComboManager::OnComboAbilityEnd);
 
-	UE_LOG(LogTemp, Log, TEXT("UAC_MeleeComboManager: Combo ability activated - %s"), *Instance->GetClass()->GetName());
+	UE_LOG(LogTemp, Log, TEXT("UAC_MeleeComboManager: Combo ability activated - %s"),*Instance->GetClass()->GetName())
 }
 
 void UAC_MeleeComboManager::OnComboAbilityEnd(const FCustomAbilityEndedData& Data)

@@ -15,6 +15,7 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	// Immunity Check
 	if (Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_DamageImmune))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("EC_DamageBase: TargetHas DamageImmune Tag"));
 		return;
 	}
 
@@ -26,15 +27,18 @@ void UEC_DamageBase::ExecuteWithParams(FExecCalculationParameters Params, FGamep
 	{
 		FDamageData Data(Params, Result.bParrySuccess);
 		DamageSubsystem->OnDamageDealt.Broadcast(Data);
+		UE_LOG(LogTemp, Warning, TEXT("EC_DamageBase: OnDamageDealt has Brodcasted"));
 	}
 
 	if (Result.bParrySuccess) 
 	{
+		UE_LOG(LogTemp, Warning, TEXT("EC_DamageBase: Result is parry, return."));
 		return;
 	}
 
 	if (Result.DamageDealt > 0)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("EC_DamageBase: DamageDealt is bigger than 0, apply damage."));
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(
 			Params.GetTargetAttributeSet()->GetHealthAttribute(), EGameplayModOp::Additive, -Result.DamageDealt));
 	}
@@ -58,6 +62,13 @@ FDamageCalculationResult UEC_DamageBase::CalculateDamageResult(FExecCalculationP
 
 	Result.bIsUnparryableAttack = Params.SourceASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnparryableAttack);
 	Result.bTargetInParry = Params.TargetASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);
+
+	// DEBUG LOG EKLE
+	UE_LOG(LogTemp, Warning, TEXT("EC_DamageBase: Parry Check - Target: %s, HasParryTag: %d, IsUnparryable: %d"),
+		*GetNameSafe(Params.TargetActor),
+		Result.bTargetInParry,
+		Result.bIsUnparryableAttack);
+
 	Result.bParrySuccess = !Result.bIsUnparryableAttack && Result.bTargetInParry && CalculateParry(Params);
 
 	Result.MitigatedDamage = GetTotalDamage(Params);

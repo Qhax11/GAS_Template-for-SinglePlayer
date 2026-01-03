@@ -24,6 +24,9 @@ UGA_TakeDamageBase::UGA_TakeDamageBase()
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_UnstoppableAttack);
 
 	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active);
+	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
+	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Dodge);
+	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Parry);
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_TakeDamage);
 	AbilityTags.AddTag(GAS_Tags::TAG_Gameplay_Ability_Combat_TakeDamage);

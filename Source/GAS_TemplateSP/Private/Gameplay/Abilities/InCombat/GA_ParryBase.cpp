@@ -14,6 +14,7 @@ UGA_ParryBase::UGA_ParryBase()
 	SetAssetTags(AbiltiyTags);
 
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Parry);
+	ActivationOwnedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Parry);
 
 	WarpTargetMode = EWarpTargetMode::None;
 }

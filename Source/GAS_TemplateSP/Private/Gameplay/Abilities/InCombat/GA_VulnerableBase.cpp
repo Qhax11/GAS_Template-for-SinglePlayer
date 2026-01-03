@@ -9,6 +9,10 @@ UGA_VulnerableBase::UGA_VulnerableBase()
 	ActivationOwnedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Vulnerable);
 
 	ActivationBlockedTags.AddTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead);
+
+	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Attack);
+	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Dodge);
+	ActivationBlockedTags.RemoveTag(GAS_Tags::TAG_Gameplay_State_Phase_Active_Parry);
 }
 
 void UGA_VulnerableBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,

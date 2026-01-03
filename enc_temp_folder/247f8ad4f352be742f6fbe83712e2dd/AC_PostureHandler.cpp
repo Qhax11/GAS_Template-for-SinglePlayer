@@ -63,11 +63,6 @@ void UAC_PostureHandler::OnHealthChanged(const FAttributeChangeCallbackData& Dat
 		return;
 	}
 
-	if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_Entity_Character_Hero))
-	{
-		return;
-	}
-
 	if (OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_Gameplay_State_InCombat_Dead))
 	{
 		return;

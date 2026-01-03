@@ -98,6 +98,16 @@ void UGA_HeroParry::OnHeroInAirTagAdded(const UAbilitySystemComponent* AbilitySy
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, true);
 }
 
+void UGA_HeroParry::OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	// Parry is using montage loop. Override parent EndAbility() execution.
+}
+
+void UGA_HeroParry::OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	// Parry is using montage loop. Override parent EndAbility() execution.
+}
+
 void UGA_HeroParry::EndAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FGameplayAbilityActorInfo* ActorInfo, 
 	const FGameplayAbilityActivationInfo ActivationInfo, 

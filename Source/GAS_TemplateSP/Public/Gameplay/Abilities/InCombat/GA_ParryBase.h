@@ -27,9 +27,5 @@ public:
 	UFUNCTION()
 	virtual void OnPostureEmptyTagAdded(const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& Tag);
 
-	virtual void OnMontageBlendOut(FGameplayTag EventTag, FGameplayEventData EventData) override;
-
-	virtual void OnMontageCompleted(FGameplayTag EventTag, FGameplayEventData EventData) override;
-
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled);
 };

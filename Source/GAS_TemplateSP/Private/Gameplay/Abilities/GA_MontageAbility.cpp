@@ -434,6 +434,8 @@ void UGA_MontageAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
 	// Delay task cleanup
 	CancelBlendOutDelay();
 
+	UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_MontageAbility: EndAbility is called for: %s"), *GetAvatarActorFromActorInfo()->GetName());
+
 	if (PlayMontageWaitForEventTask && IsValid(PlayMontageWaitForEventTask))
 	{
 		if (PlayMontageWaitForEventTask->IsActive())

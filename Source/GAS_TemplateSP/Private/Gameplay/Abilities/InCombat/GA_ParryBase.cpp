@@ -50,6 +50,7 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	if (!CharacterBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_ParryBase: CharacterBase is null in: %s, can not initialize"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
 
@@ -57,6 +58,7 @@ void UGA_ParryBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	if (!TargetCharacterTagDelegatesComp)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ability: UGA_ParryBase: TargetCharacterTagDelegatesComp is null in: %s, can not initialize"), *GetName());
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
 
@@ -75,7 +77,10 @@ void UGA_ParryBase::OnPostureEmptyTagAdded(const UAbilitySystemComponent* Abilit
 
 void UGA_ParryBase::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	TargetCharacterTagDelegatesComp->UnregisterAllDelegatesForObject(this);
+	if (IsValid(TargetCharacterTagDelegatesComp))
+	{
+		TargetCharacterTagDelegatesComp->UnregisterAllDelegatesForObject(this);
+	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

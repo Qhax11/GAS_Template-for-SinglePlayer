@@ -79,15 +79,12 @@ class GAS_TEMPLATESP_API UAC_TagDelegates : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-
 	UAC_TagDelegates();
 
 protected:
-
 	virtual void BeginPlay() override;
 
 public:	
-
 	virtual bool Initialize(AActor* OwnerActor);
 
 	/**
@@ -105,11 +102,9 @@ public:
 	void UnregisterAllDelegatesForObject(UObject* Target);
 
 protected:
-
 	UAbilitySystemComponent* OwnerASC;
 
 private:
-
 	TArray<FTagDelegate> TagDelegates;
 
 };

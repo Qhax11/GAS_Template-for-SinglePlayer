@@ -43,6 +43,8 @@ void AGAS_EnemyBase::PossessedBy(AController* NewController)
 		UE_LOG(LogTemp, Warning, TEXT("EnemyController is null in: %s"), *GetName());
 		return;
 	}
+
+	ApplyEnemyProfile();
 }
 
 void AGAS_EnemyBase::BrodcastCharacterSpawn()
@@ -52,4 +54,29 @@ void AGAS_EnemyBase::BrodcastCharacterSpawn()
 		FEnemySpawnData EnemySpawnData = FEnemySpawnData(this, GetAbilitySystemComponent());
 		SpawnDelegatesSubsystem->RegisterEnemy(EnemySpawnData);
 	}
+}
+
+void AGAS_EnemyBase::ApplyEnemyProfile()
+{
+	if (!EnemyProfileData)
+	{
+		return;
+	}
+
+	auto ASC = GetAbilitySystemComponent();
+	if (!ASC)
+	{
+		return;
+	}
+
+	if (!EnemyProfileData->CombatRules.bCanParry) 
+	{
+		ASC->AddLooseGameplayTag(GAS_Tags::TAG_AI_Rule_Reaction_Parry_Disabled);
+	}
+
+	if (!EnemyProfileData->CombatRules.bCanAttack)
+	{
+		ASC->AddLooseGameplayTag(GAS_Tags::TAG_AI_Rule_Attack_Disabled);
+	}
+	
 }

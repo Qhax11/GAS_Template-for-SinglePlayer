@@ -492,6 +492,21 @@ namespace GAS_Tags
 	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Direction_Policy_EscapeFromAttack);
 
 
+	// ============================================================
+    // AI RULES / CAPABILITIES
+    // ============================================================
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Rule);
+
+	// Attack
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Rule_Attack);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Rule_Attack_Disabled);
+
+	// Reaction
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Rule_Reaction);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Rule_Reaction_Parry_Disabled);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Rule_Reaction_Dodge_Disabled);
+	GAS_TEMPLATESP_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(TAG_AI_Rule_Reaction_Block_Disabled);
+
 
 	/************************************************
 	*-------------------<UI Tags>-------------------*

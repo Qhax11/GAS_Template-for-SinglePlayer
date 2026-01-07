@@ -31,6 +31,7 @@ enum class EReactionDisableReason : uint8
     CanInterruptUnstoppable,
     InActiveAttackPhase,
     Cooldown,
+    RuleBlocked,
 };
 
 struct FReactionEnableDebug

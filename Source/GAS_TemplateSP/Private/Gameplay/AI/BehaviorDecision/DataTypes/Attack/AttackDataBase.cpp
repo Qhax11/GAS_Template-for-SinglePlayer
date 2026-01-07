@@ -16,6 +16,16 @@ bool UAttackDataBase::IsEnable(const FAttackDecisionContext& Context, FAttackEna
 		return false;
 	}
 
+	const bool bIsAttackDisabled = Context.OwnerASC->HasMatchingGameplayTag(GAS_Tags::TAG_AI_Rule_Attack_Disabled);
+	if (bIsAttackDisabled)
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EAttackDisableReason::RuleBlocked;
+		}
+		return false;
+	}
+
 	if (OutDebug)
 	{
 		OutDebug->Reason = EAttackDisableReason::None;

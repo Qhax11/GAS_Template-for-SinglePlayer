@@ -40,6 +40,7 @@ enum class EAttackDisableReason : uint8
 	OnCooldown,
 	InvalidState,
 	ComboBlocked,
+	RuleBlocked,
 };
 
 struct FAttackEnableDebug

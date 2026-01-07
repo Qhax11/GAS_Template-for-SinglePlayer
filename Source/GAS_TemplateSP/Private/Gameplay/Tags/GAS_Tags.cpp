@@ -467,6 +467,19 @@ namespace GAS_Tags
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_PlayerLastDirection, "AI.Direction.Policy.LastPlayerDirection");
 	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Direction_Policy_EscapeFromAttack, "AI.Direction.Policy.EscapeFromAttack");
 
+	// ============================================================
+	// AI RULES / CAPABILITIES
+	// ============================================================
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Rule, "AI.Rule");
+
+	// Attack Rules
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Rule_Attack, "AI.Rule.Attack");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Rule_Attack_Disabled, "AI.Rule.Attack.Disabled");
+
+	// Reaction Rules
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Rule_Reaction, "AI.Rule.Reaction");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Rule_Reaction_Parry, "AI.Rule.Reaction.Parry");
+	UE_DEFINE_GAMEPLAY_TAG(TAG_AI_Rule_Reaction_Parry_Disabled, "AI.Rule.Reaction.Parry.Disabled");
 
 
 	/************************************************

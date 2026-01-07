@@ -45,6 +45,16 @@ bool UComingAttackReactionDataParry::IsEnable(FComingAttackPayload ComingAttackP
 		return false;
 	}
 
+	const bool bIsParryDisabled = ComingAttackPayload.DefenderASC->HasMatchingGameplayTag(GAS_Tags::TAG_AI_Rule_Reaction_Parry_Disabled);
+	if (bIsParryDisabled)
+	{
+		if (OutDebug)
+		{
+			OutDebug->Reason = EReactionDisableReason::RuleBlocked;
+		}
+		return false;
+	}
+
 	return true;
 }
 

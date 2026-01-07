@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Gameplay/Actors/Characters/GAS_CharacterBase.h"
+#include "Gameplay/AI/DataTypes/Enemy/EnemyProfileData.h"
 #include "GAS_EnemyBase.generated.h"
 
 
@@ -28,6 +29,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class UAC_PatrolHandler* GetPatrolHandlerComponent() const { return PatrolHandlerComponent; }
+
+	UPROPERTY(EditAnywhere)
+	UEnemyProfileData* EnemyProfileData;
 
 protected:
 	virtual void BeginPlay() override;
@@ -55,5 +59,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy|Components")
     USceneComponent* FinisherPointComponent;
 
+	UPROPERTY()
 	class AAIControllerBase* EnemyController;
+
+private:
+	void ApplyEnemyProfile();
+
 };

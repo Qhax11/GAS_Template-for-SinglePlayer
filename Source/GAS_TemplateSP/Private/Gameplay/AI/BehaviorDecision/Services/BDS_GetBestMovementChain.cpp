@@ -85,7 +85,7 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(UAttackDataB
         if (bEnableDebug)
         {
             UE_LOG(LogTemp, Warning,
-                TEXT("Decision: Service: UBDS_GetBestMovementChain: MovementChainScore = %s | Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+                TEXT("Decision: Service: UBDS_GetBestMovementChain: MovementChainScore = %s | Intent = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
                 *MovementChain->MovementChainName.ToString(),
                 ScoreDebug.IntentScore,
                 ScoreDebug.DistanceScore,
@@ -109,7 +109,7 @@ UMovementChainData* UBDS_GetBestMovementChain::GetBestMovementChain(UAttackDataB
         if (BestMovementChainData) 
         {
             UE_LOG(LogTemp, Warning,
-                TEXT("Decision: Service: UBDS_GetBestMovementChain: WINNER = %s | Current Intent: %s |  Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+                TEXT("Decision: Service: UBDS_GetBestMovementChain: WINNER = %s | Current Intent: %s | Intent = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
                 *BestMovementChainData->MovementChainName.ToString(),
                 *UEnum::GetValueAsString(BestScoreDebug.CurrentIntent),
                 BestScoreDebug.IntentScore,

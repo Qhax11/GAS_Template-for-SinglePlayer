@@ -234,7 +234,7 @@ bool UAC_StateManager::RequestStateTreeEnter(const FGameplayTag& TargetStateTag,
 	UStateBase* TargetState = GetStateWithTag(TargetStateTag);
 	if (!IsValid(TargetState))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("State: Manager: %s TargetState is null!"));
+		UE_LOG(LogTemp, Warning, TEXT("State: Manager: TargetState is null!"));
 		return false;
 	}
 

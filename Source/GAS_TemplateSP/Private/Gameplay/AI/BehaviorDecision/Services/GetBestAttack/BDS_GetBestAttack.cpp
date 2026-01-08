@@ -72,9 +72,10 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 		if (bEnableDebug)
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("Decision: Service: UBDS_GetBestAttack: AttackScore = %s | Intent = %.2f, Tag = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("Decision: Service: UBDS_GetBestAttack: AttackScore = %s | Intent = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
 				*AttackData->AttackName.ToString(),
 				ScoreDebug.IntentScore,
+				ScoreDebug.DistanceScore,
 				ScoreDebug.Bias,
 				ScoreDebug.Total
 			);
@@ -95,7 +96,7 @@ UAttackDataBase* UBDS_GetBestAttack::GetBestAttack()
 		if (BestAttackData) 
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("Decision: Service: UBDS_GetBestAttack: WINNER: %s | Current intent: %s | Score: Intent = %.2f, Combo = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
+				TEXT("Decision: Service: UBDS_GetBestAttack: WINNER: %s | Current intent: %s | Score: Intent = %.2f, Distance = %.2f, Bias = %.2f, Total = %.2f |"),
 				*BestAttackData->AttackName.ToString(),
 				*UEnum::GetValueAsString(BestScoreDebug.CurrentIntent),
 				BestScoreDebug.IntentScore,
